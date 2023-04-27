@@ -1,5 +1,5 @@
-#' @rdname ImageArray
-#' @title The ImageArray class
+#' @rdname readImageArray
+#' @title Read as `ImageArray`
 #' @description ...
 #' 
 #' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
@@ -9,12 +9,12 @@
 #' @examples
 #' path <- "extdata/mibitof/images/point8_image/0"
 #' path <- system.file(path, package = "SpatialData")
-#' (ia <- readImage(path))
+#' (ia <- readImageArray(path))
 #' 
 #' @importFrom jsonlite fromJSON
 #' @importFrom Rarr read_zarr_array
 #' @export
-readImage <- function(path = ".", resolution = "0", ...) { 
+readImageArray <- function(path = ".", resolution = "0", ...) { 
   if (file.exists(file.path(path, ".zarray"))) {
     json <- file.path(dirname(path), ".zattrs")
     if (!file.exists(json)) 
@@ -29,7 +29,7 @@ readImage <- function(path = ".", resolution = "0", ...) {
   }
   md <- fromJSON(json)
   za <- read_zarr_array(zarr)
-  ImageArray(za, md)
+  ImageArray(data=za, metadata=md)
 }
   
 # path <- "/Users/helucro/Packages/ImageArray/inst/extdata/mibitof/images/point8_image/0"
