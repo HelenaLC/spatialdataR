@@ -21,23 +21,26 @@
 #' @export
 ImageArray <- function(data, metadata = list(), ...) { 
   
+  # path <- "~/Packages/SpatialData/inst/extdata/mibitof/labels/point16_labels/"
+  # data <- read_zarr_array(file.path(path, "0"))
+  # metadata <- fromJSON(file.path(path, ".zattrs"))
+  
   msc <- as.list(metadata$multiscales)
   axs <- msc$axes[[1]]
   
-  chs <- metadata$channels_metadata$channels$label
-  idx <- grep("channel", axs$type)
-  
-  nms <- vector("list", 3)
+  nms <- vector("list", nrow(axs))
   names(nms) <- axs$name
-  nms[[idx]] <- chs
-  
+  #chs <- metadata$channels_metadata$channels$label
+  #idx <- grep("channel", axs$type)
+  #nms[[idx]] <- chs
+
   dimnames(data) <- nms
   
   .ImageArray(data = data, metadata = metadata)
 }
 
 .showImageArray <- function(object) {
-  axs <- md$multiscales$axes[[1]]
+  axs <- metadata(object)$multiscales$axes[[1]]
   cat("class: ImageArray\n")
   cat(sprintf("axiis(%s):", paste(axs$name, collapse="")), dim(object), "\n")
   

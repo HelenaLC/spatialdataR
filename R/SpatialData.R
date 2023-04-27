@@ -7,16 +7,9 @@
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
 #' @examples
-#' dir <- "extdata/mibitof/images/point8_image"
-#' zarr <- system.file(file.path(dir, "0"), package = "SpatialData")
-#' json <- system.file(file.path(dir, ".zattrs"), package = "SpatialData")
-#' 
-#' library(Rarr)
-#' library(jsonlite)
-#' 
-#' za <- read_zarr_array(zarr)
-#' md <- fromJSON(json)
-#' (ia <- ImageArray(za, md))
+#' path <- "extdata/mibitof/images/point8_image/mibitof"
+#' path <- system.file(path, package = "SpatialData")
+#' (spd <- readSpatialData(path))
 #' 
 #' @export
 SpatialData <- function(images, labels, shapes, points, ...) {
@@ -40,3 +33,13 @@ SpatialData <- function(images, labels, shapes, points, ...) {
   
   .SpatialData(images = images, labels = labels, shapes = shapes, points = points)
 }
+
+.showSpatialData <- function(object) {
+  cat("class: SpatialData")
+  cat(sprintf("images(%s):", length(object@images)), "\n")
+  cat(sprintf("labels(%s):", length(object@images)), "\n")
+  cat(sprintf("shapes(%s):", length(object@images)), "\n")
+  cat(sprintf("points(%s):", length(object@images)), "\n")
+}
+
+setMethod("show", "SpatialData", .showSpatialData)
