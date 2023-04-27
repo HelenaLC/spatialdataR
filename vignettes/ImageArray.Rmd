@@ -1,0 +1,71 @@
+---
+title: "The `ImageArray` class"
+#package: "`r BiocStyle::pkg_ver('ImageArray')`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author:
+  - Constantin Ahlmann-Eltze
+  - Helena L. Crowell
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc-depth: 2
+    toc-float: true
+vignette: >
+  %\VignetteIndexEntry{"foo"}
+  %\VignettePackage{foo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+#bibliography: "`r file.path(system.file('extdata', package = 'muscat'), 'refs.bib')`"
+abstract: > 
+  <p> ...
+---
+
+# Preamble
+
+## Dependencies
+
+```{r load-libs, message=FALSE, warning=FALSE}
+library(Rarr)
+library(EBImage)
+library(jsonlite)
+library(ImageArray)
+```
+
+## Introduction
+
+# Setup
+
+## Constructor
+
+```{r load-data}
+path <- "extdata/mibitof/images/point8_image"
+zarr <- system.file(file.path(path, "0"), package = "ImageArray")
+json <- system.file(file.path(path, ".zattrs"), package = "ImageArray")
+
+za <- read_zarr_array(zarr)
+md <- fromJSON(json)
+(ia <- ImageArray(za, md))
+```
+
+## `readImage`
+
+```{r}
+path <- "extdata/mibitof/images/point8_image/0"
+path <- system.file(path, package = "ImageArray")
+(ia <- readImage(path))
+```
+
+# Visualization
+
+```{r plot-img, fig.size="small"}
+img <- data(aperm(ia))
+plot(Image(img/255, dim(img), "Color"))
+```
+
+# Appendix
+
+## Session info
+
+```{r session-info}
+sessionInfo()
+```

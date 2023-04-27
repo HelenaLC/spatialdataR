@@ -1,0 +1,12 @@
+Package: SpatialData
+Title: ...
+Description: ...
+Type: Package
+Version: 0.99
+Depends: R (>= 4.3)
+Imports: BiocGenerics, S4Arrays, jsonlite, Rarr, EBImage
+VignetteBuilder: knitr
+URL: https://github.com/HelenaLC/ImageArray
+BugReports: https://github.com/HelenaLC/ImageArray/issues
+RoxygenNote: 7.2.3
+Encoding: UTF-8
