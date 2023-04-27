@@ -5,7 +5,6 @@ setMethod("data", "ImageArray", function(x) {
 })
 
 #' @rdname ImageArray
-#' @importFrom S4Vectors metadata
 #' @export
 setMethod("metadata", "ImageArray", function(x) {
   x@metadata
@@ -79,3 +78,34 @@ setMethod("shapes", "SpatialData", function(x) x@shapes)
 #' @rdname SpatialData
 #' @export
 setMethod("points", "SpatialData", function(x) x@points)
+
+#' @rdname SpatialData
+#' @export
+setMethod("imageNames", "SpatialData", function(x) names(images(x)))
+
+#' @rdname SpatialData
+#' @export
+setMethod("labelNames", "SpatialData", function(x) names(labels(x)))
+
+#' @rdname SpatialData
+#' @export
+setMethod("shapeNames", "SpatialData", function(x) names(shapes(x)))
+
+#' @rdname SpatialData
+#' @export
+setMethod("pointNames", "SpatialData", function(x) names(points(x)))
+
+#' @rdname SpatialData
+#' @export
+setMethod("elementNames", "SpatialData", function(x) {
+  layers <- attributes(x)
+  layers <- layers[setdiff(names(layers), c("metadata", "class"))]
+  names(layers)[vapply(layers, \(.) length(.) > 0, logical(1))]
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("element", "SpatialData", 
+  function(x, elementName=elementNames(x)[1], which=1, ...) {
+  getFromNamespace(elementName, "SpatialData")(x)[[which]]
+})

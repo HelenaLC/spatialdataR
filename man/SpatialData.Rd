@@ -5,6 +5,12 @@
 \alias{labels,SpatialData-method}
 \alias{shapes,SpatialData-method}
 \alias{points,SpatialData-method}
+\alias{imageNames,SpatialData-method}
+\alias{labelNames,SpatialData-method}
+\alias{shapeNames,SpatialData-method}
+\alias{pointNames,SpatialData-method}
+\alias{elementNames,SpatialData-method}
+\alias{element,SpatialData-method}
 \alias{SpatialData}
 \title{The `SpatialData` class}
 \usage{
@@ -15,6 +21,18 @@
 \S4method{shapes}{SpatialData}(x)
 
 \S4method{points}{SpatialData}(x)
+
+\S4method{imageNames}{SpatialData}(x)
+
+\S4method{labelNames}{SpatialData}(x)
+
+\S4method{shapeNames}{SpatialData}(x)
+
+\S4method{pointNames}{SpatialData}(x)
+
+\S4method{elementNames}{SpatialData}(x)
+
+\S4method{element}{SpatialData}(x, elementName = elementNames(x)[1], which = 1, ...)
 
 SpatialData(images, labels, shapes, points, ...)
 }
@@ -29,8 +47,9 @@ SpatialData(images, labels, shapes, points, ...)
 ...
 }
 \examples{
-path <- "extdata/mibitof/images/point8_image/mibitof"
+path <- file.path("extdata", "mibitof")
 path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
+images(spd)
 
 }
