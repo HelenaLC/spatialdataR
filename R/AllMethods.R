@@ -1,8 +1,4 @@
-#' @rdname ImageArray
-#' @export
-setMethod("data", "ImageArray", function(x) {
-  x@data
-})
+
 
 #' @rdname ImageArray
 #' @importFrom S4Vectors metadata
@@ -35,7 +31,7 @@ setMethod("[", "ImageArray", function(x, i, j, ...) {
   x@data <- data(x)[i, j, ..., drop=FALSE]
   x
 })
-  
+
 getArrayElement <- S4Arrays:::getArrayElement
 #' @rdname ImageArray
 #' @export

@@ -1,7 +1,4 @@
 #' @export
-setGeneric("data", function(x, ...) standardGeneric("data"))
-
-#' @export
 setGeneric("images", function(x, ...) standardGeneric("images"))
 
 #' @export
