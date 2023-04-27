@@ -1,9 +1,6 @@
-#' @rdname ImageArray
-#' @export
-setMethod("data", "ImageArray", function(x) {
-  x@data
-})
 
+
+#' @importFrom S4Vectors metadata
 #' @rdname ImageArray
 #' @export
 setMethod("metadata", "ImageArray", function(x) {
@@ -13,36 +10,36 @@ setMethod("metadata", "ImageArray", function(x) {
 #' @rdname ImageArray
 #' @export
 setMethod("dim", "ImageArray", function(x) {
-  dim(data(x))
+  dim(x@data)
 })
 
 #' @rdname ImageArray
 #' @export
 setMethod("dimnames", "ImageArray", function(x) {
-  dimnames(data(x))
+  dimnames(x@data)
 })
 
 #' #' @rdname ImageArray
 #' #' @export
 #' setMethod("extract_array", "ImageArray", function(x, index) {
-#'   extract_array(data(x), index)
+#'   extract_array(x@data, index)
 #' })
 
 #' @rdname ImageArray
 #' @export
 setMethod("[", "ImageArray", function(x, i, j, ...) {
-  x@data <- data(x)[i, j, ..., drop=FALSE]
+  x@data <- x@data[i, j, ..., drop=FALSE]
   x
 })
-  
+
 getArrayElement <- S4Arrays:::getArrayElement
 #' @rdname ImageArray
 #' @export
 setMethod("getArrayElement", "ImageArray", function(x, subscripts) {
-  if (is(data(x), "Array")) {
-    getArrayElement(data(x), subscripts)
+  if (is(x@data, "Array")) {
+    getArrayElement(x@data, subscripts)
   } else {
-    do.call(`[`, c(list(x=data(x)), as.list(subscripts)))
+    do.call(`[`, c(list(x=x@data), as.list(subscripts)))
   }
 })
 
@@ -81,6 +78,22 @@ setMethod("points", "SpatialData", function(x) x@points)
 
 #' @rdname SpatialData
 #' @export
+setMethod("image", "SpatialData", function(x, i = 1) x@images[[i]])
+
+#' @rdname SpatialData
+#' @export
+setMethod("label", "SpatialData", function(x, i = 1) x@labels[[i]])
+
+#' @rdname SpatialData
+#' @export
+setMethod("shape", "SpatialData", function(x, i = 1) x@shapes[[i]])
+
+#' @rdname SpatialData
+#' @export
+setMethod("point", "SpatialData", function(x, i = 1) x@points[[i]])
+
+#' @rdname SpatialData
+#' @export
 setMethod("imageNames", "SpatialData", function(x) names(images(x)))
 
 #' @rdname SpatialData
@@ -105,7 +118,9 @@ setMethod("elementNames", "SpatialData", function(x) {
 
 #' @rdname SpatialData
 #' @export
-setMethod("element", "SpatialData", 
+setMethod("element", "SpatialData",
   function(x, elementName=elementNames(x)[1], which=1, ...) {
   getFromNamespace(elementName, "SpatialData")(x)[[which]]
 })
+
+
