@@ -22,4 +22,9 @@ path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
 images(spd)
 
+path <- file.path("extdata", "blobs.zarr")
+path <- system.file(path, package = "SpatialData")
+(spd <- readSpatialData(path))
+shapes(spd)
+
 }
