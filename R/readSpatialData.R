@@ -10,16 +10,21 @@
 #' path <- file.path("extdata", "mibitof")
 #' path <- system.file(path, package = "SpatialData")
 #' (spd <- readSpatialData(path))
+#' images(spd)
 #' 
 #' @export
 readSpatialData <- function(path, ...) {
   layers <- list.dirs(path, recursive=FALSE)
 #browser()
   images <- if ("images" %in% basename(layers)) {
-    lapply(list.dirs(file.path(path, "images"), recursive=FALSE), readImageArray)
+    images <- list.dirs(file.path(path, "images"), recursive=FALSE)
+    names(images) <- basename(images)
+    lapply(images, readImageArray)
   } else list()
-  layers <- if ("labels" %in% basename(layers)) {
-    lapply(list.dirs(file.path(path, "labels"), recursive=FALSE), readImageArray)
+  labels <- if ("labels" %in% basename(layers)) {
+    labels <- list.dirs(file.path(path, "labels"), recursive=FALSE)
+    names(labels) <- basename(labels)
+    lapply(labels, readImageArray)
   } else list()
   
   # shapes <- if ("shapes" %in% layers){

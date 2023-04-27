@@ -20,5 +20,6 @@ readSpatialData(path, ...)
 path <- file.path("extdata", "mibitof")
 path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
+images(spd)
 
 }
