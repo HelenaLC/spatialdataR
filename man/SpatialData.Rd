@@ -5,6 +5,9 @@
 \alias{labels,SpatialData-method}
 \alias{shapes,SpatialData-method}
 \alias{points,SpatialData-method}
+\alias{label,SpatialData-method}
+\alias{shape,SpatialData-method}
+\alias{point,SpatialData-method}
 \alias{imageNames,SpatialData-method}
 \alias{labelNames,SpatialData-method}
 \alias{shapeNames,SpatialData-method}
@@ -21,6 +24,14 @@
 \S4method{shapes}{SpatialData}(x)
 
 \S4method{points}{SpatialData}(x)
+
+\S4method{images}{SpatialData}(x)
+
+\S4method{label}{SpatialData}(x, i = 1)
+
+\S4method{shape}{SpatialData}(x, i = 1)
+
+\S4method{point}{SpatialData}(x, i = 1)
 
 \S4method{imageNames}{SpatialData}(x)
 

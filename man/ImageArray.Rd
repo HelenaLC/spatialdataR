@@ -12,7 +12,7 @@
 \title{#' @rdname ImageArray
 #' @export
 setMethod("extract_array", "ImageArray", function(x, index) {
-  extract_array(data(x), index)
+  extract_array(x@data, index)
 })}
 \usage{
 \S4method{metadata}{ImageArray}(x)
