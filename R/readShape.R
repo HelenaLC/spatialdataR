@@ -1,76 +1,56 @@
 readShapes = function(path, ...) {
-
-  files = list.files(path = path, full.names = TRUE, recursive = TRUE)
-
-  coords_path = NULL
-  index_path = NULL
-  radius_path = NULL
-  offset0_path = NULL
-  offset1_path = NULL
-
-  coords_pattern = "coords/0"
-  index_pattern = "Index/0"
-  radius_pattern = "radius/0"
-  offset0_pattern = "offset0/0"
-  offset1_pattern = "offset1/0"
-
-  if (any(grepl(coords_pattern, files))) {
-    coords_path = gsub("/0/0", "", files[grepl(coords_pattern, files)])
-    coords = Rarr::read_zarr_array(coords_path)
-  }
-
-  if (any(grepl(index_pattern, files))) {
-    index_path = dirname(files[grepl(index_pattern, files)])
-    index = Rarr::read_zarr_array(index_path)
-  }
-
-  if (any(grepl(radius_pattern, files))) {
-    radius_path = dirname(files[grepl(radius_pattern, files)])
-    radius = Rarr::read_zarr_array(radius_path)
-  }
-
-  if (any(grepl(offset0_pattern, files))) {
-    offset0_path = dirname(files[grepl(offset0_pattern, files)])
-    offset0 = Rarr::read_zarr_array(offset0_path)
-  }
-
-  if (any(grepl(offset1_pattern, files))) {
-    offset1_path = dirname(files[grepl(offset1_pattern, files)])
-    offset1 = Rarr::read_zarr_array(offset1_path)
-  }
-
-  if (!is.null(radius_path)) {
-    shape_type = "circle"
+  parts <- list.dirs(path, recursive=FALSE)
+  coords <- if ("coords" %in% basename(parts)) {
+    Rarr::read_zarr_array(file.path(path, "coords"))
   } else {
-    shape_type = "polygon"
+    NULL
+  }
+  index <- if ("Index" %in% basename(parts)) {
+    Rarr::read_zarr_array(file.path(path, "index"))
+  } else {
+    NULL
+  }
+
+  radius <- if ("radius" %in% basename(parts)) {
+    Rarr::read_zarr_array(file.path(path, "radius"))
+  } else {
+    NULL
+  }
+  offset0 <- if ("offset0" %in% basename(parts)) {
+    Rarr::read_zarr_array(file.path(path, "offset0"))
+  } else {
+    NULL
+  }
+  offset1 <- if ("offset1" %in% basename(parts)) {
+    Rarr::read_zarr_array(file.path(path, "offset1"))
+  } else {
+    NULL
+  }
+
+  if (!is.null(radius)) {
+    shape_type <- "circle"
+  } else {
+    shape_type <- "polygon"
   }
 
   if (shape_type == "polygon") {
 
-    matrices = list()
+    matrices <- lapply(seq_along(index), function(i) NULL)
     for (i in 1:(length(offset0)-1)) {
-
-      matrices[[i]] = coords[offset0[[i]]:offset0[[i+1]], ]
-
+      matrices[[i]] <- coords[(offset0[[i]]+1):offset0[[i+1]], ,drop=FALSE]
     }
-
-    result = S4Vectors::DataFrame(
+    S4Vectors::DataFrame(
       data = I(matrices),
       index = index,
       type = rep(shape_type, length(index))
     )
-
   } else {
-
-    result = S4Vectors::DataFrame(
-      data = I(apply(coords, 1, function(x) list(x[1], x[2]))),
+    S4Vectors::DataFrame(
+      data = I(asplit(coords, 1)),
       index = index,
       radius = radius,
       type = rep(shape_type, length(index))
     )
 
   }
-
-  result
-
 }
