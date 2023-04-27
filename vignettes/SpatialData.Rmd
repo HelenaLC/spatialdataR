@@ -1,6 +1,6 @@
 ---
-title: "The `ImageArray` class"
-#package: "`r BiocStyle::pkg_ver('ImageArray')`"
+title: "The `SpatialData` class"
+#package: "`r BiocStyle::pkg_ver('SpatialData')`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author:
   - Constantin Ahlmann-Eltze
@@ -28,12 +28,12 @@ abstract: >
 library(Rarr)
 library(EBImage)
 library(jsonlite)
-library(ImageArray)
+library(SpatialData)
 ```
 
 ## Introduction
 
-# Setup
+# `ImageArray`
 
 ## Constructor
 
@@ -51,15 +51,31 @@ md <- fromJSON(json)
 
 ```{r}
 path <- "extdata/mibitof/images/point8_image/0"
-path <- system.file(path, package = "ImageArray")
-(ia <- readImage(path))
+path <- system.file(path, package = "SpatialData")
+(ia <- readImageArray(path))
+```
+
+# `SpatialData`
+
+```{r}
+path <- "extdata/mibitof"
+path <- system.file(path, package = "SpatialData")
+(spd <- readSpatialData(path))
+```
+
+## Accessors
+
+```{r}
+elementNames(spd)
+imageNames(spd)
+(img <- element(spd, "images", 1))
 ```
 
 # Visualization
 
 ```{r plot-img, fig.size="small"}
-img <- data(aperm(ia))
-plot(Image(img/255, dim(img), "Color"))
+mtx <- data(aperm(img))
+plot(Image(mtx/255, dim(mtx), "Color"))
 ```
 
 # Appendix
