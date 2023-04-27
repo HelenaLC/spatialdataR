@@ -12,6 +12,11 @@
 #' (spd <- readSpatialData(path))
 #' images(spd)
 #' 
+#' path <- file.path("extdata", "blobs.zarr")
+#' path <- system.file(path, package = "SpatialData")
+#' (spd <- readSpatialData(path))
+#' shapes(spd)
+#' 
 #' @export
 readSpatialData <- function(path, ...) {
   layers <- list.dirs(path, recursive=FALSE)
@@ -21,10 +26,17 @@ readSpatialData <- function(path, ...) {
     names(images) <- basename(images)
     lapply(images, readImageArray)
   } else list()
+  
   labels <- if ("labels" %in% basename(layers)) {
     labels <- list.dirs(file.path(path, "labels"), recursive=FALSE)
     names(labels) <- basename(labels)
     lapply(labels, readImageArray)
+  } else list()
+  
+  shapes <- if ("shapes" %in% basename(layers)) {
+    shapes <- list.dirs(file.path(path, "shapes"), recursive=FALSE)
+    names(shapes) <- basename(shapes)
+    lapply(shapes, readShapes)
   } else list()
   
   # shapes <- if ("shapes" %in% layers){
@@ -43,7 +55,7 @@ readSpatialData <- function(path, ...) {
   #   NULL
   # }
   
-  SpatialData(images=images, labels=labels)
+  SpatialData(images=images, labels=labels, shapes=shapes)
 }
 
 # path <- "~/packages/ImageArray/inst/extdata/mibitof"

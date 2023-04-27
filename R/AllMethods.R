@@ -1,5 +1,3 @@
-
-
 #' @importFrom S4Vectors metadata
 #' @rdname ImageArray
 #' @export
@@ -54,7 +52,7 @@ setMethod("as.array", "ImageArray", function(x) {
 #' @export
 setMethod("aperm", "ImageArray", function(a, perm) {
   if (missing(perm)) perm <- NULL
-  a@data <- aperm(data(a), perm)
+  a@data <- aperm(a@data, perm)
   a
 })
 

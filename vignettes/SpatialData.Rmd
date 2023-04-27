@@ -5,6 +5,7 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author:
   - Constantin Ahlmann-Eltze
   - Helena L. Crowell
+  - Tim Treis
 output: 
   BiocStyle::html_document:
     toc: true
@@ -27,8 +28,10 @@ abstract: >
 ```{r load-libs, message=FALSE, warning=FALSE}
 library(Rarr)
 library(EBImage)
+library(ggplot2)
 library(jsonlite)
 library(SpatialData)
+library(SingleCellExperiment)
 ```
 
 ## Introduction
@@ -69,13 +72,23 @@ path <- system.file(path, package = "SpatialData")
 elementNames(spd)
 imageNames(spd)
 (img <- element(spd, "images", 1))
+(lab <- element(spd, "labels", 1))
 ```
 
 # Visualization
 
-```{r plot-img, fig.size="small"}
-mtx <- data(aperm(img))
+```{r plot-img}
+mtx <- as.array(aperm(img))
 plot(Image(mtx/255, dim(mtx), "Color"))
+mtx <- as.array(aperm(lab))
+plot(Image(mtx, dim(mtx)))
+```
+
+```{r}
+(sce <- aggregateImage(spd))
+cd <- data.frame(colData(sce), z = assay(sce)[1, ])
+ggplot(cd, aes(x, y, col = z)) + geom_point() + 
+  scale_color_viridis_c() + scale_y_reverse()
 ```
 
 # Appendix
