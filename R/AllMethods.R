@@ -61,3 +61,21 @@ setMethod("aperm", "ImageArray", function(a, perm) {
   a@data <- aperm(data(a), perm)
   a
 })
+
+# ------------------------------------------------------------------------------
+
+#' @rdname SpatialData
+#' @export
+setMethod("images", "SpatialData", function(x) x@images)
+
+#' @rdname SpatialData
+#' @export
+setMethod("labels", "SpatialData", function(x) x@labels)
+
+#' @rdname SpatialData
+#' @export
+setMethod("shapes", "SpatialData", function(x) x@shapes)
+
+#' @rdname SpatialData
+#' @export
+setMethod("points", "SpatialData", function(x) x@points)

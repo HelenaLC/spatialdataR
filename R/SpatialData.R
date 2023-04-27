@@ -7,9 +7,10 @@
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
 #' @examples
-#' path <- "extdata/mibitof/images/point8_image/mibitof"
+#' path <- file.path("extdata", "mibitof")
 #' path <- system.file(path, package = "SpatialData")
 #' (spd <- readSpatialData(path))
+#' images(spd)
 #' 
 #' @export
 SpatialData <- function(images, labels, shapes, points, ...) {
@@ -35,11 +36,15 @@ SpatialData <- function(images, labels, shapes, points, ...) {
 }
 
 .showSpatialData <- function(object) {
-  cat("class: SpatialData")
-  cat(sprintf("images(%s):", length(object@images)), "\n")
-  cat(sprintf("labels(%s):", length(object@images)), "\n")
-  cat(sprintf("shapes(%s):", length(object@images)), "\n")
-  cat(sprintf("points(%s):", length(object@images)), "\n")
+  imgs <- images(object)
+  labs <- labels(object)
+  shps <- shapes(object)
+  pnts <- points(object)
+  cat("class: SpatialData\n")
+  cat(sprintf("images(%s):", length(imgs)), names(imgs), "\n")
+  cat(sprintf("labels(%s):", length(labs)), names(labs), "\n")
+  cat(sprintf("shapes(%s):", length(shps)), names(shps), "\n")
+  cat(sprintf("points(%s):", length(pnts)), names(pnts), "\n")
 }
 
 setMethod("show", "SpatialData", .showSpatialData)
