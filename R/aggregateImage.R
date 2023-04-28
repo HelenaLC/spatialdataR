@@ -1,21 +1,22 @@
 #' @rdname SpatialData
 #' @title The `SpatialData` class
 #' @description ...
-#' 
+#'
 #' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
-#' 
+#'
 #' @examples
 #' library(ggplot2)
+#' library(SingleCellExperiment)
 #' path <- file.path("extdata", "mibitof")
 #' path <- system.file(path, package = "SpatialData")
 #' spd <- readSpatialData(path)
-#' sce <- SpatialData::aggregate(spd)
+#' sce <- aggregateImage(spd)
 #' cd <- data.frame(colData(sce), z = assay(sce)[1, ])
-#' ggplot(cd, aes(x, y, col = z)) + geom_point() + 
+#' ggplot(cd, aes(x, y, col = z)) + geom_point() +
 #'   scale_color_viridis_c() + scale_y_reverse()
-#' 
+#'
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @export
 aggregateImage <- function(x, which=1) {
