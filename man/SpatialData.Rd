@@ -56,11 +56,24 @@ SpatialData(images, labels, shapes, points, ...)
 aggregateImage(x, which = 1)
 }
 \arguments{
+\item{x}{A \code{SpatialData} object.}
+
 \item{...}{Further arguments to be passed to or from other methods.}
 
 \item{data}{A \code{array} or \code{\link[S4Arrays]{Array}}.}
 
 \item{metadata}{A \code{list}.}
+}
+\value{
+\itemize{
+\item \code{images/labels/shapes/points}
+  return a list of entities of the corresponding element.
+\item \code{image/label/shape/point}
+  return a single entitiy of the corresponing type.
+\item \code{image/label/shape/pointNames}
+  return a character string of available 
+  entities of the corresponding element.
+}
 }
 \description{
 ...
