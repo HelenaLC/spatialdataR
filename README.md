@@ -5,13 +5,11 @@ Draft implementation of a SpatialData class in R.
 ## Installation
 
 ```r
-library(devtools)
-install_github("HelenaLC/SpatialData")
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("HelenaLC/SpatialData")
 ```
-
-## Tutorial
-
-[DEMO][https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html]
+## [DEMO](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
 
 ## Useful links
 - Specs for raster-type data (images, segmentation masks) follow [OME-NGFF][]
@@ -25,6 +23,8 @@ install_github("HelenaLC/SpatialData")
 
 ### Level 0
 - [ ] preliminarily pass `R CMD check` and `BiocCheck`
+### Level 1
+- [ ] clean read/write OME-Zarr round
 
 ### Check list
 
