@@ -21,11 +21,17 @@ test_that("check that reading a full spatial dataset works", {
 
 test_that("readShapes works", {
 
-  path <- system.file("extdata/blobs.zarr", package = "SpatialData", mustWork = TRUE)
+  path <- system.file("extdata/blobs", package = "SpatialData", mustWork = TRUE)
   shape_data <- readShapes(file.path(path, "shapes/blobs_shapes"))
   shapes(readSpatialData(path))
 
   path <- "~/Documents/PhD/Courses/2023_scverse_hackathon/example_data/merfish.zarr/"
   readShapes(file.path(path, "shapes/cells"))
+})
+
+test_that("readTable works", {
+  path <- system.file("extdata/blobs", package = "SpatialData", mustWork = TRUE)
+  sce <- SpatialData:::readTable(file.path(path, "table/table"))
+  expect_s4_class(sce, "SingleCellExperiment")
 })
 

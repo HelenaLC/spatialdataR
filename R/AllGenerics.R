@@ -31,5 +31,5 @@ setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 setGeneric("element", function(x, ...) standardGeneric("element"))
 
-#' @export
-setGeneric("getLayer", function(x, ...) standardGeneric("getLayer"))
+setGeneric("transformations", function(x, ...) standardGeneric("transformations"))
+setGeneric("transformation", function(x, ...) standardGeneric("transformation"))

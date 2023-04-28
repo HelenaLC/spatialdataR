@@ -41,9 +41,9 @@ library(SingleCellExperiment)
 ## Constructor
 
 ```{r load-data}
-path <- "extdata/mibitof/images/point8_image"
-zarr <- system.file(file.path(path, "0"), package = "ImageArray")
-json <- system.file(file.path(path, ".zattrs"), package = "ImageArray")
+path <- file.path("extdata", "mibitof", "images", "point8_image")
+zarr <- system.file(file.path(path, "0"), package = "SpatialData", mustWork = TRUE)
+json <- system.file(file.path(path, ".zattrs"), package = "SpatialData", mustWork = TRUE)
 
 za <- read_zarr_array(zarr)
 md <- fromJSON(json)
@@ -89,6 +89,30 @@ plot(Image(mtx, dim(mtx)))
 cd <- data.frame(colData(sce), z = assay(sce)[1, ])
 ggplot(cd, aes(x, y, col = z)) + geom_point() + 
   scale_color_viridis_c() + scale_y_reverse()
+```
+
+# Transformations
+
+```{r}
+# utility for image plotting with 'EBImage'
+.plot <- \(i, c="Color") {
+  j <- as.array(aperm(i))
+  plot(Image(j/max(j), dim(j), c))
+}
+```
+
+```{r}
+path <- file.path("extdata", "raccoon_scale")
+path <- system.file(path, package = "SpatialData")
+(spd <- readSpatialData(path))
+(i <- image(spd))
+transformations(i)
+# rotation
+j <- SpatialData:::.rotate(i, 30)
+par(mfrow=c(1,2)); .plot(i); .plot(j)
+# scaling
+j <- SpatialData:::.scale(i, c(1,1,2))
+par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 
 # Appendix
