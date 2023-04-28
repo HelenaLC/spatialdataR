@@ -11,7 +11,7 @@ install_github("HelenaLC/SpatialData")
 
 ## Tutorial
 
-[Link to tutorial][]
+[DEMO][https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html]
 
 ## Useful links
 - Specs for raster-type data (images, segmentation masks) follow [OME-NGFF][]
