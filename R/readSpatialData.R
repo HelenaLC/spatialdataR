@@ -2,7 +2,7 @@
 #' @title Read `SpatialData` OME-Zarr
 #' @description ...
 #' 
-#' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
+#' @param data An \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
@@ -20,7 +20,7 @@
 #' @export
 readSpatialData <- function(path, ...) {
   layers <- list.dirs(path, recursive=FALSE)
-#browser()
+
   images <- if ("images" %in% basename(layers)) {
     images <- list.dirs(file.path(path, "images"), recursive=FALSE)
     names(images) <- basename(images)
@@ -47,6 +47,3 @@ readSpatialData <- function(path, ...) {
   
   SpatialData(images=images, labels=labels, shapes=shapes, points=points)
 }
-
-# path <- "~/packages/ImageArray/inst/extdata/mibitof"
-# readSpatialData(path)

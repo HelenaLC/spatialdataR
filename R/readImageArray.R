@@ -2,8 +2,10 @@
 #' @title Read as `ImageArray`
 #' @description ...
 #' 
-#' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
-#' @param metadata A \code{list}.
+#' @param path A character string specifying
+#'   a .zarray or .zattrs file-containing directory.
+#' @param resolution A charactering specifiying
+#'   the image resolution (pyramid level) to read in.
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
 #' @examples
@@ -31,6 +33,3 @@ readImageArray <- function(path = ".", resolution = "0", ...) {
   za <- read_zarr_array(zarr)
   ImageArray(data=za, metadata=md)
 }
-  
-# path <- "/Users/helucro/Packages/ImageArray/inst/extdata/mibitof/images/point8_image/0"
-# readImage(path)

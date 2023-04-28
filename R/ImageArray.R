@@ -2,7 +2,7 @@
 #' @title The `ImageArray` class
 #' @description ...
 #' 
-#' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
+#' @param data An \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
@@ -43,8 +43,7 @@ ImageArray <- function(data, metadata = list(), ...) {
   axs <- metadata(object)$multiscales$axes[[1]]
   cat("class: ImageArray\n")
   cat(sprintf("axiis(%s):", paste(axs$name, collapse="")), dim(object), "\n")
-  
-  #cat(sprintf("axes(%s):", nrow(axs)), "\n")
+
   t <- axs$type == "time"
   s <- axs$type == "space"
   c <- axs$type == "channel"

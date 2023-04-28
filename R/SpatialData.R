@@ -2,9 +2,21 @@
 #' @title The `SpatialData` class
 #' @description ...
 #' 
+#' @param x A \code{SpatialData} object.
 #' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
+#' 
+#' @return
+#' \itemize{
+#' \item \code{images/labels/shapes/points}
+#'   return a list of entities of the corresponding element.
+#' \item \code{image/label/shape/point}
+#'   return a single entitiy of the corresponing type.
+#' \item \code{image/label/shape/pointNames}
+#'   return a character string of available 
+#'   entities of the corresponding element.
+#' }
 #' 
 #' @examples
 #' path <- file.path("extdata", "mibitof")
@@ -34,6 +46,8 @@ SpatialData <- function(images, labels, shapes, points, ...) {
   
   .SpatialData(images = images, labels = labels, shapes = shapes, points = points)
 }
+
+LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))
 
 .showSpatialData <- function(object) {
   imgs <- images(object)

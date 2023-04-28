@@ -2,8 +2,8 @@
 #' @title The `ImageArray` class
 #' @description ...
 #' 
-#' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
-#' @param metadata A \code{list}.
+#' @param path A character string specifying
+#'   a .parquet file-containing directory.
 #' @param ... Further arguments to be passed to or from other methods.
 #' 
 #' @examples

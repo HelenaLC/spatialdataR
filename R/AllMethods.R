@@ -109,8 +109,7 @@ setMethod("pointNames", "SpatialData", function(x) names(points(x)))
 #' @rdname SpatialData
 #' @export
 setMethod("elementNames", "SpatialData", function(x) {
-  layers <- attributes(x)
-  layers <- layers[setdiff(names(layers), c("metadata", "class"))]
+  layers <- attributes(x)[LAYERS]
   names(layers)[vapply(layers, \(.) length(.) > 0, logical(1))]
 })
 
@@ -135,9 +134,7 @@ setMethod("element", "SpatialData",
 #' @export
 #' @importFrom utils .DollarNames
 .DollarNames.SpatialData <- function(x, pattern="") {
-  layers <- names(attributes(x))
-  layers <- setdiff(layers, c("metadata", "class"))
-  grep(pattern, layers, value=TRUE)
+  grep(pattern, LAYERS, value=TRUE)
 }
 
 #' @rdname SpatialData
