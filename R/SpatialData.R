@@ -22,10 +22,16 @@
 #' }
 #'
 #' @examples
-#' path <- file.path("extdata", "mibitof")
+#' path <- file.path("extdata", "blobs")
 #' path <- system.file(path, package="SpatialData")
 #' (spd <- readSpatialData(path))
-#' images(spd)
+#'
+#' # accessors
+#' imageNames(spd)
+#' image(spd, "blobs_image")
+#' spd$images$blobs_image
+#'
+#' (sce <- table(spd))
 #'
 #' @export
 SpatialData <- function(images, labels, shapes, points, table) {
