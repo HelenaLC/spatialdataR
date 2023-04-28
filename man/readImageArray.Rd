@@ -7,11 +7,13 @@
 readImageArray(path = ".", resolution = "0", ...)
 }
 \arguments{
+\item{path}{A character string specifying
+a .zarray or .zattrs file-containing directory.}
+
+\item{resolution}{A charactering specifiying
+the image resolution (pyramid level) to read in.}
+
 \item{...}{Further arguments to be passed to or from other methods.}
-
-\item{data}{A \code{array} or \code{\link[S4Arrays]{Array}}.}
-
-\item{metadata}{A \code{list}.}
 }
 \description{
 ...

@@ -1,4 +1,4 @@
-path <- file.path("extdata", "blobs.zarr", "images", "blobs_image")
+path <- file.path("extdata", "blobs", "images", "blobs_image")
 path <- system.file(path, package="SpatialData")
 ia <- readImageArray(path)
 

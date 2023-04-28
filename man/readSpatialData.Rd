@@ -9,7 +9,7 @@ readSpatialData(path, ...)
 \arguments{
 \item{...}{Further arguments to be passed to or from other methods.}
 
-\item{data}{A \code{array} or \code{\link[S4Arrays]{Array}}.}
+\item{data}{An \code{array} or \code{\link[S4Arrays]{Array}}.}
 
 \item{metadata}{A \code{list}.}
 }
@@ -22,7 +22,7 @@ path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
 images(spd)
 
-path <- file.path("extdata", "blobs.zarr")
+path <- file.path("extdata", "blobs")
 path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
 shapes(spd)
