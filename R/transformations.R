@@ -36,8 +36,24 @@ setMethod("transformation", "ImageArray", function(x, which=1, ...) {
   df$data[[idx]]
 })
 
-#' @importFrom EBImage abind resize Image
-.trans <- \(x, which=1) {
+#' @importFrom EBImage abind resize
+.scale <- function(i, t) {
+  i <- as.array(i)
+  j <- apply(i, 1, \(j) {
+    resize(j, nrow(j)*t[2], ncol(j)*t[3])
+  }, simplify = FALSE)
+  j <- abind(j, along=0)
+}
+
+#' @importFrom EBImage abind rotate
+.rotate <- function(i, t) {
+  i <- as.array(i)
+  j <- apply(i, 1, rotate, t, simplify = FALSE)
+  j <- abind(j, along=0)
+}
+
+#' @importFrom EBImage Image
+.trans <- function(x, which=1) {
   # x <- image(spd)
   # which <- "global"
   i <- as.array(x)
@@ -45,18 +61,11 @@ setMethod("transformation", "ImageArray", function(x, which=1, ...) {
   idx <- .get_idx(df, which)
   t <- transformation(x, which)
   type <- df$type[idx]
-  switch(type,
-    "scale" = {
-      j <- apply(i, 1, \(j) {
-        resize(j, nrow(j)*t[2], ncol(j)*t[3])
-      }, simplify = FALSE)
-      j <- abind(j, along=0)
-    },
-    "identity" = { 
-      j <- i
-    },
-    sprintf("transformation of type '%s' yet to be supported.", type)
-  )
+  j <- switch(type,
+    "identity" = i,
+    "scale" = .scale(i, t),
+    "rotate" = .rotate(i, t),
+    sprintf("transformation of type '%s' yet to be supported.", type))
   ImageArray(data=j, metadata=metadata(x))
 }
 

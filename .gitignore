@@ -6,4 +6,4 @@ vignettes/*.html
 inst/extdata/visium
 inst/extdata/cosmx_io
 inst/extdata/raccoon
-inst/extdata/raccoon_scale
+#inst/extdata/raccoon_scale
