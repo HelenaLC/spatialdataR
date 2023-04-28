@@ -1,5 +1,8 @@
 #' @rdname SpatialData
 #' @title The `SpatialData` class
+#' @aliases
+#' image images label labels
+#' shape shapes point points table
 #' @description ...
 #'
 #' @param x A \code{SpatialData} object.
@@ -38,10 +41,10 @@ SpatialData <- function(images, labels, shapes, points, table) {
   if (!is.list(points)) points <- list(a=points)
 
   .SpatialData(
-    images=images, 
-    labels=labels, 
-    shapes=shapes, 
-    points=points, 
+    images=images,
+    labels=labels,
+    shapes=shapes,
+    points=points,
     table=table)
 }
 
@@ -57,6 +60,7 @@ LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))
   cat(sprintf("labels(%s):", length(labs)), names(labs), "\n")
   cat(sprintf("shapes(%s):", length(shps)), names(shps), "\n")
   cat(sprintf("points(%s):", length(pnts)), names(pnts), "\n")
+  cat("table:", if (!is.null(table(object))) dim(table(object)) else "nan")
 }
 
 setMethod("show", "SpatialData", .showSpatialData)

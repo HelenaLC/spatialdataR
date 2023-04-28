@@ -23,6 +23,12 @@ setGeneric("shape", function(x, ...) standardGeneric("shape"))
 #' @export
 setGeneric("point", function(x, ...) standardGeneric("point"))
 
+#' @export
+setGeneric("table", function(x, ...) standardGeneric("table"))
+
+#' @export
+setGeneric("table<-", function(x, value) standardGeneric("table<-"))
+
 setGeneric("imageNames", function(x, ...) standardGeneric("imageNames"))
 setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
 setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))

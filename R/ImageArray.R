@@ -1,6 +1,7 @@
 #' @rdname ImageArray
 #' @title The `ImageArray` class
-#' @aliases translateImage scaleImage rotateImage
+#' @aliases
+#' translateImage scaleImage rotateImage
 #' @description ...
 #'
 #' @param data An \code{array} or \code{\link[S4Arrays]{Array}}.
@@ -8,14 +9,14 @@
 #' @param ... Further arguments to be passed to or from other methods.
 #'
 #' @section Transformations:
-#' \describe{
-#' \item{\code{translateImage}}{
+#' \itemize{
+#' \item{\code{translateImage}:
 #'   translates xy coordinates according to \code{t}
 #'   (see \code{\link[EBImage:resize]{translate}})}
-#' \item{\code{scaleImage}}{
+#' \item{\code{scaleImage}:
 #'   scales the image to the desired dimensions
 #'   (see \code{\link[EBImage:resize]{resize}})}
-#' \item{\code{rotateImage}}{
+#' \item{\code{rotateImage}:
 #'   rotates the image clockwise by
 #'   the given angle around the origin.
 #'   (see \code{\link[EBImage:resize]{rotate}})}
