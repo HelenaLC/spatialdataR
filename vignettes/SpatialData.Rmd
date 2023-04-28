@@ -42,8 +42,8 @@ library(SingleCellExperiment)
 
 ```{r load-data}
 path <- "extdata/mibitof/images/point8_image"
-zarr <- system.file(file.path(path, "0"), package = "ImageArray")
-json <- system.file(file.path(path, ".zattrs"), package = "ImageArray")
+zarr <- system.file(file.path(path, "0"), package = "SpatialData", mustWork = TRUE)
+json <- system.file(file.path(path, ".zattrs"), package = "SpatialData", mustWork = TRUE)
 
 za <- read_zarr_array(zarr)
 md <- fromJSON(json)

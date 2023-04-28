@@ -87,12 +87,13 @@ path <- system.file(path, package = "SpatialData")
 images(spd)
 
 library(ggplot2)
+library(SingleCellExperiment)
 path <- file.path("extdata", "mibitof")
 path <- system.file(path, package = "SpatialData")
 spd <- readSpatialData(path)
-sce <- SpatialData::aggregate(spd)
+sce <- aggregateImage(spd)
 cd <- data.frame(colData(sce), z = assay(sce)[1, ])
-ggplot(cd, aes(x, y, col = z)) + geom_point() + 
+ggplot(cd, aes(x, y, col = z)) + geom_point() +
   scale_color_viridis_c() + scale_y_reverse()
 
 }

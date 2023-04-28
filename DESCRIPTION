@@ -1,10 +1,31 @@
 Package: SpatialData
-Title: ...
+Title: Handle SpatialData objects in R
 Description: ...
+Authors@R: c(person("Helena L.", "Crowell", 
+               email="helena@crowell.eu", 
+               comment=c(ORCID="0000-0002-4801-1767"),
+               role=c("aut", "cre")),
+             person("Constantin", "Ahlmann-Eltze",
+                email = "artjom31415@googlemail.com",
+                comment = c(ORCID = "0000-0002-3762-068X"), 
+                role = c("aut")),
+             person("Tim", "Treis", role = "aut"))
 Type: Package
 Version: 0.99
 Depends: R (>= 4.3)
-Imports: BiocGenerics, S4Arrays, S4Vectors, jsonlite, Rarr, EBImage, utils, arrow
+Imports: 
+  BiocGenerics, 
+  S4Arrays, 
+  S4Vectors, 
+  jsonlite, 
+  Rarr, 
+  EBImage, 
+  utils, 
+  arrow, 
+  basilisk,
+  zellkonverter,
+  methods,
+  SingleCellExperiment
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues
@@ -13,5 +34,7 @@ Encoding: UTF-8
 Suggests: 
   ggplot2,
   SingleCellExperiment,
-  testthat (>= 3.0.0)
+  testthat (>= 3.0.0),
+  BiocStyle
 Config/testthat/edition: 3
+StagedInstall: no
