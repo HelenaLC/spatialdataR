@@ -21,7 +21,7 @@ test_that("check that reading a full spatial dataset works", {
 
 test_that("readShapes works", {
 
-  path <- system.file("extdata/blobs.zarr", package = "SpatialData", mustWork = TRUE)
+  path <- system.file("extdata/blobs", package = "SpatialData", mustWork = TRUE)
   shape_data <- readShapes(file.path(path, "shapes/blobs_shapes"))
   shapes(readSpatialData(path))
 
