@@ -23,10 +23,8 @@ test_that("readShapes works", {
 
   path <- system.file("extdata/blobs", package = "SpatialData", mustWork = TRUE)
   shape_data <- readShapes(file.path(path, "shapes/blobs_shapes"))
-  shapes(readSpatialData(path))
-
-  path <- "~/Documents/PhD/Courses/2023_scverse_hackathon/example_data/merfish.zarr/"
-  readShapes(file.path(path, "shapes/cells"))
+  df <- shapes(readSpatialData(path))
+  expect_s4_class(df$blobs_shapes, "DataFrame")
 })
 
 test_that("readTable works", {
