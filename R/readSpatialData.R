@@ -39,23 +39,13 @@ readSpatialData <- function(path, ...) {
     lapply(shapes, readShapes)
   } else list()
   
-  # shapes <- if ("shapes" %in% layers){
-  #   readShapes(file.path(path, "shapes"))
-  # }else{
-  #   NULL
-  # }
-  # points <- if("points" %in% layers){
-  #   readPoints(file.path(path, "points"))
-  # }else{
-  #   NULL
-  # }
-  # table <- if("table" %in% layers){
-  #   readTable(file.path(path, "table"))
-  # }else{
-  #   NULL
-  # }
+  points <- if ("points" %in% basename(layers)) {
+    points <- list.dirs(file.path(path, "points"), recursive=FALSE)
+    names(points) <- basename(points)
+    lapply(points, readPoints)
+  } else list()
   
-  SpatialData(images=images, labels=labels, shapes=shapes)
+  SpatialData(images=images, labels=labels, shapes=shapes, points=points)
 }
 
 # path <- "~/packages/ImageArray/inst/extdata/mibitof"

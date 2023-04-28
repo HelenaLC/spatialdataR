@@ -4,7 +4,7 @@ Description: ...
 Type: Package
 Version: 0.99
 Depends: R (>= 4.3)
-Imports: BiocGenerics, S4Arrays, S4Vectors, jsonlite, Rarr, EBImage, utils
+Imports: BiocGenerics, S4Arrays, S4Vectors, jsonlite, Rarr, EBImage, utils, arrow
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues

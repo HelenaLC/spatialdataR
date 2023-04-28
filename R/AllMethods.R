@@ -121,7 +121,6 @@ setMethod("element", "SpatialData",
     stopifnot(
       length(which) == 1,
       is.character(which) || which == round(which))
-    elementName <- "points"
     ele <- getFromNamespace(elementName, "SpatialData")(x)
     if (length(ele) == 0)
       stop("'SpatialData' object does not contain any 'points' element.")
