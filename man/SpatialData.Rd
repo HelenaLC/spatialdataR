@@ -51,7 +51,7 @@
 
 \S4method{$}{SpatialData}(x, name)
 
-SpatialData(images, labels, shapes, points, ...)
+SpatialData(images, labels, shapes, points, table)
 
 aggregateImage(x, which = 1)
 }
@@ -71,7 +71,7 @@ aggregateImage(x, which = 1)
 \item \code{image/label/shape/point}
   return a single entitiy of the corresponing type.
 \item \code{image/label/shape/pointNames}
-  return a character string of available 
+  return a character string of available
   entities of the corresponding element.
 }
 }
@@ -82,7 +82,7 @@ aggregateImage(x, which = 1)
 }
 \examples{
 path <- file.path("extdata", "mibitof")
-path <- system.file(path, package = "SpatialData")
+path <- system.file(path, package="SpatialData")
 (spd <- readSpatialData(path))
 images(spd)
 

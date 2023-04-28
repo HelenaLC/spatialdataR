@@ -6,7 +6,7 @@ setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
 .ImageArray <- setClass("ImageArray",
   slots = c(data = "Array_OR_array"),
   contains = c("Array", "Annotated"),
-  prototype = list(metadata = list()))
+  prototype = list(data=array(), metadata = list()))
 
 #' @export
 .SpatialData <- setClass("SpatialData",

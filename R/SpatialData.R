@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' path <- file.path("extdata", "mibitof")
-#' path <- system.file(path, package = "SpatialData")
+#' path <- system.file(path, package="SpatialData")
 #' (spd <- readSpatialData(path))
 #' images(spd)
 #'
@@ -30,22 +30,19 @@ SpatialData <- function(images, labels, shapes, points, table) {
   if (missing(labels)) labels <- list()
   if (missing(shapes)) shapes <- list()
   if (missing(points)) points <- list()
-  if(missing(table)) table <- NULL
+  if (missing(table)) table <- NULL
 
-  if(! is.list(images)){
-    images <- list(a = images)
-  }
-  if(! is.list(labels)){
-    labels <- list(a = labels)
-  }
-  if(! is.list(shapes)){
-    shapes <- list(a = shapes)
-  }
-  if(! is.list(points)){
-    points <- list(a = points)
-  }
+  if (!is.list(images)) images <- list(a=images)
+  if (!is.list(labels)) labels <- list(a=labels)
+  if (!is.list(shapes)) shapes <- list(a=shapes)
+  if (!is.list(points)) points <- list(a=points)
 
-  .SpatialData(images = images, labels = labels, shapes = shapes, points = points, table = table)
+  .SpatialData(
+    images=images, 
+    labels=labels, 
+    shapes=shapes, 
+    points=points, 
+    table=table)
 }
 
 LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))

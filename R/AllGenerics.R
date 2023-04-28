@@ -31,5 +31,9 @@ setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 setGeneric("element", function(x, ...) standardGeneric("element"))
 
-setGeneric("transformations", function(x, ...) standardGeneric("transformations"))
-setGeneric("transformation", function(x, ...) standardGeneric("transformation"))
+setGeneric("coords", function(x, ...) standardGeneric("coords"))
+setGeneric("coord", function(x, ...) standardGeneric("coord"))
+
+setGeneric("scaleImage", function(x, ...) standardGeneric("scaleImage"))
+setGeneric("rotateImage", function(x, ...) standardGeneric("rotateImage"))
+setGeneric("transformImage", function(x, ...) standardGeneric("transformImage"))

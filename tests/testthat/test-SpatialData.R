@@ -1,4 +1,36 @@
-path <- file.path("extdata", "mibitof")
+test_that("SpatialData,empty", {
+  x <- SpatialData()
+  expect_s4_class(x, "SpatialData")
+  expect_length(elementNames(x), 0)
+})
+
+test_that("SpatialData,images", {
+  one <- SpatialData(images=ImageArray())
+  two <- SpatialData(images=replicate(2, ImageArray()))
+  for (x in list(one, two)) {
+    expect_s4_class(x, "SpatialData")
+    y <- elementNames(x)
+    expect_length(y, 1)
+    expect_type(y, "character")
+    expect_identical(y, "images")
+  }
+})
+
+test_that("SpatialData,shapes", {
+  one <- SpatialData(shapes=ImageArray())
+  two <- SpatialData(shapes=replicate(2, ImageArray()))
+  for (x in list(one, two)) {
+    expect_s4_class(x, "SpatialData")
+    y <- elementNames(x)
+    expect_length(y, 1)
+    expect_type(y, "character")
+    expect_identical(y, "shapes")
+  }
+})
+
+# ------------------------------------------------------------------------------
+
+path <- file.path("extdata", "raccoon")
 path <- system.file(path, package="SpatialData")
 spd <- readSpatialData(path)
 
@@ -34,6 +66,46 @@ is_ia <- \(.) is(., "ImageArray")
 is_df <- \(.) is(., "DFrame")
 is_r6 <- \(.) is(., "R6")
 
+test_that("image", {
+  expect_error(image(spd, 00))
+  expect_error(image(spd, -1))
+  expect_error(image(spd, 99))
+  expect_error(image(spd, ""))
+  i <- imageNames(spd)[1]
+  expect_s4_class(image(spd, 1), "ImageArray")
+  expect_s4_class(image(spd, i), "ImageArray")
+})
+
+test_that("label", {
+  expect_error(label(spd, 00))
+  expect_error(label(spd, -1))
+  expect_error(label(spd, 99))
+  expect_error(label(spd, ""))
+  i <- labelNames(spd)[1]
+  expect_s4_class(label(spd, 1), "ImageArray")
+  expect_s4_class(label(spd, i), "ImageArray")
+})
+
+test_that("shape", {
+  expect_error(shape(spd, 00))
+  expect_error(shape(spd, -1))
+  expect_error(shape(spd, 99))
+  expect_error(shape(spd, ""))
+  i <- shapeNames(spd)[1]
+  expect_s4_class(shape(spd, 1), "DFrame")
+  expect_s4_class(shape(spd, i), "DFrame")
+})
+
+# test_that("point", {
+#   expect_error(point(spd, 00))
+#   expect_error(point(spd, -1))
+#   expect_error(point(spd, 99))
+#   expect_error(point(spd, ""))
+#   i <- pointNames(spd)[1]
+#   expect_s4_class(point(spd, 1), "DFrame")
+#   expect_s4_class(point(spd, i), "DFrame")
+# })
+
 test_that("images", {
   x <- images(spd)
   n <- length(attr(spd, "images"))
@@ -67,7 +139,8 @@ test_that("elementNames", {
   expect_type(x, "character")
   layers <- attributes(spd)
   layers <- layers[setdiff(names(layers), c("metadata", "class"))]
-  expect_length(x, sum(vapply(layers, length, integer(1)) != 0))
+  .na <- \(.) length(.) == 0 || is(., "name")
+  expect_length(x, sum(!vapply(layers, .na, logical(1))))
 })
 
 test_that("element", {
