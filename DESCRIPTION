@@ -15,24 +15,24 @@ Authors@R: c(
     role = c("aut")),
   person("Tim", "Treis", role = "aut"))
 Imports: 
-  BiocGenerics, 
-  S4Arrays, 
-  S4Vectors, 
-  jsonlite, 
-  Rarr, 
-  EBImage, 
-  utils, 
   arrow, 
   basilisk,
-  reticulate,
-  zellkonverter,
+  BiocGenerics, 
+  EBImage, 
+  jsonlite, 
   methods,
-  SingleCellExperiment
+  Rarr, 
+  reticulate,
+  S4Arrays, 
+  S4Vectors, 
+  SingleCellExperiment,
+  utils, 
+  zellkonverter
 Suggests: 
-  ggplot2,
-  testthat (>= 3.0.0),
   BiocStyle,
-  knitr
+  knitr,
+  ggplot2,
+  testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues
