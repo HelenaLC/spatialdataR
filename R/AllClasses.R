@@ -1,5 +1,7 @@
 #' @importClassesFrom S4Arrays Array
 setClassUnion("Array_OR_array", c("Array", "array"))
+
+#' @importClassesFrom SingleCellExperiment SingleCellExperiment
 setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
 
 #' @export

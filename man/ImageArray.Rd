@@ -10,6 +10,9 @@
 \alias{as.array,ImageArray-method}
 \alias{aperm,ImageArray-method}
 \alias{ImageArray}
+\alias{translateImage}
+\alias{scaleImage}
+\alias{rotateImage}
 \alias{readPoints}
 \alias{coords,ImageArray-method}
 \alias{scaleImage,ImageArray-method}
@@ -62,6 +65,22 @@ a .parquet file-containing directory.}
 
 ...
 }
+\section{Transformations}{
+
+\describe{
+\item{\code{translateImage}}{
+  translates xy coordinates according to \code{t}
+  (see \code{\link[EBImage:resize]{translate}})}
+\item{\code{scaleImage}}{
+  scales the image to the desired dimensions
+  (see \code{\link[EBImage:resize]{resize}})}
+\item{\code{rotateImage}}{
+  rotates the image clockwise by
+  the given angle around the origin.
+  (see \code{\link[EBImage:resize]{rotate}})}
+}
+}
+
 \examples{
 dir <- "extdata/mibitof/images/point8_image"
 zarr <- system.file(file.path(dir, "0"), package = "SpatialData")

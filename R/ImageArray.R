@@ -1,44 +1,59 @@
 #' @rdname ImageArray
 #' @title The `ImageArray` class
+#' @aliases translateImage scaleImage rotateImage
 #' @description ...
-#' 
+#'
 #' @param data An \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
-#' 
+#'
+#' @section Transformations:
+#' \describe{
+#' \item{\code{translateImage}}{
+#'   translates xy coordinates according to \code{t}
+#'   (see \code{\link[EBImage:resize]{translate}})}
+#' \item{\code{scaleImage}}{
+#'   scales the image to the desired dimensions
+#'   (see \code{\link[EBImage:resize]{resize}})}
+#' \item{\code{rotateImage}}{
+#'   rotates the image clockwise by
+#'   the given angle around the origin.
+#'   (see \code{\link[EBImage:resize]{rotate}})}
+#' }
+#'
 #' @examples
 #' dir <- "extdata/mibitof/images/point8_image"
 #' zarr <- system.file(file.path(dir, "0"), package = "SpatialData")
 #' json <- system.file(file.path(dir, ".zattrs"), package = "SpatialData")
-#' 
+#'
 #' library(Rarr)
 #' library(jsonlite)
-#' 
+#'
 #' za <- read_zarr_array(zarr)
 #' md <- fromJSON(json)
 #' (ia <- ImageArray(za, md))
-#' 
+#'
 #' @export
-ImageArray <- function(data=array(), metadata=list(), ...) { 
-  
+ImageArray <- function(data=array(), metadata=list(), ...) {
+
   # TODO: lot's of validity checks needed here...
   if (length(metadata) > 0) {
     # path <- "~/Packages/SpatialData/inst/extdata/mibitof/labels/point16_labels/"
     # data <- read_zarr_array(file.path(path, "0"))
     # metadata <- fromJSON(file.path(path, ".zattrs"))
-    
+
     msc <- as.list(metadata$multiscales)
     axs <- msc$axes[[1]]
-    
+
     nms <- vector("list", nrow(axs))
     names(nms) <- axs$name
     #chs <- metadata$channels_metadata$channels$label
     #idx <- grep("channel", axs$type)
     #nms[[idx]] <- chs
-  
+
     dimnames(data) <- nms
   }
-  
+
   .ImageArray(data = data, metadata = metadata)
 }
 
