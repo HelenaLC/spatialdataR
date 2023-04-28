@@ -2,7 +2,7 @@
 .Rproj.user
 .Rhistory
 vignettes/*.html
-inst/extdata/blobs
+#inst/extdata/blobs
 inst/extdata/visium
 inst/extdata/cosmx_io
 inst/extdata/raccoon
