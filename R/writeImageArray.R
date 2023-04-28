@@ -23,18 +23,24 @@ writeImageArray <- function(image, path, ...) {
   if (file.exists(path))
     stop("path already exists")
 
+  # get list of optional arguments
   dots <- list(...)
 
+  # check if chunk_dim has been passed, otherwise assign with no chunk
   if (!is.null(dots$chunk_dim)) {
     chunk_dim <- dots$chunk_dim
   } else {
     chunk_dim <- dim(image)
   }
 
+  # "pop" chunk_dim from dots
   dots <- dots[setdiff(names(dots), "chunk_dim")]
+
   args = list(x=image@data, zarr_array_path = path,  chunk_dim = chunk_dim)
   if (length(dots) > 0) args <- c(args, dots)
   do.call(write_zarr_array, args)
+
+  # get metadata and write to file
   metadata <- toJSON(image@metadata)
   write(metadata, paste0(path,path,"/.zattr"))
 }
