@@ -74,21 +74,50 @@ setMethod("shapes", "SpatialData", function(x) x@shapes)
 #' @export
 setMethod("points", "SpatialData", function(x) x@points)
 
-#' @rdname SpatialData
-#' @export
-setMethod("image", "SpatialData", function(x, i = 1) x@images[[i]])
+.check_i <- function(x, ele, i) {
+  stopifnot(length(i) == 1)
+  if (is.character(i)) {
+    fun <- paste0(ele, "Names")
+    fun <- getFromNamespace(fun, "SpatialData")
+    stopifnot(
+      i %in% fun(x),
+      sum(grepl(i, fun(x))) == 1)
+  } else {
+    fun <- paste0(ele, "s")
+    fun <- getFromNamespace(fun, "SpatialData")
+    stopifnot(
+      round(i) == i,
+      i %in% seq_along(fun(x)))
+  }
+}
 
 #' @rdname SpatialData
 #' @export
-setMethod("label", "SpatialData", function(x, i = 1) x@labels[[i]])
+setMethod("image", "SpatialData", function(x, i=1) {
+  .check_i(x, "image", i)
+  images(x)[[i]]
+})
 
 #' @rdname SpatialData
 #' @export
-setMethod("shape", "SpatialData", function(x, i = 1) x@shapes[[i]])
+setMethod("label", "SpatialData", function(x, i=1) {
+  .check_i(x, "label", i)
+  labels(x)[[i]]
+})
 
 #' @rdname SpatialData
 #' @export
-setMethod("point", "SpatialData", function(x, i = 1) x@points[[i]])
+setMethod("shape", "SpatialData", function(x, i=1) {
+  .check_i(x, "shape", i)
+  shapes(x)[[i]]
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("point", "SpatialData", function(x, i=1) {
+  .check_i(x, "point", i)
+  points(x)[[i]]
+})
 
 #' @rdname SpatialData
 #' @export
@@ -110,7 +139,9 @@ setMethod("pointNames", "SpatialData", function(x) names(points(x)))
 #' @export
 setMethod("elementNames", "SpatialData", function(x) {
   layers <- attributes(x)[LAYERS]
-  names(layers)[vapply(layers, \(.) length(.) > 0, logical(1))]
+  names(layers)[!vapply(layers, \(.) 
+    length(.) == 0 || is(., "name"), 
+    logical(1))]
 })
 
 #' @rdname SpatialData

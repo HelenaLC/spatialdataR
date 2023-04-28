@@ -19,22 +19,25 @@
 #' (ia <- ImageArray(za, md))
 #' 
 #' @export
-ImageArray <- function(data, metadata = list(), ...) { 
+ImageArray <- function(data=array(), metadata=list(), ...) { 
   
-  # path <- "~/Packages/SpatialData/inst/extdata/mibitof/labels/point16_labels/"
-  # data <- read_zarr_array(file.path(path, "0"))
-  # metadata <- fromJSON(file.path(path, ".zattrs"))
+  # TODO: lot's of validity checks needed here...
+  if (length(metadata) > 0) {
+    # path <- "~/Packages/SpatialData/inst/extdata/mibitof/labels/point16_labels/"
+    # data <- read_zarr_array(file.path(path, "0"))
+    # metadata <- fromJSON(file.path(path, ".zattrs"))
+    
+    msc <- as.list(metadata$multiscales)
+    axs <- msc$axes[[1]]
+    
+    nms <- vector("list", nrow(axs))
+    names(nms) <- axs$name
+    #chs <- metadata$channels_metadata$channels$label
+    #idx <- grep("channel", axs$type)
+    #nms[[idx]] <- chs
   
-  msc <- as.list(metadata$multiscales)
-  axs <- msc$axes[[1]]
-  
-  nms <- vector("list", nrow(axs))
-  names(nms) <- axs$name
-  #chs <- metadata$channels_metadata$channels$label
-  #idx <- grep("channel", axs$type)
-  #nms[[idx]] <- chs
-
-  dimnames(data) <- nms
+    dimnames(data) <- nms
+  }
   
   .ImageArray(data = data, metadata = metadata)
 }

@@ -11,9 +11,9 @@
 \alias{aperm,ImageArray-method}
 \alias{ImageArray}
 \alias{readPoints}
-\alias{transformations,ImageArray-method}
-\alias{transformation,ImageArray-method}
-\alias{alignImages}
+\alias{coords,ImageArray-method}
+\alias{scaleImage,ImageArray-method}
+\alias{rotateImage,ImageArray-method}
 \title{#' @rdname ImageArray
 #' @export
 setMethod("extract_array", "ImageArray", function(x, index) {
@@ -34,19 +34,17 @@ setMethod("extract_array", "ImageArray", function(x, index) {
 
 \S4method{aperm}{ImageArray}(a, perm)
 
-ImageArray(data, metadata = list(), ...)
+ImageArray(data = array(), metadata = list(), ...)
 
 readPoints(path, ...)
 
-\S4method{transformations}{ImageArray}(x)
+\S4method{coords}{ImageArray}(x)
 
-\S4method{transformation}{ImageArray}(x, which = 1, ...)
+\S4method{scaleImage}{ImageArray}(x, t = rep(1, length(dim(x))))
 
-alignImages(x, y, which, ...)
+\S4method{rotateImage}{ImageArray}(x, t = 0)
 }
 \arguments{
-\item{x, y}{\code{ImageArray}s to be aligned.}
-
 \item{...}{Further arguments to be passed to or from other methods.}
 
 \item{data}{An \code{array} or \code{\link[S4Arrays]{Array}}.}
@@ -55,9 +53,6 @@ alignImages(x, y, which, ...)
 
 \item{path}{A character string specifying
 a .parquet file-containing directory.}
-
-\item{which}{A character string specifying
-the joint reference coordinate system.}
 }
 \description{
 ...
