@@ -24,7 +24,8 @@ Imports:
   arrow, 
   basilisk,
   zellkonverter,
-  methods
+  methods,
+  SingleCellExperiment
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues
