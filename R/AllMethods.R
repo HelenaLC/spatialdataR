@@ -120,7 +120,7 @@ setMethod("element", "SpatialData",
     stopifnot(
       length(which) == 1,
       is.character(which) || which == round(which))
-    ele <- getFromNamespace(elementName, "SpatialData")(x)
+    ele <- utils::getFromNamespace(elementName, "SpatialData")(x)
     if (length(ele) == 0)
       stop("'SpatialData' object does not contain any 'points' element.")
     if (is.character(which)) {
