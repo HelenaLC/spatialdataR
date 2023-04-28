@@ -118,7 +118,19 @@ setMethod("elementNames", "SpatialData", function(x) {
 #' @export
 setMethod("element", "SpatialData",
   function(x, elementName=elementNames(x)[1], which=1, ...) {
-  getFromNamespace(elementName, "SpatialData")(x)[[which]]
+    stopifnot(
+      length(which) == 1,
+      is.character(which) || which == round(which))
+    elementName <- "points"
+    ele <- getFromNamespace(elementName, "SpatialData")(x)
+    if (length(ele) == 0)
+      stop("'SpatialData' object does not contain any 'points' element.")
+    if (is.character(which)) {
+      stopifnot(which %in% names(ele))
+    } else {
+      stopifnot(which %in% seq_along(ele))
+    }
+    ele[[which]]
 })
 
 #' @export
