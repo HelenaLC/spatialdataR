@@ -23,21 +23,21 @@ install_github("HelenaLC/SpatialData")
 
 ## Milestones
 - [ ] IO for Elements (and associated metadata)
-  - [ ] Images (raster)
+  - [x] Images (raster)
     - [ ] Multiscale
-  - [ ] Labels (raster)
+  - [x] Labels (raster)
     - [ ] Multiscale
-  - [ ] Shapes (polygons)
-  - [ ] Points
-  - [ ] Table
+  - [x] Shapes (polygons)
+  - [x] Points
+  - [ ] Table 
 
 - [ ] Transformations
   - [ ] Affine
-  - [ ] Scale
-  - [ ] Translation
-  - [ ] Rotate
+  - [x] Scale
+  - [x] Translation
+  - [x] Rotate
   - [ ] Sequence
-  - [ ] Identity
+  - [x] Identity
   - [ ] ByDimension
   - [ ] MapAxis
 

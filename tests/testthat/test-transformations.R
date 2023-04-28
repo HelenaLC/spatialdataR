@@ -32,6 +32,12 @@ test_that("rotateImage", {
   expect_equal(dim(rotateImage(i, 270)), dim(i)[c(1, 3, 2)])
 })
 
+test_that("translateImage", {
+  j <- translateImage(i)
+  expect_s4_class(j, "ImageArray")
+  expect_equal(dim(i), dim(j))
+})
+
 test_that("transformImage", {
   j <- transformImage(i)
   expect_s4_class(j, "ImageArray")

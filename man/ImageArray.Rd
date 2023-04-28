@@ -14,6 +14,7 @@
 \alias{coords,ImageArray-method}
 \alias{scaleImage,ImageArray-method}
 \alias{rotateImage,ImageArray-method}
+\alias{translateImage,ImageArray-method}
 \title{#' @rdname ImageArray
 #' @export
 setMethod("extract_array", "ImageArray", function(x, index) {
@@ -43,6 +44,8 @@ readPoints(path, ...)
 \S4method{scaleImage}{ImageArray}(x, t = rep(1, length(dim(x))))
 
 \S4method{rotateImage}{ImageArray}(x, t = 0)
+
+\S4method{translateImage}{ImageArray}(x, t = 0)
 }
 \arguments{
 \item{...}{Further arguments to be passed to or from other methods.}

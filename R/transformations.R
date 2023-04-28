@@ -62,6 +62,20 @@ setMethod("rotateImage", "ImageArray", function(x, t=0) {
   ImageArray(y, metadata(x))
 })
 
+#' @rdname ImageArray
+#' @importFrom EBImage abind translate
+#' @export
+setMethod("translateImage", "ImageArray", function(x, t=0) {
+  stopifnot(
+    is.numeric(t),
+    length(t) == 2,
+    round(t) == t)
+  a <- as.array(x)
+  y <- apply(a, 1, translate, t, simplify = FALSE)
+  y <- abind(y, along=0)
+  ImageArray(y, metadata(x))
+})
+
 #' @importFrom EBImage Image
 setMethod("transformImage", "ImageArray", function(x, coords) {
   df <- coord(x, coords)

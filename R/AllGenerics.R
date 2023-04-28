@@ -36,4 +36,5 @@ setGeneric("coord", function(x, ...) standardGeneric("coord"))
 
 setGeneric("scaleImage", function(x, ...) standardGeneric("scaleImage"))
 setGeneric("rotateImage", function(x, ...) standardGeneric("rotateImage"))
+setGeneric("translateImage", function(x, ...) standardGeneric("translateImage"))
 setGeneric("transformImage", function(x, ...) standardGeneric("transformImage"))
