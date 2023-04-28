@@ -33,6 +33,7 @@ Encoding: UTF-8
 Suggests: 
   ggplot2,
   SingleCellExperiment,
-  testthat (>= 3.0.0)
+  testthat (>= 3.0.0),
+  BiocStyle
 Config/testthat/edition: 3
 StagedInstall: no
