@@ -22,6 +22,12 @@ install_github("HelenaLC/SpatialData")
 - Design document for [AnnData<>SCE][] integration
 
 ## Milestones
+
+### Level 0
+- [ ] preliminarily pass `R CMD check` and `BiocCheck`
+
+### Check list
+
 - [ ] IO for Elements (and associated metadata)
   - [x] Images (raster)
     - [ ] Multiscale

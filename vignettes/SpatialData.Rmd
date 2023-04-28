@@ -106,12 +106,20 @@ path <- file.path("extdata", "raccoon_scale")
 path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
 (i <- image(spd))
-transformations(i)
-# rotation
-j <- SpatialData:::.rotate(i, 30)
+coords(i)
+```
+
+## `scaleImage`
+
+```{r}
+j <- scaleImage(i, c(1,1,2))
 par(mfrow=c(1,2)); .plot(i); .plot(j)
-# scaling
-j <- SpatialData:::.scale(i, c(1,1,2))
+```
+
+## `rotateImage`
+
+```{r}
+j <- rotateImage(i, 30)
 par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 

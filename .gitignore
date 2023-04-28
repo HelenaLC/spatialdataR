@@ -1,7 +1,7 @@
 .DS_Store
 .Rproj.user
 .Rhistory
-vignettes/*.html
+#vignettes/*.html
 #inst/extdata/blobs
 inst/extdata/visium
 inst/extdata/cosmx_io
