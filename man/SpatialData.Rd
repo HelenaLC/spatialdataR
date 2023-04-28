@@ -16,6 +16,7 @@
 \alias{pointNames,SpatialData-method}
 \alias{elementNames,SpatialData-method}
 \alias{element,SpatialData-method}
+\alias{$,SpatialData-method}
 \alias{SpatialData}
 \alias{aggregateImage}
 \title{The `SpatialData` class}
@@ -47,6 +48,8 @@
 \S4method{elementNames}{SpatialData}(x)
 
 \S4method{element}{SpatialData}(x, elementName = elementNames(x)[1], which = 1, ...)
+
+\S4method{$}{SpatialData}(x, name)
 
 SpatialData(images, labels, shapes, points, ...)
 

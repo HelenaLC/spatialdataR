@@ -121,4 +121,17 @@ setMethod("element", "SpatialData",
   getFromNamespace(elementName, "SpatialData")(x)[[which]]
 })
 
+#' @export
+#' @importFrom utils .DollarNames
+.DollarNames.SpatialData <- function(x, pattern="") {
+  layers <- names(attributes(x))
+  layers <- setdiff(layers, c("metadata", "class"))
+  grep(pattern, layers, value=TRUE)
+}
 
+#' @rdname SpatialData
+#' @aliases $,SpatialData-method
+#' @exportMethod $
+setMethod("$", "SpatialData", function(x, name) {
+  attr(x, name)
+})
