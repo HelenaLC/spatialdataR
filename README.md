@@ -20,6 +20,30 @@ install_github("HelenaLC/SpatialData")
     - [Proposal PR][]
 - Specs for shapes, polygons and table generally follow the spatialdata [design doc][]
 
+## Milestones
+- [ ] IO for Elements (and associated metadata)
+  - [ ] Images (raster)
+    - [ ] Multiscale
+  - [ ] Labels (raster)
+    - [ ] Multiscale
+  - [ ] Shapes (polygons)
+  - [ ] Points
+  - [ ] Table
+
+- [ ] Transformations
+  - [ ] Affine
+  - [ ] Scale
+  - [ ] Translation
+  - [ ] Rotate
+  - [ ] Sequence
+  - [ ] Identity
+  - [ ] ByDimension
+  - [ ] MapAxis
+
+- [ ] Operations
+  - [ ] Aggregation
+  - [ ] Query
+
 <!-- Links -->
 [Link to tutorial]: https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/inst/SpatialData.html
 [OME-NGFF]: https://ngff.openmicroscopy.org/latest/
