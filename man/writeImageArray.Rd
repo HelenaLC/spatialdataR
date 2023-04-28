@@ -13,7 +13,7 @@ to be saved.}
 \item{path}{A character string specifying
 a path}
 
-\item{...}{Further arguments to be passed to or from other methods.}
+\item{...}{Further arguments to be passed to write_zarr_array.}
 }
 \description{
 ...

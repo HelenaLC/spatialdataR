@@ -42,5 +42,7 @@ writeImageArray <- function(image, path, ...) {
 
   # get metadata and write to file
   metadata <- toJSON(image@metadata)
-  write(metadata, paste0(path,path,"/.zattr"))
+  
+  # TODO: once this is fixed https://github.com/grimbough/Rarr/issues/1 adapt
+  write(metadata, file.path(paste0(path,path),"/.zattrs"))
 }
