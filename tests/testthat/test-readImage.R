@@ -30,7 +30,7 @@ test_that("readShapes works", {
 })
 
 test_that("readTable works", {
-  path <- system.file("extdata/blobs.zarr", package = "SpatialData", mustWork = TRUE)
+  path <- system.file("extdata/blobs", package = "SpatialData", mustWork = TRUE)
   sce <- SpatialData:::readTable(file.path(path, "table/table"))
   expect_s4_class(sce, "SingleCellExperiment")
 })

@@ -1,12 +1,12 @@
 #' @rdname SpatialData
 #' @title The `SpatialData` class
 #' @description ...
-#' 
+#'
 #' @param x A \code{SpatialData} object.
 #' @param data A \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
-#' 
+#'
 #' @return
 #' \itemize{
 #' \item \code{images/labels/shapes/points}
@@ -14,23 +14,24 @@
 #' \item \code{image/label/shape/point}
 #'   return a single entitiy of the corresponing type.
 #' \item \code{image/label/shape/pointNames}
-#'   return a character string of available 
+#'   return a character string of available
 #'   entities of the corresponding element.
 #' }
-#' 
+#'
 #' @examples
 #' path <- file.path("extdata", "mibitof")
 #' path <- system.file(path, package = "SpatialData")
 #' (spd <- readSpatialData(path))
 #' images(spd)
-#' 
+#'
 #' @export
-SpatialData <- function(images, labels, shapes, points, ...) {
+SpatialData <- function(images, labels, shapes, points, table) {
   if (missing(images)) images <- list()
   if (missing(labels)) labels <- list()
   if (missing(shapes)) shapes <- list()
   if (missing(points)) points <- list()
-    
+  if(missing(table)) table <- NULL
+
   if(! is.list(images)){
     images <- list(a = images)
   }
@@ -43,8 +44,8 @@ SpatialData <- function(images, labels, shapes, points, ...) {
   if(! is.list(points)){
     points <- list(a = points)
   }
-  
-  .SpatialData(images = images, labels = labels, shapes = shapes, points = points)
+
+  .SpatialData(images = images, labels = labels, shapes = shapes, points = points, table = table)
 }
 
 LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))
