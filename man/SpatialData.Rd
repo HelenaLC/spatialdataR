@@ -2,6 +2,8 @@
 % Please edit documentation in R/AllMethods.R, R/SpatialData.R
 \name{$,SpatialData-method}
 \alias{$,SpatialData-method}
+\alias{[[,SpatialData,ANY,ANY-method}
+\alias{[[,SpatialData-method}
 \alias{images,SpatialData-method}
 \alias{image,SpatialData-method}
 \alias{imageNames,SpatialData-method}
@@ -32,6 +34,8 @@
 \title{The `SpatialData` class}
 \usage{
 \S4method{$}{SpatialData}(x, name)
+
+\S4method{[[}{SpatialData,ANY,ANY}(x, i, j, ...)
 
 \S4method{images}{SpatialData}(x)
 

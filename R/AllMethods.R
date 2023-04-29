@@ -13,6 +13,16 @@ setMethod("$", "SpatialData", function(x, name) {
   attr(x, name)
 })
 
+#' @rdname SpatialData
+#' @aliases [[,SpatialData-method
+#' @exportMethod [[
+setMethod("[[", "SpatialData", function(x, i, ...) {
+  j <- grep(i, names(attributes(x)), value=TRUE)
+  if (length(j)) return(attr(x, j))
+  stop(sprintf("'SpatialData' has no element '%s'", i))
+
+})
+
 #' @importFrom S4Vectors metadata
 #' @rdname ImageArray
 #' @export
@@ -73,7 +83,10 @@ setMethod("aperm", "ImageArray", function(a, perm) {
 })
 
 .check_i <- function(x, ele, i) {
+  ele <- match.arg(ele, LAYERS)
   stopifnot(length(i) == 1)
+  if (!length(x[[ele]]))
+    stop(sprintf("'SpatialData' object does not contain any '%s'", ele))
   if (is.character(i)) {
     fun <- paste0(ele, "Names")
     fun <- getFromNamespace(fun, "SpatialData")
@@ -202,7 +215,7 @@ setMethod("element", "SpatialData",
       is.character(which) || which == round(which))
     ele <- utils::getFromNamespace(elementName, "SpatialData")(x)
     if (length(ele) == 0)
-      stop("'SpatialData' object does not contain any 'points' element.")
+      stop(sprintf("'SpatialData' object does not contain any '%s'", elementName))
     if (is.character(which)) {
       stopifnot(which %in% names(ele))
     } else {
