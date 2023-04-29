@@ -2,7 +2,7 @@
 % Please edit documentation in R/readImage.R
 \name{readImage}
 \alias{readImage}
-\title{Read as `ImageArray`}
+\title{Read `images/labels` element}
 \usage{
 readImage(path = ".", resolution = "0", ...)
 }
@@ -15,12 +15,17 @@ the image resolution (pyramid level) to read in.}
 
 \item{...}{Further arguments to be passed to or from other methods.}
 }
+\value{
+\code{\link{ImageArray}}
+}
 \description{
 ...
 }
 \examples{
-path <- "extdata/mibitof/images/point8_image/0"
-path <- system.file(path, package = "SpatialData")
-(ia <- readImage(path))
+path <- system.file("extdata", "blobs", package="SpatialData")
+(ia <- readImage(file.path(path, "images", "blobs_image")))
 
+}
+\author{
+Helena L. Crowell
 }

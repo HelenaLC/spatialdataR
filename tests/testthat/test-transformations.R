@@ -1,5 +1,5 @@
 path <- file.path("extdata", "raccoon", "images", "raccoon")
-path <- system.file(path, package="SpatialData")
+path <- system.file(path, package="SpatialData", mustWork=TRUE)
 i <- readImage(path)
 
 test_that("coords", {

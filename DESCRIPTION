@@ -1,8 +1,15 @@
 Type: Package
 Package: SpatialData
 Title: SpatialData objects in R
-Description: ...
-Version: 0.99
+Description:
+  Defines S4Classes to represent scverse's 'SpatialData' class in R.
+  The class contains 5 elements, specifically,
+  images and labels ('ImageArray's),
+  shapes and points ('DataFrame's),
+  and a table ('SingleCellExperiment').
+  The S4 'ImageArray' class is implemented to represent Zarr images
+  with any 'A/array' representation (e.g., 'SparseArray', 'DelayedArray').
+Version: 0.99.0
 Depends: R (>= 4.3)
 Authors@R: c(
   person("Helena L.", "Crowell", 
@@ -33,6 +40,15 @@ Suggests:
   knitr,
   ggplot2,
   testthat (>= 3.0.0)
+biocViews: 
+    DataRepresentation, 
+    DataImport, 
+    Infrastructure, 
+    ImmunoOncology, 
+    GeneExpression, 
+    Transcriptomics, 
+    SingleCell, 
+    Spatial
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues
