@@ -4,16 +4,20 @@
 \alias{aggregateImage}
 \title{Aggregate to `SingleCellExperiment`}
 \usage{
-aggregateImage(x, which = 1, fun = mean)
+aggregateImage(x, image = 1, label = 1, fun = mean)
 }
 \arguments{
+\item{x}{A \code{\link{SpatialData}} object.}
+
+\item{image, label}{Index or character string specifying
+the image/label to use; if a string is provided,
+should be one of \code{image/labelNames(x)}.}
+
 \item{fun}{Function to use for aggregation.}
-
-\item{data}{A \code{array} or \code{\link[S4Arrays]{Array}}.}
-
-\item{metadata}{A \code{list}.}
-
-\item{...}{Further arguments to be passed to or from other methods.}
+}
+\value{
+An object of class \code{\link{SingleCellExperiment}}
+where rows = image channels and columns = unique labels.
 }
 \description{
 ...
@@ -21,7 +25,7 @@ aggregateImage(x, which = 1, fun = mean)
 \examples{
 library(ggplot2)
 library(SingleCellExperiment)
-path <- file.path("extdata", "mibitof")
+path <- file.path("extdata", "blobs")
 path <- system.file(path, package = "SpatialData")
 spd <- readSpatialData(path)
 sce <- aggregateImage(spd)
@@ -29,4 +33,7 @@ cd <- data.frame(colData(sce), z = assay(sce)[1, ])
 ggplot(cd, aes(x, y, col = z)) + geom_point() +
   scale_color_viridis_c() + scale_y_reverse()
 
+}
+\author{
+Helena L. Crowell
 }

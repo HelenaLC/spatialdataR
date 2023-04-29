@@ -1,31 +1,57 @@
 #' @rdname ImageArray
 #' @title The `ImageArray` class
 #' @aliases
+#' ImageArray
+#' ImageArray-class
+#' [,ImageArray-method
+#' dim,ImageArray-method
+#' dimnames,ImageArray-method
+#' coord coords transformImage
 #' translateImage scaleImage rotateImage
+#'
 #' @description ...
 #'
 #' @param data An \code{array} or \code{\link[S4Arrays]{Array}}.
 #' @param metadata A \code{list}.
 #' @param ... Further arguments to be passed to or from other methods.
+#' @param x An \code{ImageArray} object.
+#' @param t Transformation data (see Transformations).
+#' @param i,j Indices for subsetting (see \code{?base::Extract}).
+#' @param subscripts A list of the same length as
+#'   the number of the array's dimensions.
+#'   Each entry provides the indices
+#'   in that dimensions to subset.
+#' @param drop Logical specifying whether or not flat
+#'   dimensions should be dropped (see \code{?base::Extract}).
+#' @param a An array-like object (see `?base::aperm`).
+#' @param perm The subscript permutation vector (see `?base::aperm`).
+#' @param name A character string specifying the coordinate system to extract.
+#' @param coords A character string specifying the target coordinate system.
 #'
 #' @section Transformations:
+#' In the following examples, \code{ia} is a \code{\link{ImageArray}} object.
 #' \itemize{
 #' \item{\code{translateImage}:
-#'   translates xy coordinates according to \code{t}
+#'   translates xy coordinates according to \code{t},
+#'   an integer vector of length 2.
 #'   (see \code{\link[EBImage:resize]{translate}})}
 #' \item{\code{scaleImage}:
-#'   scales the image to the desired dimensions
+#'   scales the image to the desired dimensions,
+#'   a numeric vector of length \code{length(dim(ia))}.
 #'   (see \code{\link[EBImage:resize]{resize}})}
 #' \item{\code{rotateImage}:
-#'   rotates the image clockwise by
-#'   the given angle around the origin.
+#'   rotates the image clockwise around the origin
+#'   according to the given angle \code{t}, a scalar numeric.
 #'   (see \code{\link[EBImage:resize]{rotate}})}
 #' }
 #'
+#' @return \code{ImageArray}
+#'
 #' @examples
-#' dir <- "extdata/mibitof/images/point8_image"
-#' zarr <- system.file(file.path(dir, "0"), package = "SpatialData")
-#' json <- system.file(file.path(dir, ".zattrs"), package = "SpatialData")
+#' path <- system.file("extdata", "blobs", package="SpatialData")
+#' imgs <- file.path(path, "images", "blobs_image")
+#' zarr <- file.path(imgs, "0")
+#' json <- file.path(imgs, ".zattrs")
 #'
 #' library(Rarr)
 #' library(jsonlite)
@@ -34,47 +60,25 @@
 #' md <- fromJSON(json)
 #' (ia <- ImageArray(za, md))
 #'
+#' @author Helena L. Crowell
+#'
 #' @export
 ImageArray <- function(data=array(), metadata=list(), ...) {
+    # TODO: lot's of validity checks needed here...
+    if (length(metadata) > 0) {
+        # data <- read_zarr_array(file.path(path, "0"))
+        # metadata <- fromJSON(file.path(path, ".zattrs"))
 
-  # TODO: lot's of validity checks needed here...
-  if (length(metadata) > 0) {
-    # path <- "~/Packages/SpatialData/inst/extdata/mibitof/labels/point16_labels/"
-    # data <- read_zarr_array(file.path(path, "0"))
-    # metadata <- fromJSON(file.path(path, ".zattrs"))
+        msc <- as.list(metadata$multiscales)
+        axs <- msc$axes[[1]]
 
-    msc <- as.list(metadata$multiscales)
-    axs <- msc$axes[[1]]
+        nms <- vector("list", nrow(axs))
+        names(nms) <- axs$name
+        #chs <- metadata$channels_metadata$channels$label
+        #idx <- grep("channel", axs$type)
+        #nms[[idx]] <- chs
 
-    nms <- vector("list", nrow(axs))
-    names(nms) <- axs$name
-    #chs <- metadata$channels_metadata$channels$label
-    #idx <- grep("channel", axs$type)
-    #nms[[idx]] <- chs
-
-    dimnames(data) <- nms
-  }
-
-  .ImageArray(data = data, metadata = metadata)
+        dimnames(data) <- nms
+    }
+    .ImageArray(data = data, metadata = metadata)
 }
-
-.showImageArray <- function(object) {
-  axs <- metadata(object)$multiscales$axes[[1]]
-  cat("class: ImageArray\n")
-  d <- dim(object)
-  if (length(d) == 1) d <- 0
-  cat(sprintf("axiis(%s):", paste(axs$name, collapse="")), d, "\n")
-
-  t <- axs$type == "time"
-  s <- axs$type == "space"
-  c <- axs$type == "channel"
-  cat(sprintf("|-time(%s):", sum(t)), axs$name[t], "\n")
-  cat(sprintf("|-space(%s):", sum(s)), axs$name[s], "\n")
-  cat(sprintf("|-channel(%s):", sum(c)), axs$name[c], "\n")
-
-  chs <- metadata(object)$channels_metadata$channels$label
-  cat("channels:", chs, "\n")
-}
-
-#' @export
-setMethod("show", "ImageArray", .showImageArray)

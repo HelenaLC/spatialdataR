@@ -17,8 +17,11 @@ the path to a `table/` subdirectory.}
 ...
 }
 \examples{
-path <- file.path("extdata", "mibitof", "table", "table")
+path <- file.path("extdata", "blobs", "table", "table")
 path <- system.file(path, package="SpatialData")
 (sce <- readTable(path))
 
+}
+\author{
+Constantin Ahlmann-Eltze
 }

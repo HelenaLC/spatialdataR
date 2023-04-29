@@ -6,7 +6,7 @@ test_that("ImageArray", {
   expect_equal(dim(ia), 1)
 })
 
-path <- system.file("extdata", "raccoon", package="SpatialData")
+path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 path <- file.path(path, "images", "raccoon")
 md <- Rarr::zarr_overview(
   list.dirs(path, recursive=FALSE),
