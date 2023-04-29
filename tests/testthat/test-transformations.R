@@ -1,6 +1,6 @@
 path <- file.path("extdata", "raccoon", "images", "raccoon")
 path <- system.file(path, package="SpatialData")
-i <- readImageArray(path)
+i <- readImage(path)
 
 test_that("coords", {
   df <- coords(i)
