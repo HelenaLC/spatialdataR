@@ -1,10 +1,10 @@
 path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
 
-test_that("readImage", {
+test_that("readZarr", {
   path <- file.path(path, "images", "blobs_image")
   zarr <- list.dirs(path, recursive=FALSE)
   md <- Rarr::zarr_overview(zarr, as_data_frame=TRUE)
-  ia <- readImage(path)
+  ia <- readArray(path)
   expect_s4_class(ia, "ImageArray")
   expect_true(is.list(metadata(ia)))
   expect_equal(dim(ia), md$dim[[1]])
@@ -28,12 +28,12 @@ test_that("readTable", {
 test_that("readSpatialData", {
   sd <- readSpatialData(path)
   expect_s4_class(table(sd), "SingleCellExperiment")
-  expect_s4_class(label(sd), "ImageArray")
   expect_s4_class(image(sd), "ImageArray")
+  expect_s4_class(label(sd), "LabelArray")
   expect_s4_class(shape(sd), "DFrame")
   expect_s3_class(point(sd), "R6")
   for (. in images(sd)) expect_s4_class(., "ImageArray")
-  for (. in labels(sd)) expect_s4_class(., "ImageArray")
+  for (. in labels(sd)) expect_s4_class(., "LabelArray")
   for (. in shapes(sd)) expect_s4_class(., "DFrame")
   for (. in points(sd)) expect_s3_class(., "R6")
 })

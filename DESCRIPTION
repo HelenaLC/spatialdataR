@@ -4,10 +4,10 @@ Title: SpatialData objects in R
 Description:
   Defines S4Classes to represent scverse's 'SpatialData' class in R.
   The class contains 5 elements, specifically,
-  images and labels ('ImageArray's),
+  images and labels ('ZarrArray's),
   shapes and points ('DataFrame's),
   and a table ('SingleCellExperiment').
-  The S4 'ImageArray' class is implemented to represent Zarr images
+  The S4 'ZarrArray' class is implemented to represent images and labels
   with any 'A/array' representation (e.g., 'SparseArray', 'DelayedArray').
 Version: 0.99.0
 Depends: R (>= 4.3)

@@ -20,13 +20,13 @@ readSpatialData <- function(path, ...) {
     images <- if ("images" %in% basename(layers)) {
         images <- list.dirs(file.path(path, "images"), recursive=FALSE)
         names(images) <- basename(images)
-        lapply(images, readImage)
+        lapply(images, readArray)
     } else list()
 
     labels <- if ("labels" %in% basename(layers)) {
         labels <- list.dirs(file.path(path, "labels"), recursive=FALSE)
         names(labels) <- basename(labels)
-        lapply(labels, readImage)
+        lapply(labels, readArray)
     } else list()
 
     shapes <- if ("shapes" %in% basename(layers)) {

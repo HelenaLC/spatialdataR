@@ -1,4 +1,4 @@
-#' @rdname readImage
+#' @rdname readArray
 #' @title Read `images/labels` element
 #' @description ...
 #'
@@ -12,14 +12,15 @@
 #'
 #' @examples
 #' path <- system.file("extdata", "blobs", package="SpatialData")
-#' (ia <- readImage(file.path(path, "images", "blobs_image")))
+#' (ia <- readArray(file.path(path, "images", "blobs_image")))
+#' (la <- readArray(file.path(path, "labels", "blobs_labels")))
 #'
 #' @author Helena L. Crowell
 #'
 #' @importFrom jsonlite fromJSON
 #' @importFrom Rarr read_zarr_array
 #' @export
-readImage <- function(path=".", resolution="0", ...) {
+readArray <- function(path=".", resolution="0", ...) {
     if (file.exists(file.path(path, ".zarray"))) {
         json <- file.path(dirname(path), ".zattrs")
         if (!file.exists(json))
@@ -33,5 +34,8 @@ readImage <- function(path=".", resolution="0", ...) {
     }
     md <- fromJSON(json)
     za <- read_zarr_array(zarr)
-    ImageArray(data=za, metadata=md)
+
+    is_img <- !is.null(md$channels_metadata)
+    fun <- if (is_img) ImageArray else LabelArray
+    fun(data=za, metadata=md)
 }

@@ -1,11 +1,12 @@
-#' @rdname ImageArray
-#' @title The `ImageArray` class
+#' @rdname ZarrArray
+#' @title The `ZarrArray` class
 #' @aliases
-#' ImageArray
-#' ImageArray-class
-#' [,ImageArray-method
-#' dim,ImageArray-method
-#' dimnames,ImageArray-method
+#' ZarrArray ZarrArray-class
+#' ImageArray ImageArray-class
+#' LabelArray LabelArray-class
+#' [,ZarrArray-method
+#' dim,ZarrArray-method
+#' dimnames,ZarrArray-method
 #' coord coords transformImage
 #' translateImage scaleImage rotateImage
 #'
@@ -63,22 +64,36 @@
 #' @author Helena L. Crowell
 #'
 #' @export
+ZarrArray <- function(data=array(), metadata=list(), ...) {
+    .ZarrArray(data=data, metadata=metadata)
+}
+
+#' @rdname ZarrArray
+#' @export
 ImageArray <- function(data=array(), metadata=list(), ...) {
     # TODO: lot's of validity checks needed here...
     if (length(metadata) > 0) {
-        # data <- read_zarr_array(file.path(path, "0"))
-        # metadata <- fromJSON(file.path(path, ".zattrs"))
-
         msc <- as.list(metadata$multiscales)
         axs <- msc$axes[[1]]
-
         nms <- vector("list", nrow(axs))
         names(nms) <- axs$name
-        #chs <- metadata$channels_metadata$channels$label
-        #idx <- grep("channel", axs$type)
-        #nms[[idx]] <- chs
-
+        chs <- metadata$channels_metadata$channels$label
+        idx <- grep("channel", axs$type)
+        nms[[idx]] <- chs
         dimnames(data) <- nms
     }
-    .ImageArray(data = data, metadata = metadata)
+    .ImageArray(data=data, metadata=metadata)
+}
+
+#' @rdname ZarrArray
+#' @export
+LabelArray <- function(data=array(), metadata=list(), ...) {
+    # TODO: lot's of validity checks needed here...
+    if (length(metadata) > 0) {
+        msc <- as.list(metadata$multiscales)
+        axs <- msc$axes[[1]]
+        nms <- vector("list", nrow(axs))
+        names(nms) <- axs$name
+    }
+    .LabelArray(data=data, metadata=metadata)
 }

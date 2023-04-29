@@ -65,17 +65,17 @@ SpatialData <- function(images, labels, shapes, points, table) {
     if (missing(points)) points <- list()
     if (missing(table)) table <- NULL
 
-    if (!is.list(images)) images <- list(a = images)
-    if (!is.list(labels))  labels <- list(a = labels)
-    if (!is.list(shapes)) shapes <- list(a = shapes)
-    if (!is.list(points)) points <- list(a = points)
+    if (!is.list(images)) images <- list(a=images)
+    if (!is.list(labels)) labels <- list(a=labels)
+    if (!is.list(shapes)) shapes <- list(a=shapes)
+    if (!is.list(points)) points <- list(a=points)
 
     .SpatialData(
-        images = images,
-        labels = labels,
-        shapes = shapes,
-        points = points,
-        table = table)
+        images=images,
+        labels=labels,
+        shapes=shapes,
+        points=points,
+        table=table)
 }
 
 LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))

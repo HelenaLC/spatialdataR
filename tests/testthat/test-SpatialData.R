@@ -17,8 +17,8 @@ test_that("SpatialData,images", {
 })
 
 test_that("SpatialData,labels", {
-  one <- SpatialData(labels=ImageArray())
-  two <- SpatialData(labels=replicate(2, ImageArray()))
+  one <- SpatialData(labels=LabelArray())
+  two <- SpatialData(labels=replicate(2, LabelArray()))
   for (x in list(one, two)) {
     expect_s4_class(x, "SpatialData")
     y <- elementNames(x)
@@ -62,6 +62,7 @@ test_that("pointNames", {
 })
 
 is_ia <- \(.) is(., "ImageArray")
+is_la <- \(.) is(., "LabelArray")
 is_df <- \(.) is(., "DFrame")
 is_r6 <- \(.) is(., "R6")
 
@@ -81,8 +82,8 @@ test_that("label", {
   expect_error(label(sd, 99))
   expect_error(label(sd, ""))
   i <- labelNames(sd)[1]
-  expect_s4_class(label(sd, 1), "ImageArray")
-  expect_s4_class(label(sd, i), "ImageArray")
+  expect_s4_class(label(sd, 1), "LabelArray")
+  expect_s4_class(label(sd, i), "LabelArray")
 })
 
 test_that("shape", {
@@ -123,7 +124,7 @@ test_that("labels", {
   x <- labels(sd)
   n <- length(attr(sd, "labels"))
   expect_type(x, "list")
-  if (n > 0) expect_true(all(vapply(x, is_ia, logical(1))))
+  if (n > 0) expect_true(all(vapply(x, is_la, logical(1))))
 })
 
 test_that("shapes", {
@@ -155,7 +156,7 @@ test_that("element", {
   expect_error(element(sd, i=12345))
 
   expect_true(is_ia(element(sd, elementName="images", i=1)))
-  expect_true(is_ia(element(sd, elementName="labels", i=1)))
+  expect_true(is_la(element(sd, elementName="labels", i=1)))
   expect_true(is_df(element(sd, elementName="shapes", i=1)))
   expect_true(is_r6(element(sd, elementName="points", i=1)))
 })

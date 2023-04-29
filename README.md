@@ -22,7 +22,7 @@ BiocManager::install("HelenaLC/SpatialData")
 ## TODOs
 
 - soon:
-  - [ ] split `ImageArray` and `LabelArray` class,  
+  - [x] split `ImageArray` and `LabelArray` class,  
     perhaps inheriting from some `ZarrArray` class
   - [ ] validity checks for all classes
   - [ ] preliminarily pass `R CMD check` and `BiocCheck`

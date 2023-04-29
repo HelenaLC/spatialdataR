@@ -1,4 +1,4 @@
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom S4Vectors DataFrame
 #' @export
 setMethod("coords", "ImageArray", function(x) {
@@ -15,7 +15,7 @@ setMethod("coords", "ImageArray", function(x) {
         data = I(unlist(data, recursive = FALSE)))
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
 setMethod("coord", "ImageArray", function(x, name) {
     df <- coords(x)
@@ -29,7 +29,7 @@ setMethod("coord", "ImageArray", function(x, name) {
     return(df[idx,])
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom EBImage abind resize
 #' @export
 setMethod("scaleImage", "ImageArray", function(x, t=rep(1, length(dim(x)))) {
@@ -44,7 +44,7 @@ setMethod("scaleImage", "ImageArray", function(x, t=rep(1, length(dim(x)))) {
     ImageArray(y, metadata(x))
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom EBImage abind rotate
 #' @export
 setMethod("rotateImage", "ImageArray", function(x, t=0) {
@@ -57,7 +57,7 @@ setMethod("rotateImage", "ImageArray", function(x, t=0) {
     ImageArray(y, metadata(x))
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom EBImage abind translate
 #' @export
 setMethod("translateImage", "ImageArray", function(x, t=c(0,0)) {
@@ -71,7 +71,7 @@ setMethod("translateImage", "ImageArray", function(x, t=c(0,0)) {
     ImageArray(y, metadata(x))
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
 setMethod("transformImage", "ImageArray", function(x, coords) {
     df <- coord(x, coords)
