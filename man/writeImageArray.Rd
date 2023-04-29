@@ -2,18 +2,21 @@
 % Please edit documentation in R/writeImageArray.R
 \name{writeImageArray}
 \alias{writeImageArray}
-\title{Read as `ImageArray`}
+\title{Write `ImageArray` to Zarr-array}
 \usage{
 writeImageArray(image, path, ...)
 }
 \arguments{
-\item{image}{A "ImageArray" specifying the image 
+\item{image}{A "ImageArray" specifying the image
 to be saved.}
 
 \item{path}{A character string specifying
 a path}
 
 \item{...}{Further arguments to be passed to write_zarr_array.}
+}
+\value{
+\code{NULL}
 }
 \description{
 ...
