@@ -3,12 +3,18 @@
 \name{SD-miscellaneous}
 \alias{SD-miscellaneous}
 \alias{show,SpatialData-method}
+\alias{show,ZarrArray-method}
 \alias{show,ImageArray-method}
+\alias{show,LabelArray-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
+\S4method{show}{ZarrArray}(object)
+
 \S4method{show}{ImageArray}(object)
+
+\S4method{show}{LabelArray}(object)
 }
 \arguments{
 \item{object}{\code{\link{SpatialData}} or \code{\link{ImageArray}} object.}
@@ -24,7 +30,7 @@ for example, show methods.
 }
 \examples{
 path <- system.file("extdata", "raccoon", package="SpatialData")
-(ia <- readImage(file.path(path, "images", "raccoon")))
+(ia <- readArray(file.path(path, "images", "raccoon")))
 (sd <- readSpatialData(path))
 }
 \author{

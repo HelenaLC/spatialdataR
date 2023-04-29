@@ -54,10 +54,10 @@ md <- fromJSON(file.path(zarr, ".zattrs"))
 (ia <- ImageArray(za, md))
 ```
 
-## `readImage`
+## `readArray`
 
 ```{r}
-(ia <- readImage(zarr))
+(ia <- readArray(zarr))
 ```
 
 # `SpatialData`

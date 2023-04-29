@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' path <- system.file("extdata", "raccoon", package="SpatialData")
-#' (ia <- readImage(file.path(path, "images", "raccoon")))
+#' (ia <- readArray(file.path(path, "images", "raccoon")))
 #' (sd <- readSpatialData(path))
 NULL
 
@@ -35,23 +35,34 @@ NULL
 #' @rdname SD-miscellaneous
 setMethod("show", "SpatialData", .showSpatialData)
 
-.showImageArray <- function(object) {
-    axs <- metadata(object)$multiscales$axes[[1]]
-    cat("class: ImageArray\n")
+.showZarrArray <- function(object) {
     d <- dim(object)
     if (length(d) == 1) d <- 0
+    axs <- metadata(object)$multiscales$axes[[1]]
     cat(sprintf("axiis(%s):", paste(axs$name, collapse = "")), d, "\n")
-
     t <- axs$type == "time"
     s <- axs$type == "space"
     c <- axs$type == "channel"
     cat(sprintf("|-time(%s):", sum(t)), axs$name[t], "\n")
     cat(sprintf("|-space(%s):", sum(s)), axs$name[s], "\n")
     cat(sprintf("|-channel(%s):", sum(c)), axs$name[c], "\n")
-
+}
+.showImageArray <- function(object) {
+    cat("class: ImageArray\n")
     chs <- metadata(object)$channels_metadata$channels$label
     cat("channels:", chs, "\n")
+    callNextMethod(object)
+}
+.showLabelArray <- function(object) {
+    cat("class: LabelArray\n")
+    callNextMethod(object)
 }
 
 #' @rdname SD-miscellaneous
+setMethod("show", "ZarrArray", .showZarrArray)
+
+#' @rdname SD-miscellaneous
 setMethod("show", "ImageArray", .showImageArray)
+
+#' @rdname SD-miscellaneous
+setMethod("show", "LabelArray", .showLabelArray)

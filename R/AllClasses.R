@@ -4,12 +4,22 @@ setClassUnion("Array_OR_array", c("Array", "array"))
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment
 setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
 
-#' @exportClass ImageArray ImageArray
-.ImageArray <- setClass(
-    Class="ImageArray",
+#' @exportClass ZarrArray SpatialData
+.ZarrArray <- setClass(
+    Class="ZarrArray",
     slots=c(data="Array_OR_array"),
     contains=c("Array", "Annotated"),
     prototype=list(data=array(), metadata=list()))
+
+#' @exportClass ImageArray SpatialData
+.ImageArray <- setClass(
+    Class="ImageArray",
+    contains="ZarrArray")
+
+#' @exportClass LabelArray SpatialData
+.LabelArray <- setClass(
+    Class="LabelArray",
+    contains="ZarrArray")
 
 #' @exportClass SpatialData SpatialData
 .SpatialData <- setClass(
@@ -24,7 +34,7 @@ setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
         table=NULL),
     representation(
         images="list", # 'ImageArray's
-        labels="list", # 'ImageArray's
+        labels="list", # 'LabelArray's
         shapes="list", # 'DataFrame's
         points="list", # 'ArrowObject's
         table="SingleCellExperiment_OR_NULL"))

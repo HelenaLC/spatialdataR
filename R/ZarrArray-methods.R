@@ -1,40 +1,40 @@
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom S4Vectors metadata
 #' @export
-setMethod("metadata", "ImageArray", function(x) {
+setMethod("metadata", "ZarrArray", function(x) {
     x@metadata
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
-setMethod("dim", "ImageArray", function(x) {
+setMethod("dim", "ZarrArray", function(x) {
     dim(x@data)
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
-setMethod("dimnames", "ImageArray", function(x) {
+setMethod("dimnames", "ZarrArray", function(x) {
     dimnames(x@data)
 })
 
 # TODO: not sure if/why we need this?
-#' #' @rdname ImageArray
+#' #' @rdname ZarrArray
 #' #' @export
-#' setMethod("extract_array", "ImageArray", function(x, index) {
+#' setMethod("extract_array", "ZarrArray", function(x, index) {
 #'   extract_array(x@data, index)
 #' })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
-setMethod("[", "ImageArray", function(x, i, j, ...) {
+setMethod("[", "ZarrArray", function(x, i, j, ...) {
     x@data <- x@data[i, j, ..., drop=FALSE]
     x
 })
 
 getArrayElement <- S4Arrays:::getArrayElement
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
-setMethod("getArrayElement", "ImageArray", function(x, subscripts) {
+setMethod("getArrayElement", "ZarrArray", function(x, subscripts) {
     if (is(x@data, "Array")) {
         getArrayElement(x@data, subscripts)
     } else {
@@ -42,16 +42,16 @@ setMethod("getArrayElement", "ImageArray", function(x, subscripts) {
     }
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @export
-setMethod("as.array", "ImageArray", function(x) {
+setMethod("as.array", "ZarrArray", function(x) {
     as.array(x@data)
 })
 
-#' @rdname ImageArray
+#' @rdname ZarrArray
 #' @importFrom BiocGenerics aperm
 #' @export
-setMethod("aperm", "ImageArray", function(a, perm) {
+setMethod("aperm", "ZarrArray", function(a, perm) {
     if (missing(perm)) perm <- NULL
     a@data <- aperm(a@data, perm)
     a

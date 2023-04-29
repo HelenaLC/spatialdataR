@@ -11,7 +11,7 @@ path <- file.path(path, "images", "raccoon")
 md <- Rarr::zarr_overview(
   list.dirs(path, recursive=FALSE),
   as_data_frame=TRUE)
-ia <- readImage(path)
+ia <- readArray(path)
 
 test_that("dim", {
   x <- dim(ia)
