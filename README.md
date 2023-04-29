@@ -19,12 +19,20 @@ BiocManager::install("HelenaLC/SpatialData")
 - Specs for shapes, polygons and table generally follow the spatialdata [design doc][]
 - Design document for [AnnData<>SCE][] integration
 
-## Milestones
+## TODOs
 
-### Level 0
-- [ ] preliminarily pass `R CMD check` and `BiocCheck`
-### Level 1
-- [ ] clean read/write OME-Zarr round
+- soon:
+  - [ ] split `ImageArray` and `LabelArray` class,  
+    perhaps inheriting from some `ZarrArray` class
+  - [ ] validity checks for all classes
+  - [ ] preliminarily pass `R CMD check` and `BiocCheck`
+- later:
+  - [ ] clean read/write round (currently  
+    limited by `Rarr::write_zarr_array`)
+- utils:
+  - [ ] basic plotting of all elements
+  - [ ] aggregation of images/points by labels/shapes  
+    (returned as `SingleCell/SpatialExperiment`)
 
 ### Check list
 
@@ -35,7 +43,7 @@ BiocManager::install("HelenaLC/SpatialData")
     - [ ] Multiscale
   - [x] Shapes (polygons)
   - [x] Points
-  - [ ] Table 
+  - [x] Table 
 
 - [ ] Transformations
   - [ ] Affine
