@@ -55,7 +55,7 @@ md <- fromJSON(json)
 ```{r}
 path <- "extdata/mibitof/images/point8_image/0"
 path <- system.file(path, package = "SpatialData")
-(ia <- readImageArray(path))
+(ia <- readImage(path))
 ```
 
 # `SpatialData`
