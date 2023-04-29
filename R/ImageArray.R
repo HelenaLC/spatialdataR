@@ -61,7 +61,9 @@ ImageArray <- function(data=array(), metadata=list(), ...) {
 .showImageArray <- function(object) {
   axs <- metadata(object)$multiscales$axes[[1]]
   cat("class: ImageArray\n")
-  cat(sprintf("axiis(%s):", paste(axs$name, collapse="")), dim(object), "\n")
+  d <- dim(object)
+  if (length(d) == 1) d <- 0
+  cat(sprintf("axiis(%s):", paste(axs$name, collapse="")), d, "\n")
 
   t <- axs$type == "time"
   s <- axs$type == "space"

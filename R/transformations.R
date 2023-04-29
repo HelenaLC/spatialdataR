@@ -5,10 +5,10 @@ setMethod("coords", "ImageArray", function(x) {
   df <- metadata(x)$multiscales$coordinateTransformations[[1]]
   data <- lapply(seq(nrow(df)), \(.)
     ifelse(
-      df$type[.] == "identity", 
+      df$type[.] == "identity",
       list(NA), I(df[., df$type[.]])))
   DataFrame(
-    input.name=df$input$name,  
+    input.name=df$input$name,
     output.name=df$output$name,
     input.axes=I(df$input$axes),
     output.axes=I(df$output$axes),
@@ -65,7 +65,7 @@ setMethod("rotateImage", "ImageArray", function(x, t=0) {
 #' @rdname ImageArray
 #' @importFrom EBImage abind translate
 #' @export
-setMethod("translateImage", "ImageArray", function(x, t=0) {
+setMethod("translateImage", "ImageArray", function(x, t=c(0,0)) {
   stopifnot(
     is.numeric(t),
     length(t) == 2,

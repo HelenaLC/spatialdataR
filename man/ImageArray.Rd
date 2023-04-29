@@ -48,7 +48,7 @@ readPoints(path, ...)
 
 \S4method{rotateImage}{ImageArray}(x, t = 0)
 
-\S4method{translateImage}{ImageArray}(x, t = 0)
+\S4method{translateImage}{ImageArray}(x, t = c(0, 0))
 }
 \arguments{
 \item{...}{Further arguments to be passed to or from other methods.}
