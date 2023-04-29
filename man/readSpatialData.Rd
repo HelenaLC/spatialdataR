@@ -7,24 +7,20 @@
 readSpatialData(path, ...)
 }
 \arguments{
+\item{path}{A character string specifying the path to an
+OME-Zarr file adhering to \code{SpatialData} specification.}
+
 \item{...}{Further arguments to be passed to or from other methods.}
-
-\item{data}{An \code{array} or \code{\link[S4Arrays]{Array}}.}
-
-\item{metadata}{A \code{list}.}
 }
 \description{
 ...
 }
 \examples{
-path <- file.path("extdata", "mibitof")
-path <- system.file(path, package = "SpatialData")
-(spd <- readSpatialData(path))
-images(spd)
-
 path <- file.path("extdata", "blobs")
-path <- system.file(path, package = "SpatialData")
+path <- system.file(path, package="SpatialData")
 (spd <- readSpatialData(path))
-shapes(spd)
 
+}
+\author{
+Constantin Ahlmann-Eltze, Helena L. Crowell
 }

@@ -1,4 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+vignettes/*html
 inst/extdata/visium
+inst/extdata/mibitof
 inst/extdata/cosmx_io
+inst/extdata/raccoon_scale

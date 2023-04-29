@@ -23,6 +23,12 @@ setGeneric("shape", function(x, ...) standardGeneric("shape"))
 #' @export
 setGeneric("point", function(x, ...) standardGeneric("point"))
 
+#' @export
+setGeneric("table", function(x, ...) standardGeneric("table"))
+
+#' @export
+setGeneric("table<-", function(x, value) standardGeneric("table<-"))
+
 setGeneric("imageNames", function(x, ...) standardGeneric("imageNames"))
 setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
 setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))
@@ -31,5 +37,10 @@ setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 setGeneric("element", function(x, ...) standardGeneric("element"))
 
-setGeneric("transformations", function(x, ...) standardGeneric("transformations"))
-setGeneric("transformation", function(x, ...) standardGeneric("transformation"))
+setGeneric("coords", function(x, ...) standardGeneric("coords"))
+setGeneric("coord", function(x, ...) standardGeneric("coord"))
+
+setGeneric("scaleImage", function(x, ...) standardGeneric("scaleImage"))
+setGeneric("rotateImage", function(x, ...) standardGeneric("rotateImage"))
+setGeneric("translateImage", function(x, ...) standardGeneric("translateImage"))
+setGeneric("transformImage", function(x, ...) standardGeneric("transformImage"))

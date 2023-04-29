@@ -1,56 +1,50 @@
-readShapes = function(path, ...) {
-  parts <- list.dirs(path, recursive=FALSE)
-  coords <- if ("coords" %in% basename(parts)) {
-    Rarr::read_zarr_array(file.path(path, "coords"))
-  } else {
-    NULL
-  }
-  index <- if ("Index" %in% basename(parts)) {
-    Rarr::read_zarr_array(file.path(path, "index"))
-  } else {
-    NULL
-  }
-
-  radius <- if ("radius" %in% basename(parts)) {
-    Rarr::read_zarr_array(file.path(path, "radius"))
-  } else {
-    NULL
-  }
-  offset0 <- if ("offset0" %in% basename(parts)) {
-    Rarr::read_zarr_array(file.path(path, "offset0"))
-  } else {
-    NULL
-  }
-  offset1 <- if ("offset1" %in% basename(parts)) {
-    Rarr::read_zarr_array(file.path(path, "offset1"))
-  } else {
-    NULL
-  }
-
-  if (!is.null(radius)) {
-    shape_type <- "circle"
-  } else {
-    shape_type <- "polygon"
-  }
-
-  if (shape_type == "polygon") {
-
-    matrices <- lapply(seq_along(index), function(i) NULL)
-    for (i in 1:(length(offset0)-1)) {
-      matrices[[i]] <- coords[(offset0[[i]]+1):offset0[[i+1]], ,drop=FALSE]
-    }
-    S4Vectors::DataFrame(
-      data = I(matrices),
-      index = index,
-      type = rep(shape_type, length(index))
-    )
-  } else {
-    S4Vectors::DataFrame(
-      data = I(asplit(coords, 1)),
-      index = index,
-      radius = radius,
-      type = rep(shape_type, length(index))
-    )
-
-  }
+#' @rdname readShapes
+#' @title Read `shapes` element
+#' @description ...
+#'
+#' @param path A character string specifying
+#'   the path to a `shapes/` subdirectory.
+#' @param ... Further arguments to be passed to or from other methods.
+#'
+#' @return \code{\link{DataFrame}}
+#'
+#' @examples
+#' path <- file.path("extdata", "raccoon", "shapes", "circles")
+#' path <- system.file(path, package="SpatialData")
+#' (df <- readShapes(path))
+#'
+#' @author Tim Treis
+#'
+#' @importFrom reticulate import
+#' @importFrom Rarr read_zarr_array
+#' @importFrom S4Vectors DataFrame
+#' @importFrom zellkonverter AnnData2SCE
+#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
+#' @export
+readShapes <- function(path, ...) {
+    parts <- list.dirs(path, recursive=FALSE)
+    names(ps) <- ps <- c("coords", "Index", "radius", "offset0", "offset1")
+    ps <- lapply(ps, \(p) {
+        if (p %in% basename(parts))
+            read_zarr_array(file.path(path, p))
+    })
+    geom <- ifelse(!is.null(ps$radius), "circle", "polygon")
+    switch(geom,
+        circle={
+            DataFrame(
+                data=I(asplit(ps$coords, 1)),
+                index=ps$Index,
+                radius=ps$radius,
+                type=rep(geom, length(ps$Index)))
+        },
+        polygon={
+            coords <- lapply(seq_along(ps$Index), \(.) {
+                idx <- seq(ps$offset0[[.]] + 1, ps$offset0[[. + 1]])
+                ps$coords[idx, , drop=FALSE]
+            })
+            DataFrame(
+                data=I(coords),
+                index=ps$Index,
+                type=rep(geom, length(ps$Index)))
+        })
 }

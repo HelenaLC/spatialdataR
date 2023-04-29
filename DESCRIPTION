@@ -1,42 +1,59 @@
-Package: SpatialData
-Title: Handle SpatialData objects in R
-Description: ...
-Authors@R: c(person("Helena L.", "Crowell", 
-               email="helena@crowell.eu", 
-               comment=c(ORCID="0000-0002-4801-1767"),
-               role=c("aut", "cre")),
-             person("Constantin", "Ahlmann-Eltze",
-                email = "artjom31415@googlemail.com",
-                comment = c(ORCID = "0000-0002-3762-068X"), 
-                role = c("aut")),
-             person("Tim", "Treis", role = "aut"))
 Type: Package
-Version: 0.99
+Package: SpatialData
+Title: SpatialData objects in R
+Description:
+  Defines S4Classes to represent scverse's 'SpatialData' class in R.
+  The class contains 5 elements, specifically,
+  images and labels ('ImageArray's),
+  shapes and points ('DataFrame's),
+  and a table ('SingleCellExperiment').
+  The S4 'ImageArray' class is implemented to represent Zarr images
+  with any 'A/array' representation (e.g., 'SparseArray', 'DelayedArray').
+Version: 0.99.0
 Depends: R (>= 4.3)
+Authors@R: c(
+  person("Helena L.", "Crowell", 
+    email="helena@crowell.eu", 
+    comment=c(ORCID="0000-0002-4801-1767"),
+    role=c("aut", "cre")),
+  person("Constantin", "Ahlmann-Eltze",
+    email = "artjom31415@googlemail.com",
+    comment = c(ORCID = "0000-0002-3762-068X"), 
+    role = c("aut")),
+  person("Tim", "Treis", role = "aut"))
 Imports: 
-  BiocGenerics, 
-  S4Arrays, 
-  S4Vectors, 
-  jsonlite, 
-  Rarr, 
-  EBImage, 
-  utils, 
   arrow, 
   basilisk,
-  reticulate,
-  zellkonverter,
+  BiocGenerics, 
+  EBImage, 
+  jsonlite, 
   methods,
-  SingleCellExperiment
+  Rarr, 
+  reticulate,
+  S4Arrays, 
+  S4Vectors, 
+  SingleCellExperiment,
+  utils, 
+  zellkonverter
+Suggests: 
+  BiocStyle,
+  knitr,
+  ggplot2,
+  testthat (>= 3.0.0)
+biocViews: 
+    DataRepresentation, 
+    DataImport, 
+    Infrastructure, 
+    ImmunoOncology, 
+    GeneExpression, 
+    Transcriptomics, 
+    SingleCell, 
+    Spatial
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/ImageArray
 BugReports: https://github.com/HelenaLC/ImageArray/issues
 RoxygenNote: 7.2.3
 Encoding: UTF-8
 License: BSD 3
-Suggests: 
-  ggplot2,
-  testthat (>= 3.0.0),
-  BiocStyle,
-  knitr
 Config/testthat/edition: 3
 StagedInstall: no

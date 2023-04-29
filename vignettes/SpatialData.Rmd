@@ -3,9 +3,14 @@ title: "The `SpatialData` class"
 #package: "`r BiocStyle::pkg_ver('SpatialData')`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author:
-  - Constantin Ahlmann-Eltze
-  - Helena L. Crowell
-  - Tim Treis
+- name: Constantin Ahlmann-Eltze
+  affiliation: EMBL Genome Biology Unit, Heidelberg, Germany
+- name: Helena L Crowell
+  affiliation:
+  - Department of Molecular Life Sciences, University of Zurich, Switzerland
+  - SIB Swiss Institute of Bioinformatics, University of Zurich, Switzerland
+- name: Tim Treis
+  affiliation: Computational Health Center, Helmholtz Center Munich, Neuherberg, Germany
 output: 
   BiocStyle::html_document:
     toc: true
@@ -16,7 +21,7 @@ vignette: >
   %\VignettePackage{foo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-#bibliography: "`r file.path(system.file('extdata', package = 'muscat'), 'refs.bib')`"
+#bibliography: "`r file.path(system.file('extdata', package='muscat'), 'refs.bib')`"
 abstract: > 
   <p> ...
 ---
@@ -41,38 +46,42 @@ library(SingleCellExperiment)
 ## Constructor
 
 ```{r load-data}
-path <- file.path("extdata", "mibitof", "images", "point8_image")
-zarr <- system.file(file.path(path, "0"), package = "SpatialData", mustWork = TRUE)
-json <- system.file(file.path(path, ".zattrs"), package = "SpatialData", mustWork = TRUE)
+path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
+zarr <- file.path(path, "images", "blobs_image")
 
-za <- read_zarr_array(zarr)
-md <- fromJSON(json)
+za <- read_zarr_array(file.path(zarr, "0"))
+md <- fromJSON(file.path(zarr, ".zattrs"))
 (ia <- ImageArray(za, md))
 ```
 
 ## `readImage`
 
 ```{r}
-path <- "extdata/mibitof/images/point8_image/0"
-path <- system.file(path, package = "SpatialData")
-(ia <- readImageArray(path))
+(ia <- readImage(zarr))
 ```
 
 # `SpatialData`
 
 ```{r}
-path <- "extdata/mibitof"
-path <- system.file(path, package = "SpatialData")
 (spd <- readSpatialData(path))
 ```
 
 ## Accessors
 
+`SpatialData` objects behave like a list, i.e.,
+Elements can be accessed in various (equivalent) ways:
+
+```{r results="hide"}
+i <- "blobs_image"
+element(spd, "images", i)
+images(spd)[[i]]
+image(spd, i)
+spd$images[[i]]
+```
+
 ```{r}
-elementNames(spd)
-imageNames(spd)
-(img <- element(spd, "images", 1))
-(lab <- element(spd, "labels", 1))
+(img <- image(spd))
+(lab <- label(spd))
 ```
 
 # Visualization
@@ -86,8 +95,8 @@ plot(Image(mtx, dim(mtx)))
 
 ```{r}
 (sce <- aggregateImage(spd))
-cd <- data.frame(colData(sce), z = assay(sce)[1, ])
-ggplot(cd, aes(x, y, col = z)) + geom_point() + 
+cd <- data.frame(colData(sce), z=assay(sce)[1, ])
+ggplot(cd, aes(x, y, col=z)) + geom_point() + 
   scale_color_viridis_c() + scale_y_reverse()
 ```
 
@@ -102,16 +111,23 @@ ggplot(cd, aes(x, y, col = z)) + geom_point() +
 ```
 
 ```{r}
-path <- file.path("extdata", "raccoon_scale")
-path <- system.file(path, package = "SpatialData")
+path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 (spd <- readSpatialData(path))
 (i <- image(spd))
-transformations(i)
-# rotation
-j <- SpatialData:::.rotate(i, 30)
+coords(i)
+```
+
+## `scaleImage`
+
+```{r}
+j <- scaleImage(i, c(1,1,2))
 par(mfrow=c(1,2)); .plot(i); .plot(j)
-# scaling
-j <- SpatialData:::.scale(i, c(1,1,2))
+```
+
+## `rotateImage`
+
+```{r}
+j <- rotateImage(i, 30)
 par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 
