@@ -37,6 +37,7 @@ setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 setGeneric("element", function(x, ...) standardGeneric("element"))
 
+setGeneric("channels", function(x, ...) standardGeneric("channels"))
 setGeneric("coords", function(x, ...) standardGeneric("coords"))
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
 
