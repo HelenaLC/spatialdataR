@@ -18,6 +18,8 @@
 #' @importFrom arrow open_dataset
 #' @export
 readPoints <- function(path, ...) {
+    # TODO: metadata are currently being ignored here...
+    # might need another data structure to accommodate these.
     dirs <- list.files(path=path, full.names=TRUE, recursive=TRUE)
     dset <- grep("*.parquet", dirs, value=TRUE)
     open_dataset(dset)

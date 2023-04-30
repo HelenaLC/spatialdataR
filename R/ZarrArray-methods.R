@@ -1,4 +1,11 @@
 #' @rdname ZarrArray
+#' @export
+setMethod("channels", "ImageArray", function(x) {
+    # TODO: Gio said this'll move elsewhere in corrected version
+    as.character(metadata(x)$channels_metadata$channels$label)
+})
+
+#' @rdname ZarrArray
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod("metadata", "ZarrArray", function(x) {

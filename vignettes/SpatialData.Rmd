@@ -1,7 +1,7 @@
 ---
 title: "The `SpatialData` class"
-#package: "`r BiocStyle::pkg_ver('SpatialData')`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: "`r BiocStyle::pkg_ver('SpatialData')`"
 author:
 - name: Constantin Ahlmann-Eltze
   affiliation: EMBL Genome Biology Unit, Heidelberg, Germany
@@ -16,6 +16,8 @@ output:
     toc: true
     toc-depth: 2
     toc-float: true
+# having some bug & this gets around it
+knit: (function(input, ...) rmarkdown::render(input, output_dir=".")) 
 vignette: >
   %\VignetteIndexEntry{"foo"}
   %\VignettePackage{foo}

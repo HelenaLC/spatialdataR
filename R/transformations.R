@@ -1,7 +1,7 @@
 #' @rdname ZarrArray
 #' @importFrom S4Vectors DataFrame
 #' @export
-setMethod("coords", "ImageArray", function(x) {
+setMethod("coords", "ZarrArray", function(x) {
     df <- metadata(x)$multiscales$coordinateTransformations[[1]]
     data <- lapply(seq(nrow(df)), \(.)
         ifelse(df$type[.] == "identity",
@@ -17,7 +17,7 @@ setMethod("coords", "ImageArray", function(x) {
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ImageArray", function(x, name) {
+setMethod("coord", "ZarrArray", function(x, name) {
     df <- coords(x)
     if (missing(name))
         name <- df$output.name[1]

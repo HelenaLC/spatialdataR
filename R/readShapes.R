@@ -22,6 +22,8 @@
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
 readShapes <- function(path, ...) {
+    # TODO: metadata are currently being ignored here...
+    # might need another data structure to accommodate these.
     parts <- list.dirs(path, recursive=FALSE)
     names(ps) <- ps <- c("coords", "Index", "radius", "offset0", "offset1")
     ps <- lapply(ps, \(p) {
