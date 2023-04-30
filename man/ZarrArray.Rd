@@ -3,6 +3,8 @@
 %   R/transformations.R
 \name{channels,ImageArray-method}
 \alias{channels,ImageArray-method}
+\alias{channels<-,ImageArray,character-method}
+\alias{channels<-,ImageArray,numeric-method}
 \alias{metadata,ZarrArray-method}
 \alias{dim,ZarrArray-method}
 \alias{dimnames,ZarrArray-method}
@@ -45,6 +47,10 @@ setMethod("extract_array", "ZarrArray", function(x, index) {
 })}
 \usage{
 \S4method{channels}{ImageArray}(x)
+
+\S4method{channels}{ImageArray,character}(x) <- value
+
+\S4method{channels}{ImageArray,numeric}(x) <- value
 
 \S4method{metadata}{ZarrArray}(x)
 

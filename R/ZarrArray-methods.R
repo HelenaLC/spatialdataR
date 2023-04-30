@@ -6,6 +6,32 @@ setMethod("channels", "ImageArray", function(x) {
 })
 
 #' @rdname ZarrArray
+#' @export
+setReplaceMethod("channels",
+    c("ImageArray", "character"),
+    function(x, value) {
+        # x <- image(spd)
+        # value <- c("R", "G", "B")
+        new <- length(value)
+        old <- length(channels(x))
+        if (new != old)
+            stop("new channel names (", new, ") must be of the same",
+                " length as the number of channels (", old, ")")
+        metadata(x)$channels_metadata$channels$label <- value
+        return(x)
+    }
+)
+#' @rdname ZarrArray
+#' @export
+setReplaceMethod("channels",
+    c("ImageArray", "numeric"),
+    function(x, value) {
+        value <- as.character(value)
+        `channels<-`(x=x, value=value)
+    }
+)
+
+#' @rdname ZarrArray
 #' @importFrom S4Vectors metadata
 #' @export
 setMethod("metadata", "ZarrArray", function(x) {
