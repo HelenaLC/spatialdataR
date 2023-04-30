@@ -51,11 +51,13 @@ setGeneric("channels", function(x, ...) standardGeneric("channels"))
 setGeneric("coords", function(x, ...) standardGeneric("coords"))
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
 
-setGeneric("scaleArray", function(x, ...) standardGeneric("scaleArray"))
-setGeneric("rotateArray", function(x, ...) standardGeneric("rotateArray"))
-setGeneric("translateArray", function(x, ...) standardGeneric("translateArray"))
-setGeneric("transformArray", function(x, ...) standardGeneric("transformArray"))
+setGeneric("scaleElement", function(x, ...) standardGeneric("scaleElement"))
+setGeneric("rotateElement", function(x, ...) standardGeneric("rotateElement"))
+setGeneric("translateElement", function(x, ...) standardGeneric("translateElement"))
+setGeneric("transformElement", function(x, ...) standardGeneric("transformElement"))
 
 setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
 
 setGeneric("alignElements", function(...) standardGeneric("alignElements"))
+
+setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
