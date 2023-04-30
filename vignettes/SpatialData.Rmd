@@ -157,8 +157,8 @@ and will default the first available shared one if left unspecified.
 Elements are internally aligned via `alignElements`,
 which in turn calls `transformArray` on the input
 `image` and `label` (type `Image/LabelArray`).
-Depending on the underlying metadata, `transformArray`
-uses `scale/rotate/translateArray` for transformation.
+Depending on the underlying metadata, `transformElement`
+uses `scale/rotate/translateElement` for transformation.
 
 ```{r}
 plotElement(image(spd)) +
