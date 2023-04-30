@@ -46,17 +46,6 @@ library(SpatialData)
 library(SingleCellExperiment)
 ```
 
-```{r}
-# utility for image plotting with 'EBImage'
-.plot <- \(i) {
-    c <- ifelse(
-        length(dim(i)) == 3, 
-        "Color", "Grayscale")
-    j <- as.array(aperm(i))
-    plot(Image(j/max(j), dim(j), c))
-}
-```
-
 ## Introduction
 
 # `SpatialData`
@@ -105,9 +94,11 @@ These differ slightly in their associated metadata
 and array properties, but share many functions.
 
 ```{r}
-# construction
-zarr <- file.path(path, "images", "raccoon")
-(ia <- readArray(zarr))
+# extract 'ImageArray'
+img <- image(spd, "raccoon")
+# rename channels
+channels(img) <- c("R", "G", "B")
+img
 ```
 
 # Transformations
@@ -119,13 +110,6 @@ as well as transformation data `t` according to:
 - `rotateElement`: scalar integer (angle).
 - `scaleElement`: numeric vector with as many elements as SD has dimensions.
 - `translateElement`: integer vector of length 2 (row/y and col/x translation).
-
-```{r}
-# view available channels
-img <- image(spd)
-channels(img) <- c("R", "G", "B")
-img
-```
 
 Available coordinate systems can be retrieved via `coords()`:
 
@@ -149,8 +133,8 @@ wrap_plots(lapply(ps, plotElement))
 ## Rotation
 
 ```{r}
-# spin the raccoon around
-ps <- lapply(c(0, 90, 180), \(t) 
+# spin the raccoon (counter-clockwise)
+ps <- lapply(c(0, 60, 90), \(t) 
     rotateElement(img, t))
 wrap_plots(lapply(ps, plotElement))
 ```
