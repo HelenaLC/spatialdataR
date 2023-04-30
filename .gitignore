@@ -1,9 +1,8 @@
 .DS_Store
 .Rproj.user
 .Rhistory
-vignettes/*_cache
-vignettes/*_files
-#vignettes/*.html
+#vignettes/*cache
+#vignettes/*cache
 #inst/extdata/blobs
 inst/extdata/visium
 #inst/extdata/raccoon

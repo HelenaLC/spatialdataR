@@ -41,6 +41,7 @@ library(Rarr)
 library(EBImage)
 library(ggplot2)
 library(jsonlite)
+library(patchwork)
 library(SpatialData)
 library(SingleCellExperiment)
 ```
@@ -115,9 +116,9 @@ Only translation, scaling, and rotation of `Image/LabelArray`s are currently sup
 via the following functions, each of which expects a \code{SpatialData} object (SD),
 as well as transformation data `t` according to:
 
-- `rotateArray`: scalar integer (angle).
-- `scaleArray`: numeric vector with as many elements as SD has dimensions.
-- `translateArray`: integer vector of length 2 (row/y and col/x translation).
+- `rotateElement`: scalar integer (angle).
+- `scaleElement`: numeric vector with as many elements as SD has dimensions.
+- `translateElement`: integer vector of length 2 (row/y and col/x translation).
 
 ```{r}
 (i <- image(spd))
@@ -138,14 +139,14 @@ coords(i)
 ## scale
 
 ```{r}
-j <- scaleArray(i, c(1,1,2))
+j <- scaleElement(i, c(1,1,2))
 par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 
 ## rotate
 
 ```{r}
-j <- rotateArray(i, 30)
+j <- rotateElement(i, 30)
 par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 
@@ -167,21 +168,26 @@ path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 ```
 
 ```{r}
+# clockwise rotation about the origin
+ps <- lapply(c(0, 90, 180), \(angle) 
+    rotateElement(shape(spd), angle))
+wrap_plots(lapply(ps, plotElement))
+```
+
+```{r}
+plotElement(image(spd)) +
+plotElement(label(spd)) +
+plotElement(shape(spd)) 
+```
+
+```{r}
 plotSD(spd,
     image="raccoon",
     label="segmentation",
     shape="circles",
     alpha.label=1/3,
     alpha.shape=1,
-    color.shape="lightgrey")
-```
-
-```{r}
-(img <- image(spd))
-(lab <- label(spd))
-par(mfrow=c(1,2))
-.plot(img)
-.plot(lab)
+    fill.shape="lightgrey")
 ```
 
 # Query
