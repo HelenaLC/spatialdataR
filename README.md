@@ -46,8 +46,8 @@ BiocManager::install("HelenaLC/SpatialData")
 
 |          | images | labels | shapes | points
 |---------:|:------:|:------:|:------:|:------:
-|identity  |&#x2714;|&#x2714;|&#x274C;|&#x274C;
-|translate |&#x2714;|&#x2714;|&#x274C;|&#x274C;
+|identity  |&#x2714;|&#x2714;|&#x2714;|&#x274C;
+|translate |&#x2714;|&#x2714;|&#x2714;|&#x274C;
 |rotate    |&#x2714;|&#x2714;|&#x2714;|&#x274C;
 |scale     |&#x2714;|&#x2714;|&#x274C;|&#x274C;
 |affine    |&#x274C;|&#x274C;|&#x274C;|&#x274C;

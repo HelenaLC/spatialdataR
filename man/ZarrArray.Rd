@@ -29,11 +29,12 @@
 \alias{coords,ZarrArray-method}
 \alias{coord,ZarrArray-method}
 \alias{coord,ShapeFrame-method}
+\alias{translateElement,ZarrArray-method}
+\alias{translateElement,ShapeFrame-method}
 \alias{scaleElement,ZarrArray-method}
 \alias{scaleElement,ShapeFrame-method}
 \alias{rotateElement,ZarrArray-method}
 \alias{rotateElement,ShapeFrame-method}
-\alias{translateElement,ZarrArray-method}
 \alias{transformElement,ZarrArray-method}
 \alias{transformElement,ShapeFrame-method}
 \alias{alignElements,ANY-method}
@@ -71,6 +72,10 @@ LabelArray(data = array(), metadata = list(), ...)
 
 \S4method{coord}{ShapeFrame}(x, name = 1)
 
+\S4method{translateElement}{ZarrArray}(x, t = c(0, 0))
+
+\S4method{translateElement}{ShapeFrame}(x, t = c(0, 0))
+
 \S4method{scaleElement}{ZarrArray}(x, t = rep(1, length(dim(x))))
 
 \S4method{scaleElement}{ShapeFrame}(x, t = c(1, 1))
@@ -78,8 +83,6 @@ LabelArray(data = array(), metadata = list(), ...)
 \S4method{rotateElement}{ZarrArray}(x, t = 0)
 
 \S4method{rotateElement}{ShapeFrame}(x, t = 0)
-
-\S4method{translateElement}{ZarrArray}(x, t = c(0, 0))
 
 \S4method{transformElement}{ZarrArray}(x, coord = NULL)
 

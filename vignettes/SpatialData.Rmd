@@ -28,7 +28,7 @@ abstract: >
   <p> ...
 ---
 
-```{r setup, inclue=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(cache=TRUE)
 ```
 
@@ -70,7 +70,7 @@ The `SpatialData` class contains 5 elements that are represented as follows:
 - `table`: a `SingleCellExperiment`
 
 ```{r}
-path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
+path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 (spd <- readSpatialData(path))
 ```
 
@@ -88,7 +88,7 @@ elements can be accessed in various (equivalent) ways:
 
 ```{r results="hide"}
 # these are all equivalent
-i <- "blobs_image"
+i <- "raccoon"
 element(spd, "images", i)
 images(spd)[[i]]
 image(spd, i)
@@ -106,7 +106,7 @@ and array properties, but share many functions.
 
 ```{r}
 # construction
-zarr <- file.path(path, "images", "blobs_image")
+zarr <- file.path(path, "images", "raccoon")
 (ia <- readArray(zarr))
 ```
 
@@ -136,18 +136,31 @@ Available coordinate systems can be retrieved via `coords()`:
 coords(i)
 ```
 
-## scale
+## Translation
 
 ```{r}
-j <- scaleElement(i, c(1,1,2))
-par(mfrow=c(1,2)); .plot(i); .plot(j)
+# move the raccoon up'n'down
+ps <- lapply(c(-300, 0, 300), \(t) 
+    translateElement(image(spd), c(t, 0)))
+wrap_plots(lapply(ps, plotElement))
 ```
 
-## rotate
+## Rotation
 
 ```{r}
-j <- rotateElement(i, 30)
-par(mfrow=c(1,2)); .plot(i); .plot(j)
+# spin the raccoon around
+ps <- lapply(c(0, 90, 180), \(t) 
+    rotateElement(image(spd), t))
+wrap_plots(lapply(ps, plotElement))
+```
+
+## Scaling
+
+```{r}
+# squeeze the raccoon horizontally
+ps <- lapply(c(1, 2/3, 1/2), \(t) 
+    scaleElement(image(spd), c(1, 1, t)))
+wrap_plots(lapply(ps, plotElement))
 ```
 
 # Visualization
@@ -165,13 +178,6 @@ uses `scale/rotate/translateArray` for transformation.
 ```{r}
 path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 (spd <- readSpatialData(path))
-```
-
-```{r}
-# clockwise rotation about the origin
-ps <- lapply(c(0, 90, 180), \(angle) 
-    rotateElement(shape(spd), angle))
-wrap_plots(lapply(ps, plotElement))
 ```
 
 ```{r}
