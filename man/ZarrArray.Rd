@@ -17,18 +17,23 @@
 \alias{LabelArray}
 \alias{LabelArray-class}
 \alias{[,ZarrArray-method}
+\alias{channels}
 \alias{coord}
 \alias{coords}
 \alias{transformImage}
-\alias{translateImage}
-\alias{scaleImage}
-\alias{rotateImage}
+\alias{translateArray}
+\alias{scaleArray}
+\alias{rotateArray}
+\alias{transformArray}
+\alias{alignElements}
 \alias{coords,ZarrArray-method}
 \alias{coord,ZarrArray-method}
-\alias{scaleImage,ImageArray-method}
-\alias{rotateImage,ImageArray-method}
-\alias{translateImage,ImageArray-method}
-\alias{transformImage,ImageArray-method}
+\alias{coord,ShapeFrame-method}
+\alias{scaleArray,ZarrArray-method}
+\alias{rotateArray,ZarrArray-method}
+\alias{translateArray,ZarrArray-method}
+\alias{transformArray,ZarrArray-method}
+\alias{alignElements,ANY-method}
 \title{#' @rdname ZarrArray
 #' @export
 setMethod("extract_array", "ZarrArray", function(x, index) {
@@ -59,15 +64,19 @@ LabelArray(data = array(), metadata = list(), ...)
 
 \S4method{coords}{ZarrArray}(x)
 
-\S4method{coord}{ZarrArray}(x, name)
+\S4method{coord}{ZarrArray}(x, name = 1)
 
-\S4method{scaleImage}{ImageArray}(x, t = rep(1, length(dim(x))))
+\S4method{coord}{ShapeFrame}(x, name = 1)
 
-\S4method{rotateImage}{ImageArray}(x, t = 0)
+\S4method{scaleArray}{ZarrArray}(x, t = rep(1, length(dim(x))))
 
-\S4method{translateImage}{ImageArray}(x, t = c(0, 0))
+\S4method{rotateArray}{ZarrArray}(x, t = 0)
 
-\S4method{transformImage}{ImageArray}(x, coords)
+\S4method{translateArray}{ZarrArray}(x, t = c(0, 0))
+
+\S4method{transformArray}{ZarrArray}(x, coord = NULL)
+
+\S4method{alignElements}{ANY}(..., coord = NULL)
 }
 \arguments{
 \item{x}{An \code{ImageArray} object.}
@@ -96,7 +105,7 @@ in that dimensions to subset.}
 
 \item{t}{Transformation data (see Transformations).}
 
-\item{coords}{A character string specifying the target coordinate system.}
+\item{coord}{A character string specifying the target coordinate system.}
 }
 \value{
 \code{ImageArray}
@@ -108,7 +117,7 @@ in that dimensions to subset.}
 
 In the following examples, \code{ia} is a \code{\link{ImageArray}} object.
 \itemize{
-\item{\code{translateImage}:
+\item{\code{translateArray}:
   translates xy coordinates according to \code{t},
   an integer vector of length 2.
   (see \code{\link[EBImage:resize]{translate}})}

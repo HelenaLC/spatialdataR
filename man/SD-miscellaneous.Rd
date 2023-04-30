@@ -6,6 +6,7 @@
 \alias{show,ZarrArray-method}
 \alias{show,ImageArray-method}
 \alias{show,LabelArray-method}
+\alias{show,ShapeFrame-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
@@ -15,6 +16,8 @@
 \S4method{show}{ImageArray}(object)
 
 \S4method{show}{LabelArray}(object)
+
+\S4method{show}{ShapeFrame}(object)
 }
 \arguments{
 \item{object}{\code{\link{SpatialData}} or \code{\link{ImageArray}} object.}

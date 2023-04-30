@@ -7,9 +7,17 @@
 \alias{images,SpatialData-method}
 \alias{image,SpatialData-method}
 \alias{imageNames,SpatialData-method}
+\alias{images<-,SpatialData,list-method}
+\alias{image<-,SpatialData,numeric-method}
+\alias{image<-,SpatialData,character-method}
+\alias{image<-,SpatialData,missing-method}
 \alias{labels,SpatialData-method}
 \alias{label,SpatialData-method}
 \alias{labelNames,SpatialData-method}
+\alias{labels<-,SpatialData,list-method}
+\alias{label<-,SpatialData,numeric-method}
+\alias{label<-,SpatialData,character-method}
+\alias{label<-,SpatialData,missing-method}
 \alias{shapes,SpatialData-method}
 \alias{shape,SpatialData-method}
 \alias{shapeNames,SpatialData-method}
@@ -26,19 +34,39 @@
 \alias{image}
 \alias{images}
 \alias{imageNames}
+\alias{image<-}
+\alias{images<-}
+\alias{image<-,SpatialData,1}
+\alias{image<-,SpatialData,character}
+\alias{images<-,SpatialData,list}
 \alias{label}
 \alias{labels}
 \alias{labelNames}
+\alias{label<-}
+\alias{labels<-}
+\alias{label<-,SpatialData,1}
+\alias{label<-,SpatialData,character}
+\alias{labels<-,SpatialData,list}
 \alias{shape}
 \alias{shapes}
 \alias{shapeNames}
+\alias{shape<-}
+\alias{shapes<-}
+\alias{shape<-,SpatialData,1}
+\alias{shape<-,SpatialData,character}
+\alias{shapes<-,SpatialData,list}
 \alias{point}
 \alias{points}
 \alias{pointNames}
-\alias{element}
-\alias{elementNames}
+\alias{point<-}
+\alias{points<-}
+\alias{point<-,SpatialData,1}
+\alias{point<-,SpatialData,character}
+\alias{points<-,SpatialData,list}
 \alias{table}
 \alias{table<-}
+\alias{element}
+\alias{elementNames}
 \title{The `SpatialData` class}
 \usage{
 \S4method{$}{SpatialData}(x, name)
@@ -51,11 +79,27 @@
 
 \S4method{imageNames}{SpatialData}(x)
 
+\S4method{images}{SpatialData,list}(x) <- value
+
+\S4method{image}{SpatialData,numeric}(x, i) <- value
+
+\S4method{image}{SpatialData,character}(x, i) <- value
+
+\S4method{image}{SpatialData,missing}(x, i) <- value
+
 \S4method{labels}{SpatialData}(x)
 
 \S4method{label}{SpatialData}(x, i = 1)
 
 \S4method{labelNames}{SpatialData}(x)
+
+\S4method{labels}{SpatialData,list}(x) <- value
+
+\S4method{label}{SpatialData,numeric}(x, i) <- value
+
+\S4method{label}{SpatialData,character}(x, i) <- value
+
+\S4method{label}{SpatialData,missing}(x, i) <- value
 
 \S4method{shapes}{SpatialData}(x)
 
