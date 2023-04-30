@@ -64,10 +64,19 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
     if (is(x, "ShapeFrame")) {
         a[, 1] <- a[, 1]+t[2]
         a[, 2] <- a[, 2]+t[1]
-        y <- asplit(a, 1)
+        y <- switch(x$type[1],
+            circle=asplit(a, 1),
+            polygon={
+                i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
+                i <- split(seq(nrow(a)), i)
+                lapply(i, \(.) a[., ])
+            })
     } else {
+        d <- length(dim(a))
+        if (d == 2) a <- array(a, c(1, dim(a)))
         y <- apply(a, 1, translate, t, simplify=FALSE)
         y <- abind(y, along=0)
+        if (d == 2) y <- y[1, , ]
     }
     return(y)
 }

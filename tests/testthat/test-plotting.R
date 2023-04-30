@@ -29,6 +29,7 @@ test_that("plotElement,ShapeArray", {
     r <- c(-1, 1)*y$radius[1]
     expect_equal(xy[[1]]$limits, range(a[, 1])+r, tolerance=1e3)
     expect_equal(xy[[2]]$limits, range(a[, 2])+r, tolerance=1e3)
+    # TODO: polygon
 })
 
 test_that("plotSD", {
