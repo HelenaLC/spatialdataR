@@ -10,8 +10,6 @@ setMethod("channels", "ImageArray", function(x) {
 setReplaceMethod("channels",
     c("ImageArray", "character"),
     function(x, value) {
-        # x <- image(spd)
-        # value <- c("R", "G", "B")
         new <- length(value)
         old <- length(channels(x))
         if (new != old)

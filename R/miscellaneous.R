@@ -49,8 +49,7 @@ setMethod("show", "SpatialData", .showSpatialData)
 }
 .showImageArray <- function(object) {
     cat("class: ImageArray\n")
-    chs <- metadata(object)$channels_metadata$channels$label
-    cat("channels:", chs, "\n")
+    cat("channels:", channels(object), "\n")
     callNextMethod(object)
 }
 .showLabelArray <- function(object) {

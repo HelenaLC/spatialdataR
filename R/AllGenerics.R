@@ -35,23 +35,23 @@ setGeneric("point<-", function(x, i, ..., value) standardGeneric("point<-"))
 setGeneric("points<-", function(x, value) standardGeneric("points<-"))
 
 #' @export
-setGeneric("table", function(x, ...) standardGeneric("table"))
+setGeneric("table", function(x, value) standardGeneric("table"))
 #' @export
 setGeneric("table<-", function(x, value) standardGeneric("table<-"))
+
+setGeneric("element", function(x, ...) standardGeneric("element"))
+setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 
 setGeneric("imageNames", function(x, ...) standardGeneric("imageNames"))
 setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
 setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))
 setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 
-setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
-setGeneric("element", function(x, ...) standardGeneric("element"))
-
 setGeneric("channels", function(x, ...) standardGeneric("channels"))
-setGeneric("channels<-", function(x, ..., value) standardGeneric("channels<-"))
+setGeneric("channels<-", function(x, value) standardGeneric("channels<-"))
 
-setGeneric("coords", function(x, ...) standardGeneric("coords"))
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
+setGeneric("coords", function(x, ...) standardGeneric("coords"))
 
 setGeneric("scaleElement", function(x, ...) standardGeneric("scaleElement"))
 setGeneric("rotateElement", function(x, ...) standardGeneric("rotateElement"))
