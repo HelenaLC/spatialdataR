@@ -6,6 +6,8 @@
 #'   OME-Zarr file adhering to \code{SpatialData} specification.
 #' @param ... Further arguments to be passed to or from other methods.
 #'
+#' @return \code{\link{SpatialData}}
+#'
 #' @examples
 #' path <- file.path("extdata", "blobs")
 #' path <- system.file(path, package="SpatialData")

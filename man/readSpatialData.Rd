@@ -12,6 +12,9 @@ OME-Zarr file adhering to \code{SpatialData} specification.}
 
 \item{...}{Further arguments to be passed to or from other methods.}
 }
+\value{
+\code{\link{SpatialData}}
+}
 \description{
 ...
 }

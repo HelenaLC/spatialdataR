@@ -7,13 +7,12 @@
 writeImageArray(image, path, ...)
 }
 \arguments{
-\item{image}{A "ImageArray" specifying the image
-to be saved.}
+\item{image}{A \code{\link{ImageArray}} specifying the image to be saved.}
 
-\item{path}{A character string specifying
-a path}
+\item{path}{A character string specifying the output location.}
 
-\item{...}{Further arguments to be passed to write_zarr_array.}
+\item{...}{Further arguments to be passed to
+\code{\link{Rarr}[write_zarr_array]}.}
 }
 \value{
 \code{NULL}
@@ -22,8 +21,6 @@ a path}
 ...
 }
 \examples{
-path <- "/path/to/my/image.zarr"
-path <- system.file(path, package = "SpatialData")
-writeImageArray(image, path)
+# TODO
 
 }

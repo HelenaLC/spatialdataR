@@ -28,13 +28,13 @@
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @export
 aggregateImage <- function(x, image=1, label=1, fun=mean) {
-  img <- as.array(image(x, image))
-  lab <- as.array(label(x, label))
-  pbs <- t(apply(img, 1, tapply, lab, fun))
-  xs <- tapply(col(img[1,,]), lab, fun)
-  ys <- tapply(row(img[1,,]), lab, fun)
-  cd <- data.frame(x=xs, y=ys)
-  rmv <- match("0", colnames(pbs))
-  pbs <- pbs[, -1]; cd <- cd[-1, ]
-  SingleCellExperiment(list(pbs), colData=cd)
+    img <- as.array(image(x, image))
+    lab <- as.array(label(x, label))
+    pbs <- t(apply(img, 1, tapply, lab, fun))
+    xs <- tapply(col(img[1,,]), lab, fun)
+    ys <- tapply(row(img[1,,]), lab, fun)
+    cd <- data.frame(x=xs, y=ys)
+    rmv <- match("0", colnames(pbs))
+    pbs <- pbs[, -1]; cd <- cd[-1, ]
+    SingleCellExperiment(list(pbs), colData=cd)
 }
