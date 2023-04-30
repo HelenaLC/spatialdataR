@@ -1,6 +1,8 @@
-path <- file.path("extdata", "raccoon", "images", "raccoon")
-path <- system.file(path, package="SpatialData", mustWork=TRUE)
-i <- readArray(path)
+path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
+x <- readSpatialData(path)
+i <- image(x)
+l <- label(x)
+s <- shape(x)
 
 test_that("coords", {
   df <- coords(i)
@@ -8,7 +10,6 @@ test_that("coords", {
   expect_s4_class(df, "DFrame")
   expect_equal(nrow(df), nrow(md$multiscales))
 })
-
 test_that("coords", {
   expect_error(coord(i, 99))
   expect_error(coord(i, ""))
@@ -16,13 +17,24 @@ test_that("coords", {
   expect_s4_class(coord(i, nm), "DFrame")
 })
 
-test_that("scaleElement,ImageArray", {
-  d <- length(dim(i))
-  expect_s4_class(scaleElement(i), "ImageArray")
-  expect_equal(dim(scaleElement(i, rep(1, d))), dim(i))
-  expect_equal(dim(scaleElement(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
+# translation ----
+test_that("translateElement,ImageArray", {
+    y <- translateElement(i)
+    expect_s4_class(y, "ImageArray")
+    expect_equal(dim(i), dim(y))
+})
+test_that("translateElement,LabelArray", {
+    y <- translateElement(l)
+    expect_s4_class(y, "LabelArray")
+    expect_equal(dim(l), dim(y))
+})
+test_that("translateElement,ShapeFrame", {
+    y <- translateElement(s)
+    expect_s4_class(y, "ShapeFrame")
+    expect_equal(dim(s), dim(y))
 })
 
+# rotation ----
 test_that("rotateElement,ImageArray", {
   expect_s4_class(rotateElement(i), "ImageArray")
   expect_equal(dim(rotateElement(i, 000)), dim(i))
@@ -32,14 +44,17 @@ test_that("rotateElement,ImageArray", {
   expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
 })
 
-test_that("translateElement,ImageArray", {
-  j <- translateElement(i)
-  expect_s4_class(j, "ImageArray")
-  expect_equal(dim(i), dim(j))
+# scaling ----
+test_that("scaleElement,ImageArray", {
+    d <- length(dim(i))
+    expect_s4_class(scaleElement(i), "ImageArray")
+    expect_equal(dim(scaleElement(i, rep(1, d))), dim(i))
+    expect_equal(dim(scaleElement(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
 })
 
+# transformation ----
 test_that("transformElement,ImageArray", {
-  j <- transformElement(i)
-  expect_s4_class(j, "ImageArray")
-  expect_identical(metadata(i), metadata(j))
+    y <- transformElement(i)
+    expect_s4_class(y, "ImageArray")
+    expect_identical(metadata(i), metadata(y))
 })
