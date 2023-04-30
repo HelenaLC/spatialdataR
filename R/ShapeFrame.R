@@ -3,6 +3,7 @@
 #' @aliases
 #' ShapeFrame ShapeFrame-class
 #' coords,ShapeFrame-method
+#' scaleFrame
 #'
 #' @description
 #' A \code{\link{DataFrame}} with fixed structure
@@ -42,3 +43,7 @@ ShapeFrame <- function(data=DataFrame(), metadata=list()) {
     metadata(df) <- metadata
     return(df)
 }
+
+#' @rdname ShapeFrame
+#' @export
+setMethod("as.array", "ShapeFrame", function(x) do.call(rbind, x$data))

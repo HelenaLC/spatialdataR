@@ -1,3 +1,10 @@
+is_ia <- \(.) is(., "ImageArray")
+is_la <- \(.) is(., "LabelArray")
+is_df <- \(.) is(., "DFrame")
+is_r6 <- \(.) is(., "R6")
+
+# constructor ----
+
 test_that("SpatialData,empty", {
   x <- SpatialData()
   expect_s4_class(x, "SpatialData")
@@ -28,10 +35,10 @@ test_that("SpatialData,labels", {
   }
 })
 
-# ------------------------------------------------------------------------------
-
 path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
 sd <- readSpatialData(path)
+
+# names ----
 
 test_that("imageNames", {
   x <- imageNames(sd)
@@ -61,10 +68,16 @@ test_that("pointNames", {
   if (n > 0) expect_type(x, "character")
 })
 
-is_ia <- \(.) is(., "ImageArray")
-is_la <- \(.) is(., "LabelArray")
-is_df <- \(.) is(., "DFrame")
-is_r6 <- \(.) is(., "R6")
+test_that("elementNames", {
+    x <- elementNames(sd)
+    expect_type(x, "character")
+    layers <- attributes(sd)
+    layers <- layers[setdiff(names(layers), c("metadata", "class"))]
+    .na <- \(.) length(.) == 0 || is(., "name")
+    expect_length(x, sum(!vapply(layers, .na, logical(1))))
+})
+
+# access single ----
 
 test_that("image", {
   expect_error(image(sd, 00))
@@ -113,6 +126,19 @@ test_that("table", {
   expect_silent(table(sd) <- NULL)
 })
 
+test_that("element", {
+    expect_error(element(sd, elementName="foo"))
+    expect_error(element(sd, i="foo"))
+    expect_error(element(sd, i=12345))
+
+    expect_true(is_ia(element(sd, elementName="images", i=1)))
+    expect_true(is_la(element(sd, elementName="labels", i=1)))
+    expect_true(is_df(element(sd, elementName="shapes", i=1)))
+    expect_true(is_r6(element(sd, elementName="points", i=1)))
+})
+
+# access multiple ----
+
 test_that("images", {
   x <- images(sd)
   n <- length(attr(sd, "images"))
@@ -141,22 +167,43 @@ test_that("points", {
   if (n > 0) expect_true(all(vapply(x, is_r6, logical(1))))
 })
 
-test_that("elementNames", {
-  x <- elementNames(sd)
-  expect_type(x, "character")
-  layers <- attributes(sd)
-  layers <- layers[setdiff(names(layers), c("metadata", "class"))]
-  .na <- \(.) length(.) == 0 || is(., "name")
-  expect_length(x, sum(!vapply(layers, .na, logical(1))))
+# replace multiple ----
+
+test_that("images<-", {
+    ds <- sd
+    expect_silent(images(ds) <- list())
+    expect_length(images(ds), 0)
+    ds <- sd
+    ia <- ImageArray()
+    expect_silent(images(ds) <- list(ia))
+    expect_identical(image(ds), ia)
+    expect_null(imageNames(ds))
+})
+test_that("labels<-", {
+    ds <- sd
+    expect_silent(labels(ds) <- list())
+    expect_length(labels(ds), 0)
+    ds <- sd
+    la <- LabelArray()
+    expect_silent(labels(ds) <- list(la))
+    expect_identical(label(ds), la)
+    expect_null(labelNames(ds))
 })
 
-test_that("element", {
-  expect_error(element(sd, elementName="foo"))
-  expect_error(element(sd, i="foo"))
-  expect_error(element(sd, i=12345))
+# replace single ----
 
-  expect_true(is_ia(element(sd, elementName="images", i=1)))
-  expect_true(is_la(element(sd, elementName="labels", i=1)))
-  expect_true(is_df(element(sd, elementName="shapes", i=1)))
-  expect_true(is_r6(element(sd, elementName="points", i=1)))
+test_that("image<-", {
+    ds <- sd
+    ia <- ImageArray()
+    expect_error(image(ds, 99) <- ia)
+    expect_silent(image(ds, "foo") <- ia)
+    expect_true("foo" %in% imageNames(ds))
+})
+
+test_that("label<-", {
+    ds <- sd
+    la <- LabelArray()
+    expect_error(label(ds, 99) <- la)
+    expect_silent(label(ds, "foo") <- la)
+    expect_true("foo" %in% labelNames(ds))
 })

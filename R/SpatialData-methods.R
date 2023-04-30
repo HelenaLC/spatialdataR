@@ -73,17 +73,16 @@ setReplaceMethod("images",
 setReplaceMethod("image",
     c("SpatialData", "numeric"),
     function(x, i, value) {
-    .check_i(x, "images", i)
-    images(x)[[i]] <- value
-    return(x)
-})
+        stopifnot(i <= length(images(x))+1)
+        images(x)[[i]] <- value
+        return(x)
+    })
 
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("image",
     c("SpatialData", "character"),
     function(x, i, value) {
-        .check_i(x, "images", i)
         images(x)[[i]] <- value
         return(x)
     })
@@ -127,7 +126,7 @@ setReplaceMethod("labels",
 setReplaceMethod("label",
     c("SpatialData", "numeric"),
     function(x, i, value) {
-        .check_i(x, "labels", i)
+        stopifnot(i <= length(images(x))+1)
         labels(x)[[i]] <- value
         return(x)
     })
@@ -137,7 +136,6 @@ setReplaceMethod("label",
 setReplaceMethod("label",
     c("SpatialData", "character"),
     function(x, i, value) {
-        .check_i(x, "labels", i)
         labels(x)[[i]] <- value
         return(x)
     })

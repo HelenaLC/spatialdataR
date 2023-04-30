@@ -56,4 +56,6 @@ setGeneric("rotateArray", function(x, ...) standardGeneric("rotateArray"))
 setGeneric("translateArray", function(x, ...) standardGeneric("translateArray"))
 setGeneric("transformArray", function(x, ...) standardGeneric("transformArray"))
 
+setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
+
 setGeneric("alignElements", function(...) standardGeneric("alignElements"))

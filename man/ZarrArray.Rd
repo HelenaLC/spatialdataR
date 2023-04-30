@@ -30,6 +30,7 @@
 \alias{coord,ZarrArray-method}
 \alias{coord,ShapeFrame-method}
 \alias{scaleArray,ZarrArray-method}
+\alias{scaleFrame,ShapeFrame-method}
 \alias{rotateArray,ZarrArray-method}
 \alias{translateArray,ZarrArray-method}
 \alias{transformArray,ZarrArray-method}
@@ -69,6 +70,8 @@ LabelArray(data = array(), metadata = list(), ...)
 \S4method{coord}{ShapeFrame}(x, name = 1)
 
 \S4method{scaleArray}{ZarrArray}(x, t = rep(1, length(dim(x))))
+
+\S4method{scaleFrame}{ShapeFrame}(x, t = c(1, 1))
 
 \S4method{rotateArray}{ZarrArray}(x, t = 0)
 

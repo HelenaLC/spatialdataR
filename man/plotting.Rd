@@ -7,9 +7,9 @@
 \usage{
 plotSD(
   x,
-  image = 1,
-  label = 1,
-  shape = 1,
+  image,
+  label,
+  shape,
   alpha.label = 1/3,
   alpha.shape = 1,
   color.shape = "lightgrey",
