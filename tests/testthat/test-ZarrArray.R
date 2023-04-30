@@ -1,10 +1,18 @@
-test_that("ImageArray", {
-  ia <- ImageArray()
-  expect_s4_class(ia, "ImageArray")
-  expect_true(is.na(as.array(ia)))
-  expect_length(dim(ia), 1)
-  expect_equal(dim(ia), 1)
+# constructor ----
+
+test_that("ZarrArray,empty", {
+    s4 <- c("Zarr", "Image", "Label")
+    s4 <- paste0(s4, "Array")
+    for (. in s4) {
+        x <- get(.)()
+        expect_s4_class(x, .)
+        expect_true(is.na(as.array(x)))
+        expect_length(dim(x), 1)
+        expect_equal(dim(x), 1)
+    }
 })
+
+# utils ----
 
 path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
 path <- file.path(path, "images", "raccoon")
@@ -24,7 +32,7 @@ test_that("dimnames", {
   expect_type(x, "list")
 })
 
-test_that("[", {
+test_that("extract", {
   expect_error(ia[1,])
   expect_error(ia[1,,,])
   expect_equal(dim(ia[1,,])[1], 1)
