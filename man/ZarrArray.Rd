@@ -23,10 +23,10 @@
 \alias{coord}
 \alias{coords}
 \alias{transformImage}
-\alias{translateArray}
-\alias{scaleArray}
-\alias{rotateArray}
-\alias{transformArray}
+\alias{translateElement}
+\alias{rotateElement}
+\alias{scaleElement}
+\alias{transformElement}
 \alias{alignElements}
 \alias{coords,ZarrArray-method}
 \alias{coord,ZarrArray-method}

@@ -16,30 +16,30 @@ test_that("coords", {
   expect_s4_class(coord(i, nm), "DFrame")
 })
 
-test_that("scaleArray", {
+test_that("scaleElement,ImageArray", {
   d <- length(dim(i))
-  expect_s4_class(scaleArray(i), "ImageArray")
-  expect_equal(dim(scaleArray(i, rep(1, d))), dim(i))
-  expect_equal(dim(scaleArray(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
+  expect_s4_class(scaleElement(i), "ImageArray")
+  expect_equal(dim(scaleElement(i, rep(1, d))), dim(i))
+  expect_equal(dim(scaleElement(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
 })
 
-test_that("rotateArray", {
-  expect_s4_class(rotateArray(i), "ImageArray")
-  expect_equal(dim(rotateArray(i, 000)), dim(i))
-  expect_equal(dim(rotateArray(i, 180)), dim(i))
-  expect_equal(dim(rotateArray(i, 360)), dim(i))
-  expect_equal(dim(rotateArray(i,  90)), dim(i)[c(1, 3, 2)])
-  expect_equal(dim(rotateArray(i, 270)), dim(i)[c(1, 3, 2)])
+test_that("rotateElement,ImageArray", {
+  expect_s4_class(rotateElement(i), "ImageArray")
+  expect_equal(dim(rotateElement(i, 000)), dim(i))
+  expect_equal(dim(rotateElement(i, 180)), dim(i))
+  expect_equal(dim(rotateElement(i, 360)), dim(i))
+  expect_equal(dim(rotateElement(i,  90)), dim(i)[c(1, 3, 2)])
+  expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
 })
 
-test_that("translateArray", {
-  j <- translateArray(i)
+test_that("translateElement,ImageArray", {
+  j <- translateElement(i)
   expect_s4_class(j, "ImageArray")
   expect_equal(dim(i), dim(j))
 })
 
-test_that("transformArray", {
-  j <- transformArray(i)
+test_that("transformElement,ImageArray", {
+  j <- transformElement(i)
   expect_s4_class(j, "ImageArray")
   expect_identical(metadata(i), metadata(j))
 })

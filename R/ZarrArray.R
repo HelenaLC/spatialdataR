@@ -8,8 +8,8 @@
 #' dim,ZarrArray-method
 #' dimnames,ZarrArray-method
 #' channels coord coords transformImage
-#' translateArray scaleArray rotateArray
-#' transformArray alignElements
+#' translateElement rotateElement scaleElement
+#' transformElement alignElements
 #'
 #' @description ...
 #'
