@@ -34,7 +34,7 @@ NULL
 #' @importFrom grDevices as.raster rainbow
 #' @export
 plotSD <- function(x,
-    image=1, label=1, shape=1,
+    image, label, shape,
     alpha.label=1/3, alpha.shape=1,
     color.shape="lightgrey", coord=NULL) {
 
@@ -45,10 +45,25 @@ plotSD <- function(x,
         alpha.label >= 0, alpha.label <= 1,
         alpha.shape >= 0, alpha.shape <= 1)
 
-    # TODO: shapes & points
-    y <- alignElements(image(x), label(x), coord=coord)
-    i <- y[[1]]; l <- y[[2]]
+    # for all unspecified elements,
+    # default to first available
+    if (missing(image)) image <- imageNames(x)[1]
+    if (missing(label)) label <- labelNames(x)[1]
+    if (missing(shape)) shape <- shapeNames(x)[1]
 
+    # retrieve elements to include
+    if (!is.null(image)) i <- image(x, image)
+    if (!is.null(label)) l <- label(x, label)
+    if (!is.null(shape)) s <- shape(x, shape)
+
+    # visually align elements
+    # TODO: shapes & points
+    if (!is.null(image) && !is.null(label)) {
+        y <- alignElements(i, l, coord=coord)
+        i <- y[[1]]; l <- y[[2]]
+    }
+
+    # construct image layer
     if (!is.null(image)) {
         i <- as.array(i)
         i <- aperm(i, c(2, 3, 1))
@@ -64,14 +79,14 @@ plotSD <- function(x,
         wl <- dim(l)[2]
     } else hl <- wl <- 0
 
+    # construct shape layer
     if (!is.null(shape)) {
-        .check_i(x, "shape", shape)
-        s <- shape(x, shape)
         switch(s$type[1],
             # TODO: other options?
             circle={
-                s$x <- vapply(s$data, \(.) .[1], numeric(1))
-                s$y <- vapply(s$data, \(.) .[2], numeric(1))
+                a <- as.array(s)
+                s$x <- a[, 1]
+                s$y <- a[, 2]
                 s <- .circles(s)
             },
             polygon={
@@ -88,9 +103,11 @@ plotSD <- function(x,
             data=s, aes_string("x", "y", group="id"))
     }
 
+    # use largest element width/height
     h <- max(hi, hl)
     w <- max(wi, wl)
 
+    # construct label layer
     if (!is.null(label)) {
         n <- length(unique(c(l)))
         c <- rainbow(n, alpha=alpha.label)
@@ -100,6 +117,7 @@ plotSD <- function(x,
         label_geom <- annotation_raster(rl, 0, wl, 0, -hl)
     }
 
+    # put it all together...
     ggplot() +
         (if (!is.null(image)) image_geom) +
         (if (!is.null(label)) label_geom) +
@@ -112,6 +130,8 @@ plotSD <- function(x,
             axis.title=element_blank())
 }
 
+# construct table of circle coordinates
+# (polygons) given xy-coordinates & radii
 .circles <- function(df, n=360){
     angle <- seq(-pi, pi, length=n)
     .circ <- function(x, y, r, id)
