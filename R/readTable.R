@@ -30,8 +30,3 @@ readTable <- function(path) {
         sce <- AnnData2SCE(obj)
     }, zarr=path)
 }
-
-.env <- basilisk::BasiliskEnvironment(
-    pkgname="SpatialData",
-    envname="anndata_loader_env",
-    packages=c("anndata==0.9.1", "zarr==2.14.2"))

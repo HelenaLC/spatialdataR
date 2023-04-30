@@ -54,12 +54,11 @@ setMethod("coord", "ZarrArray", function(x, name=1) .coord(x, name))
 setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
 
 .scale <- function(x, t) {
-    stopifnot(
-        is.numeric(t),
-        length(t) == length(dim(x)))
     a <- as.array(x)
+    d <- length(dim(a))
+    stopifnot(is.numeric(t), length(t) == d)
     y <- apply(a, 1, \(.)
-        resize(., nrow(.) * t[2], ncol(.) * t[3]),
+        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
         simplify = FALSE)
     y <- abind(y, along = 0)
 }
@@ -91,6 +90,17 @@ setMethod("scaleArray", "ZarrArray",
         y <- .scale(x, t)
         fun <- get(class(x))
         fun(y, metadata(x))
+    }
+)
+#' @rdname ZarrArray
+#' @importFrom EBImage abind resize
+#' @export
+setMethod("scaleFrame", "ShapeFrame",
+    function(x, t=c(1, 1)) {
+        y <- .scale(x, t)
+        y <- asplit(y, 1)
+        x$data <- y
+        return(x)
     }
 )
 

@@ -35,6 +35,8 @@ aggregateImage <- function(x, image=1, label=1, fun=mean) {
     ys <- tapply(row(img[1,,]), lab, fun)
     cd <- data.frame(x=xs, y=ys)
     rmv <- match("0", colnames(pbs))
-    pbs <- pbs[, -1]; cd <- cd[-1, ]
-    SingleCellExperiment(list(pbs), colData=cd)
+    cd <- cd[-1, ]; as <- list(pbs[, -1])
+    names(as) <- as.character(substitute(fun))
+    sce <- SingleCellExperiment(as, colData=cd)
+    return(sce)
 }

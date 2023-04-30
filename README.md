@@ -19,44 +19,45 @@ BiocManager::install("HelenaLC/SpatialData")
 - Specs for shapes, polygons and table generally follow the spatialdata [design doc][]
 - Design document for [AnnData<>SCE][] integration
 
-## TODOs
+## NOTEs
 
-- soon:
-  - [x] split `ImageArray` and `LabelArray` class,  
-    perhaps inheriting from some `ZarrArray` class
-  - [ ] validity checks for all classes
-  - [ ] preliminarily pass `R CMD check` and `BiocCheck`
-- later:
-  - [ ] clean read/write round (currently  
-    limited by `Rarr::write_zarr_array`)
-- utils:
-  - [ ] basic plotting of all elements
-  - [ ] aggregation of images/points by labels/shapes  
-    (returned as `SingleCell/SpatialExperiment`)
+- Presumably should split into separate packages in the long run,  
+  e.g., `plotSpatialData` and `utilSpatialData` for convenience  
+  visualization and query/wrangling/analysis functions.
+- Although, in principle, we should be able to support `Array`s  
+  (e.g., `DelayedArray`), nearly everything (except for _.parquet_)  
+  is currently being read into memory because of `Rarr`.
+- `EBImage` transformation work on 2D images only, so we cannot use  
+  these for anything more sophisticated than scaling, shifting, rotating;  
+  might have to do these ourselves if there are no alternatives to be found.
 
 ### Check list
 
 - [ ] IO for Elements (and associated metadata)
-  - [x] Images (raster)
+  - [x] Images
     - [ ] Multiscale
-  - [x] Labels (raster)
+  - [x] Labels
     - [ ] Multiscale
-  - [x] Shapes (polygons)
-  - [x] Points
-  - [x] Table 
+  - [x] Shapes
+  - [x] Points (*missing metadata)
+  - [x] Table
 
 - [ ] Transformations
   - [ ] Affine
-  - [x] Scale
-  - [x] Translation
-  - [x] Rotate
-  - [ ] Sequence
-  - [x] Identity
-  - [ ] ByDimension
   - [ ] MapAxis
+  - [ ] Sequence
+  - [ ] ByDimension
+  - [x] Identity
+  - [x] Translation
+  - [x] Scale
+  - [x] Rotate
 
 - [ ] Operations
   - [ ] Aggregation
+    - [x] images by labels
+    - [ ] images by shapes
+    - [ ] points by labels
+    - [ ] points by shapes
   - [ ] Query
 
 <!-- Links -->
