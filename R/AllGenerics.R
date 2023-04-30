@@ -48,6 +48,8 @@ setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
 setGeneric("element", function(x, ...) standardGeneric("element"))
 
 setGeneric("channels", function(x, ...) standardGeneric("channels"))
+setGeneric("channels<-", function(x, ..., value) standardGeneric("channels<-"))
+
 setGeneric("coords", function(x, ...) standardGeneric("coords"))
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
 
