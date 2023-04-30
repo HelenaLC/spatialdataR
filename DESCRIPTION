@@ -17,15 +17,17 @@ Authors@R: c(
     comment=c(ORCID="0000-0002-4801-1767"),
     role=c("aut", "cre")),
   person("Constantin", "Ahlmann-Eltze",
-    email = "artjom31415@googlemail.com",
-    comment = c(ORCID = "0000-0002-3762-068X"), 
-    role = c("aut")),
-  person("Tim", "Treis", role = "aut"))
+    email="artjom31415@googlemail.com",
+    comment=c(ORCID="0000-0002-3762-068X"), 
+    role=c("aut")),
+  person("Tim", "Treis", role="aut"))
 Imports: 
   arrow, 
   basilisk,
   BiocGenerics, 
   EBImage, 
+  ggplot2, 
+  grDevices,
   jsonlite, 
   methods,
   Rarr, 
@@ -38,7 +40,6 @@ Imports:
 Suggests: 
   BiocStyle,
   knitr,
-  ggplot2,
   testthat (>= 3.0.0)
 biocViews: 
     DataRepresentation, 

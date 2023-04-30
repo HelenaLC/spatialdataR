@@ -6,11 +6,26 @@
 #' $,SpatialData-method
 #' [[,SpatialData-method
 #' image images imageNames
+#' image<- images<-
+#' image<-,SpatialData,1
+#' image<-,SpatialData,character
+#' images<-,SpatialData,list
 #' label labels labelNames
+#' label<- labels<-
+#' label<-,SpatialData,1
+#' label<-,SpatialData,character
+#' labels<-,SpatialData,list
 #' shape shapes shapeNames
+#' shape<- shapes<-
+#' shape<-,SpatialData,1
+#' shape<-,SpatialData,character
+#' shapes<-,SpatialData,list
 #' point points pointNames
-#' element elementNames
-#' table table<-
+#' point<- points<-
+#' point<-,SpatialData,1
+#' point<-,SpatialData,character
+#' points<-,SpatialData,list
+#' table table<- element elementNames
 #'
 #' @description ...
 #'
@@ -79,5 +94,3 @@ SpatialData <- function(images, labels, shapes, points, table) {
 }
 
 LAYERS <- setdiff(names(attributes(SpatialData())), c("metadata", "class"))
-
-

@@ -7,8 +7,9 @@
 #' [,ZarrArray-method
 #' dim,ZarrArray-method
 #' dimnames,ZarrArray-method
-#' coord coords transformImage
-#' translateImage scaleImage rotateImage
+#' channels coord coords transformImage
+#' translateArray scaleArray rotateArray
+#' transformArray alignElements
 #'
 #' @description ...
 #'
@@ -27,12 +28,12 @@
 #' @param a An array-like object (see `?base::aperm`).
 #' @param perm The subscript permutation vector (see `?base::aperm`).
 #' @param name A character string specifying the coordinate system to extract.
-#' @param coords A character string specifying the target coordinate system.
+#' @param coord A character string specifying the target coordinate system.
 #'
 #' @section Transformations:
 #' In the following examples, \code{ia} is a \code{\link{ImageArray}} object.
 #' \itemize{
-#' \item{\code{translateImage}:
+#' \item{\code{translateArray}:
 #'   translates xy coordinates according to \code{t},
 #'   an integer vector of length 2.
 #'   (see \code{\link[EBImage:resize]{translate}})}

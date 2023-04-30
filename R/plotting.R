@@ -4,9 +4,15 @@
 #'
 #' @description ...
 #'
-#' @inheritParams ZarrArray
+#' @param x A \code{\link{SpatialData}} object.
+#' @param image,label,shape
+#'   A scalar integer (index) or character string (identifier)
+#'   specifying the entity to include (can be \code{NULL}).
+#' @param alpha.label,alpha.shape,color.shape Plotting aesthetics.
+#' @param coord A character string specifying the target coordinate system.
+#'   If \code{NULL}, defaults to the first available shared coordinates.
 #'
-#' @return \code{NULL}
+#' @return \code{ggplot2}
 #'
 #' @author Helena L. Crowell
 #'
@@ -14,9 +20,13 @@
 #' path <- system.file("extdata", "raccoon", package="SpatialData")
 #' sd <- readSpatialData(path)
 #' plotSD(sd)
+#'
 #' plotSD(sd, image=NULL)
 #' plotSD(sd, label=NULL, color.shape="pink")
 #' plotSD(sd, shape=NULL, alpha.label=0.2)
+
+#' image(sd, 1) <- scaleArray(image(sd), c(1, 1, 0.5))
+#' plotSD(sd)
 NULL
 
 #' @rdname plotting
@@ -26,7 +36,7 @@ NULL
 plotSD <- function(x,
     image=1, label=1, shape=1,
     alpha.label=1/3, alpha.shape=1,
-    color.shape="lightgrey", ...) {
+    color.shape="lightgrey", coord=NULL) {
 
     stopifnot(
         is(x, "SpatialData"),
@@ -35,9 +45,11 @@ plotSD <- function(x,
         alpha.label >= 0, alpha.label <= 1,
         alpha.shape >= 0, alpha.shape <= 1)
 
+    # TODO: shapes & points
+    y <- alignElements(image(x), label(x), coord=coord)
+    i <- y[[1]]; l <- y[[2]]
+
     if (!is.null(image)) {
-        .check_i(x, "image", image)
-        i <- image(x, image)
         i <- as.array(i)
         i <- aperm(i, c(2, 3, 1))
         hi <- dim(i)[1]
@@ -47,8 +59,6 @@ plotSD <- function(x,
     } else hi <- wi <- 0
 
     if (!is.null(label)) {
-        .check_i(x, "label", label)
-        l <- label(x, label)
         l <- as.array(l)
         hl <- dim(l)[1]
         wl <- dim(l)[2]
@@ -58,9 +68,10 @@ plotSD <- function(x,
         .check_i(x, "shape", shape)
         s <- shape(x, shape)
         switch(s$type[1],
+            # TODO: other options?
             circle={
-                s$x <- sapply(s$data, .subset, 1)
-                s$y <- sapply(s$data, .subset, 2)
+                s$x <- vapply(s$data, \(.) .[1], numeric(1))
+                s$y <- vapply(s$data, \(.) .[2], numeric(1))
                 s <- .circles(s)
             },
             polygon={
@@ -74,7 +85,7 @@ plotSD <- function(x,
         shape_geom <- geom_polygon(
             fill=color.shape,
             alpha=alpha.shape,
-            data=s, aes(x, y, group=id))
+            data=s, aes_string("x", "y", group="id"))
     }
 
     h <- max(hi, hl)
