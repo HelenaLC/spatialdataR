@@ -89,6 +89,21 @@ spd$images[[i]]
 # Visualization
 
 ```{r}
+path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
+(spd <- readSpatialData(path))
+```
+
+```{r}
+plotSD(spd,
+    iamge="raccoon",
+    label="segmentation",
+    shape="circles",
+    alpha.label=1/3,
+    alpha.shape=1,
+    color.shape="lightgrey")
+```
+
+```{r}
 # utility for image plotting with 'EBImage'
 .plot <- \(i) {
     c <- ifelse(
@@ -97,9 +112,6 @@ spd$images[[i]]
     j <- as.array(aperm(i))
     plot(Image(j/max(j), dim(j), c))
 }
-```
-
-```{r plot-img}
 par(mfrow=c(1,2))
 .plot(img)
 .plot(lab)
@@ -107,16 +119,22 @@ par(mfrow=c(1,2))
 
 ```{r}
 (sce <- aggregateImage(spd))
-cd <- data.frame(colData(sce), z=assay(sce)[1, ])
-ggplot(cd, aes(x, y, col=z)) + geom_point() + 
-  scale_color_viridis_c() + scale_y_reverse()
+col <- t(assay(sce))
+rgb <- c("R", "G", "B")
+colnames(col) <- rgb
+cd <- do.call(rbind, lapply(rgb, \(.) 
+    data.frame(colData(sce), z=col[, .], col=.)))
+ggplot(cd, aes(x, y, col=z)) + 
+    scale_color_viridis_c() + 
+    scale_y_reverse() +
+    facet_grid(~col) +
+    geom_point() +
+    coord_fixed()
 ```
 
 # Transformations
 
 ```{r}
-path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
-(spd <- readSpatialData(path))
 (i <- image(spd))
 coords(i)
 ```

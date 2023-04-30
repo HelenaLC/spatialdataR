@@ -21,6 +21,7 @@ NULL
 
 #' @rdname plotting
 #' @import ggplot2
+#' @importFrom grDevices as.raster rainbow
 #' @export
 plotSD <- function(x,
     image=1, label=1, shape=1,
