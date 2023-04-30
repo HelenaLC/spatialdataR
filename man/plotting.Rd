@@ -12,6 +12,10 @@ plotSD(
   shape = 1,
   alpha.label = 1/3,
   alpha.shape = 1,
+<<<<<<< HEAD
+=======
+  color.shape = "lightgrey",
+>>>>>>> 12d58bb (add basic plotSD for demo purposes)
   ...
 )
 }
@@ -28,10 +32,18 @@ plotSD(
 }
 \examples{
 path <- system.file("extdata", "raccoon", package="SpatialData")
+<<<<<<< HEAD
 plotSD(readSpatialData(path))
 
 path <- system.file("extdata", "blobs", package="SpatialData")
 plotSD(readSpatialData(path))
+=======
+sd <- readSpatialData(path)
+plotSD(sd)
+plotSD(sd, image=NULL)
+plotSD(sd, label=NULL, color.shape="pink")
+plotSD(sd, shape=NULL, alpha.label=0.2)
+>>>>>>> 12d58bb (add basic plotSD for demo purposes)
 }
 \author{
 Helena L. Crowell

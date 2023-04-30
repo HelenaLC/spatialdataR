@@ -92,6 +92,7 @@ plotSD <- function(x,
         (if (!is.null(image)) image_geom) +
         (if (!is.null(label)) label_geom) +
         (if (!is.null(shape)) shape_geom) +
+        # TODO: not so sure about this part yet...
         xlim(0, w) + #ylim(0, h) +
         scale_y_reverse(limits=c(h,0)) +
         coord_fixed(expand = FALSE) +
@@ -110,8 +111,3 @@ plotSD <- function(x,
         x=df$x, y=df$y, r=df$radius,
         SIMPLIFY=FALSE) |> do.call(what=rbind)
 }
-
-# blobs <- readSpatialData("inst/extdata/blobs/")
-# raccoon <- readSpatialData("inst/extdata/raccoon/")
-plotSD(blobs)
-plotSD(raccoon)
