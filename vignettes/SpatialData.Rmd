@@ -121,9 +121,10 @@ as well as transformation data `t` according to:
 - `translateElement`: integer vector of length 2 (row/y and col/x translation).
 
 ```{r}
-(i <- image(spd))
 # view available channels
-channels(i)
+img <- image(spd)
+channels(img) <- c("R", "G", "B")
+img
 ```
 
 Available coordinate systems can be retrieved via `coords()`:
@@ -133,7 +134,7 @@ Available coordinate systems can be retrieved via `coords()`:
 - `output.name` the target coordinate system's identity
 
 ```{r}
-coords(i)
+coords(img)
 ```
 
 ## Translation
@@ -141,7 +142,7 @@ coords(i)
 ```{r}
 # move the raccoon up'n'down
 ps <- lapply(c(-300, 0, 300), \(t) 
-    translateElement(image(spd), c(t, 0)))
+    translateElement(img, c(t, 0)))
 wrap_plots(lapply(ps, plotElement))
 ```
 
@@ -150,7 +151,7 @@ wrap_plots(lapply(ps, plotElement))
 ```{r}
 # spin the raccoon around
 ps <- lapply(c(0, 90, 180), \(t) 
-    rotateElement(image(spd), t))
+    rotateElement(img, t))
 wrap_plots(lapply(ps, plotElement))
 ```
 
@@ -159,7 +160,7 @@ wrap_plots(lapply(ps, plotElement))
 ```{r}
 # squeeze the raccoon horizontally
 ps <- lapply(c(1, 2/3, 1/2), \(t) 
-    scaleElement(image(spd), c(1, 1, t)))
+    scaleElement(img, c(1, 1, t)))
 wrap_plots(lapply(ps, plotElement))
 ```
 
@@ -174,11 +175,6 @@ which in turn calls `transformArray` on the input
 `image` and `label` (type `Image/LabelArray`).
 Depending on the underlying metadata, `transformArray`
 uses `scale/rotate/translateArray` for transformation.
-
-```{r}
-path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
-(spd <- readSpatialData(path))
-```
 
 ```{r}
 plotElement(image(spd)) +
