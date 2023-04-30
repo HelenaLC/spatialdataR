@@ -19,6 +19,13 @@ BiocManager::install("HelenaLC/SpatialData")
 - Specs for shapes, polygons and table generally follow the spatialdata [design doc][]
 - Design document for [AnnData<>SCE][] integration
 
+## Qs
+- What happens to circle _shapes_ when scaling by, e.g., `(1,2)`?  
+  Is there an ellipse shape type or is this stored as a polygon?
+- Are entities always matching between elements? I.e., is the first  
+  image/labels/shapes/points entity from the same sample, or  
+  is there something like a sample identifier stored somewhere?
+
 ## NOTEs
 
 - Presumably should split into separate packages in the long run,  
@@ -31,7 +38,22 @@ BiocManager::install("HelenaLC/SpatialData")
   these for anything more sophisticated than scaling, shifting, rotating;  
   might have to do these ourselves if there are no alternatives to be found.
 
-### Check list
+## TODOs
+
+### Transformations
+
+<!-- yes: &#x2714; no: &#x274C; -->
+
+|          | images | labels | shapes | points
+|---------:|:------:|:------:|:------:|:------:
+|identity  |&#x2714;|&#x2714;|&#x274C;|&#x274C;
+|translate |&#x2714;|&#x2714;|&#x274C;|&#x274C;
+|rotate    |&#x2714;|&#x2714;|&#x2714;|&#x274C;
+|scale     |&#x2714;|&#x2714;|&#x274C;|&#x274C;
+|affine    |&#x274C;|&#x274C;|&#x274C;|&#x274C;
+|by dim.   |&#x274C;|&#x274C;|&#x274C;|&#x274C;
+|sequence  |&#x274C;|&#x274C;|&#x274C;|&#x274C;
+|map axis  |&#x274C;|&#x274C;|&#x274C;|&#x274C;
 
 - [ ] IO for Elements (and associated metadata)
   - [x] Images
@@ -41,16 +63,6 @@ BiocManager::install("HelenaLC/SpatialData")
   - [x] Shapes
   - [x] Points (*missing metadata)
   - [x] Table
-
-- [ ] Transformations
-  - [ ] Affine
-  - [ ] MapAxis
-  - [ ] Sequence
-  - [ ] ByDimension
-  - [x] Identity
-  - [x] Translation
-  - [x] Scale
-  - [x] Rotate
 
 - [ ] Operations
   - [ ] Aggregation
