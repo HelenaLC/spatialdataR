@@ -58,6 +58,12 @@ setMethod("show", "SpatialData", .showSpatialData)
     callNextMethod(object)
 }
 
+.showShapeFrame <- function(object) {
+    cat("class: ShapeFrame\n")
+    cat("geoms:", n <- nrow(object), "\n")
+    if (n) cat("type:", object$type[1])
+}
+
 #' @rdname SD-miscellaneous
 setMethod("show", "ZarrArray", .showZarrArray)
 
@@ -66,3 +72,6 @@ setMethod("show", "ImageArray", .showImageArray)
 
 #' @rdname SD-miscellaneous
 setMethod("show", "LabelArray", .showLabelArray)
+
+#' @rdname SD-miscellaneous
+setMethod("show", "ShapeFrame", .showShapeFrame)

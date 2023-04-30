@@ -13,16 +13,22 @@ plotSD(
   alpha.label = 1/3,
   alpha.shape = 1,
   color.shape = "lightgrey",
-  ...
+  coord = NULL
 )
 }
 \arguments{
-\item{x}{An \code{ImageArray} object.}
+\item{x}{A \code{\link{SpatialData}} object.}
 
-\item{...}{Further arguments to be passed to or from other methods.}
+\item{image, label, shape}{A scalar integer (index) or character string (identifier)
+specifying the entity to include (can be \code{NULL}).}
+
+\item{alpha.label, alpha.shape, color.shape}{Plotting aesthetics.}
+
+\item{coord}{A character string specifying the target coordinate system.
+If \code{NULL}, defaults to the first available shared coordinates.}
 }
 \value{
-\code{NULL}
+\code{ggplot2}
 }
 \description{
 ...
@@ -31,9 +37,12 @@ plotSD(
 path <- system.file("extdata", "raccoon", package="SpatialData")
 sd <- readSpatialData(path)
 plotSD(sd)
+
 plotSD(sd, image=NULL)
 plotSD(sd, label=NULL, color.shape="pink")
 plotSD(sd, shape=NULL, alpha.label=0.2)
+image(sd, 1) <- scaleArray(image(sd), c(1, 1, 0.5))
+plotSD(sd)
 }
 \author{
 Helena L. Crowell

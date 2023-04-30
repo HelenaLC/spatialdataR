@@ -28,6 +28,10 @@ abstract: >
   <p> ...
 ---
 
+```{r setup, inclue=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
 # Preamble
 
 ## Dependencies
@@ -41,68 +45,6 @@ library(SpatialData)
 library(SingleCellExperiment)
 ```
 
-## Introduction
-
-# `ImageArray`
-
-## Constructor
-
-```{r load-data}
-path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
-zarr <- file.path(path, "images", "blobs_image")
-
-za <- read_zarr_array(file.path(zarr, "0"))
-md <- fromJSON(file.path(zarr, ".zattrs"))
-(ia <- ImageArray(za, md))
-```
-
-## `readArray`
-
-```{r}
-(ia <- readArray(zarr))
-```
-
-# `SpatialData`
-
-```{r}
-(spd <- readSpatialData(path))
-```
-
-## Accessors
-
-`SpatialData` objects behave like a list, i.e.,
-Elements can be accessed in various (equivalent) ways:
-
-```{r results="hide"}
-i <- "blobs_image"
-element(spd, "images", i)
-images(spd)[[i]]
-image(spd, i)
-spd$images[[i]]
-```
-
-```{r}
-(img <- image(spd))
-(lab <- label(spd))
-```
-
-# Visualization
-
-```{r}
-path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
-(spd <- readSpatialData(path))
-```
-
-```{r}
-plotSD(spd,
-    iamge="raccoon",
-    label="segmentation",
-    shape="circles",
-    alpha.label=1/3,
-    alpha.shape=1,
-    color.shape="lightgrey")
-```
-
 ```{r}
 # utility for image plotting with 'EBImage'
 .plot <- \(i) {
@@ -112,45 +54,147 @@ plotSD(spd,
     j <- as.array(aperm(i))
     plot(Image(j/max(j), dim(j), c))
 }
+```
+
+## Introduction
+
+# `SpatialData`
+
+The `SpatialData` class contains 5 elements that are represented as follows:
+
+- `images`: list of `ImageArray`s
+- `labels`: list of `LabelArray`s
+- `shapes`: list of `ShapeFrame`s
+- `points`: list of Arrow `Dataset`s
+- `table`: a `SingleCellExperiment`
+
+```{r}
+path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
+(spd <- readSpatialData(path))
+```
+
+## Accession
+
+The following accessors are currently supported:
+
+- `image/label/shape/pointNames` to retrieve available entities of the respective element.
+- `images/labels/shapes/points` to retrieve a list of entities of the respective element.
+- `image/label/shape/point` to retrieve a single entity of the respective element.
+- `$` to directly access the entities of the respective element.
+
+`SpatialData` objects behave like a list, i.e., entities of a all
+elements can be accessed in various (equivalent) ways:
+
+```{r results="hide"}
+# these are all equivalent
+i <- "blobs_image"
+element(spd, "images", i)
+images(spd)[[i]]
+image(spd, i)
+spd$images[[i]]
+```
+
+# `ZarrArray`
+
+The `ZarrArray` class is essentially an `Annotated` array-like object, that may
+contain a dense `array` or any type of `Array` (e.g., `Sparse/DelayedArray`).
+Derived here-from are the `ImageArray` and `LabelArray` classes
+that represent single entities of `images` and `labels`, respectively.
+These differ slightly in their associated metadata
+and array properties, but share many functions.
+
+```{r}
+# construction
+zarr <- file.path(path, "images", "blobs_image")
+(ia <- readArray(zarr))
+```
+
+# Transformations
+
+Only translation, scaling, and rotation of `Image/LabelArray`s are currently supported
+via the following functions, each of which expects a \code{SpatialData} object (SD),
+as well as transformation data `t` according to:
+
+- `rotateArray`: scalar integer (angle).
+- `scaleArray`: numeric vector with as many elements as SD has dimensions.
+- `translateArray`: integer vector of length 2 (row/y and col/x translation).
+
+```{r}
+(i <- image(spd))
+# view available channels
+channels(i)
+```
+
+Available coordinate systems can be retrieved via `coords()`:
+
+- `type`: type of transformation (one of identity, rotate, scale, ...)
+- `data`: transformation data (`NA` when `type = "identity"`)
+- `output.name` the target coordinate system's identity
+
+```{r}
+coords(i)
+```
+
+## scale
+
+```{r}
+j <- scaleArray(i, c(1,1,2))
+par(mfrow=c(1,2)); .plot(i); .plot(j)
+```
+
+## rotate
+
+```{r}
+j <- rotateArray(i, 30)
+par(mfrow=c(1,2)); .plot(i); .plot(j)
+```
+
+# Visualization
+
+`plotSD` currently supports overlaying up to 3 elements 
+(an image, label and shape, but not points yet).
+Argument `coord` specifies the target coordinate system,
+and will default the first available shared one if left unspecified.
+Elements are internally aligned via `alignElements`,
+which in turn calls `transformArray` on the input
+`image` and `label` (type `Image/LabelArray`).
+Depending on the underlying metadata, `transformArray`
+uses `scale/rotate/translateArray` for transformation.
+
+```{r}
+path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
+(spd <- readSpatialData(path))
+```
+
+```{r}
+plotSD(spd,
+    image="raccoon",
+    label="segmentation",
+    shape="circles",
+    alpha.label=1/3,
+    alpha.shape=1,
+    color.shape="lightgrey")
+```
+
+```{r}
+(img <- image(spd))
+(lab <- label(spd))
 par(mfrow=c(1,2))
 .plot(img)
 .plot(lab)
 ```
 
+# Query
+
+`aggregateImage` computed aggregated measurement values from `image`
+according to `label` using `fun` to summarized measurements (default `mean`).
+By default, the first available `image` and `label` are used.
+In the output `SingleCellExperiment`, rows correspond
+to channels and columns to unique labels (excluding 0); 
+aggregated xy-coordinates are included in the `colData`.
+
 ```{r}
 (sce <- aggregateImage(spd))
-col <- t(assay(sce))
-rgb <- c("R", "G", "B")
-colnames(col) <- rgb
-cd <- do.call(rbind, lapply(rgb, \(.) 
-    data.frame(colData(sce), z=col[, .], col=.)))
-ggplot(cd, aes(x, y, col=z)) + 
-    scale_color_viridis_c() + 
-    scale_y_reverse() +
-    facet_grid(~col) +
-    geom_point() +
-    coord_fixed()
-```
-
-# Transformations
-
-```{r}
-(i <- image(spd))
-coords(i)
-```
-
-## `scaleImage`
-
-```{r}
-j <- scaleImage(i, c(1,1,2))
-par(mfrow=c(1,2)); .plot(i); .plot(j)
-```
-
-## `rotateImage`
-
-```{r}
-j <- rotateImage(i, 30)
-par(mfrow=c(1,2)); .plot(i); .plot(j)
 ```
 
 # Appendix

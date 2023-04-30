@@ -59,6 +59,43 @@ setMethod("image", "SpatialData", function(x, i=1) {
 #' @export
 setMethod("imageNames", "SpatialData", function(x) names(images(x)))
 
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("images",
+    c("SpatialData", "list"),
+    function(x, value) {
+        x@images <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("image",
+    c("SpatialData", "numeric"),
+    function(x, i, value) {
+    .check_i(x, "images", i)
+    images(x)[[i]] <- value
+    return(x)
+})
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("image",
+    c("SpatialData", "character"),
+    function(x, i, value) {
+        .check_i(x, "images", i)
+        images(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("image",
+    c("SpatialData", "missing"),
+    function(x, i, value) {
+        `image<-`(x=x, i=1, value=value)
+    })
+
 # labels -----------------------------------------------------------------------
 
 #' @rdname SpatialData
@@ -75,6 +112,43 @@ setMethod("label", "SpatialData", function(x, i=1) {
 #' @rdname SpatialData
 #' @export
 setMethod("labelNames", "SpatialData", function(x) names(labels(x)))
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("labels",
+    c("SpatialData", "list"),
+    function(x, value) {
+        x@labels <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("label",
+    c("SpatialData", "numeric"),
+    function(x, i, value) {
+        .check_i(x, "labels", i)
+        labels(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("label",
+    c("SpatialData", "character"),
+    function(x, i, value) {
+        .check_i(x, "labels", i)
+        labels(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("label",
+    c("SpatialData", "missing"),
+    function(x, i, value) {
+        `label<-`(x=x, i=1, value=value)
+    })
 
 # shapes -----------------------------------------------------------------------
 
@@ -149,8 +223,8 @@ setMethod("elementNames", "SpatialData", function(x) {
 #' @importFrom utils getFromNamespace
 #' @export
 setMethod("element", "SpatialData",
-  function(x, elementName=elementNames(x)[1], i=1, ...) {
-      .check_i(x, elementName, i)
-      fun <- getFromNamespace(elementName, "SpatialData")
-      fun(x)[[i]]
+    function(x, elementName=elementNames(x)[1], i=1, ...) {
+        .check_i(x, elementName, i)
+        fun <- getFromNamespace(elementName, "SpatialData")
+        fun(x)[[i]]
 })

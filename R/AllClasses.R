@@ -21,6 +21,14 @@ setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
     Class="LabelArray",
     contains="ZarrArray")
 
+setClassUnion("ImageArray_OR_LabelArray", c("ImageArray", "LabelArray"))
+
+#' @importClassesFrom S4Vectors DFrame
+#' @exportClass ShapeFrame SpatialData
+.ShapeFrame <- setClass(
+    Class="ShapeFrame",
+    contains="DFrame")
+
 #' @exportClass SpatialData SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",

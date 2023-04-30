@@ -25,5 +25,5 @@ path <- system.file(path, package="SpatialData")
 
 }
 \author{
-Tim Treis
+Tim Treis, Helena L. Crowell
 }
