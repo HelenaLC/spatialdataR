@@ -53,32 +53,7 @@ setMethod("coord", "ZarrArray", function(x, name=1) .coord(x, name))
 #' @export
 setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
 
-#' @importFrom EBImage abind resize
-.scale <- function(x, t) {
-    a <- as.array(x)
-    d <- length(dim(a))
-    stopifnot(is.numeric(t), length(t) == d)
-    y <- apply(a, 1, \(.)
-        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
-        simplify=FALSE)
-    y <- abind(y, along=0)
-}
-
-#' @importFrom EBImage rotate
-.rotate <- function(x, t) {
-    stopifnot(
-        is.numeric(t),
-        length(t) == 1)
-    if (is(x, "ShapeFrame")) {
-        t <- t*pi/180
-        R <- matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
-        lapply(x$data, \(xy) (xy %*% R))
-    } else {
-        a <- as.array(x)
-        y <- apply(a, 1, rotate, t, simplify=FALSE)
-        y <- abind(y, along=0)
-    }
-}
+# translation ----
 
 .translate <- function(x, t) {
     stopifnot(
@@ -86,7 +61,49 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
         length(t) == 2,
         round(t) == t)
     a <- as.array(x)
-    y <- apply(a, 1, translate, t, simplify=FALSE)
+    if (is(x, "ShapeFrame")) {
+        a[, 1] <- a[, 1]+t[2]
+        a[, 2] <- a[, 2]+t[1]
+        y <- asplit(a, 1)
+    } else {
+        y <- apply(a, 1, translate, t, simplify=FALSE)
+        y <- abind(y, along=0)
+    }
+    return(y)
+}
+
+#' @rdname ZarrArray
+#' @importFrom EBImage abind translate
+#' @export
+setMethod("translateElement", "ZarrArray",
+    function(x, t=c(0,0)) {
+        y <- .translate(x, t)
+        fun <- get(class(x))
+        fun(y, metadata(x))
+    }
+)
+
+#' @rdname ZarrArray
+#' @export
+setMethod("translateElement", "ShapeFrame",
+    function(x, t=c(0,0)) {
+        x$data <- .translate(x, t)
+        ShapeFrame(x, metadata(x))
+    }
+)
+
+# scaling ----
+
+#' @importFrom EBImage abind resize
+.scale <- function(x, t) {
+    a <- as.array(x)
+    d <- length(dim(a))
+    stopifnot(
+        is.numeric(t),
+        length(t) == d)
+    y <- apply(a, 1, \(.)
+        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
+        simplify=FALSE)
     y <- abind(y, along=0)
 }
 
@@ -110,6 +127,24 @@ setMethod("scaleElement", "ShapeFrame",
     }
 )
 
+# rotation ----
+
+#' @importFrom EBImage rotate
+.rotate <- function(x, t) {
+    stopifnot(
+        is.numeric(t),
+        length(t) == 1)
+    if (is(x, "ShapeFrame")) {
+        t <- t*pi/180
+        R <- matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+        lapply(x$data, \(xy) (xy %*% R))
+    } else {
+        a <- as.array(x)
+        y <- apply(a, 1, rotate, t, simplify=FALSE)
+        y <- abind(y, along=0)
+    }
+}
+
 #' @rdname ZarrArray
 #' @export
 setMethod("rotateElement", "ZarrArray",
@@ -128,16 +163,7 @@ setMethod("rotateElement", "ShapeFrame",
     }
 )
 
-#' @rdname ZarrArray
-#' @importFrom EBImage abind translate
-#' @export
-setMethod("translateElement", "ZarrArray",
-    function(x, t=c(0,0)) {
-        y <- .translate(x, t)
-        fun <- get(class(x))
-        fun(y, metadata(x))
-    }
-)
+# transformation ----
 
 .transform <- function(x, coord) {
     df <- coord(x, coord)
