@@ -67,3 +67,8 @@ setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
 setGeneric("alignElements", function(...) standardGeneric("alignElements"))
 
 setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
+
+# internals ----
+
+setGeneric("zattrs", function(x, ...) standardGeneric("zattrs"))
+setGeneric("zattrs<-", function(x, value) standardGeneric("zattrs<-"))
