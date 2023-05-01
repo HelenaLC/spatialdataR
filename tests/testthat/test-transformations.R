@@ -5,16 +5,16 @@ l <- label(x)
 s <- shape(x)
 
 test_that("coords", {
-  df <- coords(i)
-  md <- metadata(i)
-  expect_s4_class(df, "DFrame")
-  expect_equal(nrow(df), nrow(md$multiscales))
+    df <- coords(i)
+    md <- metadata(i)
+    expect_s4_class(df, "DFrame")
+    expect_equal(nrow(df), nrow(md$multiscales))
 })
 test_that("coords", {
-  expect_error(coord(i, 99))
-  expect_error(coord(i, ""))
-  nm <- coords(i)$output.name[1]
-  expect_s4_class(coord(i, nm), "DFrame")
+    expect_error(coord(i, 99))
+    expect_error(coord(i, ""))
+    nm <- coords(i)$output.name[1]
+    expect_s4_class(coord(i, nm), "DFrame")
 })
 
 # translation ----
@@ -36,12 +36,20 @@ test_that("translateElement,ShapeFrame", {
 
 # rotation ----
 test_that("rotateElement,ImageArray", {
-  expect_s4_class(rotateElement(i), "ImageArray")
-  expect_equal(dim(rotateElement(i, 000)), dim(i))
-  expect_equal(dim(rotateElement(i, 180)), dim(i))
-  expect_equal(dim(rotateElement(i, 360)), dim(i))
-  expect_equal(dim(rotateElement(i,  90)), dim(i)[c(1, 3, 2)])
-  expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
+    j <- rotateElement(i, 0)
+    expect_identical(j, i)
+    expect_equal(dim(rotateElement(i, 000)), dim(i))
+    expect_equal(dim(rotateElement(i, 180)), dim(i))
+    expect_equal(dim(rotateElement(i, 360)), dim(i))
+    expect_equal(dim(rotateElement(i,  90)), dim(i)[c(1, 3, 2)])
+    expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
+})
+test_that("rotateElement,ShapeFrame,polygon", {
+    expect_equal(rotateElement(s, 000), s)
+    expect_equal(rotateElement(s, 360), s)
+    t <- rotateElement(s, 180)
+    expect_identical(metadata(t), metadata(s))
+    expect_equal(range(t$data), -rev(range(s$data)))
 })
 
 # scaling ----
@@ -50,6 +58,13 @@ test_that("scaleElement,ImageArray", {
     expect_s4_class(scaleElement(i), "ImageArray")
     expect_equal(dim(scaleElement(i, rep(1, d))), dim(i))
     expect_equal(dim(scaleElement(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
+})
+test_that("scaleElement,ShapeFrame,polygon", {
+    t <- scaleElement(s, c(1, 1))
+    expect_s4_class(t, "ShapeFrame")
+    expect_equal(dim(t), dim(s))
+    expect_equal(range(t$data), range(s$data))
+    expect_identical(metadata(t), metadata(s))
 })
 
 # transformation ----

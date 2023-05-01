@@ -110,10 +110,18 @@ setMethod("translateElement", "ShapeFrame",
     stopifnot(
         is.numeric(t),
         length(t) == d)
-    y <- apply(a, 1, \(.)
-        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
-        simplify=FALSE)
-    y <- abind(y, along=0)
+    if (is(x, "ShapeFrame")) {
+        a[, 1] <- a[, 1]*t[1]
+        a[, 2] <- a[, 2]*t[2]
+        i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
+        i <- split(seq(nrow(a)), i)
+        lapply(i, \(.) a[., ])
+    } else {
+        y <- apply(a, 1, \(.)
+            resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
+            simplify=FALSE)
+        y <- abind(y, along=0)
+    }
 }
 
 #' @rdname ZarrArray
@@ -129,10 +137,8 @@ setMethod("scaleElement", "ZarrArray",
 #' @export
 setMethod("scaleElement", "ShapeFrame",
     function(x, t=c(1, 1)) {
-        y <- .scale(x, t)
-        y <- asplit(y, 1)
-        x$data <- y
-        return(x)
+        x$data <- .scale(x, t)
+        ShapeFrame(x, metadata(x))
     }
 )
 
