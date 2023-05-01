@@ -1,42 +1,47 @@
-.zattrs2df <- function(x) {
-    l <- x@zattrs
-    ms <- l$multiscales
-    if (is.null(ms)) {
-        l$coordinateTransformations
-    } else {
-        ms$coordinateTransformations[[1]]
-    }
-}
-.df2zattrs <- function(x) {
-    l <- x@zattrs
-    ms <- l$multiscales
-    df <- if (!is.null(ms)) ms else l
-}
+# internals ----
+
+setMethod("zattrs", "ZarrArray", function(x) x@zattrs)
+setMethod("zattrs", "ShapeFrame", function(x) x@zattrs)
+setReplaceMethod("zattrs",
+    c("ZarrArray", "list"),
+    function(x, value) {
+        x@zattrs <- value
+        return(x)
+    })
+setReplaceMethod("zattrs",
+    c("ShapeFrame", "list"),
+    function(x, value) {
+        x@zattrs <- value
+        return(x)
+    })
+
 .get_ct <- \(x) {
-    l <- x@zattrs
+    l <- zattrs(x)
     ms <- l$multiscales
     if (!is.null(ms)) l <- ms
     l$coordinateTransformations[[1]]
 }
 .set_ct <- \(x, df) {
-    l <- x@zattrs
+    l <- zattrs(x)
     ms <- l$multiscales
     if (is.null(ms)) {
-        x@zattrs$coordinateTransformations[[1]] <- df
+        l$coordinateTransformations[[1]] <- df
+        zattrs(x) <- l
     } else {
-        x@zattrs$multiscales$coordinateTransformations[[1]] <- df
+        l$multiscales$coordinateTransformations[[1]] <- df
+        zattrs(x) <- l
     }
     return(x)
 }
-.add_ct <- \(x, name, type, data) {
+.add_coord <- \(x, name, type, data) {
     df <- coords(x)
     fd <- df[1, ]
     fd$type <- type
     fd$output$name <- name
     fd[[type]] <- list(data)
-    l <- vector("list", nrow(df)+1)
     # there has to be an easier way than this...
     # but 'data.frame' keeps flattening stuff
+    l <- vector("list", nrow(df)+1)
     . <- data.frame(
         input=I(l), output=I(l),
         type=character(1),
@@ -45,7 +50,14 @@
     .$output <- rbind(df$output, fd$output)
     .$type <- c(df$type, fd$type)
     .$data <- c(df[[ncol(df)]], fd[[ncol(fd)]])
-    names(.)[ncol(.)] <- names(df)[ncol(df)]
+    typ <- names(df)[ncol(df)]
+    # need an example with different transformations
+    # to see what specs actually look like in the wild...
+    if (typ != "type") {
+        names(.)[ncol(.)] <- typ
+    } else {
+        .$data <- NULL
+    }
     .set_ct(x, .)
 }
 .rmv_coord <- \(x, name) {
@@ -55,7 +67,17 @@
     .set_ct(x, df)
 }
 
-.coords <- function(x) .zattrs2df(x)
+# coords ----
+
+.coords <- function(x) {
+    l <- zattrs(x)
+    ms <- l$multiscales
+    if (is.null(ms)) {
+        l$coordinateTransformations
+    } else {
+        ms$coordinateTransformations[[1]]
+    }
+}
 
 .coord <- function(x, name) {
     df <- coords(x)
@@ -103,7 +125,7 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
     y <- abind(y, along=0)
     if (d == 2) y <- y[1, , ]
     fun <- get(class(x))
-    fun(y, x@zattrs)
+    fun(y, zattrs(x))
 }
 
 .translateShapeFrame <- function(x, t) {
@@ -155,7 +177,7 @@ setMethod("translateElement", "ShapeFrame",
     y <- apply(a, 1, rotate, t, simplify=FALSE)
     y <- abind(y, along=0)
     fun <- get(class(x))
-    fun(y, x@zattrs)
+    fun(y, zattrs(x))
 }
 .rotateShapeFrame <- function(x, t) {
     t <- t*pi/180
@@ -201,7 +223,7 @@ setMethod("rotateElement", "ShapeFrame",
         resize(., nrow(.)*t[d-1], ncol(.)*t[d]))
     y <- abind(y, along=0)
     fun <- get(class(x))
-    fun(y, x@zattrs)
+    fun(y, zattrs(x))
 }
 .scaleShapeFrame <- function(x, t) {
     switch(x$type[1],
@@ -270,7 +292,7 @@ setMethod("transformElement", "ShapeFrame",
 #' @rdname ZarrArray
 #' @export
 setMethod("axes", "ImageArray", function(x, type=NULL) {
-    l <- x@zattrs
+    l <- zattrs(x)
     ax <- l$multiscales$axes[[1]]
     if (is.null(type)) return(ax$name)
     stopifnot(
