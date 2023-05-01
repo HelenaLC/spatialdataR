@@ -7,7 +7,7 @@
 #' [,ZarrArray-method
 #' dim,ZarrArray-method
 #' dimnames,ZarrArray-method
-#' channels channels<-
+#' axes channels channels<-
 #' channels<-,ImageArray-method
 #' coord coords transformImage
 #' translateElement rotateElement scaleElement

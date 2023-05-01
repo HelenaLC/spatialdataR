@@ -13,11 +13,11 @@
 \alias{plotElement,ShapeFrame-method}
 \title{Plot `SpatialData` elements}
 \usage{
-\S4method{plotElement}{ImageArray}(x, coord = NULL, ...)
+\S4method{plotElement}{ImageArray}(x, coord, ...)
 
-\S4method{plotElement}{LabelArray}(x, coord = NULL, ...)
+\S4method{plotElement}{LabelArray}(x, coord, ...)
 
-\S4method{plotElement}{ShapeFrame}(x, coord = NULL, ...)
+\S4method{plotElement}{ShapeFrame}(x, coord, ...)
 
 plotSD(
   x,

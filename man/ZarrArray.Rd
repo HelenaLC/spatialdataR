@@ -19,6 +19,7 @@
 \alias{LabelArray}
 \alias{LabelArray-class}
 \alias{[,ZarrArray-method}
+\alias{axes}
 \alias{channels}
 \alias{channels<-}
 \alias{channels<-,ImageArray-method}
@@ -41,6 +42,7 @@
 \alias{scaleElement,ShapeFrame-method}
 \alias{transformElement,ZarrArray-method}
 \alias{transformElement,ShapeFrame-method}
+\alias{axes,ImageArray-method}
 \alias{alignElements,ANY-method}
 \title{#' @rdname ZarrArray
 #' @export
@@ -95,6 +97,8 @@ LabelArray(data = array(), metadata = list(), ...)
 \S4method{transformElement}{ZarrArray}(x, coord = NULL)
 
 \S4method{transformElement}{ShapeFrame}(x, coord = NULL)
+
+\S4method{axes}{ImageArray}(x, type = NULL)
 
 \S4method{alignElements}{ANY}(..., coord = NULL)
 }
