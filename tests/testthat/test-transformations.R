@@ -18,6 +18,14 @@ test_that("coords", {
 })
 
 # translation ----
+test_that("translate,t", {
+    # should be 2 whole numbers
+    expect_error(.translate(i, NULL))
+    expect_error(.translate(i, c("", "")))
+    expect_error(.translate(i, c(1.1, 1)))
+    expect_error(.translate(i, numeric(0)))
+    expect_error(.translate(i, numeric(3)))
+})
 test_that("translateElement,ImageArray", {
     y <- translateElement(i)
     expect_s4_class(y, "ImageArray")
@@ -35,6 +43,13 @@ test_that("translateElement,ShapeFrame", {
 })
 
 # rotation ----
+test_that("rotate,t", {
+    # should be any ONE number
+    expect_error(.rotate(i, "bunny"))
+    expect_error(.rotate(i, c(0, 0)))
+    expect_silent(.rotate(i, -99))
+    expect_silent(.rotate(i, 999))
+})
 test_that("rotateElement,ImageArray", {
     j <- rotateElement(i, 0)
     expect_identical(j, i)
@@ -53,6 +68,15 @@ test_that("rotateElement,ShapeFrame,polygon", {
 })
 
 # scaling ----
+test_that("scale,t", {
+    # should be n numbers > 0
+    # (n = number of channels)
+    n <- length(channels(i))
+    expect_error(.scale(i, rep(1, n-1)))
+    expect_error(.scale(i, rep(1, n+1)))
+    expect_error(.scale(i, rep(-1, n)))
+    expect_silent(.scale(i, rep(1, n)))
+})
 test_that("scaleElement,ImageArray", {
     d <- length(dim(i))
     expect_s4_class(scaleElement(i), "ImageArray")
