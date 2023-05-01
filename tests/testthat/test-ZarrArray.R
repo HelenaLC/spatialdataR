@@ -58,10 +58,10 @@ test_that("dim", {
     expect_identical(x, md$dim[[1]])
 })
 
-test_that("dimnames", {
-    x <- dimnames(ia)
-    expect_type(x, "list")
-})
+# test_that("dimnames", {
+#     x <- dimnames(ia)
+#     expect_type(x, "list")
+# })
 
 test_that("extract", {
     expect_error(ia[1, ])

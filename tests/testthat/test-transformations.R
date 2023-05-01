@@ -5,16 +5,16 @@ l <- label(x)
 s <- shape(x)
 
 test_that("coords", {
+    md <- i@zattrs
     df <- coords(i)
-    md <- metadata(i)
-    expect_s4_class(df, "DFrame")
+    expect_s3_class(df, "data.frame")
     expect_equal(nrow(df), nrow(md$multiscales))
 })
-test_that("coords", {
+test_that("coord", {
     expect_error(coord(i, 99))
     expect_error(coord(i, ""))
-    nm <- coords(i)$output.name[1]
-    expect_s4_class(coord(i, nm), "DFrame")
+    nm <- coords(i)$output$name[1]
+    expect_s3_class(coord(i, nm), "data.frame")
 })
 
 # translation ----
@@ -72,10 +72,11 @@ test_that("scale,t", {
     # should be n numbers > 0
     # (n = number of channels)
     n <- length(channels(i))
-    expect_error(.scale(i, rep(1, n-1)))
-    expect_error(.scale(i, rep(1, n+1)))
-    expect_error(.scale(i, rep(-1, n)))
-    expect_silent(.scale(i, rep(1, n)))
+    expect_error(.scale(i, numeric(n-1)))
+    expect_error(.scale(i, numeric(n+1)))
+    expect_error(.scale(i, rep(-1.0, n)))
+    expect_silent(.scale(i, rep(1.0, n)))
+    expect_silent(.scale(i, rep(1.1, n)))
 })
 test_that("scaleElement,ImageArray", {
     d <- length(dim(i))

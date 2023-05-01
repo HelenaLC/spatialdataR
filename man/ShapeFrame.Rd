@@ -8,7 +8,7 @@
 \alias{as.array,ShapeFrame-method}
 \title{The `ShapeFrame` class}
 \usage{
-ShapeFrame(data = DataFrame(), metadata = list())
+ShapeFrame(data = DataFrame(), metadata = list(), ...)
 
 \S4method{as.array}{ShapeFrame}(x)
 

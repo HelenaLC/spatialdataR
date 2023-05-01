@@ -37,5 +37,5 @@ readArray <- function(path=".", resolution="0", ...) {
 
     is_img <- !is.null(md$channels_metadata)
     fun <- if (is_img) ImageArray else LabelArray
-    fun(data=za, metadata=md)
+    fun(data=za, metadata=list(), zattrs=md)
 }

@@ -2,7 +2,7 @@
 #' @export
 setMethod("channels", "ImageArray", function(x) {
     # TODO: Gio said this'll move elsewhere in corrected version
-    as.character(metadata(x)$channels_metadata$channels$label)
+    as.character(x@zattrs$channels_metadata$channels$label)
 })
 
 #' @rdname ZarrArray
@@ -15,7 +15,7 @@ setReplaceMethod("channels",
         if (new != old)
             stop("new channel names (", new, ") must be of the same",
                 " length as the number of channels (", old, ")")
-        metadata(x)$channels_metadata$channels$label <- value
+        x@zattrs$channels_metadata$channels$label <- value
         return(x)
     }
 )

@@ -32,14 +32,14 @@
 #'
 #' @importFrom S4Vectors DataFrame isEmpty metadata<-
 #' @export
-ShapeFrame <- function(data=DataFrame(), metadata=list()) {
+ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
     if (isEmpty(data))
         data <- data.frame(
             data=numeric(),
             index=integer(),
             type=character())
     data <- DataFrame(data)
-    df <- .ShapeFrame(data)
+    df <- .ShapeFrame(data, ...)
     metadata(df) <- metadata
     return(df)
 }

@@ -54,6 +54,8 @@ setGeneric("channels<-", function(x, value) standardGeneric("channels<-"))
 
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
 setGeneric("coords", function(x, ...) standardGeneric("coords"))
+setGeneric("coord<-", function(x, i, ..., value) standardGeneric("coord<-"))
+setGeneric("coords<-", function(x, value) standardGeneric("coords<-"))
 
 setGeneric("scaleElement", function(x, ...) standardGeneric("scaleElement"))
 setGeneric("rotateElement", function(x, ...) standardGeneric("rotateElement"))

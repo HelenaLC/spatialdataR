@@ -27,18 +27,18 @@
 #'
 #' @examples
 #' path <- system.file("extdata", "raccoon", package="SpatialData")
-#' sd <- readSpatialData(path)
+#' spd <- readSpatialData(path)
 #'
 #' # by element
-#' plotElement(image(sd))
-#' plotElement(label(sd))
-#' plotElement(shape(sd))
+#' plotElement(image(spd))
+#' plotElement(label(spd))
+#' plotElement(shape(spd))
 #'
 #' # layered
-#' plotSD(sd)
-#' plotSD(sd, image=NULL)
-#' plotSD(sd, label=NULL, fill.shape="pink")
-#' plotSD(sd, shape=NULL, alpha.label=0.2)
+#' plotSD(spd)
+#' plotSD(spd, image=NULL)
+#' plotSD(spd, label=NULL, fill.shape="pink")
+#' plotSD(spd, shape=NULL, alpha.label=0.2)
 NULL
 
 #' @import ggplot2
@@ -75,7 +75,6 @@ setMethod("plotElement", "LabelArray", function(x, coord, ...) {
         x <- transformElement(x, coord)
     dots <- list(...)
     alpha <- ifelse(is.null(dots$alpha), 1, dots$alpha)
-    x <- transformElement(x, coord)
     a <- as.array(x)
     w <- dim(a)[2]; h <- dim(a)[1]
     n <- length(unique(c(a)))
@@ -125,6 +124,7 @@ plotSD <- function(x,
 # image <- 1
 # label <- NULL
 # shape <- NULL
+
     stopifnot(
         is(x, "SpatialData"),
         is.numeric(alpha.label),
