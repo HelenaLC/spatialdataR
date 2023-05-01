@@ -20,6 +20,8 @@
 \alias{LabelArray-class}
 \alias{[,ZarrArray-method}
 \alias{channels}
+\alias{channels<-}
+\alias{channels<-,ImageArray-method}
 \alias{coord}
 \alias{coords}
 \alias{transformImage}
@@ -33,10 +35,10 @@
 \alias{coord,ShapeFrame-method}
 \alias{translateElement,ZarrArray-method}
 \alias{translateElement,ShapeFrame-method}
-\alias{scaleElement,ZarrArray-method}
-\alias{scaleElement,ShapeFrame-method}
 \alias{rotateElement,ZarrArray-method}
 \alias{rotateElement,ShapeFrame-method}
+\alias{scaleElement,ZarrArray-method}
+\alias{scaleElement,ShapeFrame-method}
 \alias{transformElement,ZarrArray-method}
 \alias{transformElement,ShapeFrame-method}
 \alias{alignElements,ANY-method}
@@ -78,17 +80,17 @@ LabelArray(data = array(), metadata = list(), ...)
 
 \S4method{coord}{ShapeFrame}(x, name = 1)
 
-\S4method{translateElement}{ZarrArray}(x, t = c(0, 0))
+\S4method{translateElement}{ZarrArray}(x, t = numeric(2))
 
-\S4method{translateElement}{ShapeFrame}(x, t = c(0, 0))
-
-\S4method{scaleElement}{ZarrArray}(x, t = rep(1, length(dim(x))))
-
-\S4method{scaleElement}{ShapeFrame}(x, t = c(1, 1))
+\S4method{translateElement}{ShapeFrame}(x, t = numeric(2))
 
 \S4method{rotateElement}{ZarrArray}(x, t = 0)
 
 \S4method{rotateElement}{ShapeFrame}(x, t = 0)
+
+\S4method{scaleElement}{ZarrArray}(x, t = rep(1, length(channels(x))))
+
+\S4method{scaleElement}{ShapeFrame}(x, t = c(1, 1))
 
 \S4method{transformElement}{ZarrArray}(x, coord = NULL)
 
@@ -98,6 +100,8 @@ LabelArray(data = array(), metadata = list(), ...)
 }
 \arguments{
 \item{x}{An \code{ImageArray} object.}
+
+\item{value}{A character string of \code{length(channels(x))}.}
 
 \item{i, j}{Indices for subsetting (see \code{?base::Extract}).}
 

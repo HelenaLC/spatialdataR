@@ -37,6 +37,11 @@ plotSD(
 \item{coord}{A character string specifying the target coordinate system.
 If \code{NULL}, defaults to the first available shared coordinates.}
 
+\item{...}{Additional graphical parameters passed to
+\code{\link[ggplot2]{geom_polygon}} for shapes;
+for labels, an \code{alpha} value can be passed;
+ignored otherwise.}
+
 \item{image, label, shape}{A scalar integer (index) or character string (identifier)
 specifying the entity to include (can be \code{NULL}).}
 
