@@ -16,6 +16,10 @@
 #' @param alpha.label,alpha.shape,fill.shape,col.shape Plotting aesthetics.
 #' @param coord A character string specifying the target coordinate system.
 #'   If \code{NULL}, defaults to the first available shared coordinates.
+#' @param ... Additional graphical parameters passed to
+#'   \code{\link[ggplot2]{geom_polygon}} for shapes;
+#'   for labels, an \code{alpha} value can be passed;
+#'   ignored otherwise.
 #'
 #' @return \code{ggplot2}
 #'

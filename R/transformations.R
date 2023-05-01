@@ -55,128 +55,148 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
 
 # translation ----
 
+.translateZarrArray <- function(x, t) {
+    a <- as.array(x)
+    d <- length(dim(a))
+    if (d == 2) a <- array(a, c(1, dim(a)))
+    y <- apply(a, 1, translate, t, simplify=FALSE)
+    y <- abind(y, along=0)
+    if (d == 2) y <- y[1, , ]
+    fun <- get(class(x))
+    fun(y, metadata(x))
+}
+.translateShapeFrame <- function(x, t) {
+    a <- as.array(x)
+    a[, 1] <- a[, 1]+t[2]
+    a[, 2] <- a[, 2]+t[1]
+    y <- switch(x$type[1],
+        circle={
+            asplit(a, 1)
+        },
+        polygon={
+            i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
+            i <- split(seq(nrow(a)), i)
+            lapply(i, \(.) a[., ])
+        }
+    )
+    x$data <- y
+    return(x)
+}
 .translate <- function(x, t) {
     stopifnot(
-        is.numeric(t),
-        length(t) == 2,
-        round(t) == t)
-    a <- as.array(x)
-    if (is(x, "ShapeFrame")) {
-        a[, 1] <- a[, 1]+t[2]
-        a[, 2] <- a[, 2]+t[1]
-        y <- switch(x$type[1],
-            circle=asplit(a, 1),
-            polygon={
-                i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
-                i <- split(seq(nrow(a)), i)
-                lapply(i, \(.) a[., ])
-            })
+        "'t' should be numeric"=is.numeric(t),
+        "'t' should be of length 2"=length(t) == 2,
+        "'t' should be whole numbers"=round(t) == t)
+    fun <- if (is(x, "ZarrArray")) {
+        .translateZarrArray
     } else {
-        d <- length(dim(a))
-        if (d == 2) a <- array(a, c(1, dim(a)))
-        y <- apply(a, 1, translate, t, simplify=FALSE)
-        y <- abind(y, along=0)
-        if (d == 2) y <- y[1, , ]
+        .translateShapeFrame
     }
-    return(y)
+    fun(x, t)
 }
 
 #' @rdname ZarrArray
 #' @importFrom EBImage abind translate
 #' @export
 setMethod("translateElement", "ZarrArray",
-    function(x, t=c(0,0)) {
-        y <- .translate(x, t)
-        fun <- get(class(x))
-        fun(y, metadata(x))
-    }
-)
+    function(x, t=numeric(2)) .translateZarrArray(x, t))
 
 #' @rdname ZarrArray
 #' @export
 setMethod("translateElement", "ShapeFrame",
-    function(x, t=c(0,0)) {
-        x$data <- .translate(x, t)
-        ShapeFrame(x, metadata(x))
-    }
-)
-
-# scaling ----
-
-#' @importFrom EBImage abind resize
-.scale <- function(x, t) {
-    a <- as.array(x)
-    d <- length(dim(a))
-    stopifnot(
-        is.numeric(t),
-        length(t) == d)
-    if (is(x, "ShapeFrame")) {
-        a[, 1] <- a[, 1]*t[1]
-        a[, 2] <- a[, 2]*t[2]
-        i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
-        i <- split(seq(nrow(a)), i)
-        lapply(i, \(.) a[., ])
-    } else {
-        y <- apply(a, 1, \(.)
-            resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
-            simplify=FALSE)
-        y <- abind(y, along=0)
-    }
-}
-
-#' @rdname ZarrArray
-#' @export
-setMethod("scaleElement", "ZarrArray",
-    function(x, t=rep(1, length(dim(x)))) {
-        y <- .scale(x, t)
-        fun <- get(class(x))
-        fun(y, metadata(x))
-    }
-)
-#' @rdname ZarrArray
-#' @export
-setMethod("scaleElement", "ShapeFrame",
-    function(x, t=c(1, 1)) {
-        x$data <- .scale(x, t)
-        ShapeFrame(x, metadata(x))
-    }
-)
+    function(x, t=numeric(2)) .translateShapeFrame(x, t))
 
 # rotation ----
+
+.rotateZarrArray <- function(x, t) {
+    a <- as.array(x)
+    y <- apply(a, 1, rotate, t, simplify=FALSE)
+    y <- abind(y, along=0)
+    fun <- get(class(x))
+    fun(y, metadata(x))
+}
+.rotateShapeFrame <- function(x, t) {
+    t <- t*pi/180
+    R <- matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+    y <- lapply(x$data, \(xy) (xy %*% R))
+    x$data <- y
+    return(x)
+}
 
 #' @importFrom EBImage rotate
 .rotate <- function(x, t) {
     stopifnot(
-        is.numeric(t),
-        length(t) == 1)
-    if (is(x, "ShapeFrame")) {
-        t <- t*pi/180
-        R <- matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
-        lapply(x$data, \(xy) (xy %*% R))
+        "'t' should be numeric"=is.numeric(t),
+        "'t' should be of length 1"=length(t) == 1)
+    fun <- if (is(x, "ZarrArray")) {
+        .rotateZarrArray
     } else {
-        a <- as.array(x)
-        y <- apply(a, 1, rotate, t, simplify=FALSE)
-        y <- abind(y, along=0)
+        .rotateShapeFrame
     }
+    fun(x, t)
 }
 
 #' @rdname ZarrArray
 #' @export
 setMethod("rotateElement", "ZarrArray",
-    function(x, t=0) {
-        y <- .rotate(x, t)
-        fun <- get(class(x))
-        fun(y, metadata(x))
-    }
-)
+    function(x, t=0) .rotate(x, t))
+
 #' @rdname ZarrArray
 #' @export
 setMethod("rotateElement", "ShapeFrame",
-    function(x, t=0) {
-        x$data <- .rotate(x, t)
-        ShapeFrame(x, metadata(x))
+    function(x, t=0) .rotate(x, t))
+
+# scaling ----
+
+#' @importFrom EBImage abind resize
+.scaleZarrArray <- function(x, t) {
+    a <- as.array(x)
+    d <- length(dim(a))
+    y <- apply(a, 1, \(.)
+        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
+        simplify=FALSE)
+    y <- abind(y, along=0)
+    fun <- get(class(x))
+    fun(y, metadata(x))
+}
+.scaleShapeFrame <- function(x, t) {
+    a <- as.array(x)
+    a[, 1] <- a[, 1]*t[1]
+    a[, 2] <- a[, 2]*t[2]
+    n <- vapply(x$data, nrow, integer(1))
+    i <- rep.int(x$index, n)
+    i <- split(seq(nrow(a)), i)
+    y <- lapply(i, \(.) a[., ])
+    x$data <- y
+    return(x)
+}
+.scale <- function(x, t) {
+    d <- length(dim(x))
+    stopifnot(
+        "'t' should be numeric"=is.numeric(t),
+        "'t' should be greater than zero"=t > 0)
+    fun <- if (is(x, "ZarrArray")) {
+        d <- length(channels(x))
+        if (length(t) != d)
+            stop("length of 't' (", length(t), ") should be",
+                " the same as the number of channels (", d, ")")
+        .scaleZarrArray
+    } else {
+        stopifnot("'t' should be of length 2"=length(t) == 2)
+        .scaleShapeFrame
     }
-)
+    fun(x, t)
+}
+
+#' @rdname ZarrArray
+#' @export
+setMethod("scaleElement", "ZarrArray",
+    function(x, t=rep(1, length(channels(x)))) .scale(x, t))
+
+#' @rdname ZarrArray
+#' @export
+setMethod("scaleElement", "ShapeFrame",
+    function(x, t=c(1, 1)) .scale(x, t))
 
 # transformation ----
 
@@ -193,11 +213,13 @@ setMethod("rotateElement", "ShapeFrame",
 
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement", "ZarrArray", function(x, coord=NULL) .transform(x, coord))
+setMethod("transformElement", "ZarrArray",
+    function(x, coord=NULL) .transform(x, coord))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement", "ShapeFrame", function(x, coord=NULL) .transform(x, coord))
+setMethod("transformElement", "ShapeFrame",
+    function(x, coord=NULL) .transform(x, coord))
 
 #' @rdname ZarrArray
 #' @export

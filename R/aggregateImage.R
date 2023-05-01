@@ -10,7 +10,7 @@
 #'
 #' @return
 #' An object of class \code{\link{SingleCellExperiment}}
-#' where rows = image channels and columns = unique labels.
+#' where rows=image channels and columns=unique labels.
 #'
 #' @examples
 #' library(ggplot2)
@@ -19,8 +19,8 @@
 #' path <- system.file(path, package = "SpatialData")
 #' spd <- readSpatialData(path)
 #' sce <- aggregateImage(spd)
-#' cd <- data.frame(colData(sce), z = assay(sce)[1, ])
-#' ggplot(cd, aes(x, y, col = z)) + geom_point() +
+#' cd <- data.frame(colData(sce), z=assay(sce)[1, ])
+#' ggplot(cd, aes(x, y, col=z)) + geom_point() +
 #'   scale_color_viridis_c() + scale_y_reverse()
 #'
 #' @author Helena L. Crowell
@@ -31,11 +31,11 @@ aggregateImage <- function(x, image=1, label=1, fun=mean) {
     img <- as.array(image(x, image))
     lab <- as.array(label(x, label))
     pbs <- t(apply(img, 1, tapply, lab, fun))
-    xs <- tapply(col(img[1,,]), lab, fun)
-    ys <- tapply(row(img[1,,]), lab, fun)
+    xs <- tapply(col(img[1, , ]), lab, fun)
+    ys <- tapply(row(img[1, , ]), lab, fun)
     cd <- data.frame(x=xs, y=ys)
     rmv <- match("0", colnames(pbs))
-    cd <- cd[-1, ]; as <- list(pbs[, -1])
+    cd <- cd[-1,]; as <- list(pbs[,-1])
     names(as) <- as.character(substitute(fun))
     sce <- SingleCellExperiment(as, colData=cd)
     return(sce)

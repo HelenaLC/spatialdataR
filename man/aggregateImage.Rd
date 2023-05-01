@@ -17,7 +17,7 @@ should be one of \code{image/labelNames(x)}.}
 }
 \value{
 An object of class \code{\link{SingleCellExperiment}}
-where rows = image channels and columns = unique labels.
+where rows=image channels and columns=unique labels.
 }
 \description{
 ...
@@ -29,8 +29,8 @@ path <- file.path("extdata", "blobs")
 path <- system.file(path, package = "SpatialData")
 spd <- readSpatialData(path)
 sce <- aggregateImage(spd)
-cd <- data.frame(colData(sce), z = assay(sce)[1, ])
-ggplot(cd, aes(x, y, col = z)) + geom_point() +
+cd <- data.frame(colData(sce), z=assay(sce)[1, ])
+ggplot(cd, aes(x, y, col=z)) + geom_point() +
   scale_color_viridis_c() + scale_y_reverse()
 
 }

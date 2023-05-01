@@ -7,7 +7,9 @@
 #' [,ZarrArray-method
 #' dim,ZarrArray-method
 #' dimnames,ZarrArray-method
-#' channels coord coords transformImage
+#' channels channels<-
+#' channels<-,ImageArray-method
+#' coord coords transformImage
 #' translateElement rotateElement scaleElement
 #' transformElement alignElements
 #'
@@ -29,6 +31,7 @@
 #' @param perm The subscript permutation vector (see `?base::aperm`).
 #' @param name A character string specifying the coordinate system to extract.
 #' @param coord A character string specifying the target coordinate system.
+#' @param value A character string of \code{length(channels(x))}.
 #'
 #' @section Transformations:
 #' In the following examples, \code{ia} is a \code{\link{ImageArray}} object.
