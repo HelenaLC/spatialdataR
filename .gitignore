@@ -1,6 +1,7 @@
 .DS_Store
 .Rproj.user
 .Rhistory
+inst/*.R
 vignettes/*cache
 vignettes/*files
 #inst/extdata/blobs

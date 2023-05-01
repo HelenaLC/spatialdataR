@@ -47,6 +47,8 @@ setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
 setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))
 setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 
+setGeneric("axes", function(x, ...) standardGeneric("axes"))
+
 setGeneric("channels", function(x, ...) standardGeneric("channels"))
 setGeneric("channels<-", function(x, value) standardGeneric("channels<-"))
 

@@ -150,8 +150,12 @@ setMethod("rotateElement", "ShapeFrame",
 
 #' @importFrom EBImage abind resize
 .scaleZarrArray <- function(x, t) {
-    a <- as.array(x)
+    i <- sample(2000, 100)
+    j <- sample(1969, 200)
+    i <- j <- TRUE
+    a <- as.array(x)[,i,j]
     d <- length(dim(a))
+    # TODO: this is slow as hell...
     y <- apply(a, 1, \(.)
         resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
         simplify=FALSE)
@@ -220,6 +224,23 @@ setMethod("transformElement", "ZarrArray",
 #' @export
 setMethod("transformElement", "ShapeFrame",
     function(x, coord=NULL) .transform(x, coord))
+
+#' @rdname ZarrArray
+#' @export
+setMethod("axes", "ImageArray", function(x, type=NULL) {
+    md <- metadata(x)
+    ax <- md$multiscales$axes[[1]]
+    if (is.null(type)) return(ax$name)
+    stopifnot(
+        "'type' should be a string"=is.character(type),
+        "'type' should be of length 1"=length(type) == 1)
+    if (!type %in% ax$type) {
+        ax <- dQuote(unique(ax$type))
+        ax <- paste(ax, collapse=", ")
+        stop("'type' should be one of ", ax)
+    }
+    ax$name[ax$type == type]
+})
 
 #' @rdname ZarrArray
 #' @export
