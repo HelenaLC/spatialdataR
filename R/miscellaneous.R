@@ -46,7 +46,8 @@ setMethod("show", "SpatialData", .showSpatialData)
     cat(sprintf("|-time(%s):", sum(t)), axs$name[t], "\n")
     cat(sprintf("|-space(%s):", sum(s)), axs$name[s], "\n")
     cat(sprintf("|-channel(%s):", sum(c)), axs$name[c], "\n")
-    cat("coords:", coords(object)$output.name)
+    cs <- coords(object)$output.name
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 .showImageArray <- function(object) {
     cat("class: ImageArray\n")
@@ -62,7 +63,8 @@ setMethod("show", "SpatialData", .showSpatialData)
     cat("class: ShapeFrame\n")
     cat("geoms:", n <- nrow(object), "\n")
     if (n) cat("type:", object$type[1], "\n")
-    cat("coords:", coords(object)$output.name)
+    cs <- coords(object)$output.name
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
 #' @rdname SD-miscellaneous
