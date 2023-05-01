@@ -76,17 +76,17 @@ ZarrArray <- function(data=array(), metadata=list(), ...) {
 #' @export
 ImageArray <- function(data=array(), metadata=list(), ...) {
     # TODO: lot's of validity checks needed here...
-    if (length(metadata) > 0) {
-        msc <- as.list(metadata$multiscales)
-        axs <- msc$axes[[1]]
-        nms <- vector("list", nrow(axs))
-        names(nms) <- axs$name
-        chs <- metadata$channels_metadata$channels$label
-        idx <- grep("channel", axs$type)
-        nms[[idx]] <- chs
-        dimnames(data) <- nms
-    }
-    .ImageArray(data=data, metadata=metadata)
+    # if (length(metadata) > 0) {
+    #     msc <- as.list(metadata$multiscales)
+    #     axs <- msc$axes[[1]]
+    #     nms <- vector("list", nrow(axs))
+    #     names(nms) <- axs$name
+    #     chs <- metadata$channels_metadata$channels$label
+    #     idx <- grep("channel", axs$type)
+    #     nms[[idx]] <- chs
+    #     dimnames(data) <- nms
+    # }
+    .ImageArray(data=data, metadata=metadata, ...)
 }
 
 #' @rdname ZarrArray
@@ -99,5 +99,5 @@ LabelArray <- function(data=array(), metadata=list(), ...) {
         nms <- vector("list", nrow(axs))
         names(nms) <- axs$name
     }
-    .LabelArray(data=data, metadata=metadata)
+    .LabelArray(data=data, metadata=metadata, ...)
 }

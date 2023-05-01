@@ -46,7 +46,7 @@ setMethod("show", "SpatialData", .showSpatialData)
     cat(sprintf("|-time(%s):", sum(t)), axs$name[t], "\n")
     cat(sprintf("|-space(%s):", sum(s)), axs$name[s], "\n")
     cat(sprintf("|-channel(%s):", sum(c)), axs$name[c], "\n")
-    cs <- coords(object)$output.name
+    cs <- coords(object)$output$name
     cat(sprintf("coords(%s):", length(cs)), cs)
 }
 .showImageArray <- function(object) {
