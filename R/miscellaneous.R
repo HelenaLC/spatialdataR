@@ -24,12 +24,19 @@ NULL
     shps <- shapes(object)
     pnts <- points(object)
     cat("class: SpatialData\n")
+    # available elements
     cat(sprintf("images(%s):", length(imgs)), names(imgs), "\n")
     cat(sprintf("labels(%s):", length(labs)), names(labs), "\n")
     cat(sprintf("shapes(%s):", length(shps)), names(shps), "\n")
     cat(sprintf("points(%s):", length(pnts)), names(pnts), "\n")
     cat("table:", if (!is.null(table(object)))
-        dim(table(object)) else "nan")
+        dim(table(object)) else "nan", "\n")
+    # shared coordinate systems
+    # TODO: util for this?
+    lys <- list(imgs, labs, shps)
+    cs <- Reduce(intersect, lapply(lys, \(.)
+        vapply(., \(.) getCoordTrans(.)$output$name, character(1))))
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
 #' @rdname SD-miscellaneous

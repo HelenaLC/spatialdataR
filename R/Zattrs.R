@@ -34,16 +34,12 @@ setValidity("Zattrs", .validityZattrs)
 setMethod("zattrs", "ZarrArray", function(x) x@zattrs)
 setMethod("zattrs", "ShapeFrame", function(x) x@zattrs)
 
-setReplaceMethod("zattrs", c("ZarrArray", "Zattrs"),
+setReplaceMethod("zattrs",
+    c("ZarrArray_OR_ShapeFrame", "Zattrs"),
     function(x, value) { x@zattrs <- value; x })
 
-setReplaceMethod("zattrs", c("ZarrArray", "list"),
-    function(x, value) `zattrs<-`(x, Zattrs(value)))
-
-setReplaceMethod("zattrs", c("ShapeFrame", "Zattrs"),
-    function(x, value) { x@zattrs <- value; x })
-
-setReplaceMethod("zattrs", c("ShapeFrame", "list"),
+setReplaceMethod("zattrs",
+    c("ZarrArray_OR_ShapeFrame", "list"),
     function(x, value) `zattrs<-`(x, Zattrs(value)))
 
 # getters & setters for coordinate transformations -----------------------------
@@ -67,9 +63,21 @@ setMethod("getCoordTrans", "Zattrs", function(x, name=NULL) {
     return(ct[idx, ])
 })
 
-setMethod("getCoordTrans", "ANY",
-    function(x, name=NULL)
-        getCoordTrans(zattrs(x), name))
+setMethod("getCoordTrans", "ZarrArray_OR_ShapeFrame",
+    function(x, name=NULL) getCoordTrans(zattrs(x), name))
+
+setMethod("getCoordTrans", "SpatialData",
+    function(x, i, name=NULL) {
+        # TODO: validity checks
+        for (e in elementNames(x)) {
+            if (i %in% names(x[[e]])) {
+                y <- x[[e]][[i]]
+                break
+            }
+        }
+        getCoordTrans(zattrs(y), name)
+    }
+)
 
 setMethod("setCoordTrans", "Zattrs", function(x, value) {
     ms <- x$multiscales
@@ -130,11 +138,14 @@ setMethod("addCoordTrans", "Zattrs",
     }
 )
 
-setMethod("addCoordTrans", "ZarrArray", function(x, name, type, data)
-    `zattrs<-`(x, addCoordTrans(zattrs(x), name, type, data)))
-
-setMethod("addCoordTrans", "ShapeFrame", function(x, name, type, data)
-    `zattrs<-`(x, addCoordTrans(zattrs(x), name, type, data)))
+setMethod("addCoordTrans",
+    "ZarrArray_OR_ShapeFrame",
+    function(x, name, type, data) {
+        l <- addCoordTrans(zattrs(x), name, type, data)
+        zattrs(x) <- l
+        return(x)
+    }
+)
 
 setMethod("rmvCoordTrans", "Zattrs", function(x, name) {
     old <- getCoordTrans(x)
@@ -143,8 +154,11 @@ setMethod("rmvCoordTrans", "Zattrs", function(x, name) {
     setCoordTrans(x, new)
 })
 
-setMethod("rmvCoordTrans", "ZarrArray", function(x, name)
-    `zattrs<-`(x, rmvCoordTrans(zattrs(x), name)))
-
-setMethod("rmvCoordTrans", "ShapeFrame", function(x, name)
-    `zattrs<-`(x, rmvCoordTrans(zattrs(x), name)))
+setMethod("rmvCoordTrans",
+    "ZarrArray_OR_ShapeFrame",
+    function(x, name) {
+        l <- rmvCoordTrans(zattrs(x), name)
+        zattrs(x) <- l
+        return(x)
+    }
+)

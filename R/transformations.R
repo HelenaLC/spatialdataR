@@ -169,25 +169,21 @@ setMethod("scaleElement", "ShapeFrame",
 
 # transformation ----
 
-.transform <- function(x, coord) {
-    df <- coord(x, coord)
-    switch(
-        df$type,
-        "identity"=x,
-        "scale"=scaleElement(x, df$data[[1]]),
-        "rotate"=rotateElement(x, df$data[[1]]),
-        sprintf("transformation of type '%s' yet to be supported.", df$type))
-}
-
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement", "ZarrArray",
-    function(x, coord=NULL) .transform(x, coord))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("transformElement", "ShapeFrame",
-    function(x, coord=NULL) .transform(x, coord))
+setMethod("transformElement",
+    "ZarrArray_OR_ShapeFrame",
+    function(x, coord=NULL) {
+        df <- coord(x, coord)
+        switch(
+            df$type,
+            "identity"=x,
+            "scale"=scaleElement(x, df$data[[1]]),
+            "rotate"=rotateElement(x, df$data[[1]]),
+            paste0("transformation of type '",
+                df$type, "' not (yet) supported"))
+    }
+)
 
 #' @rdname ZarrArray
 #' @export
