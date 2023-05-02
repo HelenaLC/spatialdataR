@@ -19,6 +19,8 @@ ShapeFrame(data = DataFrame(), metadata = list(), ...)
 
 \item{metadata}{A list of metadata corresponding to .zattrs.}
 
+\item{...}{Further arguments to be passed to or from other methods.}
+
 \item{x}{An object of class \code{ShapeFrame}.}
 }
 \value{

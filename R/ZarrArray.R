@@ -32,6 +32,8 @@
 #' @param name A character string specifying the coordinate system to extract.
 #' @param coord A character string specifying the target coordinate system.
 #' @param value A character string of \code{length(channels(x))}.
+#' @param type A character string specifying
+#'   which type(s) of channel(s) to extract.
 #'
 #' @section Transformations:
 #' In the following examples, \code{ia} is a \code{\link{ImageArray}} object.

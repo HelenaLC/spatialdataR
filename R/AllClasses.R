@@ -35,6 +35,11 @@ setClassUnion(
     contains="DFrame",
     slots=c(zattrs="Zattrs"))
 
+# making it easier for shared 'Zattrs' methods
+setClassUnion(
+    "ZarrArray_OR_ShapeFrame",
+    c("ZarrArray", "ShapeFrame"))
+
 #' @exportClass SpatialData SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",
