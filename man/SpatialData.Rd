@@ -21,9 +21,11 @@
 \alias{shapes,SpatialData-method}
 \alias{shape,SpatialData-method}
 \alias{shapeNames,SpatialData-method}
+\alias{shapes<-,SpatialData,list-method}
 \alias{points,SpatialData-method}
 \alias{point,SpatialData-method}
 \alias{pointNames,SpatialData-method}
+\alias{points<-,SpatialData,list-method}
 \alias{table,SpatialData-method}
 \alias{table<-,SpatialData,SingleCellExperiment_OR_NULL-method}
 \alias{table<-,SpatialData,ANY-method}
@@ -107,11 +109,15 @@
 
 \S4method{shapeNames}{SpatialData}(x)
 
+\S4method{shapes}{SpatialData,list}(x) <- value
+
 \S4method{points}{SpatialData}(x)
 
 \S4method{point}{SpatialData}(x, i = 1)
 
 \S4method{pointNames}{SpatialData}(x)
+
+\S4method{points}{SpatialData,list}(x) <- value
 
 \S4method{table}{SpatialData}(x)
 

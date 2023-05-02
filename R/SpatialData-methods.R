@@ -165,6 +165,15 @@ setMethod("shape", "SpatialData", function(x, i=1) {
 #' @export
 setMethod("shapeNames", "SpatialData", function(x) names(shapes(x)))
 
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("shapes",
+    c("SpatialData", "list"),
+    function(x, value) {
+        x@shapes <- value
+        return(x)
+    })
+
 # points -----------------------------------------------------------------------
 
 #' @rdname SpatialData
@@ -181,6 +190,15 @@ setMethod("point", "SpatialData", function(x, i=1) {
 #' @rdname SpatialData
 #' @export
 setMethod("pointNames", "SpatialData", function(x) names(points(x)))
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("points",
+    c("SpatialData", "list"),
+    function(x, value) {
+        x@points <- value
+        return(x)
+    })
 
 # table ------------------------------------------------------------------------
 

@@ -24,12 +24,19 @@ NULL
     shps <- shapes(object)
     pnts <- points(object)
     cat("class: SpatialData\n")
+    # available elements
     cat(sprintf("images(%s):", length(imgs)), names(imgs), "\n")
     cat(sprintf("labels(%s):", length(labs)), names(labs), "\n")
     cat(sprintf("shapes(%s):", length(shps)), names(shps), "\n")
     cat(sprintf("points(%s):", length(pnts)), names(pnts), "\n")
     cat("table:", if (!is.null(table(object)))
-        dim(table(object)) else "nan")
+        dim(table(object)) else "nan", "\n")
+    # shared coordinate systems
+    # TODO: util for this?
+    lys <- list(imgs, labs, shps)
+    cs <- Reduce(intersect, lapply(lys, \(.)
+        vapply(., \(.) getCoordTrans(.)$output$name, character(1))))
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
 #' @rdname SD-miscellaneous
@@ -46,6 +53,8 @@ setMethod("show", "SpatialData", .showSpatialData)
     cat(sprintf("|-time(%s):", sum(t)), axs$name[t], "\n")
     cat(sprintf("|-space(%s):", sum(s)), axs$name[s], "\n")
     cat(sprintf("|-channel(%s):", sum(c)), axs$name[c], "\n")
+    cs <- coords(object)$output$name
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 .showImageArray <- function(object) {
     cat("class: ImageArray\n")
@@ -60,7 +69,9 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showShapeFrame <- function(object) {
     cat("class: ShapeFrame\n")
     cat("geoms:", n <- nrow(object), "\n")
-    if (n) cat("type:", object$type[1])
+    if (n) cat("type:", object$type[1], "\n")
+    cs <- coords(object)$output.name
+    cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
 #' @rdname SD-miscellaneous

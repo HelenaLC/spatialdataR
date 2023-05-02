@@ -47,11 +47,15 @@ setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
 setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))
 setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
 
+setGeneric("axes", function(x, ...) standardGeneric("axes"))
+
 setGeneric("channels", function(x, ...) standardGeneric("channels"))
 setGeneric("channels<-", function(x, value) standardGeneric("channels<-"))
 
 setGeneric("coord", function(x, ...) standardGeneric("coord"))
 setGeneric("coords", function(x, ...) standardGeneric("coords"))
+setGeneric("coord<-", function(x, i, ..., value) standardGeneric("coord<-"))
+setGeneric("coords<-", function(x, value) standardGeneric("coords<-"))
 
 setGeneric("scaleElement", function(x, ...) standardGeneric("scaleElement"))
 setGeneric("rotateElement", function(x, ...) standardGeneric("rotateElement"))
@@ -63,3 +67,13 @@ setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
 setGeneric("alignElements", function(...) standardGeneric("alignElements"))
 
 setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
+
+# INTERNALS for handling of coordinate transformations -------------------------
+
+setGeneric("zattrs", function(x, ...) standardGeneric("zattrs"))
+setGeneric("zattrs<-", function(x, value) standardGeneric("zattrs<-"))
+
+setGeneric("getCoordTrans", function(x, ...) standardGeneric("getCoordTrans"))
+setGeneric("setCoordTrans", function(x, ...) standardGeneric("setCoordTrans"))
+setGeneric("addCoordTrans", function(x, ...) standardGeneric("addCoordTrans"))
+setGeneric("rmvCoordTrans", function(x, ...) standardGeneric("rmvCoordTrans"))
