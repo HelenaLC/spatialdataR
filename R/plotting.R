@@ -27,18 +27,18 @@
 #'
 #' @examples
 #' path <- system.file("extdata", "raccoon", package="SpatialData")
-#' sd <- readSpatialData(path)
+#' spd <- readSpatialData(path)
 #'
 #' # by element
-#' plotElement(image(sd))
-#' plotElement(label(sd))
-#' plotElement(shape(sd))
+#' plotElement(image(spd))
+#' plotElement(label(spd))
+#' plotElement(shape(spd))
 #'
 #' # layered
-#' plotSD(sd)
-#' plotSD(sd, image=NULL)
-#' plotSD(sd, label=NULL, fill.shape="pink")
-#' plotSD(sd, shape=NULL, alpha.label=0.2)
+#' plotSD(spd)
+#' plotSD(spd, image=NULL)
+#' plotSD(spd, label=NULL, fill.shape="pink")
+#' plotSD(spd, shape=NULL, alpha.label=0.2)
 NULL
 
 #' @import ggplot2
@@ -56,8 +56,9 @@ NULL
 #' @importFrom grDevices as.raster
 #' @importFrom ggplot2 annotation_raster
 #' @export
-setMethod("plotElement", "ImageArray", function(x, coord=NULL, ...) {
-    x <- transformElement(x, coord)
+setMethod("plotElement", "ImageArray", function(x, coord, ...) {
+    if (!missing(coord))
+        x <- transformElement(x, coord)
     a <- as.array(x)
     a <- aperm(a, c(2, 3, 1))
     r <- as.raster(a/max(a))
@@ -69,10 +70,11 @@ setMethod("plotElement", "ImageArray", function(x, coord=NULL, ...) {
 #' @importFrom grDevices as.raster
 #' @importFrom ggplot2 annotation_raster
 #' @export
-setMethod("plotElement", "LabelArray", function(x, coord=NULL, ...) {
+setMethod("plotElement", "LabelArray", function(x, coord, ...) {
+    if (!missing(coord))
+        x <- transformElement(x, coord)
     dots <- list(...)
     alpha <- ifelse(is.null(dots$alpha), 1, dots$alpha)
-    x <- transformElement(x, coord)
     a <- as.array(x)
     w <- dim(a)[2]; h <- dim(a)[1]
     n <- length(unique(c(a)))
@@ -87,8 +89,9 @@ setMethod("plotElement", "LabelArray", function(x, coord=NULL, ...) {
 #' @importFrom grDevices as.raster
 #' @importFrom ggplot2 aes geom_polygon
 #' @export
-setMethod("plotElement", "ShapeFrame", function(x, coord=NULL, ...) {
-    x <- transformElement(x, coord)
+setMethod("plotElement", "ShapeFrame", function(x, coord, ...) {
+    if (!missing(coord))
+        x <- transformElement(x, coord)
     switch(x$type[1],
         # TODO: other options?
         circle={
@@ -121,6 +124,7 @@ plotSD <- function(x,
 # image <- 1
 # label <- NULL
 # shape <- NULL
+
     stopifnot(
         is(x, "SpatialData"),
         is.numeric(alpha.label),
@@ -139,13 +143,19 @@ plotSD <- function(x,
     l <- if (!is.null(label)) label(x, label)
     s <- if (!is.null(shape)) shape(x, shape)
 
-    # ils <- alignElements(i, l, s, coord=coord)
-    # i <- ils[[1]]; l <- ils[[2]]; s <- ils[[3]]
+    # align elements
+    lys <- list(i, l, s)
+    nan <- vapply(lys, is.null, logical(1))
+    tmp <- do.call(alignElements, c(lys[!nan], list(coord=coord)))
+    lys[!nan] <- tmp
+    if (!nan[1]) i <- lys[[1]]
+    if (!nan[2]) l <- lys[[2]]
+    if (!nan[3]) s <- lys[[3]]
 
     ps <- list(
-        if (!is.null(i)) plotElement(i, coord=coord),
-        if (!is.null(l)) plotElement(l, coord=coord, alpha=alpha.label),
-        if (!is.null(s)) plotElement(s, coord=coord, alpha=alpha.shape, fill=fill.shape, col=col.shape))
+        if (!is.null(i)) plotElement(i),
+        if (!is.null(l)) plotElement(l, alpha=alpha.label),
+        if (!is.null(s)) plotElement(s, alpha=alpha.shape, fill=fill.shape, col=col.shape))
     ps <- ps[!vapply(ps, is.null, logical(1))]
     .get_lim <- \(p, i) p$scales$scales[[i]]$limits
     xs <- vapply(ps, \(p) .get_lim(p, 1), numeric(2))

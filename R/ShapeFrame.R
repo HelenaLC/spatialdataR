@@ -22,6 +22,7 @@
 #' @param x An object of class \code{ShapeFrame}.
 #' @param data A \code{\link{DataFrame}} of appropriate format.
 #' @param metadata A list of metadata corresponding to .zattrs.
+#' @param ... Further arguments to be passed to or from other methods.
 #'
 #' @return \code{ShapeFrame}
 #'
@@ -32,14 +33,14 @@
 #'
 #' @importFrom S4Vectors DataFrame isEmpty metadata<-
 #' @export
-ShapeFrame <- function(data=DataFrame(), metadata=list()) {
+ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
     if (isEmpty(data))
         data <- data.frame(
             data=numeric(),
             index=integer(),
             type=character())
     data <- DataFrame(data)
-    df <- .ShapeFrame(data)
+    df <- .ShapeFrame(data, ...)
     metadata(df) <- metadata
     return(df)
 }

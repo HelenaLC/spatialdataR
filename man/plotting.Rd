@@ -13,11 +13,11 @@
 \alias{plotElement,ShapeFrame-method}
 \title{Plot `SpatialData` elements}
 \usage{
-\S4method{plotElement}{ImageArray}(x, coord = NULL, ...)
+\S4method{plotElement}{ImageArray}(x, coord, ...)
 
-\S4method{plotElement}{LabelArray}(x, coord = NULL, ...)
+\S4method{plotElement}{LabelArray}(x, coord, ...)
 
-\S4method{plotElement}{ShapeFrame}(x, coord = NULL, ...)
+\S4method{plotElement}{ShapeFrame}(x, coord, ...)
 
 plotSD(
   x,
@@ -55,18 +55,18 @@ specifying the entity to include (can be \code{NULL}).}
 }
 \examples{
 path <- system.file("extdata", "raccoon", package="SpatialData")
-sd <- readSpatialData(path)
+spd <- readSpatialData(path)
 
 # by element
-plotElement(image(sd))
-plotElement(label(sd))
-plotElement(shape(sd))
+plotElement(image(spd))
+plotElement(label(spd))
+plotElement(shape(spd))
 
 # layered
-plotSD(sd)
-plotSD(sd, image=NULL)
-plotSD(sd, label=NULL, fill.shape="pink")
-plotSD(sd, shape=NULL, alpha.label=0.2)
+plotSD(spd)
+plotSD(spd, image=NULL)
+plotSD(spd, label=NULL, fill.shape="pink")
+plotSD(spd, shape=NULL, alpha.label=0.2)
 }
 \author{
 Helena L. Crowell

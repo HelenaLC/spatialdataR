@@ -7,7 +7,7 @@
 #' [,ZarrArray-method
 #' dim,ZarrArray-method
 #' dimnames,ZarrArray-method
-#' channels channels<-
+#' axes channels channels<-
 #' channels<-,ImageArray-method
 #' coord coords transformImage
 #' translateElement rotateElement scaleElement
@@ -32,6 +32,8 @@
 #' @param name A character string specifying the coordinate system to extract.
 #' @param coord A character string specifying the target coordinate system.
 #' @param value A character string of \code{length(channels(x))}.
+#' @param type A character string specifying
+#'   which type(s) of channel(s) to extract.
 #'
 #' @section Transformations:
 #' In the following examples, \code{ia} is a \code{\link{ImageArray}} object.
@@ -76,17 +78,17 @@ ZarrArray <- function(data=array(), metadata=list(), ...) {
 #' @export
 ImageArray <- function(data=array(), metadata=list(), ...) {
     # TODO: lot's of validity checks needed here...
-    if (length(metadata) > 0) {
-        msc <- as.list(metadata$multiscales)
-        axs <- msc$axes[[1]]
-        nms <- vector("list", nrow(axs))
-        names(nms) <- axs$name
-        chs <- metadata$channels_metadata$channels$label
-        idx <- grep("channel", axs$type)
-        nms[[idx]] <- chs
-        dimnames(data) <- nms
-    }
-    .ImageArray(data=data, metadata=metadata)
+    # if (length(metadata) > 0) {
+    #     msc <- as.list(metadata$multiscales)
+    #     axs <- msc$axes[[1]]
+    #     nms <- vector("list", nrow(axs))
+    #     names(nms) <- axs$name
+    #     chs <- metadata$channels_metadata$channels$label
+    #     idx <- grep("channel", axs$type)
+    #     nms[[idx]] <- chs
+    #     dimnames(data) <- nms
+    # }
+    .ImageArray(data=data, metadata=metadata, ...)
 }
 
 #' @rdname ZarrArray
@@ -99,5 +101,5 @@ LabelArray <- function(data=array(), metadata=list(), ...) {
         nms <- vector("list", nrow(axs))
         names(nms) <- axs$name
     }
-    .LabelArray(data=data, metadata=metadata)
+    .LabelArray(data=data, metadata=metadata, ...)
 }

@@ -40,6 +40,9 @@ BiocManager::install("HelenaLC/SpatialData")
 
 ## TODOs
 
+- Need an example of coordinate systems with different    
+  units to implement rescaling of transformations.
+
 ### Transformations
 
 <!-- yes: &#x2714; no: &#x274C; -->
@@ -49,7 +52,7 @@ BiocManager::install("HelenaLC/SpatialData")
 |identity  |&#x2714;|&#x2714;|&#x2714;|&#x274C;
 |translate |&#x2714;|&#x2714;|&#x2714;|&#x274C;
 |rotate    |&#x2714;|&#x2714;|&#x2714;|&#x274C;
-|scale     |&#x2714;|&#x2714;|&#x274C;|&#x274C;
+|scale     |&#x2714;|&#x2714;|&#x2714;|&#x274C;
 |affine    |&#x274C;|&#x274C;|&#x274C;|&#x274C;
 |by dim.   |&#x274C;|&#x274C;|&#x274C;|&#x274C;
 |sequence  |&#x274C;|&#x274C;|&#x274C;|&#x274C;

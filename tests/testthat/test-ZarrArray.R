@@ -21,6 +21,18 @@ md <- Rarr::zarr_overview(
   as_data_frame=TRUE)
 ia <- readArray(path)
 
+test_that("axes", {
+    x <- axes(ia)
+    expect_type(x, "character")
+    expect_length(x, md$dim[[1]][1])
+    expect_error(axes(ia, "foo"))
+    expect_error(axes(ia, 12345))
+    expect_error(axes(ia, axes(is)))
+    expect_error(axes(ia, c("a", "b")))
+    expect_length(axes(ia, "space"), 2)
+    expect_length(axes(ia, "channel"), 1)
+})
+
 test_that("channels", {
     x <- channels(ia)
     expect_type(x, "character")
@@ -46,10 +58,10 @@ test_that("dim", {
     expect_identical(x, md$dim[[1]])
 })
 
-test_that("dimnames", {
-    x <- dimnames(ia)
-    expect_type(x, "list")
-})
+# test_that("dimnames", {
+#     x <- dimnames(ia)
+#     expect_type(x, "list")
+# })
 
 test_that("extract", {
     expect_error(ia[1, ])

@@ -8,7 +8,7 @@
 \alias{as.array,ShapeFrame-method}
 \title{The `ShapeFrame` class}
 \usage{
-ShapeFrame(data = DataFrame(), metadata = list())
+ShapeFrame(data = DataFrame(), metadata = list(), ...)
 
 \S4method{as.array}{ShapeFrame}(x)
 
@@ -18,6 +18,8 @@ ShapeFrame(data = DataFrame(), metadata = list())
 \item{data}{A \code{\link{DataFrame}} of appropriate format.}
 
 \item{metadata}{A list of metadata corresponding to .zattrs.}
+
+\item{...}{Further arguments to be passed to or from other methods.}
 
 \item{x}{An object of class \code{ShapeFrame}.}
 }

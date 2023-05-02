@@ -19,6 +19,7 @@
 \alias{LabelArray}
 \alias{LabelArray-class}
 \alias{[,ZarrArray-method}
+\alias{axes}
 \alias{channels}
 \alias{channels<-}
 \alias{channels<-,ImageArray-method}
@@ -39,8 +40,8 @@
 \alias{rotateElement,ShapeFrame-method}
 \alias{scaleElement,ZarrArray-method}
 \alias{scaleElement,ShapeFrame-method}
-\alias{transformElement,ZarrArray-method}
-\alias{transformElement,ShapeFrame-method}
+\alias{transformElement,ZarrArray_OR_ShapeFrame-method}
+\alias{axes,ImageArray-method}
 \alias{alignElements,ANY-method}
 \title{#' @rdname ZarrArray
 #' @export
@@ -92,9 +93,9 @@ LabelArray(data = array(), metadata = list(), ...)
 
 \S4method{scaleElement}{ShapeFrame}(x, t = c(1, 1))
 
-\S4method{transformElement}{ZarrArray}(x, coord = NULL)
+\S4method{transformElement}{ZarrArray_OR_ShapeFrame}(x, coord = NULL)
 
-\S4method{transformElement}{ShapeFrame}(x, coord = NULL)
+\S4method{axes}{ImageArray}(x, type = NULL)
 
 \S4method{alignElements}{ANY}(..., coord = NULL)
 }
@@ -128,6 +129,9 @@ in that dimensions to subset.}
 \item{t}{Transformation data (see Transformations).}
 
 \item{coord}{A character string specifying the target coordinate system.}
+
+\item{type}{A character string specifying
+which type(s) of channel(s) to extract.}
 }
 \value{
 \code{ImageArray}

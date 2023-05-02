@@ -1,57 +1,20 @@
-.coords <- function(x) {
-    md <- metadata(x)
-    df <- if (!is.null(md$multiscales)) {
-        md$multiscales$coordinateTransformations[[1]]
-    } else {
-        md$coordinateTransformations
-    }
-    data <- lapply(seq(nrow(df)), \(.)
-        ifelse(df$type[.] == "identity",
-            list(NA), I(df[., df$type[.]])))
-    DataFrame(
-        input.name=df$input$name,
-        output.name=df$output$name,
-        input.axes=I(df$input$axes),
-        output.axes=I(df$output$axes),
-        type=df$type,
-        data=I(unlist(data, recursive=FALSE)))
-}
-
-.coord <- function(x, name) {
-    df <- coords(x)
-    if (is.null(name))
-        name <- df$output.name[1]
-    if (is.character(name)) {
-        idx <- match(name, df$output.name)
-        if (is.na(idx))
-            stop("couldn't find coords '", name, "'")
-    } else {
-        stopifnot(
-            is.numeric(name),
-            length(name) == 1,
-            name == round(name))
-        if (name > nrow(df))
-            stop("only", nrow(df), "coords available")
-            idx <- name
-    }
-    return(df[idx,])
-}
+# coords ----
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coords", "ZarrArray", function(x) .coords(x))
+setMethod("coords", "ZarrArray", function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("coords", "ShapeFrame", function(x) .coords(x))
+setMethod("coords", "ShapeFrame", function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ZarrArray", function(x, name=1) .coord(x, name))
+setMethod("coord", "ZarrArray", function(x, name=1) getCoordTrans(x, name))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
+setMethod("coord", "ShapeFrame", function(x, name=1) getCoordTrans(x, name))
 
 # translation ----
 
@@ -63,8 +26,9 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
     y <- abind(y, along=0)
     if (d == 2) y <- y[1, , ]
     fun <- get(class(x))
-    fun(y, metadata(x))
+    fun(y, zattrs(x))
 }
+
 .translateShapeFrame <- function(x, t) {
     a <- as.array(x)
     a[, 1] <- a[, 1]+t[2]
@@ -87,6 +51,7 @@ setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
         "'t' should be numeric"=is.numeric(t),
         "'t' should be of length 2"=length(t) == 2,
         "'t' should be whole numbers"=round(t) == t)
+    if (all(t == 0)) return(x)
     fun <- if (is(x, "ZarrArray")) {
         .translateZarrArray
     } else {
@@ -113,7 +78,7 @@ setMethod("translateElement", "ShapeFrame",
     y <- apply(a, 1, rotate, t, simplify=FALSE)
     y <- abind(y, along=0)
     fun <- get(class(x))
-    fun(y, metadata(x))
+    fun(y, zattrs(x))
 }
 .rotateShapeFrame <- function(x, t) {
     t <- t*pi/180
@@ -128,6 +93,7 @@ setMethod("translateElement", "ShapeFrame",
     stopifnot(
         "'t' should be numeric"=is.numeric(t),
         "'t' should be of length 1"=length(t) == 1)
+    if (t == 0) return(x)
     fun <- if (is(x, "ZarrArray")) {
         .rotateZarrArray
     } else {
@@ -152,37 +118,40 @@ setMethod("rotateElement", "ShapeFrame",
 .scaleZarrArray <- function(x, t) {
     a <- as.array(x)
     d <- length(dim(a))
-    y <- apply(a, 1, \(.)
-        resize(., nrow(.)*t[d-1], ncol(.)*t[d]),
-        simplify=FALSE)
+    if (length(t) != d) stop("'t' should be of length ", d)
+    # TODO: this is slow as hell...
+    y <- apply(a, 1, simplify=FALSE, \(.)
+        resize(., nrow(.)*t[d-1], ncol(.)*t[d]))
     y <- abind(y, along=0)
     fun <- get(class(x))
-    fun(y, metadata(x))
+    fun(y, zattrs(x))
 }
 .scaleShapeFrame <- function(x, t) {
-    a <- as.array(x)
-    a[, 1] <- a[, 1]*t[1]
-    a[, 2] <- a[, 2]*t[2]
-    n <- vapply(x$data, nrow, integer(1))
-    i <- rep.int(x$index, n)
-    i <- split(seq(nrow(a)), i)
-    y <- lapply(i, \(.) a[., ])
-    x$data <- y
+    switch(x$type[1],
+        circle={
+            if (length(t) != 1) stop(
+                "'t' should be scalar for scaling ",
+                "for scaling 'circle' shapes")
+            r <- t*x$radius
+            x$radius <- r
+        },
+        polygon={
+            if (length(t) != 2) stop(
+                "'t' should be of length 2 ",
+                "for scaling 'polygon' shapes")
+            x$data <- lapply(x$data, \(df) sweep(df, 2, t, `*`))
+        }
+    )
     return(x)
 }
 .scale <- function(x, t) {
-    d <- length(dim(x))
     stopifnot(
         "'t' should be numeric"=is.numeric(t),
         "'t' should be greater than zero"=t > 0)
+    if (all(t == 1)) return(x)
     fun <- if (is(x, "ZarrArray")) {
-        d <- length(channels(x))
-        if (length(t) != d)
-            stop("length of 't' (", length(t), ") should be",
-                " the same as the number of channels (", d, ")")
         .scaleZarrArray
     } else {
-        stopifnot("'t' should be of length 2"=length(t) == 2)
         .scaleShapeFrame
     }
     fun(x, t)
@@ -200,32 +169,44 @@ setMethod("scaleElement", "ShapeFrame",
 
 # transformation ----
 
-.transform <- function(x, coord) {
-    df <- coord(x, coord)
-    t <- df$data[[1]]
-    switch(
-        df$type,
-        "identity"=x,
-        "scale"=scaleElement(x, t),
-        "rotate"=rotateElement(x, t),
-        sprintf("transformation of type '%s' yet to be supported.", df$type))
-}
+#' @rdname ZarrArray
+#' @export
+setMethod("transformElement",
+    "ZarrArray_OR_ShapeFrame",
+    function(x, coord=NULL) {
+        df <- coord(x, coord)
+        switch(
+            df$type,
+            "identity"=x,
+            "scale"=scaleElement(x, df$data[[1]]),
+            "rotate"=rotateElement(x, df$data[[1]]),
+            paste0("transformation of type '",
+                df$type, "' not (yet) supported"))
+    }
+)
 
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement", "ZarrArray",
-    function(x, coord=NULL) .transform(x, coord))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("transformElement", "ShapeFrame",
-    function(x, coord=NULL) .transform(x, coord))
+setMethod("axes", "ImageArray", function(x, type=NULL) {
+    l <- zattrs(x)
+    ax <- l$multiscales$axes[[1]]
+    if (is.null(type)) return(ax$name)
+    stopifnot(
+        "'type' should be a string"=is.character(type),
+        "'type' should be of length 1"=length(type) == 1)
+    if (!type %in% ax$type) {
+        ax <- dQuote(unique(ax$type))
+        ax <- paste(ax, collapse=", ")
+        stop("'type' should be one of ", ax)
+    }
+    ax$name[ax$type == type]
+})
 
 #' @rdname ZarrArray
 #' @export
 setMethod("alignElements", "ANY", function(..., coord=NULL) {
     x <- list(...)
-    c <- lapply(x, \(.) coords(.)$output.name)
+    c <- lapply(x, \(.) coords(.)$output$name)
     if (is.null(coord)) {
         # if unspecified, default to using
         # first shared coordinate system
@@ -233,7 +214,7 @@ setMethod("alignElements", "ANY", function(..., coord=NULL) {
     } else {
         # otherwise, check that elements
         # share input coordinate system
-        valid <- vapply(c, \(.) coord %in% c, logical(1))
+        valid <- vapply(c, \(.) . %in% coord, logical(1))
         if (!all(valid)) stop(
             "input element don't share a '",
             coord, "' coordinate system")

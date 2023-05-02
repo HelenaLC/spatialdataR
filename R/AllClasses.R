@@ -4,12 +4,15 @@ setClassUnion("Array_OR_array", c("Array", "array"))
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment
 setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
 
+.Zattrs <- setClass(
+    Class="Zattrs",
+    contains="list")
+
 #' @exportClass ZarrArray SpatialData
 .ZarrArray <- setClass(
     Class="ZarrArray",
-    slots=c(data="Array_OR_array"),
     contains=c("Array", "Annotated"),
-    prototype=list(data=array(), metadata=list()))
+    slots=c(data="Array_OR_array", zattrs="Zattrs"))
 
 #' @exportClass ImageArray SpatialData
 .ImageArray <- setClass(
@@ -21,25 +24,26 @@ setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
     Class="LabelArray",
     contains="ZarrArray")
 
-setClassUnion("ImageArray_OR_LabelArray", c("ImageArray", "LabelArray"))
+setClassUnion(
+    "ImageArray_OR_LabelArray",
+    c("ImageArray", "LabelArray"))
 
 #' @importClassesFrom S4Vectors DFrame
 #' @exportClass ShapeFrame SpatialData
 .ShapeFrame <- setClass(
     Class="ShapeFrame",
-    contains="DFrame")
+    contains="DFrame",
+    slots=c(zattrs="Zattrs"))
+
+# making it easier for shared 'Zattrs' methods
+setClassUnion(
+    "ZarrArray_OR_ShapeFrame",
+    c("ZarrArray", "ShapeFrame"))
 
 #' @exportClass SpatialData SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",
     contains="Annotated",
-    prototype=list(
-        metadata=list(),
-        images=list(),
-        labels=list(),
-        shapes=list(),
-        points=list(),
-        table=NULL),
     representation(
         images="list", # 'ImageArray's
         labels="list", # 'LabelArray's
