@@ -84,7 +84,7 @@ image(spd, i)
 spd$images[[i]]
 ```
 
-# `ZarrArray`
+## Elements
 
 The `ZarrArray` class is essentially an `Annotated` array-like object, that may
 contain a dense `array` or any type of `Array` (e.g., `Sparse/DelayedArray`).
@@ -99,6 +99,16 @@ img <- image(spd, i)
 # rename channels
 channels(img) <- c("R", "G", "B")
 img
+```
+
+Shapes are represented as `ShapeFrames`.
+Currently, these support shapes of type _circle_ and _polygon_.
+Under the hood, these are just `DataFrame`s
+(with specialized methods and additional internal requirements):
+
+```{r}
+(s <- shape(spd))
+DataFrame(s)
 ```
 
 # Transformations
@@ -150,6 +160,22 @@ wrap_plots(lapply(ps, plotElement))
 
 # Visualization
 
+## By element
+
+Element-wise plotting is possible via `plotElement`,
+which expects a single `SpatialData` element as input.
+Images and shapes are rendered via `annotation_raster`;
+for shapes (`geom_polygon`), additional graphical parameters
+may be passed as dot (`...`) arguments.
+
+```{r}
+plotElement(image(spd)) +
+plotElement(label(spd)) +
+plotElement(shape(spd), col="blue", fill="cyan") 
+```
+
+## Layered
+
 `plotSD` currently supports overlaying up to 3 elements 
 (an image, label and shape, but not points yet).
 Argument `coord` specifies the target coordinate system,
@@ -161,14 +187,7 @@ Depending on the underlying metadata, `transformElement`
 uses `scale/rotate/translateElement` for transformation.
 
 ```{r}
-# by element
-plotElement(image(spd)) +
-plotElement(label(spd)) +
-plotElement(shape(spd)) 
-```
-
-```{r}
-# layered (defaults to including all available elements)
+# defaults to including all available elements
 plotSD(spd,
     alpha.label=1/3,
     alpha.shape=1,
@@ -188,6 +207,8 @@ plotSD(spd,
 ```
 
 # Query
+
+## Aggregation
 
 `aggregateImage` computed aggregated measurement values from `image`
 according to `label` using `fun` to summarized measurements (default `mean`).
