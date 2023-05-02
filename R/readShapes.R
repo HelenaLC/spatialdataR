@@ -48,5 +48,5 @@ readShapes <- function(path, ...) {
                 index=ps$Index,
                 type=rep(geom, length(ps$Index)))
         })
-    ShapeFrame(df, zattrs=md)
+    ShapeFrame(df, zattrs=Zattrs(md))
 }
