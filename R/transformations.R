@@ -1,119 +1,20 @@
-# internals ----
-
-setMethod("zattrs", "ZarrArray", function(x) x@zattrs)
-setMethod("zattrs", "ShapeFrame", function(x) x@zattrs)
-setReplaceMethod("zattrs",
-    c("ZarrArray", "list"),
-    function(x, value) {
-        x@zattrs <- value
-        return(x)
-    })
-setReplaceMethod("zattrs",
-    c("ShapeFrame", "list"),
-    function(x, value) {
-        x@zattrs <- value
-        return(x)
-    })
-
-.get_ct <- \(x) {
-    l <- zattrs(x)
-    ms <- l$multiscales
-    if (!is.null(ms)) l <- ms
-    l$coordinateTransformations[[1]]
-}
-.set_ct <- \(x, df) {
-    l <- zattrs(x)
-    ms <- l$multiscales
-    if (is.null(ms)) {
-        l$coordinateTransformations[[1]] <- df
-        zattrs(x) <- l
-    } else {
-        l$multiscales$coordinateTransformations[[1]] <- df
-        zattrs(x) <- l
-    }
-    return(x)
-}
-.add_coord <- \(x, name, type, data) {
-    df <- coords(x)
-    fd <- df[1, ]
-    fd$type <- type
-    fd$output$name <- name
-    fd[[type]] <- list(data)
-    # there has to be an easier way than this...
-    # but 'data.frame' keeps flattening stuff
-    l <- vector("list", nrow(df)+1)
-    . <- data.frame(
-        input=I(l), output=I(l),
-        type=character(1),
-        data=character(1))
-    .$input <- rbind(df$input, fd$input)
-    .$output <- rbind(df$output, fd$output)
-    .$type <- c(df$type, fd$type)
-    .$data <- c(df[[ncol(df)]], fd[[ncol(fd)]])
-    typ <- names(df)[ncol(df)]
-    # need an example with different transformations
-    # to see what specs actually look like in the wild...
-    if (typ != "type") {
-        names(.)[ncol(.)] <- typ
-    } else {
-        .$data <- NULL
-    }
-    .set_ct(x, .)
-}
-.rmv_coord <- \(x, name) {
-    df <- .get_ct(x)
-    idx <- match(name, coords(x)$output$name)
-    df <- df[-idx[!is.na(idx)], ]
-    .set_ct(x, df)
-}
-
 # coords ----
-
-.coords <- function(x) {
-    l <- zattrs(x)
-    ms <- l$multiscales
-    if (is.null(ms)) {
-        l$coordinateTransformations
-    } else {
-        ms$coordinateTransformations[[1]]
-    }
-}
-
-.coord <- function(x, name) {
-    df <- coords(x)
-    if (is.null(name))
-        name <- df$output$name[1]
-    if (is.character(name)) {
-        idx <- match(name, df$output$name)
-        if (is.na(idx))
-            stop("couldn't find coords '", name, "'")
-    } else {
-        stopifnot(
-            is.numeric(name),
-            length(name) == 1,
-            name == round(name))
-        if (name > nrow(df))
-            stop("only", nrow(df), "coords available")
-            idx <- name
-    }
-    return(df[idx,])
-}
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coords", "ZarrArray", function(x) .coords(x))
+setMethod("coords", "ZarrArray", function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("coords", "ShapeFrame", function(x) .coords(x))
+setMethod("coords", "ShapeFrame", function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ZarrArray", function(x, name=1) .coord(x, name))
+setMethod("coord", "ZarrArray", function(x, name=1) getCoordTrans(x, name))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ShapeFrame", function(x, name=1) .coord(x, name))
+setMethod("coord", "ShapeFrame", function(x, name=1) getCoordTrans(x, name))
 
 # translation ----
 
@@ -228,18 +129,17 @@ setMethod("rotateElement", "ShapeFrame",
 .scaleShapeFrame <- function(x, t) {
     switch(x$type[1],
         circle={
-            stopifnot("'t' should be of length 1"=length(t) == 1)
+            if (length(t) != 1) stop(
+                "'t' should be scalar for scaling ",
+                "for scaling 'circle' shapes")
             r <- t*x$radius
             x$radius <- r
         },
         polygon={
-            stopifnot("'t' should be of length 2"=length(t) == 2)
-            a <- t*as.array(x)
-            n <- vapply(x$data, nrow, integer(1))
-            i <- rep.int(x$index, n)
-            i <- split(seq(nrow(a)), i)
-            y <- lapply(i, \(.) a[., ])
-            x$data <- y
+            if (length(t) != 2) stop(
+                "'t' should be of length 2 ",
+                "for scaling 'polygon' shapes")
+            x$data <- lapply(x$data, \(df) sweep(df, 2, t, `*`))
         }
     )
     return(x)

@@ -85,11 +85,20 @@ test_that("scaleElement,ImageArray", {
     expect_equal(dim(scaleElement(i, rep(2, d))), c(dim(i)[1], 2*dim(i)[-1]))
 })
 test_that("scaleElement,ShapeFrame,polygon", {
+    # no scaling
     t <- scaleElement(s, c(1, 1))
     expect_s4_class(t, "ShapeFrame")
     expect_equal(dim(t), dim(s))
     expect_equal(range(t$data), range(s$data))
     expect_identical(metadata(t), metadata(s))
+    # xy scaling
+    t <- scaleElement(s, c(f <- 2, g <- 3))
+    expect_equal(
+        range(as.array(t)[, 1]),
+        f*range(as.array(s)[, 1]))
+    expect_equal(
+        range(as.array(t)[, 2]),
+        g*range(as.array(s)[, 2]))
 })
 
 # transformation ----
