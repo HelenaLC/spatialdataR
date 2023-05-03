@@ -11,16 +11,17 @@
 #' @examples
 #' path <- "extdata/blobs/points/blobs_points"
 #' path <- system.file(path, package = "SpatialData")
-#' (ao <- readPoints(path))
+#' (pf <- readPoints(path))
 #'
 #' @author Tim Treis
 #'
-#' @importFrom arrow open_dataset
+#' @importFrom arrow read_parquet
 #' @export
 readPoints <- function(path, ...) {
-    # TODO: metadata are currently being ignored here...
-    # might need another data structure to accommodate these.
-    dirs <- list.files(path=path, full.names=TRUE, recursive=TRUE)
-    dset <- grep("*.parquet", dirs, value=TRUE)
-    open_dataset(dset)
+    path <- gsub("/$", "", path)
+    za <- fromJSON(file.path(path, ".zattrs"))
+    dirs <- list.files(path, full.names=TRUE, recursive=TRUE)
+    pq <- grep("*\\.parquet$", dirs, value=TRUE)
+    at <- read_parquet(pq, as_data_frame=FALSE)
+    PointFrame(data=at, zattrs=Zattrs(za))
 }

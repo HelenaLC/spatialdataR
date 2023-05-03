@@ -21,7 +21,7 @@ Arrow \code{\link{Dataset}}
 \examples{
 path <- "extdata/blobs/points/blobs_points"
 path <- system.file(path, package = "SpatialData")
-(ao <- readPoints(path))
+(pf <- readPoints(path))
 
 }
 \author{

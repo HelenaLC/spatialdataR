@@ -31,8 +31,7 @@ setValidity("Zattrs", .validityZattrs)
 
 # getters & setters of 'zattrs' slot for all elements --------------------------
 
-setMethod("zattrs", "ZarrArray", function(x) x@zattrs)
-setMethod("zattrs", "ShapeFrame", function(x) x@zattrs)
+setMethod("zattrs", "SpatialDataElement", function(x) x@zattrs)
 
 setReplaceMethod("zattrs",
     c("ZarrArray_OR_ShapeFrame", "Zattrs"),
@@ -63,18 +62,17 @@ setMethod("getCoordTrans", "Zattrs", function(x, name=NULL) {
     return(ct[idx, ])
 })
 
-setMethod("getCoordTrans", "ZarrArray_OR_ShapeFrame",
+setMethod("getCoordTrans", "SpatialDataElement",
     function(x, name=NULL) getCoordTrans(zattrs(x), name))
 
 setMethod("getCoordTrans", "SpatialData",
-    function(x, i, name=NULL) {
-        # TODO: validity checks
+    function(x, i=1, name=NULL) {
         for (e in elementNames(x)) {
-            if (i %in% names(x[[e]])) {
-                y <- x[[e]][[i]]
-                break
-            }
+            .check_i(x, e, i)
+            y <- tryCatch(x[[e]][[i]], error=function(e) NULL)
+            if (!inherits(y, "error")) break
         }
+        if (is.null(y)) stop("couldn't find coords '", name, "'")
         getCoordTrans(zattrs(y), name)
     }
 )

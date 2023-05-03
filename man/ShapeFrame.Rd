@@ -6,13 +6,14 @@
 \alias{coords,ShapeFrame-method}
 \alias{scaleFrame}
 \alias{as.array,ShapeFrame-method}
+\alias{coords,SpatialData-method}
 \title{The `ShapeFrame` class}
 \usage{
 ShapeFrame(data = DataFrame(), metadata = list(), ...)
 
 \S4method{as.array}{ShapeFrame}(x)
 
-\S4method{coords}{ShapeFrame}(x)
+\S4method{coords}{SpatialData}(x)
 }
 \arguments{
 \item{data}{A \code{\link{DataFrame}} of appropriate format.}

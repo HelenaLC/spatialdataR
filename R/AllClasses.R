@@ -1,5 +1,5 @@
 #' @importClassesFrom S4Arrays Array
-setClassUnion("Array_OR_array", c("Array", "array"))
+setClassUnion("Array_OR_array_OR_df", c("Array", "array", "data.frame"))
 
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment
 setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
@@ -12,7 +12,9 @@ setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
 .ZarrArray <- setClass(
     Class="ZarrArray",
     contains=c("Array", "Annotated"),
-    slots=c(data="Array_OR_array", zattrs="Zattrs"))
+    # temporarily supporting pointers,
+    # for the purpose of development...
+    slots=c(data="Array_OR_array_OR_df", zattrs="Zattrs"))
 
 #' @exportClass ImageArray SpatialData
 .ImageArray <- setClass(
@@ -35,10 +37,28 @@ setClassUnion(
     contains="DFrame",
     slots=c(zattrs="Zattrs"))
 
-# making it easier for shared 'Zattrs' methods
 setClassUnion(
     "ZarrArray_OR_ShapeFrame",
     c("ZarrArray", "ShapeFrame"))
+
+#' @importFrom arrow Table
+#' @importFrom methods setOldClass
+setOldClass("Table")
+
+setClassUnion(
+    "Table_OR_df",
+    c("Table", "data.frame"))
+
+#' @exportClass PointFrame SpatialData
+.PointFrame <- setClass(
+    Class="PointFrame",
+    contains=c("Table", "Annotated"),
+    slots=list(data="Table_OR_df", zattrs="Zattrs"))
+
+# making it easier for methods shared b/w all elements
+setClassUnion(
+    "SpatialDataElement",
+    c("ZarrArray", "ShapeFrame", "PointFrame"))
 
 #' @exportClass SpatialData SpatialData
 .SpatialData <- setClass(

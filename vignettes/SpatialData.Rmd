@@ -16,14 +16,13 @@ output:
     toc: true
     toc-depth: 2
     toc-float: true
-# having some bug & this gets around it
+# having some bug w/ basilisk/reticulate & this gets around it
 knit: (function(input, ...) rmarkdown::render(input, output_dir=".")) 
 vignette: >
-  %\VignetteIndexEntry{"foo"}
-  %\VignettePackage{foo}
+  %\VignetteIndexEntry{"SpatialData"}
+  %\VignettePackage{SpatialData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-#bibliography: "`r file.path(system.file('extdata', package='muscat'), 'refs.bib')`"
 abstract: > 
   <p> ...
 ---
@@ -37,10 +36,7 @@ knitr::opts_chunk$set(cache=TRUE)
 ## Dependencies
 
 ```{r load-libs, message=FALSE, warning=FALSE}
-library(Rarr)
-library(EBImage)
 library(ggplot2)
-library(jsonlite)
 library(patchwork)
 library(SpatialData)
 library(SingleCellExperiment)
@@ -55,7 +51,7 @@ The `SpatialData` class contains 5 elements that are represented as follows:
 - `images`: list of `ImageArray`s
 - `labels`: list of `LabelArray`s
 - `shapes`: list of `ShapeFrame`s
-- `points`: list of Arrow `Dataset`s
+- `points`: list of `PointFrame`s
 - `table`: a `SingleCellExperiment`
 
 ```{r}
@@ -176,10 +172,10 @@ plotElement(shape(spd), col="blue", fill="cyan")
 
 ## Layered
 
-`plotSD` currently supports overlaying up to 3 elements 
-(an image, label and shape, but not points yet).
-Argument `coord` specifies the target coordinate system,
-and will default the first available shared one if left unspecified.
+`plotSD` currently supports overlaying arbitrary elements;
+currently, only one instance each is supported.
+Argument `coord` specifies the target coordinate system, and
+will default to the first available shared one if left unspecified.
 Elements are internally aligned via `alignElements`,
 which in turn calls `transformArray` on the input
 `image` and `label` (type `Image/LabelArray`).
@@ -199,7 +195,8 @@ path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
 (spd <- readSpatialData(path))
 plotElement(image(spd)) +
 plotElement(label(spd)) +
-plotElement(shape(spd)) 
+plotElement(shape(spd)) +
+plotElement(point(spd))
 plotSD(spd,
     alpha.label=1/3,
     alpha.shape=1,
