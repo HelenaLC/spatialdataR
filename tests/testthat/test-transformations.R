@@ -3,9 +3,10 @@ x <- readSpatialData(path)
 i <- image(x)
 l <- label(x)
 s <- shape(x)
+p <- point(x)
 
 test_that("coords", {
-    md <- i@zattrs
+    md <- zattrs(i)
     df <- coords(i)
     expect_s3_class(df, "data.frame")
     expect_equal(nrow(df), nrow(md$multiscales))
@@ -27,19 +28,25 @@ test_that("translate,t", {
     expect_error(.translate(i, numeric(3)))
 })
 test_that("translateElement,ImageArray", {
-    y <- translateElement(i)
-    expect_s4_class(y, "ImageArray")
-    expect_equal(dim(i), dim(y))
+    y <- translateElement(i, c(0, 0))
+    expect_identical(y, i)
 })
 test_that("translateElement,LabelArray", {
-    y <- translateElement(l)
-    expect_s4_class(y, "LabelArray")
-    expect_equal(dim(l), dim(y))
+    y <- translateElement(l, c(0, 0))
+    expect_identical(y, l)
 })
 test_that("translateElement,ShapeFrame", {
-    y <- translateElement(s)
-    expect_s4_class(y, "ShapeFrame")
-    expect_equal(dim(s), dim(y))
+    y <- translateElement(s, c(0, 0))
+    expect_identical(y, s)
+})
+test_that("translateElement,PointFrame", {
+    y <- translateElement(p, c(0, 0))
+    expect_identical(y, p)
+    t <- c(t1 <- 1, t2 <- 2)
+    y <- translateElement(p, t)
+    expect_identical(dim(y), dim(p))
+    expect_identical(range(y$x), range(p$x)+t1)
+    expect_identical(range(y$y), range(p$y)+t2)
 })
 
 # rotation ----
@@ -60,11 +67,24 @@ test_that("rotateElement,ImageArray", {
     expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
 })
 test_that("rotateElement,ShapeFrame,polygon", {
-    expect_equal(rotateElement(s, 000), s)
+    expect_identical(rotateElement(s, 000), s)
     expect_equal(rotateElement(s, 360), s)
     t <- rotateElement(s, 180)
+    expect_identical(zattrs(t), zattrs(s))
     expect_identical(metadata(t), metadata(s))
     expect_equal(range(t$data), -rev(range(s$data)))
+})
+test_that("rotateElement,PointFrame", {
+    df <- as.data.frame(p)
+    q <- rotateElement(p, 000)
+    expect_identical(as.data.frame(q), df)
+    q <- rotateElement(p, 360)
+    expect_equal(as.data.frame(q), df, ignore_attr=TRUE)
+    q <- rotateElement(p, 180)
+    expect_identical(zattrs(q), zattrs(p))
+    expect_identical(metadata(q), metadata(p))
+    expect_equal(range(q$x), -rev(range(p$x)))
+    expect_equal(range(q$y), -rev(range(p$y)))
 })
 
 # scaling ----

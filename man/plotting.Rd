@@ -11,6 +11,7 @@
 \alias{plotElement,ImageArray-method}
 \alias{plotElement,LabelArray-method}
 \alias{plotElement,ShapeFrame-method}
+\alias{plotElement,PointFrame-method}
 \title{Plot `SpatialData` elements}
 \usage{
 \S4method{plotElement}{ImageArray}(x, coord, ...)
@@ -19,11 +20,14 @@
 
 \S4method{plotElement}{ShapeFrame}(x, coord, ...)
 
+\S4method{plotElement}{PointFrame}(x, coord, ...)
+
 plotSD(
   x,
   image,
   label,
   shape,
+  point,
   alpha.label = 1/3,
   alpha.shape = 1,
   fill.shape = "lightgrey",
@@ -42,7 +46,7 @@ If \code{NULL}, defaults to the first available shared coordinates.}
 for labels, an \code{alpha} value can be passed;
 ignored otherwise.}
 
-\item{image, label, shape}{A scalar integer (index) or character string (identifier)
+\item{image, label, shape, point}{A scalar integer (index) or character string (identifier)
 specifying the entity to include (can be \code{NULL}).}
 
 \item{alpha.label, alpha.shape, fill.shape, col.shape}{Plotting aesthetics.}

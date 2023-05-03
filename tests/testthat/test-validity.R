@@ -25,7 +25,9 @@ test_that("validity,shapes", {
 test_that("validity,points", {
     x@points <- list("")
     expect_error(validObject(x))
-    p <- file.path(path, "points", "blobs_points")
-    x@points <- list(arrow::open_dataset(p))
+    path <- file.path(path, "points", "blobs_points")
+    pq <- list.files(path, "*\\.parquet$", recursive=TRUE, full.names=TRUE)
+    at <- arrow::read_parquet(pq, as_data_frame=FALSE)
+    x@points <- list(PointFrame(at))
     expect_silent(validObject(x))
 })

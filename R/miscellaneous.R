@@ -18,24 +18,27 @@
 #' (sd <- readSpatialData(path))
 NULL
 
+#' @importFrom S4Vectors coolcat
 .showSpatialData <- function(object) {
     imgs <- images(object)
     labs <- labels(object)
     shps <- shapes(object)
     pnts <- points(object)
     cat("class: SpatialData\n")
-    # available elements
-    cat(sprintf("images(%s):", length(imgs)), names(imgs), "\n")
-    cat(sprintf("labels(%s):", length(labs)), names(labs), "\n")
-    cat(sprintf("shapes(%s):", length(shps)), names(shps), "\n")
-    cat(sprintf("points(%s):", length(pnts)), names(pnts), "\n")
     cat("table:", if (!is.null(table(object)))
         dim(table(object)) else "nan", "\n")
-    # shared coordinate systems
-    # TODO: util for this?
+    # available elements
+    coolcat("images(%d): %s\n", imageNames(object))
+    coolcat("labels(%d): %s\n", labelNames(object))
+    coolcat("shapes(%d): %s\n", shapeNames(object))
+    coolcat("points(%d): %s\n", pointNames(object))
+    # shared coordinate system(s)
+    # TODO: util for this? also, there's probably
+    # an easier way, this is super hacky...
     lys <- list(imgs, labs, shps)
-    cs <- Reduce(intersect, lapply(lys, \(.)
-        vapply(., \(.) getCoordTrans(.)$output$name, character(1))))
+    lys <- lys[vapply(lys, length, numeric(1)) > 0]
+    cs <- lapply(lys, \(.) lapply(., \(.) getCoordTrans(.)$output$name))
+    cs <- Reduce(intersect, lapply(cs, Reduce, f=intersect))
     cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
@@ -70,7 +73,14 @@ setMethod("show", "SpatialData", .showSpatialData)
     cat("class: ShapeFrame\n")
     cat("geoms:", n <- nrow(object), "\n")
     if (n) cat("type:", object$type[1], "\n")
-    cs <- coords(object)$output.name
+    cs <- coords(object)$output$name
+    cat(sprintf("coords(%s):", length(cs)), cs)
+}
+
+.showPointFrame <- function(object) {
+    cat("class: PointFrame\n")
+    cat("length:", length(object), "\n")
+    cs <- coords(object)$output$name
     cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
@@ -85,3 +95,6 @@ setMethod("show", "LabelArray", .showLabelArray)
 
 #' @rdname SD-miscellaneous
 setMethod("show", "ShapeFrame", .showShapeFrame)
+
+#' @rdname SD-miscellaneous
+setMethod("show", "PointFrame", .showPointFrame)

@@ -10,7 +10,7 @@
 #' @description ...
 #'
 #' @param x A \code{\link{SpatialData}} object.
-#' @param image,label,shape
+#' @param image,label,shape,point
 #'   A scalar integer (index) or character string (identifier)
 #'   specifying the entity to include (can be \code{NULL}).
 #' @param alpha.label,alpha.shape,fill.shape,col.shape Plotting aesthetics.
@@ -42,14 +42,18 @@
 NULL
 
 #' @import ggplot2
-.plotElement <- function(geom, w, h) {
-    ggplot() + geom +
-        xlim(w) +
-        scale_y_reverse(limits=rev(h)) +
-        coord_fixed(expand = FALSE) +
-        theme_linedraw() + theme(
+.plotElement <- function(x, w, h) {
+    thm <- list(
+        coord_fixed(expand = FALSE),
+        theme_linedraw(), theme(
             panel.grid=element_blank(),
-            axis.title=element_blank())
+            axis.title=element_blank()))
+    gg <- if (is.data.frame(x)) {
+        ggplot(x, aes(x, y))
+    } else {
+        ggplot() + x
+    }
+    gg + xlim(w) + scale_y_reverse(limits=rev(h)) + thm
 }
 
 #' @rdname plotting
@@ -113,17 +117,24 @@ setMethod("plotElement", "ShapeFrame", function(x, coord, ...) {
 })
 
 #' @rdname plotting
+#' @importFrom ggplot2 aes geom_point
+#' @export
+setMethod("plotElement", "PointFrame", function(x, coord, ...) {
+    x <- as.data.frame(x)
+    geom <- geom_point(aes(x, y), x)
+    .plotElement(geom, w=range(x$x), h=range(x$y))
+})
+
+#' @rdname plotting
 #' @import ggplot2
 #' @importFrom grDevices as.raster rainbow
 #' @export
 plotSD <- function(x,
-    image, label, shape,
+    image, label, shape, point,
     alpha.label=1/3, alpha.shape=1,
-    fill.shape="lightgrey", col.shape=NA, coord=NULL) {
-# x <- sd
-# image <- 1
-# label <- NULL
-# shape <- NULL
+    fill.shape="lightgrey", col.shape=NA,
+    # TODO: single argument for aes of every element
+    coord=NULL) {
 
     stopifnot(
         is(x, "SpatialData"),
@@ -132,30 +143,37 @@ plotSD <- function(x,
         alpha.label >= 0, alpha.label <= 1,
         alpha.shape >= 0, alpha.shape <= 1)
 
+    # TODO: this is all hacky, ugly & repetitive...
+    # come up with a briefer solution eventually
+
     # for all unspecified elements,
     # default to first available
     if (missing(image)) image <- imageNames(x)[1]
     if (missing(label)) label <- labelNames(x)[1]
     if (missing(shape)) shape <- shapeNames(x)[1]
+    if (missing(point)) point <- pointNames(x)[1]
 
     # retrieve elements to include
     i <- if (!is.null(image)) image(x, image)
     l <- if (!is.null(label)) label(x, label)
     s <- if (!is.null(shape)) shape(x, shape)
+    p <- if (!is.null(point)) point(x, point)
 
     # align elements
-    lys <- list(i, l, s)
+    lys <- list(i, l, s, p)
     nan <- vapply(lys, is.null, logical(1))
     tmp <- do.call(alignElements, c(lys[!nan], list(coord=coord)))
     lys[!nan] <- tmp
     if (!nan[1]) i <- lys[[1]]
     if (!nan[2]) l <- lys[[2]]
     if (!nan[3]) s <- lys[[3]]
+    if (!nan[4]) p <- lys[[4]]
 
     ps <- list(
         if (!is.null(i)) plotElement(i),
         if (!is.null(l)) plotElement(l, alpha=alpha.label),
-        if (!is.null(s)) plotElement(s, alpha=alpha.shape, fill=fill.shape, col=col.shape))
+        if (!is.null(s)) plotElement(s, alpha=alpha.shape, fill=fill.shape, col=col.shape),
+        if (!is.null(p)) plotElement(p))
     ps <- ps[!vapply(ps, is.null, logical(1))]
     .get_lim <- \(p, i) p$scales$scales[[i]]$limits
     xs <- vapply(ps, \(p) .get_lim(p, 1), numeric(2))

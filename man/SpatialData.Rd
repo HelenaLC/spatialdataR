@@ -3,7 +3,6 @@
 \name{$,SpatialData-method}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,ANY,ANY-method}
-\alias{[[,SpatialData-method}
 \alias{images,SpatialData-method}
 \alias{image,SpatialData-method}
 \alias{imageNames,SpatialData-method}
@@ -33,6 +32,7 @@
 \alias{element,SpatialData-method}
 \alias{SpatialData}
 \alias{SpatialData-class}
+\alias{[[,SpatialData-method}
 \alias{image}
 \alias{images}
 \alias{imageNames}

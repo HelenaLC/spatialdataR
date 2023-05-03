@@ -1,20 +1,18 @@
 # utils ------------------------------------------------------------------------
 
-#' @export
 #' @importFrom utils .DollarNames
+#' @export
 .DollarNames.SpatialData <- function(x, pattern="") {
     grep(pattern, LAYERS, value=TRUE)
 }
 
 #' @rdname SpatialData
-#' @aliases $,SpatialData-method
 #' @exportMethod $
 setMethod("$", "SpatialData", function(x, name) {
     attr(x, name)
 })
 
 #' @rdname SpatialData
-#' @aliases [[,SpatialData-method
 #' @exportMethod [[
 setMethod("[[", "SpatialData", function(x, i, ...) {
     j <- grep(i, names(attributes(x)), value=TRUE)
@@ -23,19 +21,19 @@ setMethod("[[", "SpatialData", function(x, i, ...) {
 })
 
 #' @importFrom utils getFromNamespace
-.check_i <- function(x, ele, i) {
-    ele <- match.arg(ele, LAYERS)
+.check_i <- function(x, e, i) {
+    e <- match.arg(e, LAYERS)
     stopifnot(length(i) == 1)
-    if (!length(x[[ele]]))
-        stop("'SpatialData' object does not contain any '", ele, "'")
+    if (!length(x[[e]]))
+        stop("'SpatialData' object does not contain any '", e, "'")
     if (is.character(i)) {
-        fun <- paste0(gsub("s$", "", ele), "Names")
+        fun <- paste0(gsub("s$", "", e), "Names")
         fun <- getFromNamespace(fun, "SpatialData")
         stopifnot(
             i %in% fun(x),
             sum(grepl(i, fun(x))) == 1)
     } else {
-        fun <- getFromNamespace(ele, "SpatialData")
+        fun <- getFromNamespace(e, "SpatialData")
         stopifnot(
             round(i) == i,
         i %in% seq_along(fun(x)))

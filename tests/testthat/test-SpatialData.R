@@ -1,7 +1,7 @@
 is_ia <- \(.) is(., "ImageArray")
 is_la <- \(.) is(., "LabelArray")
-is_df <- \(.) is(., "DFrame")
-is_r6 <- \(.) is(., "R6")
+is_sf <- \(.) is(., "ShapeFrame")
+is_pf <- \(.) is(., "PointFrame")
 
 # constructor ----
 
@@ -115,8 +115,8 @@ test_that("point", {
   expect_error(point(sd, 99))
   expect_error(point(sd, ""))
   i <- pointNames(sd)[1]
-  expect_s3_class(point(sd, 1), "R6")
-  expect_s3_class(point(sd, i), "R6")
+  expect_s4_class(point(sd, 1), "PointFrame")
+  expect_s4_class(point(sd, i), "PointFrame")
 })
 
 test_that("table", {
@@ -133,8 +133,8 @@ test_that("element", {
 
     expect_true(is_ia(element(sd, elementName="images", i=1)))
     expect_true(is_la(element(sd, elementName="labels", i=1)))
-    expect_true(is_df(element(sd, elementName="shapes", i=1)))
-    expect_true(is_r6(element(sd, elementName="points", i=1)))
+    expect_true(is_sf(element(sd, elementName="shapes", i=1)))
+    expect_true(is_pf(element(sd, elementName="points", i=1)))
 })
 
 # access multiple ----
@@ -157,14 +157,14 @@ test_that("shapes", {
   x <- shapes(sd)
   n <- length(attr(sd, "shapes"))
   expect_type(x, "list")
-  if (n > 0) expect_true(all(vapply(x, is_df, logical(1))))
+  if (n > 0) expect_true(all(vapply(x, is_sf, logical(1))))
 })
 
 test_that("points", {
   x <- points(sd)
   n <- length(attr(sd, "points"))
   expect_type(x, "list")
-  if (n > 0) expect_true(all(vapply(x, is_r6, logical(1))))
+  if (n > 0) expect_true(all(vapply(x, is_pf, logical(1))))
 })
 
 # replace multiple ----
