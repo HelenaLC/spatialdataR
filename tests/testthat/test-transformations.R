@@ -44,9 +44,10 @@ test_that("translateElement,PointFrame", {
     expect_identical(y, p)
     t <- c(t1 <- 1, t2 <- 2)
     y <- translateElement(p, t)
+    df <- collect(y@data)
     expect_identical(dim(y), dim(p))
-    expect_identical(range(y$x), range(p$x)+t1)
-    expect_identical(range(y$y), range(p$y)+t2)
+    expect_equal(range(df$x), range(p$x)+t1)
+    expect_equal(range(df$y), range(p$y)+t2)
 })
 
 # rotation ----
