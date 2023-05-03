@@ -90,12 +90,12 @@ setMethod("translateElement", "SpatialDataElement",
             x$data <- y
         },
         PointFrame={
-            # TODO: any way doing this with queries?
-            # 'arrow' doesn't support '%*%' nor 'rowwise'
-            xy <- c("x", "y")
-            df <- as.data.frame(x)
-            df[xy] <- as.matrix(df[xy]) %*% R
-            x <- PointFrame(df, metadata(x), zattrs=zattrs(x))
+            x@data <- x@data %>%
+                mutate(.x=x*R[1,1], .y=y*R[1,2]) %>%
+                mutate(x=.x+.y) %>%
+                mutate(.x=x*R[2,1], .y=y*R[2,2]) %>%
+                mutate(y=.x+.y) %>%
+                select(-.x, -.y)
         })
     return(x)
 }
