@@ -47,11 +47,11 @@ setMethod("coord", "SpatialDataElement",
     return(x)
 }
 
+#' @importFrom dplyr mutate
 .translatePointFrame <- function(x, t) {
-    xy <- c("x", "y")
-    df <- as.data.frame(x)
-    df[xy] <- sweep(df[xy], 2, t, `+`)
-    PointFrame(df, metadata(x), zattrs=zattrs(x))
+    x@data <- x@data %>%
+        mutate(x=x+t[1], y=y+t[2])
+    return(x)
 }
 
 .translate <- function(x, t) {
@@ -90,6 +90,8 @@ setMethod("translateElement", "SpatialDataElement",
             x$data <- y
         },
         PointFrame={
+            # TODO: any way doing this with queries?
+            # 'arrow' doesn't support '%*%' nor 'rowwise'
             xy <- c("x", "y")
             df <- as.data.frame(x)
             df[xy] <- as.matrix(df[xy]) %*% R
@@ -130,6 +132,7 @@ setMethod("rotateElement", "SpatialDataElement",
     fun <- get(class(x))
     fun(y, zattrs(x))
 }
+
 .scaleShapeFrame <- function(x, t) {
     switch(x$type[1],
         circle={
@@ -148,12 +151,13 @@ setMethod("rotateElement", "SpatialDataElement",
     )
     return(x)
 }
+
 .scalePointFrame <- function(x, t) {
     stopifnot("'t' should be of length 2 for scaling points"=length(t) == 2)
-    xy <- c("x", "y")
-    df <- as.data.frame(x)
-    df[xy] <- sweep(df[xy], 2, t, `*`)
-    PointFrame(df, metadata(x), zattrs=zattrs(x))
+    x@data <- x@data %>%
+        mutate(x=x*t[1], y=y*t[2]) %>%
+        collect()
+    return(x)
 }
 
 .scale <- function(x, t) {
