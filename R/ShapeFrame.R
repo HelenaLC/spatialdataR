@@ -40,9 +40,9 @@ ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
             index=integer(),
             type=character())
     data <- DataFrame(data)
-    df <- .ShapeFrame(data, ...)
-    metadata(df) <- metadata
-    return(df)
+    sf <- .ShapeFrame(data, ...)
+    metadata(sf) <- metadata
+    return(sf)
 }
 
 #' @rdname ShapeFrame

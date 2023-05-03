@@ -39,13 +39,64 @@ setMethod("metadata", "ZarrArray", function(x) {
 #' @rdname ZarrArray
 #' @export
 setMethod("dim", "ZarrArray", function(x) {
-    dim(x@data)
+    if (is.data.frame(x@data)) {
+        x@data$dim[[1]]
+    } else {
+        dim(x@data)
+    }
 })
 
 #' @rdname ZarrArray
 #' @export
 setMethod("dimnames", "ZarrArray", function(x) {
-    dimnames(x@data)
+    if (!is.data.frame(i@data))
+        dimnames(x@data)
+})
+
+.load <- function(x) {
+    var <- deparse(substitute(x))
+    x@data <- as.array(x)
+    assign(var, x, parent.frame())
+}
+
+#' @rdname ZarrArray
+#' @export
+setMethod("as.array", "ZarrArray", function(x) {
+    if (is.data.frame(x@data)) {
+        read_zarr_array(x@data$path)
+    } else {
+        as.array(x@data)
+    }
+})
+
+#' @rdname ZarrArray
+#' @export
+setMethod("[", "ZarrArray", function(x, i, j, ...) {
+    if (is.data.frame(x@data)) .load(x)
+    x@data <- x@data[i, j, ..., drop=FALSE]
+    x
+})
+
+#' @rdname ZarrArray
+#' @importFrom BiocGenerics aperm
+#' @export
+setMethod("aperm", "ZarrArray", function(a, perm) {
+    if (is.data.frame(a@data)) .load(a)
+    if (missing(perm)) perm <- NULL
+    a@data <- aperm(a@data, perm)
+    a
+})
+
+getArrayElement <- S4Arrays:::getArrayElement
+#' @rdname ZarrArray
+#' @export
+setMethod("getArrayElement", "ZarrArray", function(x, subscripts) {
+    if (is.data.frame(x@data)) .load(x)
+    if (is(x@data, "Array")) {
+        getArrayElement(x@data, subscripts)
+    } else {
+        do.call(`[`, c(list(x=x@data), as.list(subscripts)))
+    }
 })
 
 # TODO: not sure if/why we need this?
@@ -54,36 +105,3 @@ setMethod("dimnames", "ZarrArray", function(x) {
 #' setMethod("extract_array", "ZarrArray", function(x, index) {
 #'   extract_array(x@data, index)
 #' })
-
-#' @rdname ZarrArray
-#' @export
-setMethod("[", "ZarrArray", function(x, i, j, ...) {
-    x@data <- x@data[i, j, ..., drop=FALSE]
-    x
-})
-
-getArrayElement <- S4Arrays:::getArrayElement
-#' @rdname ZarrArray
-#' @export
-setMethod("getArrayElement", "ZarrArray", function(x, subscripts) {
-    if (is(x@data, "Array")) {
-        getArrayElement(x@data, subscripts)
-    } else {
-        do.call(`[`, c(list(x=x@data), as.list(subscripts)))
-    }
-})
-
-#' @rdname ZarrArray
-#' @export
-setMethod("as.array", "ZarrArray", function(x) {
-    as.array(x@data)
-})
-
-#' @rdname ZarrArray
-#' @importFrom BiocGenerics aperm
-#' @export
-setMethod("aperm", "ZarrArray", function(a, perm) {
-    if (missing(perm)) perm <- NULL
-    a@data <- aperm(a@data, perm)
-    a
-})

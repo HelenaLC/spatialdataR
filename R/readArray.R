@@ -18,7 +18,7 @@
 #' @author Helena L. Crowell
 #'
 #' @importFrom jsonlite fromJSON
-#' @importFrom Rarr read_zarr_array
+#' @importFrom Rarr read_zarr_array zarr_overview
 #' @export
 readArray <- function(path=".", resolution="0", ...) {
     if (file.exists(file.path(path, ".zarray"))) {
@@ -33,7 +33,10 @@ readArray <- function(path=".", resolution="0", ...) {
             stop("couldn't find .zarray under resolution /", resolution)
     }
     md <- fromJSON(json)
-    za <- read_zarr_array(zarr)
+    #za <- read_zarr_array(zarr)
+    # storing pointer for development purposes
+    # since we are missing delayed support atm
+    za <- zarr_overview(zarr, as_data_frame=TRUE)
 
     is_img <- !is.null(md$channels_metadata)
     fun <- if (is_img) ImageArray else LabelArray

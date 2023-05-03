@@ -26,6 +26,7 @@ Imports:
   basilisk,
   BiocGenerics, 
   EBImage, 
+  dplyr,
   ggplot2, 
   grDevices,
   jsonlite, 
