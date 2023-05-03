@@ -155,8 +155,7 @@ setMethod("rotateElement", "SpatialDataElement",
 .scalePointFrame <- function(x, t) {
     stopifnot("'t' should be of length 2 for scaling points"=length(t) == 2)
     x@data <- x@data %>%
-        mutate(x=x*t[1], y=y*t[2]) %>%
-        collect()
+        mutate(x=x*t[1], y=y*t[2])
     return(x)
 }
 
