@@ -1,6 +1,7 @@
 # TODO: subsetting; don't want to always read
 # everything but this is currently happening...
-# should be doable w/ 'arrow' to have a "smarter" OI
+# should be doable w/ 'arrow' to have a "smarter"
+# OI via queries & collecting only when necessary
 
 #' @importFrom utils .DollarNames
 #' @export
@@ -9,14 +10,14 @@
 }
 
 #' @rdname PointFrame
-#' @importFrom dplyr collect select all_of
+#' @importFrom dplyr select all_of collect
 #' @exportMethod $
 setMethod("$", "PointFrame", function(x, name) {
     collect(select(x@data, all_of(name)))[[1]]
 })
 
 #' @rdname PointFrame
-#' @importFrom dplyr collect select all_of
+#' @importFrom dplyr select all_of collect
 #' @exportMethod [[
 setMethod("[[", "PointFrame", function(x, i, ...) {
     collect(select(x@data, all_of(i)))[[1]]
@@ -45,3 +46,24 @@ setMethod("names", "PointFrame", function(x)
 #' @export
 setMethod("dim", "PointFrame", function(x)
     c(length(x), length(names(x))))
+
+#' @rdname PointFrame
+#' @importFrom dplyr mutate filter collect
+#' @export
+setMethod("[", c("PointFrame", "numeric"), function(x, i, ...) {
+    if (missing(i)) return(x)
+    x@data <- x@data %>%
+        mutate(.i=1+`__null_dask_index__`) %>%
+        filter(.i %in% i) %>%
+        select(-.i)
+    return(x)
+})
+
+#' @rdname PointFrame
+#' @importFrom dplyr mutate filter collect
+#' @export
+setMethod("[", c("PointFrame", "logical"), function(x, i, ...) {
+    if (missing(i) || isTRUE(i)) return(x)
+    stopifnot("invalid length of logical index"=length(i) == length(x))
+    x[which(i)]
+})
