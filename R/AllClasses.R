@@ -44,10 +44,11 @@ setClassUnion(
 #' @importFrom arrow Table
 #' @importFrom methods setOldClass
 setOldClass("Table")
+setOldClass("arrow_dplyr_query")
 
 setClassUnion(
     "Table_OR_df",
-    c("Table", "data.frame"))
+    c("Table", "data.frame", "arrow_dplyr_query"))
 
 #' @exportClass PointFrame SpatialData
 .PointFrame <- setClass(

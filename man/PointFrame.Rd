@@ -8,6 +8,8 @@
 \alias{length,PointFrame-method}
 \alias{names,PointFrame-method}
 \alias{dim,PointFrame-method}
+\alias{[,PointFrame,numeric,ANY,ANY-method}
+\alias{[,PointFrame,logical,ANY,ANY-method}
 \alias{PointFrame}
 \alias{PointFrame-class}
 \alias{coord,PointFrame-method}
@@ -25,6 +27,10 @@
 \S4method{names}{PointFrame}(x)
 
 \S4method{dim}{PointFrame}(x)
+
+\S4method{[}{PointFrame,numeric,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{PointFrame,logical,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
 PointFrame(data = NULL, metadata = list(), ...)
 }
