@@ -2,22 +2,22 @@
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coords", "ZarrArray", function(x) getCoordTrans(x, name=NULL))
+setMethod("coords", "SpatialDataElement",
+    function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("coords", "ShapeFrame", function(x) getCoordTrans(x, name=NULL))
+setMethod("coords", "SpatialData",
+    function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ZarrArray
 #' @export
-setMethod("coord", "ZarrArray", function(x, name=1) getCoordTrans(x, name))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("coord", "ShapeFrame", function(x, name=1) getCoordTrans(x, name))
+setMethod("coord", "SpatialDataElement",
+    function(x, name=1) getCoordTrans(x, name))
 
 # translation ----
 
+#' @importFrom EBImage translate
 .translateZarrArray <- function(x, t) {
     a <- as.array(x)
     d <- length(dim(a))
@@ -46,45 +46,55 @@ setMethod("coord", "ShapeFrame", function(x, name=1) getCoordTrans(x, name))
     x$data <- y
     return(x)
 }
+
+.translatePointFrame <- function(x, t) {
+    xy <- c("x", "y")
+    df <- as.data.frame(x)
+    df[xy] <- sweep(df[xy], 2, t, `+`)
+    PointFrame(df, metadata(x), zattrs=zattrs(x))
+}
+
 .translate <- function(x, t) {
     stopifnot(
         "'t' should be numeric"=is.numeric(t),
         "'t' should be of length 2"=length(t) == 2,
         "'t' should be whole numbers"=round(t) == t)
     if (all(t == 0)) return(x)
-    fun <- if (is(x, "ZarrArray")) {
-        .translateZarrArray
-    } else {
-        .translateShapeFrame
-    }
-    fun(x, t)
+    c <- ifelse(is(x, za <- "ZarrArray"), za, class(x))
+    fun <- paste0(".translate", c)
+    get(fun)(x, t)
 }
 
 #' @rdname ZarrArray
-#' @importFrom EBImage abind translate
 #' @export
-setMethod("translateElement", "ZarrArray",
-    function(x, t=numeric(2)) .translateZarrArray(x, t))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("translateElement", "ShapeFrame",
-    function(x, t=numeric(2)) .translateShapeFrame(x, t))
+setMethod("translateElement", "SpatialDataElement",
+    function(x, t=numeric(2)) .translate(x, t))
 
 # rotation ----
 
-.rotateZarrArray <- function(x, t) {
+.R <- function(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+
+.rotate3d <- function(x, t) {
     a <- as.array(x)
     y <- apply(a, 1, rotate, t, simplify=FALSE)
     y <- abind(y, along=0)
     fun <- get(class(x))
     fun(y, zattrs(x))
 }
-.rotateShapeFrame <- function(x, t) {
-    t <- t*pi/180
-    R <- matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
-    y <- lapply(x$data, \(xy) (xy %*% R))
-    x$data <- y
+
+.rotate2d <- function(x, t) {
+    R <- .R(t <- t*pi/180)
+    switch(class(x),
+        ShapeFrame={
+            y <- lapply(x$data, \(xy) (xy %*% R))
+            x$data <- y
+        },
+        PointFrame={
+            xy <- c("x", "y")
+            df <- as.data.frame(x)
+            df[xy] <- as.matrix(df[xy]) %*% R
+            x <- PointFrame(df, metadata(x), zattrs=zattrs(x))
+        })
     return(x)
 }
 
@@ -94,32 +104,26 @@ setMethod("translateElement", "ShapeFrame",
         "'t' should be numeric"=is.numeric(t),
         "'t' should be of length 1"=length(t) == 1)
     if (t == 0) return(x)
-    fun <- if (is(x, "ZarrArray")) {
-        .rotateZarrArray
-    } else {
-        .rotateShapeFrame
-    }
-    fun(x, t)
+    d <- ifelse(is(x, "ZarrArray"), 3, 2)
+    fun <- sprintf(".rotate%sd", d)
+    get(fun)(x, t)
 }
 
 #' @rdname ZarrArray
 #' @export
-setMethod("rotateElement", "ZarrArray",
-    function(x, t=0) .rotate(x, t))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("rotateElement", "ShapeFrame",
+setMethod("rotateElement", "SpatialDataElement",
     function(x, t=0) .rotate(x, t))
 
 # scaling ----
 
 #' @importFrom EBImage abind resize
 .scaleZarrArray <- function(x, t) {
+    d <- length(dim(x))
+    if (length(t) != d)
+        stop("'t' should be of length ", d)
+    # TODO: this is slow as hell... also,
+    # is the first entry ever even used/useful?
     a <- as.array(x)
-    d <- length(dim(a))
-    if (length(t) != d) stop("'t' should be of length ", d)
-    # TODO: this is slow as hell...
     y <- apply(a, 1, simplify=FALSE, \(.)
         resize(., nrow(.)*t[d-1], ncol(.)*t[d]))
     y <- abind(y, along=0)
@@ -144,44 +148,51 @@ setMethod("rotateElement", "ShapeFrame",
     )
     return(x)
 }
+.scalePointFrame <- function(x, t) {
+    stopifnot("'t' should be of length 2 for scaling points"=length(t) == 2)
+    xy <- c("x", "y")
+    df <- as.data.frame(x)
+    df[xy] <- sweep(df[xy], 2, t, `*`)
+    PointFrame(df, metadata(x), zattrs=zattrs(x))
+}
+
 .scale <- function(x, t) {
-    stopifnot(
-        "'t' should be numeric"=is.numeric(t),
-        "'t' should be greater than zero"=t > 0)
     if (all(t == 1)) return(x)
-    fun <- if (is(x, "ZarrArray")) {
-        .scaleZarrArray
-    } else {
-        .scaleShapeFrame
-    }
-    fun(x, t)
+    fun <- paste0(".scale", class(x))
+    c <- ifelse(is(x, za <- "ZarrArray"), za, class(x))
+    fun <- paste0(".scale", c)
+    get(fun)(x, t)
 }
 
 #' @rdname ZarrArray
 #' @export
-setMethod("scaleElement", "ZarrArray",
-    function(x, t=rep(1, length(channels(x)))) .scale(x, t))
-
-#' @rdname ZarrArray
-#' @export
-setMethod("scaleElement", "ShapeFrame",
-    function(x, t=c(1, 1)) .scale(x, t))
+setMethod("scaleElement",
+    "SpatialDataElement",
+    function(x, t) {
+        if (missing(t)) {
+            t <- rep(1, length(dim(x)))
+        } else {
+            stopifnot(
+                "'t' should be numeric"=is.numeric(t),
+                "'t' should be greater than zero"=t > 0)
+        }
+        .scale(x, t)
+    }
+)
 
 # transformation ----
 
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement",
-    "ZarrArray_OR_ShapeFrame",
-    function(x, coord=NULL) {
-        df <- coord(x, coord)
-        switch(
-            df$type,
-            "identity"=x,
-            "scale"=scaleElement(x, df$data[[1]]),
-            "rotate"=rotateElement(x, df$data[[1]]),
-            paste0("transformation of type '",
-                df$type, "' not (yet) supported"))
+setMethod("transformElement", "SpatialDataElement", function(x, coord=NULL) {
+    df <- coord(x, coord)
+    switch(
+        df$type,
+        "identity"=x,
+        "scale"=scaleElement(x, df$data[[1]]),
+        "rotate"=rotateElement(x, df$data[[1]]),
+        paste0("transformation of type '",
+            df$type, "' not (yet) supported"))
     }
 )
 

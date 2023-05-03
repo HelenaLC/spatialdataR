@@ -8,10 +8,10 @@
 \alias{metadata,ZarrArray-method}
 \alias{dim,ZarrArray-method}
 \alias{dimnames,ZarrArray-method}
-\alias{[,ZarrArray,ANY,ANY,ANY-method}
-\alias{getArrayElement,ZarrArray-method}
 \alias{as.array,ZarrArray-method}
+\alias{[,ZarrArray,ANY,ANY,ANY-method}
 \alias{aperm,ZarrArray-method}
+\alias{getArrayElement,ZarrArray-method}
 \alias{ZarrArray}
 \alias{ZarrArray-class}
 \alias{ImageArray}
@@ -31,23 +31,15 @@
 \alias{scaleElement}
 \alias{transformElement}
 \alias{alignElements}
-\alias{coords,ZarrArray-method}
-\alias{coord,ZarrArray-method}
-\alias{coord,ShapeFrame-method}
-\alias{translateElement,ZarrArray-method}
-\alias{translateElement,ShapeFrame-method}
-\alias{rotateElement,ZarrArray-method}
-\alias{rotateElement,ShapeFrame-method}
-\alias{scaleElement,ZarrArray-method}
-\alias{scaleElement,ShapeFrame-method}
-\alias{transformElement,ZarrArray_OR_ShapeFrame-method}
+\alias{coords,SpatialDataElement-method}
+\alias{coord,SpatialDataElement-method}
+\alias{translateElement,SpatialDataElement-method}
+\alias{rotateElement,SpatialDataElement-method}
+\alias{scaleElement,SpatialDataElement-method}
+\alias{transformElement,SpatialDataElement-method}
 \alias{axes,ImageArray-method}
 \alias{alignElements,ANY-method}
-\title{#' @rdname ZarrArray
-#' @export
-setMethod("extract_array", "ZarrArray", function(x, index) {
-  extract_array(x@data, index)
-})}
+\title{The `ZarrArray` class}
 \usage{
 \S4method{channels}{ImageArray}(x)
 
@@ -61,13 +53,13 @@ setMethod("extract_array", "ZarrArray", function(x, index) {
 
 \S4method{dimnames}{ZarrArray}(x)
 
-\S4method{[}{ZarrArray,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{getArrayElement}{ZarrArray}(x, subscripts)
-
 \S4method{as.array}{ZarrArray}(x)
 
+\S4method{[}{ZarrArray,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
 \S4method{aperm}{ZarrArray}(a, perm)
+
+\S4method{getArrayElement}{ZarrArray}(x, subscripts)
 
 ZarrArray(data = array(), metadata = list(), ...)
 
@@ -75,25 +67,17 @@ ImageArray(data = array(), metadata = list(), ...)
 
 LabelArray(data = array(), metadata = list(), ...)
 
-\S4method{coords}{ZarrArray}(x)
+\S4method{coords}{SpatialDataElement}(x)
 
-\S4method{coord}{ZarrArray}(x, name = 1)
+\S4method{coord}{SpatialDataElement}(x, name = 1)
 
-\S4method{coord}{ShapeFrame}(x, name = 1)
+\S4method{translateElement}{SpatialDataElement}(x, t = numeric(2))
 
-\S4method{translateElement}{ZarrArray}(x, t = numeric(2))
+\S4method{rotateElement}{SpatialDataElement}(x, t = 0)
 
-\S4method{translateElement}{ShapeFrame}(x, t = numeric(2))
+\S4method{scaleElement}{SpatialDataElement}(x, t)
 
-\S4method{rotateElement}{ZarrArray}(x, t = 0)
-
-\S4method{rotateElement}{ShapeFrame}(x, t = 0)
-
-\S4method{scaleElement}{ZarrArray}(x, t = rep(1, length(channels(x))))
-
-\S4method{scaleElement}{ShapeFrame}(x, t = c(1, 1))
-
-\S4method{transformElement}{ZarrArray_OR_ShapeFrame}(x, coord = NULL)
+\S4method{transformElement}{SpatialDataElement}(x, coord = NULL)
 
 \S4method{axes}{ImageArray}(x, type = NULL)
 
@@ -111,14 +95,14 @@ LabelArray(data = array(), metadata = list(), ...)
 \item{drop}{Logical specifying whether or not flat
 dimensions should be dropped (see \code{?base::Extract}).}
 
+\item{a}{An array-like object (see `?base::aperm`).}
+
+\item{perm}{The subscript permutation vector (see `?base::aperm`).}
+
 \item{subscripts}{A list of the same length as
 the number of the array's dimensions.
 Each entry provides the indices
 in that dimensions to subset.}
-
-\item{a}{An array-like object (see `?base::aperm`).}
-
-\item{perm}{The subscript permutation vector (see `?base::aperm`).}
 
 \item{data}{An \code{array} or \code{\link[S4Arrays]{Array}}.}
 
