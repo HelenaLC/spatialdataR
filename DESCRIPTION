@@ -41,6 +41,7 @@ Imports:
 Suggests: 
   BiocStyle,
   knitr,
+  tidyr,
   patchwork,
   testthat (>= 3.0.0)
 biocViews: 
