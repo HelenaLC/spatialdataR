@@ -17,6 +17,13 @@ output:
     toc_depth: 2
 # having some bug w/ basilisk/reticulate & this gets around it
 knit: (function(input, ...) rmarkdown::render(input, output_dir=".")) 
+vignette: >
+  %\VignetteIndexEntry{"mibitof"}
+  %\VignettePackage{SpatialData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+abstract: > 
+  <p> ...
 ---
 
 ```{r setup, include=FALSE}
