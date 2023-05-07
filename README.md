@@ -9,7 +9,10 @@ if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("HelenaLC/SpatialData")
 ```
-## [DEMO](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
+## Demos
+
+- [vignette](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
+- [mibitof](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/mibitof.html)
 
 ## Useful links
 - Specs for raster-type data (images, segmentation masks) follow [OME-NGFF][]
