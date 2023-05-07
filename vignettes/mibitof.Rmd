@@ -100,7 +100,8 @@ fd$name <- factor(fd$name, chs)
 ggplot(fd, aes(x, y, col = value)) +
     geom_point(size = 1) + facet_grid(id ~ name) +
     scale_color_viridis_c(option = "C", trans = "sqrt") +
-    coord_equal() + theme_linedraw() + theme(
+    scale_y_reverse() + coord_equal() + 
+    theme_linedraw() + theme(
         axis.title = element_blank(),
         panel.grid = element_blank(),
         panel.background = element_rect(fill = "black"),
