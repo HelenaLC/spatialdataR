@@ -17,7 +17,7 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: false
-      smooth_scroll: false
+      smooth_scroll: true
 # having some bug w/ basilisk/reticulate & this gets around it
 knit: (function(input, ...) rmarkdown::render(input, output_dir=".")) 
 ---
@@ -76,7 +76,7 @@ wrap_plots(ps, nrow = 1)
 
 ```{r calc-sce}
 # TODO: one function call should aggregate
-# across all match coordinate systems
+# across all matching coordinate systems
 ms <- mapply(
     \(i, l) {
         sce <- aggregateImage(spd, image = i, label = l)
