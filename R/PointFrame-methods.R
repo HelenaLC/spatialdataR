@@ -28,7 +28,6 @@ setAs(
     function(from) as.data.frame(from@data)[names(from)])
 
 #' @rdname PointFrame
-#' @aliases alias
 #' @export
 setMethod("as.data.frame", "PointFrame", function(x) {
     as.data.frame(x@data)[names(x)]

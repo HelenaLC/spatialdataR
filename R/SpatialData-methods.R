@@ -31,7 +31,7 @@ setMethod("[[", "SpatialData", function(x, i, ...) {
         fun <- getFromNamespace(fun, "SpatialData")
         stopifnot(
             i %in% fun(x),
-            sum(grepl(i, fun(x))) == 1)
+            sum(!is.na(match(fun(x), i))) == 1)
     } else {
         fun <- getFromNamespace(e, "SpatialData")
         stopifnot(

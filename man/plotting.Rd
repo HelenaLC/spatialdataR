@@ -14,13 +14,13 @@
 \alias{plotElement,PointFrame-method}
 \title{Plot `SpatialData` elements}
 \usage{
-\S4method{plotElement}{ImageArray}(x, coord, ...)
+\S4method{plotElement}{ImageArray}(x, coord = NULL, ...)
 
-\S4method{plotElement}{LabelArray}(x, coord, ...)
+\S4method{plotElement}{LabelArray}(x, coord = NULL, ...)
 
-\S4method{plotElement}{ShapeFrame}(x, coord, ...)
+\S4method{plotElement}{ShapeFrame}(x, coord = NULL, ...)
 
-\S4method{plotElement}{PointFrame}(x, coord, ...)
+\S4method{plotElement}{PointFrame}(x, coord = NULL, ...)
 
 plotSD(
   x,
@@ -30,8 +30,7 @@ plotSD(
   point,
   alpha.label = 1/3,
   alpha.shape = 1,
-  fill.shape = "lightgrey",
-  col.shape = NA,
+  col.point = NULL,
   coord = NULL
 )
 }
@@ -69,7 +68,7 @@ plotElement(shape(spd))
 # layered
 plotSD(spd)
 plotSD(spd, image=NULL)
-plotSD(spd, label=NULL, fill.shape="pink")
+plotSD(spd, label=NULL)
 plotSD(spd, shape=NULL, alpha.label=0.2)
 }
 \author{
