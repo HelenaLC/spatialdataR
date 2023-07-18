@@ -8,7 +8,7 @@ test_that("plotElement,ImageArray", {
     expect_s3_class(p, "ggplot")
     xy <- p$scales$scales
     expect_equal(xy[[1]]$limits, c(0, dim(y)[3]))
-    expect_equal(xy[[2]]$limits, c(-dim(y)[2], 0))
+    expect_equal(xy[[2]]$limits, c(dim(y)[2], 0))
 })
 
 test_that("plotElement,LabelArray", {
@@ -17,7 +17,7 @@ test_that("plotElement,LabelArray", {
     expect_s3_class(p, "ggplot")
     xy <- p$scales$scales
     expect_equal(xy[[1]]$limits, c(0, dim(y)[2]))
-    expect_equal(xy[[2]]$limits, c(-dim(y)[1], 0))
+    expect_equal(xy[[2]]$limits, c(dim(y)[1], 0))
 })
 
 test_that("plotElement,ShapeArray", {
