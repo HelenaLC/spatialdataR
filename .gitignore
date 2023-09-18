@@ -2,10 +2,12 @@
 .Rproj.user
 .Rhistory
 inst/*.R
+README.html
 vignettes/*cache
 vignettes/*files
 #inst/extdata/blobs
-inst/extdata/visium
 #inst/extdata/raccoon
+inst/extdata/visium
+inst/extdata/merfish
 inst/extdata/cosmx_io
 inst/extdata/raccoon_scale

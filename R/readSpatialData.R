@@ -24,29 +24,19 @@ readSpatialData <- function(path, ...) {
     i <- if (is.null(n <- dots$n)) TRUE else
         if (length(n) == 1) seq_len(n) else n
 
-    images <- if ("images" %in% basename(layers)) {
-        images <- list.dirs(file.path(path, "images"), recursive=FALSE)
-        names(images) <- basename(images)
-        lapply(images[i], readArray)
-    } else list()
-
-    labels <- if ("labels" %in% basename(layers)) {
-        labels <- list.dirs(file.path(path, "labels"), recursive=FALSE)
-        names(labels) <- basename(labels)
-        lapply(labels[i], readArray)
-    } else list()
-
-    shapes <- if ("shapes" %in% basename(layers)) {
-        shapes <- list.dirs(file.path(path, "shapes"), recursive=FALSE)
-        names(shapes) <- basename(shapes)
-        lapply(shapes[i], readShapes)
-    } else list()
-
-    points <- if ("points" %in% basename(layers)) {
-        points <- list.dirs(file.path(path, "points"), recursive=FALSE)
-        names(points) <- basename(points)
-        lapply(points[i], readPoints)
-    } else list()
+    for (var in c("images", "labels", "shapes", "points")) {
+        val <- if (var %in% basename(layers)) {
+            dir <- file.path(path, var)
+            sub <- list.dirs(dir, recursive=FALSE)
+            names(sub) <- basename(sub)
+            fun <- switch(var,
+                shapes=readShapes,
+                points=readPoints,
+                readArray)
+            lapply(sub[i], fun)
+        } else list()
+        assign(var, val)
+    }
 
     table <- if ("table" %in% basename(layers)) {
         tryCatch(

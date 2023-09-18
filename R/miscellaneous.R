@@ -18,12 +18,17 @@
 #' (sd <- readSpatialData(path))
 NULL
 
+.sharedCoords <- \(x) {
+    i <- c("images", "labels", "shapes", "images")
+    l <- lapply(i, \(.) get(.)(x))
+    l <- l[vapply(l, length, integer(1)) > 0]
+    cs <- rapply(l, how="list", \(.)
+        getCoordTrans(.)$output$name)
+    unname(unlist(Reduce(intersect, cs)))
+}
+
 #' @importFrom S4Vectors coolcat
 .showSpatialData <- function(object) {
-    imgs <- images(object)
-    labs <- labels(object)
-    shps <- shapes(object)
-    pnts <- points(object)
     cat("class: SpatialData\n")
     cat("table:", if (!is.null(table(object)))
         dim(table(object)) else "nan", "\n")
@@ -33,12 +38,7 @@ NULL
     coolcat("shapes(%d): %s\n", shapeNames(object))
     coolcat("points(%d): %s\n", pointNames(object))
     # shared coordinate system(s)
-    # TODO: util for this? also, there's probably
-    # an easier way, this is super hacky...
-    lys <- list(imgs, labs, shps)
-    lys <- lys[vapply(lys, length, numeric(1)) > 0]
-    cs <- lapply(lys, \(.) lapply(., \(.) getCoordTrans(.)$output$name))
-    cs <- Reduce(intersect, lapply(cs, Reduce, f=intersect))
+    cs <- .sharedCoords(object)
     cat(sprintf("coords(%s):", length(cs)), cs)
 }
 
@@ -48,7 +48,7 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showZarrArray <- function(object) {
     d <- dim(object)
     if (length(d) == 1) d <- 0
-    axs <- metadata(object)$multiscales$axes[[1]]
+    axs <- zattrs(object)$multiscales$axes[[1]]
     cat(sprintf("axiis(%s):", paste(axs$name, collapse = "")), d, "\n")
     t <- axs$type == "time"
     s <- axs$type == "space"
@@ -80,8 +80,12 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showPointFrame <- function(object) {
     cat("class: PointFrame\n")
     cat("length:", length(object), "\n")
+    vs <- setdiff(
+        names(object@data),
+        "__null_dask_index__")
+    coolcat("data(%d): %s\n", vs)
     cs <- coords(object)$output$name
-    cat(sprintf("coords(%s):", length(cs)), cs)
+    coolcat("coords(%d)\n: %s", cs)
 }
 
 #' @rdname SD-miscellaneous

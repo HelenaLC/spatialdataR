@@ -3,15 +3,16 @@
 #' @description ...
 #'
 #' @param path A character string specifying
-#'   the path to a `shapes/` subdirectory.
+#'   the path to a \code{shapes/} subdirectory.
 #' @param ... Further arguments to be passed to or from other methods.
 #'
-#' @return \code{\link{DataFrame}}
+#' @return \code{\link[S4Vectors]{DataFrame}}
 #'
 #' @examples
 #' path <- file.path("extdata", "raccoon", "shapes", "circles")
 #' path <- system.file(path, package="SpatialData")
-#' (df <- readShapes(path))
+#' (sf <- readShapes(path))
+#' as.data.frame(sf)
 #'
 #' @author Tim Treis, Helena L. Crowell
 #'

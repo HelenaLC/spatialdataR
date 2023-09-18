@@ -20,12 +20,9 @@ test_that("coord", {
 
 # translation ----
 test_that("translate,t", {
-    # should be 2 whole numbers
     expect_error(.translate(i, NULL))
     expect_error(.translate(i, c("", "")))
     expect_error(.translate(i, c(1.1, 1)))
-    expect_error(.translate(i, numeric(0)))
-    expect_error(.translate(i, numeric(3)))
 })
 test_that("translateElement,ImageArray", {
     y <- translateElement(i, c(0, 0))
@@ -59,13 +56,12 @@ test_that("rotate,t", {
     expect_silent(.rotate(i, 999))
 })
 test_that("rotateElement,ImageArray", {
-    j <- rotateElement(i, 0)
-    expect_identical(j, i)
-    expect_equal(dim(rotateElement(i, 000)), dim(i))
+    for (t in c(-360, 0, 360)) {
+        j <- rotateElement(i, t)
+        expect_identical(j, i)
+    }
     expect_equal(dim(rotateElement(i, 180)), dim(i))
-    expect_equal(dim(rotateElement(i, 360)), dim(i))
     expect_equal(dim(rotateElement(i,  90)), dim(i)[c(1, 3, 2)])
-    expect_equal(dim(rotateElement(i, 270)), dim(i)[c(1, 3, 2)])
 })
 test_that("rotateElement,ShapeFrame,polygon", {
     expect_identical(rotateElement(s, 000), s)

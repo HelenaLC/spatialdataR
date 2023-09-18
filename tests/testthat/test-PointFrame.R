@@ -4,6 +4,7 @@ x <- readPoints(path)
 
 pq <- list.files(path, "*\\.parquet$", recursive=TRUE, full.names=TRUE)
 y <- read_parquet(pq, as_data_frame=TRUE)
+y <- data.frame(y, check.names=FALSE)
 y <- y[setdiff(names(y), "__null_dask_index__")]
 
 test_that("length,PointFrame", {
@@ -25,6 +26,8 @@ test_that("names,PointFrame", {
 })
 
 test_that("$,PointFrame", {
+    expect_silent(x$`__null_dask_index__`)
+    expect_identical(.DollarNames(x), names(y))
     # need 'do.call' here to work
     # around 'dplyr'-like evaluation
     for (. in names(y))
@@ -36,6 +39,23 @@ test_that("$,PointFrame", {
 test_that("[[,PointFrame", {
     for (. in names(y))
         expect_identical(x[[.]], y[[.]])
+})
+
+test_that("[,PointFrame,numeric", {
+    expect_identical(x[], x)
+    expect_equal(length(x[0]), 0)
+    n <- sample(length(x), 1)
+    i <- sample(length(x), n)
+    expect_equal(length(x[ i]), n)
+    expect_equal(length(x[-i]), length(x)-n)
+})
+
+test_that("[,PointFrame,logical", {
+    expect_identical(x[TRUE], x)
+    expect_error(x[c(TRUE, FALSE)])
+
+    expect_length(x[ logical(length(x))], 0)
+    expect_length(x[!logical(length(x))], length(x))
 })
 
 test_that("df,PointFrame", {

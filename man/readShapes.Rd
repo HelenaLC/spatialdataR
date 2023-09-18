@@ -8,12 +8,12 @@ readShapes(path, ...)
 }
 \arguments{
 \item{path}{A character string specifying
-the path to a `shapes/` subdirectory.}
+the path to a \code{shapes/} subdirectory.}
 
 \item{...}{Further arguments to be passed to or from other methods.}
 }
 \value{
-\code{\link{DataFrame}}
+\code{\link[S4Vectors]{DataFrame}}
 }
 \description{
 ...
@@ -21,7 +21,8 @@ the path to a `shapes/` subdirectory.}
 \examples{
 path <- file.path("extdata", "raccoon", "shapes", "circles")
 path <- system.file(path, package="SpatialData")
-(df <- readShapes(path))
+(sf <- readShapes(path))
+as.data.frame(sf)
 
 }
 \author{

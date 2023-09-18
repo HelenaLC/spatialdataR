@@ -1,21 +1,14 @@
 #' @name plotting
-#' @title Plot `SpatialData` elements
-#' @aliases
-#' plotSD plotElement
-#' plotSD,SpatialData
-#' plotElement,ImageArray
-#' plotElement,LabelArray
-#' plotElement,ShapeFrame
+#' @title `SpatialData` plotting
+#' @aliases plotImage plotLabel plotShape plotPoint
 #'
 #' @description ...
 #'
 #' @param x A \code{\link{SpatialData}} object.
-#' @param image,label,shape,point
-#'   A scalar integer (index) or character string (identifier)
-#'   specifying the entity to include (can be \code{NULL}).
-#' @param alpha.label,alpha.shape,fill.shape,col.shape Plotting aesthetics.
+#' @param i Scalar integer or character string specifying which element to plot.
 #' @param coord A character string specifying the target coordinate system.
 #'   If \code{NULL}, defaults to the first available shared coordinates.
+#' @param width Scalar integer specifying the output plot's width (in pixel).
 #' @param ... Additional graphical parameters passed to
 #'   \code{\link[ggplot2]{geom_polygon}} for shapes;
 #'   for labels, an \code{alpha} value can be passed;
@@ -30,174 +23,74 @@
 #' spd <- readSpatialData(path)
 #'
 #' # by element
-#' plotElement(image(spd))
-#' plotElement(label(spd))
-#' plotElement(shape(spd))
+#' i <- plotImage(spd)
+#' l <- plotLabel(spd)
+#' s <- plotShape(spd)
 #'
-#' # layered
-#' plotSD(spd)
-#' plotSD(spd, image=NULL)
-#' plotSD(spd, label=NULL, fill.shape="pink")
-#' plotSD(spd, shape=NULL, alpha.label=0.2)
+#' # putting it together
+#' i+l+s
 NULL
 
 #' @import ggplot2
 .plotElement <- function(x, w, h) {
     thm <- list(
-        coord_fixed(expand = FALSE),
+        coord_fixed(expand=FALSE),
+        scale_x_continuous(limits=w),
+        scale_y_reverse(limits=h),
         theme_linedraw(), theme(
             panel.grid=element_blank(),
-            axis.title=element_blank()))
+            axis.title=element_blank(),
+            panel.background=element_blank(),
+            legend.key.size=unit(0.5, "lines")),
+        guides(col=guide_legend(override.aes=list(alpha=1, size=2))))
     gg <- if (is.data.frame(x)) {
         ggplot(x, aes(x, y))
     } else {
         ggplot() + x
-    }
-    gg + xlim(w) + scale_y_reverse(limits=rev(h)) + thm
+    } + thm
+    ggSD(gg, metadata=list(peter="pan"))
 }
 
-#' @rdname plotting
-#' @importFrom grDevices as.raster
-#' @importFrom ggplot2 annotation_raster
-#' @export
-setMethod("plotElement", "ImageArray", function(x, coord, ...) {
-    if (!missing(coord))
-        x <- transformElement(x, coord)
-    a <- as.array(x)
-    a <- aperm(a, c(2, 3, 1))
-    r <- as.raster(a/max(a))
-    w <- dim(a)[2]; h <- dim(a)[1]
-    geom <- annotation_raster(r, 0, w, 0, -h)
-    .plotElement(geom, c(0, w), c(0, h))
-})
-#' @rdname plotting
-#' @importFrom grDevices as.raster
-#' @importFrom ggplot2 annotation_raster
-#' @export
-setMethod("plotElement", "LabelArray", function(x, coord, ...) {
-    if (!missing(coord))
-        x <- transformElement(x, coord)
-    dots <- list(...)
-    alpha <- ifelse(is.null(dots$alpha), 1, dots$alpha)
-    a <- as.array(x)
-    w <- dim(a)[2]; h <- dim(a)[1]
-    n <- length(unique(c(a)))
-    c <- rainbow(n, alpha=alpha)
-    c <- matrix(c[a+1], h, w)
-    c[a == 0] <- NA
-    r <- as.raster(c)
-    geom <- annotation_raster(r, 0, w, 0, -h)
-    .plotElement(geom, c(0, w), c(0, h))
-})
-#' @rdname plotting
-#' @importFrom grDevices as.raster
-#' @importFrom ggplot2 aes geom_polygon
-#' @export
-setMethod("plotElement", "ShapeFrame", function(x, coord, ...) {
-    if (!missing(coord))
-        x <- transformElement(x, coord)
-    switch(x$type[1],
-        # TODO: other options?
-        circle={
-            a <- as.array(x)
-            x$x <- a[, 1]
-            x$y <- a[, 2]
-            df <- .circles(x)
-        },
-        polygon={
-            df <- by(x, x$index, \(.)
-                data.frame(
-                    id=.$index[1],
-                    x=.$data[[1]][, 1],
-                    y=.$data[[1]][, 2])
-            ) |> do.call(what=rbind)
-        })
-    geom <- geom_polygon(data=df, aes(x, y, group=id), ...)
-    .plotElement(geom, range(df$x), range(df$y))
-})
+# extract axis limits from a 'ggplot'
+.wh <- \(p, i) abs(p$scales$scales[[i]]$limits)
+.w <- \(p) .wh(p, 1)
+.h <- \(p) .wh(p, 2)
 
-#' @rdname plotting
-#' @importFrom ggplot2 aes geom_point
-#' @export
-setMethod("plotElement", "PointFrame", function(x, coord, ...) {
-    x <- as.data.frame(x)
-    geom <- geom_point(aes(x, y), x)
-    .plotElement(geom, w=range(x$x), h=range(x$y))
-})
-
-#' @rdname plotting
-#' @import ggplot2
-#' @importFrom grDevices as.raster rainbow
-#' @export
-plotSD <- function(x,
-    image, label, shape, point,
-    alpha.label=1/3, alpha.shape=1,
-    fill.shape="lightgrey", col.shape=NA,
-    # TODO: single argument for aes of every element
-    coord=NULL) {
-
-    stopifnot(
-        is(x, "SpatialData"),
-        is.numeric(alpha.label),
-        is.numeric(alpha.shape),
-        alpha.label >= 0, alpha.label <= 1,
-        alpha.shape >= 0, alpha.shape <= 1)
-
-    # TODO: this is all hacky, ugly & repetitive...
-    # come up with a briefer solution eventually
-
-    # for all unspecified elements,
-    # default to first available
-    if (missing(image)) image <- imageNames(x)[1]
-    if (missing(label)) label <- labelNames(x)[1]
-    if (missing(shape)) shape <- shapeNames(x)[1]
-    if (missing(point)) point <- pointNames(x)[1]
-
-    # retrieve elements to include
-    i <- if (!is.null(image)) image(x, image)
-    l <- if (!is.null(label)) label(x, label)
-    s <- if (!is.null(shape)) shape(x, shape)
-    p <- if (!is.null(point)) point(x, point)
-
-    # align elements
-    lys <- list(i, l, s, p)
-    nan <- vapply(lys, is.null, logical(1))
-    tmp <- do.call(alignElements, c(lys[!nan], list(coord=coord)))
-    lys[!nan] <- tmp
-    if (!nan[1]) i <- lys[[1]]
-    if (!nan[2]) l <- lys[[2]]
-    if (!nan[3]) s <- lys[[3]]
-    if (!nan[4]) p <- lys[[4]]
-
-    ps <- list(
-        if (!is.null(i)) plotElement(i),
-        if (!is.null(l)) plotElement(l, alpha=alpha.label),
-        if (!is.null(s)) plotElement(s, alpha=alpha.shape, fill=fill.shape, col=col.shape),
-        if (!is.null(p)) plotElement(p))
+.new_lim <- function(...) {
+    ps <- list(...)
     ps <- ps[!vapply(ps, is.null, logical(1))]
-    .get_lim <- \(p, i) p$scales$scales[[i]]$limits
-    xs <- vapply(ps, \(p) .get_lim(p, 1), numeric(2))
-    ys <- vapply(ps, \(p) .get_lim(p, 2), numeric(2))
-    xlim <- c(min(xs[1, ]), max(xs[2, ]))
-    ylim <- c(min(ys[1, ]), max(ys[2, ]))
-
-    gg <- ps[[1]]
-    if (length(ps) > 1)
-        for (p in ps[-1])
-            gg <- gg + p$layer[[1]]
-    suppressMessages(gg + xlim(xlim) + ylim(abs(ylim)))
+    # get shared axis limits
+    ws <- vapply(ps, .w, numeric(2))
+    hs <- vapply(ps, .h, numeric(2))
+    w <- c(min(ws), max(ws))
+    h <- c(max(hs), min(hs))
+    # use 1st as base & stack others
+    gg <- asS3(ps[[1]])
+    ps <- ps[-1]
+    while (length(ps)) {
+        gg <- gg + ps[[1]]$layers
+        ps <- ps[-1]
+    }
+    suppressMessages(gg <- gg +
+        scale_x_continuous(limits=w) +
+        scale_y_reverse(limits=h))
+    return(ggSD(gg))
 }
 
-# construct table of circle coordinates
-# (polygons) given xy-coordinates & radii
-.circles <- function(df, n=360){
-    angle <- seq(-pi, pi, length=n)
-    .circ <- function(x, y, r, id)
-        data.frame(id,
-            x=x+r*cos(angle),
-            y=y+r*sin(angle))
-    mapply(.circ,
-        id=seq_len(nrow(df)),
-        x=df$x, y=df$y, r=df$radius,
-        SIMPLIFY=FALSE) |> do.call(what=rbind)
-}
+# TODO: need to somehow track which coordinate system is being used
+# TODO: thrown an error when any element does not have those coordinates
+#' @export
+setMethod("+", c("ggSD", "ggSD"),
+    function(e1, e2) .new_lim(e1, e2))
+
+#' @export
+setMethod("+", c("ggSD", "gg"),
+    function(e1, e2) e1+as(e2, "ggSD"))
+
+#' @export
+setMethod("+", c("gg", "ggSD"),
+    function(e1, e2) as(e1, "ggSD")+e2)
+
+#' @export
+setMethod("+", c("ggSD", "ANY"),
+    function(e1, e2) as(asS3(e1)+e2, "ggSD"))
