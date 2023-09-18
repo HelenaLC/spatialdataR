@@ -15,13 +15,15 @@
 #' @author Constantin Ahlmann-Eltze
 #'
 #' @importFrom reticulate import
+#' @importFrom jsonlite fromJSON
 #' @importFrom zellkonverter AnnData2SCE
+#' @importFrom SingleCellExperiment int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
 readTable <- function(path) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    basiliskRun(proc, function(zarr) {
+    sce <- basiliskRun(proc, function(zarr) {
         # return value MUST be a pure R object,
         # i.e., no reticulate Python objects
         # or pointers to shared memory
@@ -29,4 +31,7 @@ readTable <- function(path) {
         obj <- ad$read_zarr(zarr)
         sce <- AnnData2SCE(obj)
     }, zarr=path)
+    md <- fromJSON(file.path(path, ".zattrs"))
+    int_metadata(sce)$zattrs <- md
+    return(sce)
 }

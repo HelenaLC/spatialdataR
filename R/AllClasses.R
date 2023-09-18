@@ -1,8 +1,12 @@
 #' @importClassesFrom S4Arrays Array
-setClassUnion("Array_OR_array_OR_df", c("Array", "array", "data.frame"))
+setClassUnion(
+    "Array_OR_array_OR_df",
+    c("Array", "array", "data.frame"))
 
 #' @importClassesFrom SingleCellExperiment SingleCellExperiment
-setClassUnion("SingleCellExperiment_OR_NULL", c("SingleCellExperiment", "NULL"))
+setClassUnion(
+    "SingleCellExperiment_OR_NULL",
+    c("SingleCellExperiment", "NULL"))
 
 .Zattrs <- setClass(
     Class="Zattrs",
@@ -44,7 +48,10 @@ setClassUnion(
 #' @importFrom arrow Table
 #' @importFrom methods setOldClass
 setOldClass("Table")
-setOldClass("arrow_dplyr_query")
+
+# 'arrow' doesn't export this class;
+# this somehow does the trick...
+setClass("arrow_dplyr_query", "VIRTUAL")
 
 setClassUnion(
     "Table_OR_df",
@@ -68,6 +75,17 @@ setClassUnion(
     representation(
         images="list", # 'ImageArray's
         labels="list", # 'LabelArray's
-        shapes="list", # 'DataFrame's
-        points="list", # 'ArrowObject's
+        shapes="list", # 'ShapeFrame's
+        points="list", # 'PointFrame's
         table="SingleCellExperiment_OR_NULL"))
+
+setOldClass("gg")
+
+#' @exportClass ggSD SpatialData
+ggSD <- setClass(
+    Class="ggSD",
+    contains="gg",
+    slots=c(metadata="list"))
+
+#' @export
+setMethod("show", "ggSD", function(object) show(asS3(object)))

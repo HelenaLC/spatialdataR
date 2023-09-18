@@ -66,8 +66,6 @@ setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
 
 setGeneric("alignElements", function(...) standardGeneric("alignElements"))
 
-setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
-
 # INTERNALS for handling of coordinate transformations -------------------------
 
 setGeneric("zattrs", function(x, ...) standardGeneric("zattrs"))
@@ -77,3 +75,11 @@ setGeneric("getCoordTrans", function(x, ...) standardGeneric("getCoordTrans"))
 setGeneric("setCoordTrans", function(x, ...) standardGeneric("setCoordTrans"))
 setGeneric("addCoordTrans", function(x, ...) standardGeneric("addCoordTrans"))
 setGeneric("rmvCoordTrans", function(x, ...) standardGeneric("rmvCoordTrans"))
+
+# plotting ---------------------------------------------------------------------
+
+setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
+setGeneric("plotImage", function(x, ...) standardGeneric("plotImage"))
+setGeneric("plotLabel", function(x, ...) standardGeneric("plotLabel"))
+setGeneric("plotShape", function(x, ...) standardGeneric("plotShape"))
+setGeneric("plotPoint", function(x, ...) standardGeneric("plotPoint"))

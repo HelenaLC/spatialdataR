@@ -172,6 +172,33 @@ setReplaceMethod("shapes",
         return(x)
     })
 
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("shape",
+    c("SpatialData", "numeric"),
+    function(x, i, value) {
+        stopifnot(i <= length(shapes(x))+1)
+        shapes(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("shape",
+    c("SpatialData", "character"),
+    function(x, i, value) {
+        shapes(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("shape",
+    c("SpatialData", "missing"),
+    function(x, i, value) {
+        `shape<-`(x=x, i=1, value=value)
+    })
+
 # points -----------------------------------------------------------------------
 
 #' @rdname SpatialData
@@ -196,6 +223,52 @@ setReplaceMethod("points",
     function(x, value) {
         x@points <- value
         return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("point",
+    c("SpatialData", "numeric", "PointFrame"),
+    function(x, i, value) {
+        stopifnot(i <= length(points(x))+1)
+        points(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("point",
+    c("SpatialData", "character", "PointFrame"),
+    function(x, i, value) {
+        points(x)[[i]] <- value
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("point",
+    c("SpatialData", "missing", "PointFrame"),
+    function(x, i, value) {
+        `point<-`(x=x, i=1, value=value)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("point",
+    c("SpatialData", "ANY", "NULL"),
+    function(x, i, value) {
+        if (missing(i)) i <- 1
+        points(x)[[i]] <- NULL
+        return(x)
+    })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("point",
+    c("SpatialData", "ANY", "ANY"),
+    function(x, i, value) {
+        stop("replacement value should be a 'PointFrame'")
+        `point<-`(x=x, i=1, value=value)
     })
 
 # table ------------------------------------------------------------------------
