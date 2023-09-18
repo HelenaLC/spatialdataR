@@ -12,9 +12,6 @@ BiocManager::install("HelenaLC/SpatialData")
 
 ## Demos
 
-- [vignette](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
-=======
-
 - [raccoon](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
 
 - [mibitof](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/mibitof.html)
