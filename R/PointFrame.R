@@ -30,6 +30,7 @@
 #' @importFrom S4Vectors metadata<-
 #' @export
 PointFrame <- function(data=NULL, metadata=list(), ...) {
+    if (is.null(data)) data <- data.frame()
     pf <- .PointFrame(data=data, ...)
     metadata(pf) <- metadata
     return(pf)

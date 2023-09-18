@@ -34,8 +34,8 @@
 \alias{coords,SpatialDataElement-method}
 \alias{coord,SpatialDataElement-method}
 \alias{translateElement,SpatialDataElement-method}
-\alias{rotateElement,SpatialDataElement-method}
 \alias{scaleElement,SpatialDataElement-method}
+\alias{rotateElement,SpatialDataElement-method}
 \alias{transformElement,SpatialDataElement-method}
 \alias{axes,ImageArray-method}
 \alias{alignElements,ANY-method}
@@ -53,7 +53,7 @@
 
 \S4method{dimnames}{ZarrArray}(x)
 
-\S4method{as.array}{ZarrArray}(x)
+\S4method{as.array}{ZarrArray}(x, i)
 
 \S4method{[}{ZarrArray,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -73,11 +73,11 @@ LabelArray(data = array(), metadata = list(), ...)
 
 \S4method{translateElement}{SpatialDataElement}(x, t = numeric(2))
 
-\S4method{rotateElement}{SpatialDataElement}(x, t = 0)
-
 \S4method{scaleElement}{SpatialDataElement}(x, t)
 
-\S4method{transformElement}{SpatialDataElement}(x, coord = NULL)
+\S4method{rotateElement}{SpatialDataElement}(x, t = 0)
+
+\S4method{transformElement}{SpatialDataElement}(x, coord = 1)
 
 \S4method{axes}{ImageArray}(x, type = NULL)
 

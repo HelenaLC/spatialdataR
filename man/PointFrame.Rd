@@ -4,7 +4,6 @@
 \alias{$,PointFrame-method}
 \alias{[[,PointFrame,ANY,ANY-method}
 \alias{as.data.frame,PointFrame-method}
-\alias{alias}
 \alias{length,PointFrame-method}
 \alias{names,PointFrame-method}
 \alias{dim,PointFrame-method}

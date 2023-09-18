@@ -53,28 +53,48 @@ setMethod("dimnames", "ZarrArray", function(x) {
         dimnames(x@data)
 })
 
-.load <- function(x) {
+.load <- function(x, i) {
     var <- deparse(substitute(x))
-    x@data <- as.array(x)
+    x@data <- as.array(x, i)
     assign(var, x, parent.frame())
+}
+
+#' @importFrom Rarr read_zarr_array
+as.array.ZarrArray <- function(x, i) {
+    if (is.data.frame(x@data)) {
+        if (missing(i)) {
+            d <- length(x@data$dim[[1]])
+            i <- vector("list", d)
+        }
+        read_zarr_array(x@data$path, i)
+    } else {
+        as.array(x@data)
+    }
 }
 
 #' @rdname ZarrArray
 #' @export
-setMethod("as.array", "ZarrArray", function(x) {
-    if (is.data.frame(x@data)) {
-        read_zarr_array(x@data$path)
-    } else {
-        as.array(x@data)
-    }
-})
+setMethod("as.array", "ZarrArray", as.array.ZarrArray)
 
 #' @rdname ZarrArray
 #' @export
 setMethod("[", "ZarrArray", function(x, i, j, ...) {
-    if (is.data.frame(x@data)) .load(x)
-    x@data <- x@data[i, j, ..., drop=FALSE]
-    x
+    if (is.data.frame(x@data)) {
+        if (missing(i)) i <- NULL
+        if (missing(j)) j <- NULL
+        d <- length(dim(x))
+        if (nargs()-1 != d)
+            stop("incorrect number of dimensions")
+        if (missing(..0)) {
+            k <- vector("list", d-2)
+        } else {
+            k <- list(...)
+        }
+        .load(x, c(list(i, j), k))
+    } else {
+        x@data <- x@data[i, j, ..., drop=FALSE]
+        x
+    }
 })
 
 #' @rdname ZarrArray

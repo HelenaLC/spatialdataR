@@ -45,6 +45,8 @@ ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
     return(sf)
 }
 
+as.array.ShapeFrame <- function(x) do.call(rbind, x$data)
+
 #' @rdname ShapeFrame
 #' @export
-setMethod("as.array", "ShapeFrame", function(x) do.call(rbind, x$data))
+setMethod("as.array", "ShapeFrame", as.array.ShapeFrame)

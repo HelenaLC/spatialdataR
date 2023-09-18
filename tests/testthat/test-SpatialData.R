@@ -36,133 +36,133 @@ test_that("SpatialData,labels", {
 })
 
 path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
-sd <- readSpatialData(path)
+x <- readSpatialData(path)
 
 # names ----
 
 test_that("imageNames", {
-  x <- imageNames(sd)
-  n <- length(attr(sd, "images"))
-  expect_length(x, n)
-  if (n > 0) expect_type(x, "character")
+  y <- imageNames(x)
+  n <- length(attr(x, "images"))
+  expect_length(y, n)
+  if (n > 0) expect_type(y, "character")
 })
 
 test_that("labelNames", {
-  x <- labelNames(sd)
-  n <- length(attr(sd, "labels"))
+  y <- labelNames(x)
+  n <- length(attr(x, "labels"))
   expect_length(x, n)
-  if (n > 0) expect_type(x, "character")
+  if (n > 0) expect_type(y, "character")
 })
 
 test_that("shapeNames", {
-  x <- shapeNames(sd)
-  n <- length(attr(sd, "shapes"))
-  expect_length(x, n)
-  if (n > 0) expect_type(x, "character")
+  y <- shapeNames(x)
+  n <- length(attr(x, "shapes"))
+  expect_length(y, n)
+  if (n > 0) expect_type(y, "character")
 })
 
 test_that("pointNames", {
-  x <- pointNames(sd)
-  n <- length(attr(sd, "points"))
-  expect_length(x, n)
-  if (n > 0) expect_type(x, "character")
+  y <- pointNames(x)
+  n <- length(attr(x, "points"))
+  expect_length(y, n)
+  if (n > 0) expect_type(y, "character")
 })
 
 test_that("elementNames", {
-    x <- elementNames(sd)
-    expect_type(x, "character")
-    layers <- attributes(sd)
+    y <- elementNames(x)
+    expect_type(y, "character")
+    layers <- attributes(x)
     layers <- layers[setdiff(names(layers), c("metadata", "class"))]
     .na <- \(.) length(.) == 0 || is(., "name")
-    expect_length(x, sum(!vapply(layers, .na, logical(1))))
+    expect_length(y, sum(!vapply(layers, .na, logical(1))))
 })
 
 # access single ----
 
 test_that("image", {
-  expect_error(image(sd, 00))
-  expect_error(image(sd, -1))
-  expect_error(image(sd, 99))
-  expect_error(image(sd, ""))
-  i <- imageNames(sd)[1]
-  expect_s4_class(image(sd, 1), "ImageArray")
-  expect_s4_class(image(sd, i), "ImageArray")
+  expect_error(image(x, 00))
+  expect_error(image(x, -1))
+  expect_error(image(x, 99))
+  expect_error(image(x, ""))
+  i <- imageNames(x)[1]
+  expect_s4_class(image(x, 1), "ImageArray")
+  expect_s4_class(image(x, i), "ImageArray")
 })
 
 test_that("label", {
-  expect_error(label(sd, 00))
-  expect_error(label(sd, -1))
-  expect_error(label(sd, 99))
-  expect_error(label(sd, ""))
-  i <- labelNames(sd)[1]
-  expect_s4_class(label(sd, 1), "LabelArray")
-  expect_s4_class(label(sd, i), "LabelArray")
+  expect_error(label(x, 00))
+  expect_error(label(x, -1))
+  expect_error(label(x, 99))
+  expect_error(label(x, ""))
+  i <- labelNames(x)[1]
+  expect_s4_class(label(x, 1), "LabelArray")
+  expect_s4_class(label(x, i), "LabelArray")
 })
 
 test_that("shape", {
-  expect_error(shape(sd, 00))
-  expect_error(shape(sd, -1))
-  expect_error(shape(sd, 99))
-  expect_error(shape(sd, ""))
-  i <- shapeNames(sd)[1]
-  expect_s4_class(shape(sd, 1), "DFrame")
-  expect_s4_class(shape(sd, i), "DFrame")
+  expect_error(shape(x, 00))
+  expect_error(shape(x, -1))
+  expect_error(shape(x, 99))
+  expect_error(shape(x, ""))
+  i <- shapeNames(x)[1]
+  expect_s4_class(shape(x, 1), "DFrame")
+  expect_s4_class(shape(x, i), "DFrame")
 })
 
 test_that("point", {
-  expect_error(point(sd, 00))
-  expect_error(point(sd, -1))
-  expect_error(point(sd, 99))
-  expect_error(point(sd, ""))
-  i <- pointNames(sd)[1]
-  expect_s4_class(point(sd, 1), "PointFrame")
-  expect_s4_class(point(sd, i), "PointFrame")
+  expect_error(point(x, 00))
+  expect_error(point(x, -1))
+  expect_error(point(x, 99))
+  expect_error(point(x, ""))
+  i <- pointNames(x)[1]
+  expect_s4_class(point(x, 1), "PointFrame")
+  expect_s4_class(point(x, i), "PointFrame")
 })
 
 test_that("table", {
-  expect_s4_class(table(sd), "SingleCellExperiment")
-  expect_error(table(sd) <- "")
-  expect_error(table(sd) <- NA)
-  expect_silent(table(sd) <- NULL)
+  expect_s4_class(table(x), "SingleCellExperiment")
+  expect_error(table(x) <- "")
+  expect_error(table(x) <- NA)
+  expect_silent(table(x) <- NULL)
 })
 
 test_that("element", {
-    expect_error(element(sd, elementName="foo"))
-    expect_error(element(sd, i="foo"))
-    expect_error(element(sd, i=12345))
+    expect_error(element(x, elementName="foo"))
+    expect_error(element(x, i="foo"))
+    expect_error(element(x, i=12345))
 
-    expect_true(is_ia(element(sd, elementName="images", i=1)))
-    expect_true(is_la(element(sd, elementName="labels", i=1)))
-    expect_true(is_sf(element(sd, elementName="shapes", i=1)))
-    expect_true(is_pf(element(sd, elementName="points", i=1)))
+    expect_true(is_ia(element(x, elementName="images", i=1)))
+    expect_true(is_la(element(x, elementName="labels", i=1)))
+    expect_true(is_sf(element(x, elementName="shapes", i=1)))
+    expect_true(is_pf(element(x, elementName="points", i=1)))
 })
 
 # access multiple ----
 
 test_that("images", {
-  x <- images(sd)
-  n <- length(attr(sd, "images"))
+  x <- images(x)
+  n <- length(attr(x, "images"))
   expect_type(x, "list")
   if (n > 0) expect_true(all(vapply(x, is_ia, logical(1))))
 })
 
 test_that("labels", {
-  x <- labels(sd)
-  n <- length(attr(sd, "labels"))
+  x <- labels(x)
+  n <- length(attr(x, "labels"))
   expect_type(x, "list")
   if (n > 0) expect_true(all(vapply(x, is_la, logical(1))))
 })
 
 test_that("shapes", {
-  x <- shapes(sd)
-  n <- length(attr(sd, "shapes"))
+  x <- shapes(x)
+  n <- length(attr(x, "shapes"))
   expect_type(x, "list")
   if (n > 0) expect_true(all(vapply(x, is_sf, logical(1))))
 })
 
 test_that("points", {
-  x <- points(sd)
-  n <- length(attr(sd, "points"))
+  x <- points(x)
+  n <- length(attr(x, "points"))
   expect_type(x, "list")
   if (n > 0) expect_true(all(vapply(x, is_pf, logical(1))))
 })
@@ -170,40 +170,61 @@ test_that("points", {
 # replace multiple ----
 
 test_that("images<-", {
-    ds <- sd
-    expect_silent(images(ds) <- list())
-    expect_length(images(ds), 0)
-    ds <- sd
+    y <- x
+    expect_silent(images(y) <- list())
+    expect_length(images(y), 0)
+    y <- x
     ia <- ImageArray()
-    expect_silent(images(ds) <- list(ia))
-    expect_identical(image(ds), ia)
-    expect_null(imageNames(ds))
+    expect_silent(images(y) <- list(ia))
+    expect_identical(image(y), ia)
+    expect_null(imageNames(y))
 })
 test_that("labels<-", {
-    ds <- sd
-    expect_silent(labels(ds) <- list())
-    expect_length(labels(ds), 0)
-    ds <- sd
+    y <- x
+    expect_silent(labels(y) <- list())
+    expect_length(labels(y), 0)
+    y <- x
     la <- LabelArray()
-    expect_silent(labels(ds) <- list(la))
-    expect_identical(label(ds), la)
-    expect_null(labelNames(ds))
+    expect_silent(labels(y) <- list(la))
+    expect_identical(label(y), la)
+    expect_null(labelNames(y))
 })
 
 # replace single ----
 
 test_that("image<-", {
-    ds <- sd
-    ia <- ImageArray()
-    expect_error(image(ds, 99) <- ia)
-    expect_silent(image(ds, "foo") <- ia)
-    expect_true("foo" %in% imageNames(ds))
+    y <- ImageArray()
+    expect_error(image(x, 99) <- y)
+    expect_silent(image(x, "foo") <- y)
+    expect_true("foo" %in% imageNames(x))
 })
 
 test_that("label<-", {
-    ds <- sd
-    la <- LabelArray()
-    expect_error(label(ds, 99) <- la)
-    expect_silent(label(ds, "foo") <- la)
-    expect_true("foo" %in% labelNames(ds))
+    y <- LabelArray()
+    expect_error(label(x, 99) <- y)
+    expect_silent(label(x, "foo") <- y)
+    expect_true("foo" %in% labelNames(x))
+})
+
+test_that("shape<-", {
+    y <- ShapeFrame()
+    expect_error(shape(x, 99) <- y)
+    expect_silent(shape(x, "foo") <- y)
+    expect_true("foo" %in% shapeNames(x))
+})
+
+test_that("point<-", {
+    expect_error(point(x) <- "x")
+    expect_error(point(x) <- 123)
+
+    y <- x; point(y) <- NULL
+    expect_length(points(y), 0)
+
+    y <- x; point(y, 1) <- NULL
+    expect_length(points(y), 0)
+
+    y <- PointFrame()
+    expect_error(point(x, 99) <- y)
+    expect_silent(point(x, "foo") <- y)
+    expect_true("foo" %in% pointNames(x))
 })

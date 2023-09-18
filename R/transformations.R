@@ -1,13 +1,24 @@
-# coords ----
+.whZarrArray <- function(x) {
+    d <- dim(x)
+    nd <- length(d)
+    md <- metadata(x)
+    if (is.null(md$w))
+        md$w <- c(0, d[nd])
+    if (is.null(md$h))
+        md$h <- c(0, d[nd-1])
+    list(w=md$w, h=md$h)
+}
 
-#' @rdname ZarrArray
-#' @export
-setMethod("coords", "SpatialDataElement",
-    function(x) getCoordTrans(x, name=NULL))
+# coords ----
 
 #' @rdname ShapeFrame
 #' @export
 setMethod("coords", "SpatialData",
+    function(x) getCoordTrans(x, name=NULL))
+
+#' @rdname ZarrArray
+#' @export
+setMethod("coords", "SpatialDataElement",
     function(x) getCoordTrans(x, name=NULL))
 
 #' @rdname ZarrArray
@@ -19,14 +30,16 @@ setMethod("coord", "SpatialDataElement",
 
 #' @importFrom EBImage translate
 .translateZarrArray <- function(x, t) {
-    a <- as.array(x)
-    d <- length(dim(a))
-    if (d == 2) a <- array(a, c(1, dim(a)))
-    y <- apply(a, 1, translate, t, simplify=FALSE)
-    y <- abind(y, along=0)
-    if (d == 2) y <- y[1, , ]
-    fun <- get(class(x))
-    fun(y, zattrs(x))
+    d <- dim(x)
+    md <- metadata(x)
+    wh <- .whZarrArray(x)
+    md$w <- wh$w+t[3]
+    md$h <- wh$h+t[2]
+    metadata(x) <- md
+    return(x)
+    # a <- as.array(x)
+    # b <- aperm(translate(aperm(a), t[-1]))
+    # get(class(x))(b, zattrs=zattrs(x))
 }
 
 .translateShapeFrame <- function(x, t) {
@@ -34,15 +47,13 @@ setMethod("coord", "SpatialDataElement",
     a[, 1] <- a[, 1]+t[2]
     a[, 2] <- a[, 2]+t[1]
     y <- switch(x$type[1],
-        circle={
-            asplit(a, 1)
-        },
+        circle=asplit(a, 1),
         polygon={
-            i <- rep.int(x$index, vapply(x$data, nrow, integer(1)))
+            ns <- vapply(x$data, nrow, integer(1))
+            i <- rep.int(x$index, ns)
             i <- split(seq(nrow(a)), i)
             lapply(i, \(.) a[., ])
-        }
-    )
+        })
     x$data <- y
     return(x)
 }
@@ -57,64 +68,18 @@ setMethod("coord", "SpatialDataElement",
 .translate <- function(x, t) {
     stopifnot(
         "'t' should be numeric"=is.numeric(t),
-        "'t' should be of length 2"=length(t) == 2,
         "'t' should be whole numbers"=round(t) == t)
+    # do nothing when all coordinate shifts are 0
     if (all(t == 0)) return(x)
+    # otherwise call corresponding method
     c <- ifelse(is(x, za <- "ZarrArray"), za, class(x))
-    fun <- paste0(".translate", c)
-    get(fun)(x, t)
+    get(paste0(".translate", c))(x, t)
 }
 
 #' @rdname ZarrArray
 #' @export
 setMethod("translateElement", "SpatialDataElement",
     function(x, t=numeric(2)) .translate(x, t))
-
-# rotation ----
-
-.R <- function(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
-
-.rotate3d <- function(x, t) {
-    a <- as.array(x)
-    y <- apply(a, 1, rotate, t, simplify=FALSE)
-    y <- abind(y, along=0)
-    fun <- get(class(x))
-    fun(y, zattrs(x))
-}
-
-.rotate2d <- function(x, t) {
-    R <- .R(t <- t*pi/180)
-    switch(class(x),
-        ShapeFrame={
-            y <- lapply(x$data, \(xy) (xy %*% R))
-            x$data <- y
-        },
-        PointFrame={
-            x@data <- x@data %>%
-                mutate(.x=x*R[1,1], .y=y*R[1,2]) %>%
-                mutate(x=.x+.y) %>%
-                mutate(.x=x*R[2,1], .y=y*R[2,2]) %>%
-                mutate(y=.x+.y) %>%
-                select(-.x, -.y)
-        })
-    return(x)
-}
-
-#' @importFrom EBImage rotate
-.rotate <- function(x, t) {
-    stopifnot(
-        "'t' should be numeric"=is.numeric(t),
-        "'t' should be of length 1"=length(t) == 1)
-    if (t == 0) return(x)
-    d <- ifelse(is(x, "ZarrArray"), 3, 2)
-    fun <- sprintf(".rotate%sd", d)
-    get(fun)(x, t)
-}
-
-#' @rdname ZarrArray
-#' @export
-setMethod("rotateElement", "SpatialDataElement",
-    function(x, t=0) .rotate(x, t))
 
 # scaling ----
 
@@ -123,14 +88,13 @@ setMethod("rotateElement", "SpatialDataElement",
     d <- length(dim(x))
     if (length(t) != d)
         stop("'t' should be of length ", d)
-    # TODO: this is slow as hell... also,
-    # is the first entry ever even used/useful?
-    a <- as.array(x)
-    y <- apply(a, 1, simplify=FALSE, \(.)
-        resize(., nrow(.)*t[d-1], ncol(.)*t[d]))
-    y <- abind(y, along=0)
+    y <- as.array(x)
+    y <- resize(aperm(y),
+        w=dim(y)[d]*t[d],
+        h=dim(y)[d-1]*t[d-1])
+    y <- aperm(y)
     fun <- get(class(x))
-    fun(y, zattrs(x))
+    fun(y, zattrs=zattrs(x))
 }
 
 .scaleShapeFrame <- function(x, t) {
@@ -154,17 +118,16 @@ setMethod("rotateElement", "SpatialDataElement",
 
 .scalePointFrame <- function(x, t) {
     stopifnot("'t' should be of length 2 for scaling points"=length(t) == 2)
-    x@data <- x@data %>%
-        mutate(x=x*t[1], y=y*t[2])
+    x@data <- x@data %>% mutate(x=x*t[1], y=y*t[2])
     return(x)
 }
 
 .scale <- function(x, t) {
+    # do nothing if all factors are 0
     if (all(t == 1)) return(x)
-    fun <- paste0(".scale", class(x))
+    # otherwise call corresponding method
     c <- ifelse(is(x, za <- "ZarrArray"), za, class(x))
-    fun <- paste0(".scale", c)
-    get(fun)(x, t)
+    get(paste0(".scale", c))(x, t)
 }
 
 #' @rdname ZarrArray
@@ -172,30 +135,88 @@ setMethod("rotateElement", "SpatialDataElement",
 setMethod("scaleElement",
     "SpatialDataElement",
     function(x, t) {
-        if (missing(t)) {
-            t <- rep(1, length(dim(x)))
-        } else {
-            stopifnot(
-                "'t' should be numeric"=is.numeric(t),
-                "'t' should be greater than zero"=t > 0)
-        }
+        if (missing(t)) t <- rep(1, length(dim(x)))
+        stopifnot(
+            "'t' should be numeric"=is.numeric(t),
+            "'t' should be greater than zero"=t > 0)
         .scale(x, t)
     }
 )
+
+# rotation ----
+
+# rotation matrix to rotate points
+# counter-clockwise through an angle 't'
+.R <- function(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+
+.rotate2d <- function(x, t) {
+    R <- .R(t*pi/180)
+    switch(class(x),
+        ShapeFrame={
+            x@listData$data <- lapply(x$data, \(xy) (xy %*% R))
+        },
+        PointFrame={
+            x@data <- x@data %>%
+                mutate(.x=x*R[1,1], .y=y*R[1,2]) %>%
+                mutate(x=.x+.y) %>%
+                mutate(.x=x*R[2,1], .y=y*R[2,2]) %>%
+                mutate(y=.x+.y) %>%
+                select(-.x, -.y)
+        })
+    return(x)
+}
+
+# 'aperm's needed here because channels are ordered as
+# tczyx in OME-NGFF, but 'EBImage' needs c to be last
+#' @importFrom EBImage rotate
+.rotate3d <- function(x, t) {
+    y <- as.array(x)
+    y <- aperm(rotate(aperm(y), -t, "none"))
+    get(class(x))(y, zattrs=zattrs(x))
+}
+
+.rotate <- function(x, t) {
+    stopifnot(
+        "'t' should be numeric"=is.numeric(t),
+        "'t' should be of length 1"=length(t) == 1)
+    # do nothing when angle's divisible by 360
+    if (t %% 360 == 0) return(x)
+    # otherwise call corresponding method
+    d <- ifelse(is(x, "ZarrArray"), 3, 2)
+    get(sprintf(".rotate%sd", d))(x, t)
+}
+
+#' @rdname ZarrArray
+#' @export
+setMethod("rotateElement", "SpatialDataElement",
+    function(x, t=0) .rotate(x, t))
 
 # transformation ----
 
 #' @rdname ZarrArray
 #' @export
-setMethod("transformElement", "SpatialDataElement", function(x, coord=NULL) {
-    df <- coord(x, coord)
-    switch(
-        df$type,
-        "identity"=x,
-        "scale"=scaleElement(x, df$data[[1]]),
-        "rotate"=rotateElement(x, df$data[[1]]),
-        paste0("transformation of type '",
-            df$type, "' not (yet) supported"))
+setMethod(
+    "transformElement",
+    "SpatialDataElement",
+    function(x, coord=1) {
+        df <- if (is.data.frame(coord))
+            coord else coord(x, coord)
+        t <- df[[df$type]][[1]]
+        switch(
+            df$type,
+            "identity"=x,
+            "scale"=scaleElement(x, t),
+            "rotate"=rotateElement(x, t),
+            "translation"=translateElement(x, t),
+            "sequence"={
+                ts <- df$transformations[[1]]
+                for (. in seq_len(nrow(ts))) {
+                    x <- transformElement(x, ts[., ])
+                }
+                return(x)
+            },
+            paste0("transformation of type '",
+                df$type, "' not (yet) supported"))
     }
 )
 
@@ -220,7 +241,8 @@ setMethod("axes", "ImageArray", function(x, type=NULL) {
 #' @export
 setMethod("alignElements", "ANY", function(..., coord=NULL) {
     x <- list(...)
-    c <- lapply(x, \(.) coords(.)$output$name)
+    x <- x[!vapply(x, is.null, logical(1))]
+    cs <- lapply(x, \(.) coords(.)$output$name)
     if (is.null(coord)) {
         # if unspecified, default to using
         # first shared coordinate system
@@ -228,7 +250,7 @@ setMethod("alignElements", "ANY", function(..., coord=NULL) {
     } else {
         # otherwise, check that elements
         # share input coordinate system
-        valid <- vapply(c, \(.) . %in% coord, logical(1))
+        valid <- vapply(cs, \(.) coord %in% ., logical(1))
         if (!all(valid)) stop(
             "input element don't share a '",
             coord, "' coordinate system")

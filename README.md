@@ -9,9 +9,14 @@ if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("HelenaLC/SpatialData")
 ```
+
 ## Demos
 
 - [vignette](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
+=======
+
+- [raccoon](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html)
+
 - [mibitof](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/mibitof.html)
 
 ## Useful links
@@ -22,7 +27,13 @@ BiocManager::install("HelenaLC/SpatialData")
 - Specs for shapes, polygons and table generally follow the spatialdata [design doc][]
 - Design document for [AnnData<>SCE][] integration
 
-## TODOs
+## Qs for GP,LM,...
+
+- Plotting high-resolution images (e.g., in the CosMx example) takes a hell of a long time. Are you rescaling these for visualization [here](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/notebooks/examples/technology_cosmx.html) and simply keeping the original axis labels? Or does Python do this by magick?
+
+- I'm assuming that people also plot multiple elements together, however, I am not seeing this in any of the demos. Would be could to have a data set to implement & test this. I.e., in the current examples, only one "stack" of image/label/point is in each plot.
+
+- Related to the above: My understanding is that the 1st entries of each element type somehow match. However, they have different identifiers. If this is a design choice, ok, but it's rather confusing (e.g., "1_image" and "1_point"); and, I wonder whether things break anywhere if that ordering is not upheld?
 
 ### Transformations
 
@@ -36,17 +47,16 @@ BiocManager::install("HelenaLC/SpatialData")
 |scale     |&#x2714;|&#x2714;|&#x2714;|&#x2714;
 |affine    |&#x274C;|&#x274C;|&#x274C;|&#x274C;
 |by dim.   |&#x274C;|&#x274C;|&#x274C;|&#x274C;
-|sequence  |&#x274C;|&#x274C;|&#x274C;|&#x274C;
+|sequence  |&#x2714;|&#x2714;|&#x2714;|&#x2714;
 |map axis  |&#x274C;|&#x274C;|&#x274C;|&#x274C;
 
-- [ ] IO for Elements (and associated metadata)
+- [x] IO for Elements (and associated metadata)
   - [x] Images
-    - [ ] Multiscale
   - [x] Labels
-    - [ ] Multiscale
   - [x] Shapes
-  - [x] Points (*missing metadata)
+  - [x] Points
   - [x] Table
+  - [ ] link elements with Table data
 
 - [ ] Operations
   - [ ] Aggregation
