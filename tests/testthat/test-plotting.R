@@ -1,49 +1,32 @@
-path <- system.file("extdata", "raccoon",
-    package="SpatialData", mustWork=TRUE)
-x <- readSpatialData(path)
+x <- readSpatialData(system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE))
 
-test_that("plotElement,ImageArray", {
-    y <- image(x)
-    p <- plotElement(y)
-    expect_s3_class(p, "ggplot")
-    xy <- p$scales$scales
-    expect_equal(xy[[1]]$limits, c(0, dim(y)[3]))
-    expect_equal(xy[[2]]$limits, c(dim(y)[2], 0))
+test_that("plotImage", {
+    p <- plotImage(x)
+    expect_s4_class(p, "ggSD")
 })
 
-test_that("plotElement,LabelArray", {
-    y <- label(x)
-    p <- plotElement(y)
-    expect_s3_class(p, "ggplot")
-    xy <- p$scales$scales
-    expect_equal(xy[[1]]$limits, c(0, dim(y)[2]))
-    expect_equal(xy[[2]]$limits, c(dim(y)[1], 0))
+test_that("plotLabel", {
+    p <- plotLabel(x)
+    expect_s4_class(p, "ggSD")
 })
 
-test_that("plotElement,ShapeArray", {
-    y <- shape(x)
-    p <- plotElement(y)
-    expect_s3_class(p, "ggplot")
-    a <- as.array(y)
-    xy <- p$scales$scales
-    r <- c(-1, 1)*y$radius[1]
-    expect_equal(xy[[1]]$limits, range(a[, 1])+r, tolerance=1e3)
-    expect_equal(xy[[2]]$limits, range(a[, 2])+r, tolerance=1e3)
-    # TODO: polygon
+test_that("plotShape,polygon", {
+    p <- plotShape(x)
+    expect_s4_class(p, "ggSD")
+    a <- as.array(shape(x))
+    xy <- p$layers[[1]]$data[c("x", "y")]
+    expect_equal(as.matrix(xy), a, ignore_attr=TRUE)
+    # TODO: circle
 })
 
-test_that("plotSD", {
-    p <- plotSD(x)
-    n <- length(elementNames(x))
-    expect_s3_class(p, "ggplot")
-    expect_equal(length(p$layers), n)
-    # w/o image
-    p <- plotSD(x, image=NULL)
-    expect_equal(length(p$layers), n-1)
-    # w/o label
-    p <- plotSD(x, label=NULL)
-    expect_equal(length(p$layers), n-1)
-    # w/o shape
-    p <- plotSD(x, shape=NULL)
-    expect_equal(length(p$layers), n-1)
+test_that("plotPoint", {
+    p <- plotPoint(x)
+    expect_s4_class(p, "ggSD")
+    p <- plotPoint(x, col="black")
+    expect_s4_class(p, "ggSD")
+    expect_identical(p$layers[[1]]$aes_params$colour, "black")
+    p <- plotPoint(x, col="x")
+    expect_s4_class(p, "ggSD")
+    expect_length(p$layers[[1]]$aes_params, 0)
+    expect_s3_class(p$layers[[1]]$mapping$colour, "quosure")
 })

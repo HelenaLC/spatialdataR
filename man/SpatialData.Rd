@@ -21,10 +21,18 @@
 \alias{shape,SpatialData-method}
 \alias{shapeNames,SpatialData-method}
 \alias{shapes<-,SpatialData,list-method}
+\alias{shape<-,SpatialData,numeric-method}
+\alias{shape<-,SpatialData,character-method}
+\alias{shape<-,SpatialData,missing-method}
 \alias{points,SpatialData-method}
 \alias{point,SpatialData-method}
 \alias{pointNames,SpatialData-method}
 \alias{points<-,SpatialData,list-method}
+\alias{point<-,SpatialData,numeric,PointFrame-method}
+\alias{point<-,SpatialData,character,PointFrame-method}
+\alias{point<-,SpatialData,missing,PointFrame-method}
+\alias{point<-,SpatialData,ANY,NULL-method}
+\alias{point<-,SpatialData,ANY,ANY-method}
 \alias{table,SpatialData-method}
 \alias{table<-,SpatialData,SingleCellExperiment_OR_NULL-method}
 \alias{table<-,SpatialData,ANY-method}
@@ -111,6 +119,12 @@
 
 \S4method{shapes}{SpatialData,list}(x) <- value
 
+\S4method{shape}{SpatialData,numeric}(x, i) <- value
+
+\S4method{shape}{SpatialData,character}(x, i) <- value
+
+\S4method{shape}{SpatialData,missing}(x, i) <- value
+
 \S4method{points}{SpatialData}(x)
 
 \S4method{point}{SpatialData}(x, i = 1)
@@ -118,6 +132,16 @@
 \S4method{pointNames}{SpatialData}(x)
 
 \S4method{points}{SpatialData,list}(x) <- value
+
+\S4method{point}{SpatialData,numeric,PointFrame}(x, i) <- value
+
+\S4method{point}{SpatialData,character,PointFrame}(x, i) <- value
+
+\S4method{point}{SpatialData,missing,PointFrame}(x, i) <- value
+
+\S4method{point}{SpatialData,ANY,`NULL`}(x, i) <- value
+
+\S4method{point}{SpatialData,ANY,ANY}(x, i) <- value
 
 \S4method{table}{SpatialData}(x)
 

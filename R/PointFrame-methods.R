@@ -47,19 +47,20 @@ setMethod("dim", "PointFrame", function(x)
     c(length(x), length(names(x))))
 
 #' @rdname PointFrame
-#' @importFrom dplyr mutate filter collect
+#' @importFrom dplyr mutate filter select
 #' @export
 setMethod("[", c("PointFrame", "numeric"), function(x, i, ...) {
-    if (missing(i)) return(x)
+    j <- seq_len(length(x))[i]
     x@data <- x@data %>%
         mutate(.i=1+`__null_dask_index__`) %>%
-        filter(.i %in% i) %>%
+        filter(.i %in% j) %>%
         select(-.i)
     return(x)
 })
 
+setMethod("[", c("PointFrame", "missing"), function(x, i, ...) return(x))
+
 #' @rdname PointFrame
-#' @importFrom dplyr mutate filter collect
 #' @export
 setMethod("[", c("PointFrame", "logical"), function(x, i, ...) {
     if (missing(i) || isTRUE(i)) return(x)
