@@ -127,7 +127,7 @@ DataFrame(sf)
 head(as.data.frame(pf))
 ```
 
-`r BiocStyle::CRANpkg("arrow")` allows *query* operations on the underlying *.parquet* file \`{a} la `dplyr`, e.g.:
+`r BiocStyle::CRANpkg("arrow")` allows *query* operations on the underlying *.parquet* file in the style of `dplyr`, e.g.:
 
 ```{r}
 dplyr::filter(pf, x == y) |> select(x, y) |> as.data.frame()
