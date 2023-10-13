@@ -1,4 +1,4 @@
-#' @rdname PointFrame
+#' @name PointFrame
 #' @title The `PointFrame` class
 #' @aliases
 #' PointFrame PointFrame-class
@@ -53,12 +53,13 @@ setMethod("dim", "PointFrame", \(x) {
     c(length(x), length(names(x))) })
 
 #' @rdname PointFrame
+#' @export
 setMethod("length", "PointFrame", \(x) nrow(x@data))
 
 #' @importFrom utils .DollarNames
 #' @export
-.DollarNames.PointFrame <- \(x, pattern="")
-    setdiff(names(x@data), "__null_dask_index__")
+.DollarNames.PointFrame <- \(x, pattern="") {
+    setdiff(names(x@data), "__null_dask_index__") }
 
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
@@ -97,12 +98,19 @@ setMethod("[", c("PointFrame", "logical"), \(x, i, ...) {
     x[which(i)]
 })
 
+#' @rdname PointFrame
+#' @importFrom BiocGenerics as.data.frame
+#' @export
+setMethod("as.data.frame", "PointFrame", \(x) as.data.frame(x@data)[names(x)])
+
 setAs(
     from="PointFrame", to="data.frame",
-    function(from) as.data.frame(from@data)[names(from)])
+    function(from) as.data.frame(from))
 
-as.data.frame.PointFrame <- \(x) as.data.frame(x@data)[names(x)]
-
-#' @rdname PointFrame
+#' @importFrom dplyr filter
 #' @export
-setMethod("as.data.frame", "PointFrame", \(x) as.data.frame.PointFrame(x))
+filter.PointFrame <- \(x, ...) { x@data <- filter(x@data, ...); x }
+
+#' @importFrom dplyr select
+#' @export
+select.PointFrame <- \(x, ...) { x@data <- select(x@data, ...); x }
