@@ -1,8 +1,8 @@
-path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
-path <- file.path(path, "points", "blobs_points")
-x <- readPoints(path)
+dir <- file.path("extdata", "blobs", "points", "blobs_points")
+dir <- system.file(dir, package="SpatialData")
+x <- readPoints(dir)
 
-pq <- list.files(path, "*\\.parquet$", recursive=TRUE, full.names=TRUE)
+pq <- list.files(dir, "*\\.parquet$", recursive=TRUE, full.names=TRUE)
 y <- read_parquet(pq, as_data_frame=TRUE)
 y <- data.frame(y, check.names=FALSE)
 y <- y[setdiff(names(y), "__null_dask_index__")]

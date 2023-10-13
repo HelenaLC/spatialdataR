@@ -16,6 +16,7 @@
 #' @param metadata A list
 #' @param i,j Indices for subsetting (see \code{?base::Extract}).
 #' @param name A character string specifying the column extract..
+#' @param drop Ignored.
 #' @param ... Further arguments to be passed to or from other methods.
 #'
 #' @return \code{PointFrame}
@@ -35,3 +36,73 @@ PointFrame <- function(data=NULL, metadata=list(), ...) {
     metadata(pf) <- metadata
     return(pf)
 }
+
+# TODO: subsetting; don't want to always read
+# everything but this is currently happening...
+# should be doable w/ 'arrow' to have a "smarter"
+# OI via queries & collecting only when necessary
+
+#' @rdname PointFrame
+#' @export
+setMethod("names", "PointFrame", \(x) {
+    setdiff(names(x@data), "__null_dask_index__") })
+
+#' @rdname PointFrame
+#' @export
+setMethod("dim", "PointFrame", \(x) {
+    c(length(x), length(names(x))) })
+
+#' @rdname PointFrame
+setMethod("length", "PointFrame", \(x) nrow(x@data))
+
+#' @importFrom utils .DollarNames
+#' @export
+.DollarNames.PointFrame <- \(x, pattern="")
+    setdiff(names(x@data), "__null_dask_index__")
+
+#' @rdname PointFrame
+#' @importFrom dplyr select all_of collect
+#' @exportMethod $
+setMethod("$", "PointFrame", \(x, name) {
+    collect(select(x@data, all_of(name)))[[1]] })
+
+#' @rdname PointFrame
+#' @importFrom dplyr select all_of collect
+#' @exportMethod [[
+setMethod("[[", "PointFrame", \(x, i, ...) {
+    collect(select(x@data, all_of(i)))[[1]] })
+
+#' @rdname PointFrame
+#' @importFrom dplyr mutate filter select
+#' @export
+setMethod("[", c("PointFrame", "numeric"), \(x, i, ...) {
+    .i <- `__null_dask_index__` <- NULL # R CMD check
+    j <- seq_len(length(x))[i]
+    x@data <- x@data |>
+        mutate(.i=1+`__null_dask_index__`) |>
+        filter(.i %in% j) |>
+        select(-.i)
+    return(x)
+})
+
+#' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "missing"), \(x, i, ...) return(x))
+
+#' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "logical"), \(x, i, ...) {
+    if (missing(i) || isTRUE(i)) return(x)
+    stopifnot(length(i) == length(x))
+    x[which(i)]
+})
+
+setAs(
+    from="PointFrame", to="data.frame",
+    function(from) as.data.frame(from@data)[names(from)])
+
+as.data.frame.PointFrame <- \(x) as.data.frame(x@data)[names(x)]
+
+#' @rdname PointFrame
+#' @export
+setMethod("as.data.frame", "PointFrame", \(x) as.data.frame.PointFrame(x))

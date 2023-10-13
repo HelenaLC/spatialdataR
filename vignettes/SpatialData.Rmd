@@ -1,5 +1,5 @@
 ---
-title: "The `SpatialData` class"
+title: "`SpatialData`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
 author:
@@ -46,65 +46,85 @@ library(SingleCellExperiment)
 
 # `SpatialData`
 
-The `SpatialData` class contains 5 elements that are represented as follows:
+The `SpatialData` class contains 5 **layers** that each may hold an arbitrary number of **elements**. Layers are represented as follows:
 
 - `images`: list of `ImageArray`s
 - `labels`: list of `LabelArray`s
 - `shapes`: list of `ShapeFrame`s
 - `points`: list of `PointFrame`s
-- `table`: a `SingleCellExperiment`
+- `tables`: list of `SingleCellExperiment`s
 
 ```{r}
-path <- system.file("extdata", "raccoon", package="SpatialData", mustWork=TRUE)
-(spd <- readSpatialData(path))
+dir <- file.path("extdata", "blobs")
+dir <- system.file(dir, package="SpatialData")
+(spd <- readSpatialData(dir))
 ```
 
 ## Accession
 
 The following accessors are currently supported:
 
-- `image/label/shape/pointNames` to retrieve available entities of the respective element.
-- `images/labels/shapes/points` to retrieve a list of entities of the respective element.
-- `image/label/shape/point` to retrieve a single entity of the respective element.
-- `$` to directly access the entities of the respective element.
+- `image/label/shape/pointNames()` to retrieve available elements of the respective layer.
+- `images/labels/shapes/points()` to retrieve a list of elements of the respective layer.
+- `image/label/shape/point()` to retrieve a single element of the respective layer.
+- `$` to directly access the elements of the respective layer.
+
+Internally, the following (more flexible) accessors are also being used:
+
+- `element()` to retrieve an element of layer `e`.
+- `elements()` to retrieve a (named, nested) list of all  
+available elements, and `elementNames()` for their names.
 
 `SpatialData` objects behave like a list, i.e., entities of a all
 elements can be accessed in various (equivalent) ways:
 
 ```{r results="hide"}
-# these are all equivalent
-i <- imageNames(spd)[1]
-element(spd, "images", i)
-images(spd)[[i]]
+e <- "images"
+i <- "blobs_image"
+spd[[e]][[i]]
 image(spd, i)
-spd$images[[i]]
+images(spd)[[i]]
+element(spd, e, i)
+elements(spd)[[e]][[i]]
 ```
 
 ## Elements
 
-The `ZarrArray` class is essentially an `Annotated` array-like object, that may
-contain a dense `array` or any type of `Array` (e.g., `Sparse/DelayedArray`).
-Derived here-from are the `ImageArray` and `LabelArray` classes
-that represent single entities of `images` and `labels`, respectively.
-These differ slightly in their associated metadata
-and array properties, but share many functions.
+The `ZarrArray` class is essentially an `Annotated` array-like object, that may contain a dense `array` or any type of `Array` (e.g., `Sparse/DelayedArray`). Derived here-from are the `ImageArray` and `LabelArray` classes that represent single entities of `images` and `labels`, respectively. These differ slightly in their associated metadata and array properties, but share many functions.
+
+### `ImageArray`
 
 ```{r}
-# extract 'ImageArray'
-img <- image(spd, i)
-# rename channels
-channels(img) <- c("R", "G", "B")
-img
+(ia <- image(spd))
 ```
 
-Shapes are represented as `ShapeFrames`.
-Currently, these support shapes of type _circle_ and _polygon_.
-Under the hood, these are just `DataFrame`s
-(with specialized methods and additional internal requirements):
+### `LabelArray`
 
 ```{r}
-(s <- shape(spd))
-DataFrame(s)
+(la <- label(spd))
+```
+
+### `ShapeFrame`
+
+Shapes are represented as `ShapeFrame`s:
+
+```{r}
+(sf <- shape(spd))
+```
+
+Under the hood, this is just a `DataFrame` (with specialized methods and additional internal requirements), and can easily be coerced into one:
+
+```{r}
+DataFrame(sf)
+```
+
+### `PointFrame`
+
+`point` elements are represented as `PointFrame`s, which are essentially pointers (i.e., they are not realized into memory until coercing to a `data.frame`):
+
+```{r eval=FALSE}
+(pf <- point(spd))
+head(as.data.frame(pf))
 ```
 
 # Transformations
@@ -113,48 +133,75 @@ Only translation, scaling, and rotation of `Image/LabelArray`s are currently sup
 via the following functions, each of which expects a \code{SpatialData} object (SD),
 as well as transformation data `t` according to:
 
-- `rotateElement`: scalar integer (angle).
-- `scaleElement`: numeric vector with as many elements as SD has dimensions.
-- `translateElement`: integer vector of length 2 (row/y and col/x translation).
+- `translateElement()`: integer vector of length 2 (row/y and col/x translation).
+- `scaleElement()`: numeric vector with as many elements as SD has dimensions.
+- `rotateElement()`: scalar integer (angle).
 
-Available coordinate systems can be retrieved via `coords()`:
+Available coordinate systems can be retrieved via `coordNames()`, and their data with `coord/s()`; here,
 
-- `type`: type of transformation (one of identity, rotate, scale, ...)
+- `type`: type of transformation (identity, rotate, scale, ...)
 - `data`: transformation data (`NA` when `type = "identity"`)
-- `output.name` the target coordinate system's identity
+- `output.name` the target coordinate system's identifier
 
 ```{r}
-coords(img)
+coords(ia)
+```
+
+Notably, `coord/s()` and `coordNames()` will behave differently when called on a `SpatialData` object: only *shared* coordinate systems will be returned (here, there's just one, so same thing but different...)!
+
+```{r}
+coordNames(spd)
 ```
 
 ## Translation
 
-```{r}
-# move the raccoon up'n' down
-ps <- lapply(c(-300, 0, 300), \(t) 
-    translateElement(img, c(t, 0)))
-wrap_plots(lapply(ps, plotElement))
+```{r fig.height=3}
+# move up'n' down
+.spd <- spd
+images(.spd) <- lapply(
+    c(-30, 0, 30), \(t) 
+    translateElement(ia, c(0, t, 0)))
+lapply(
+    seq_along(images(.spd)), 
+    \(i) plotImage(.spd, i=i)) |>
+    wrap_plots()
 ```
 
 ## Rotation
 
-```{r}
-# spin the raccoon (anti-clockwise)
-ps <- lapply(c(0, 30, 60), \(t) 
-    rotateElement(img, t))
-wrap_plots(lapply(ps, plotElement))
+```{r fig.height=3}
+# spin (anti-clockwise)
+.spd <- spd
+images(.spd) <- lapply(
+    c(0, 30, 60), 
+    \(t) rotateElement(ia, t))
+lapply(
+    seq_along(images(.spd)), 
+    \(i) plotImage(.spd, i=i)) |>
+    wrap_plots()
 ```
 
 ## Scaling
 
-```{r}
-# squeeze the raccoon horizontally
-ps <- lapply(c(1, 2/3, 1/2), \(t) 
-    scaleElement(img, c(1, 1, t)))
-wrap_plots(lapply(ps, plotElement))
+```{r fig.height=3}
+# squeeze (horizontally)
+.spd <- spd
+images(.spd) <- lapply(
+    c(1, 2/3, 1/2),
+    \(t) scaleElement(ia, c(1, 1, t)))
+lapply(
+    seq_along(images(.spd)), 
+    \(i) plotImage(.spd, i=i)) |>
+    wrap_plots()
 ```
 
 # Visualization
+
+```{r}
+dir <- file.path("extdata", "raccoon")
+dir <- system.file(dir, package="SpatialData")
+(spd <- readSpatialData(dir))
+```
 
 ## By element
 
@@ -164,58 +211,77 @@ Images and shapes are rendered via `annotation_raster`;
 for shapes (`geom_polygon`), additional graphical parameters
 may be passed as dot (`...`) arguments.
 
-```{r}
-plotElement(image(spd)) +
-plotElement(label(spd)) +
-plotElement(shape(spd), col="blue", fill="cyan") 
+```{r fig.height=3}
+ps <- list(
+    p1 <- plotImage(spd), 
+    p2 <- plotLabel(spd, alpha=0.5), 
+    p3 <- plotShape(spd, fill="grey"))
+wrap_plots(ps)
 ```
 
 ## Layered
 
-`plotSD` currently supports overlaying arbitrary elements;
-currently, only one instance each is supported.
-Argument `coord` specifies the target coordinate system, and
-will default to the first available shared one if left unspecified.
-Elements are internally aligned via `alignElements`,
-which in turn calls `transformArray` on the input
-`image` and `label` (type `Image/LabelArray`).
-Depending on the underlying metadata, `transformElement`
-uses `scale/rotate/translateElement` for transformation.
+The `+` operator allows overlaying arbitrary layers plotted with
+`plotImage/Label/Shape/Point`. Here, argument `coord` specifies 
+the target coordinate system, and will default to the first 
+shared one available if left unspecified. 
+Elements are internally aligned via `alignElements`, which in turn calls 
+`transformArray` on the input `image` and `label` (type `Image/LabelArray`). 
+Depending on the underlying metadata, `transformElement` uses 
+`scale/rotate/translateElement` for transformation.
 
 ```{r}
-# defaults to including all available elements
-plotSD(spd,
-    alpha.label=1/3,
-    alpha.shape=1,
-    fill.shape="lightgrey")
+pile(ps) # or: pile(ps[[1]], ps[[2]], ps[[3]])
+```
+
+# Masking
+
+We can aggregate signals across spatial layers in various ways using `mask()`, which currently supports the following pairs of elements as input:
+
+- [x] `image` by `label`
+- [x] `image` by `shape`
+- [ ] `label` by `shape`
+- [ ] `point` by `shape`
+
+In each case, a `SingleCellExperiment` will be obtained where rows/columns correspond to data from the 1st/2nd input element.
+
+```{r}
+(sce <- mask(image(spd), label(spd)))
+```
+
+# Platforms
+
+## MERFISH
+
+```{r}
+#devtools::load_all()
+dir <- file.path("extdata", "merfish")
+dir <- system.file(dir, package="SpatialData")
+(spd <- readSpatialData(dir))
+```
+
+The dataset contains >3,000,000 points; for visualization, we here draw a random sample of 1,000:
+
+```{r}
+(p <- point(spd))
+q <- p[sample(length(p), 1e3)]
+.spd <- spd; point(.spd) <- q
+```
+
+Underlying the following visualization is a sequential transformation, specifically, the *image* element undergoes a scaling and translation:
+
+```{r}
+df <- coord(image(.spd))
+df$transformations[[1]]
 ```
 
 ```{r}
-path <- system.file("extdata", "blobs", package="SpatialData", mustWork=TRUE)
-(spd <- readSpatialData(path))
-plotElement(image(spd)) +
-plotElement(label(spd)) +
-plotElement(shape(spd)) +
-plotElement(point(spd))
-plotSD(spd,
-    alpha.label=1/3,
-    alpha.shape=1,
-    fill.shape="lightgrey")
-```
-
-# Query
-
-## Aggregation
-
-`aggregateImage` computed aggregated measurement values from `image`
-according to `label` using `fun` to summarized measurements (default `mean`).
-By default, the first available `image` and `label` are used.
-In the output `SingleCellExperiment`, rows correspond
-to channels and columns to unique labels (excluding 0); 
-aggregated xy-coordinates are included in the `colData`.
-
-```{r}
-(sce <- aggregateImage(spd))
+p1 <- plotImage(.spd, width=400)
+p2 <- plotShape(.spd, fill=NA, col="white")
+p3 <- plotPoint(.spd, col="cell_type", size=0.5)
+pile(p1, p2, p3) +
+    theme(legend.key.size=unit(0.5, "lines")) +
+    guides(col=guide_legend(override.aes=list(size=2)))
 ```
 
 # Appendix

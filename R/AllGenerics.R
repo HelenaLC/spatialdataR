@@ -1,85 +1,93 @@
-#' @export
-setGeneric("image", function(x, ...) standardGeneric("image"))
-#' @export
-setGeneric("images", function(x, ...) standardGeneric("images"))
-#' @export
-setGeneric("image<-", function(x, i, ..., value) standardGeneric("image<-"))
-#' @export
-setGeneric("images<-", function(x, value) standardGeneric("images<-"))
+# get one ----
 
-#' @export
-setGeneric("label", function(x, ...) standardGeneric("label"))
-#' @export
-setGeneric("labels", function(x, ...) standardGeneric("labels"))
-#' @export
-setGeneric("label<-", function(x, i, ..., value) standardGeneric("label<-"))
-#' @export
-setGeneric("labels<-", function(x, value) standardGeneric("labels<-"))
+setGeneric("image", \(x, ...) standardGeneric("image"))
+setGeneric("label", \(x, ...) standardGeneric("label"))
+setGeneric("shape", \(x, ...) standardGeneric("shape"))
+setGeneric("point", \(x, ...) standardGeneric("point"))
+setGeneric("table", \(x, ...) standardGeneric("table"))
 
-#' @export
-setGeneric("shape", function(x, ...) standardGeneric("shape"))
-#' @export
-setGeneric("shapes", function(x, ...) standardGeneric("shapes"))
-#' @export
-setGeneric("shape<-", function(x, i, ..., value) standardGeneric("shape<-"))
-#' @export
-setGeneric("shapes<-", function(x, value) standardGeneric("shapes<-"))
+# get all ----
 
-#' @export
-setGeneric("point", function(x, ...) standardGeneric("point"))
-#' @export
-setGeneric("points", function(x, ...) standardGeneric("points"))
-#' @export
-setGeneric("point<-", function(x, i, ..., value) standardGeneric("point<-"))
-#' @export
-setGeneric("points<-", function(x, value) standardGeneric("points<-"))
+setGeneric("images", \(x, ...) standardGeneric("images"))
+setGeneric("labels", \(x, ...) standardGeneric("labels"))
+setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
+setGeneric("points", \(x, ...) standardGeneric("points"))
+setGeneric("tables", \(x, ...) standardGeneric("tables"))
 
-#' @export
-setGeneric("table", function(x, value) standardGeneric("table"))
-#' @export
-setGeneric("table<-", function(x, value) standardGeneric("table<-"))
+# set one -----
 
-setGeneric("element", function(x, ...) standardGeneric("element"))
-setGeneric("elementNames", function(x, ...) standardGeneric("elementNames"))
+setGeneric("image<-", \(x, i, ..., value) standardGeneric("image<-"))
+setGeneric("shape<-", \(x, i, ..., value) standardGeneric("shape<-"))
+setGeneric("label<-", \(x, i, ..., value) standardGeneric("label<-"))
+setGeneric("point<-", \(x, i, ..., value) standardGeneric("point<-"))
+setGeneric("table<-", \(x, i, ..., value) standardGeneric("table<-"))
 
-setGeneric("imageNames", function(x, ...) standardGeneric("imageNames"))
-setGeneric("labelNames", function(x, ...) standardGeneric("labelNames"))
-setGeneric("shapeNames", function(x, ...) standardGeneric("shapeNames"))
-setGeneric("pointNames", function(x, ...) standardGeneric("pointNames"))
+# set all -----
 
-setGeneric("axes", function(x, ...) standardGeneric("axes"))
+setGeneric("images<-", \(x, value) standardGeneric("images<-"))
+setGeneric("labels<-", \(x, value) standardGeneric("labels<-"))
+setGeneric("shapes<-", \(x, value) standardGeneric("shapes<-"))
+setGeneric("points<-", \(x, value) standardGeneric("points<-"))
+setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 
-setGeneric("channels", function(x, ...) standardGeneric("channels"))
-setGeneric("channels<-", function(x, value) standardGeneric("channels<-"))
+setGeneric("element", \(x, ...) standardGeneric("element"))
+setGeneric("elements", \(x, ...) standardGeneric("elements"))
+setGeneric("elementNames", \(x, ...) standardGeneric("elementNames"))
 
-setGeneric("coord", function(x, ...) standardGeneric("coord"))
-setGeneric("coords", function(x, ...) standardGeneric("coords"))
-setGeneric("coord<-", function(x, i, ..., value) standardGeneric("coord<-"))
-setGeneric("coords<-", function(x, value) standardGeneric("coords<-"))
+# get nms ----
+setGeneric("imageNames", \(x, ...) standardGeneric("imageNames"))
+setGeneric("labelNames", \(x, ...) standardGeneric("labelNames"))
+setGeneric("shapeNames", \(x, ...) standardGeneric("shapeNames"))
+setGeneric("pointNames", \(x, ...) standardGeneric("pointNames"))
+setGeneric("tableNames", \(x, ...) standardGeneric("tableNames"))
 
-setGeneric("scaleElement", function(x, ...) standardGeneric("scaleElement"))
-setGeneric("rotateElement", function(x, ...) standardGeneric("rotateElement"))
-setGeneric("translateElement", function(x, ...) standardGeneric("translateElement"))
-setGeneric("transformElement", function(x, ...) standardGeneric("transformElement"))
+# set nms ----
+setGeneric("imageNames<-", \(x, value) standardGeneric("imageNames<-"))
+setGeneric("labelNames<-", \(x, value) standardGeneric("labelNames<-"))
+setGeneric("shapeNames<-", \(x, value) standardGeneric("shapeNames<-"))
+setGeneric("pointNames<-", \(x, value) standardGeneric("pointNames<-"))
+setGeneric("tableNames<-", \(x, value) standardGeneric("tableNames<-"))
 
-setGeneric("scaleFrame", function(x, ...) standardGeneric("scaleFrame"))
+setGeneric("geoms", \(x, ...) standardGeneric("geoms"))
+setGeneric("axiis", \(x, ...) standardGeneric("axiis"))
+setGeneric("channels", \(x, ...) standardGeneric("channels"))
+setGeneric("channels<-", \(x, value) standardGeneric("channels<-"))
 
-setGeneric("alignElements", function(...) standardGeneric("alignElements"))
+# transformations -----
+setGeneric("alignElements", \(...) standardGeneric("alignElements"))
+setGeneric("scaleElement", \(x, ...) standardGeneric("scaleElement"))
+setGeneric("rotateElement", \(x, ...) standardGeneric("rotateElement"))
+setGeneric("translateElement", \(x, ...) standardGeneric("translateElement"))
+setGeneric("transformElement", \(x, ...) standardGeneric("transformElement"))
 
-# INTERNALS for handling of coordinate transformations -------------------------
+# zattrs ----
 
-setGeneric("zattrs", function(x, ...) standardGeneric("zattrs"))
-setGeneric("zattrs<-", function(x, value) standardGeneric("zattrs<-"))
+setGeneric("zattrs", \(x, ...) standardGeneric("zattrs"))
+setGeneric("zattrs<-", \(x, value) standardGeneric("zattrs<-"))
 
-setGeneric("getCoordTrans", function(x, ...) standardGeneric("getCoordTrans"))
-setGeneric("setCoordTrans", function(x, ...) standardGeneric("setCoordTrans"))
-setGeneric("addCoordTrans", function(x, ...) standardGeneric("addCoordTrans"))
-setGeneric("rmvCoordTrans", function(x, ...) standardGeneric("rmvCoordTrans"))
+setGeneric("coord", \(x, ...) standardGeneric("coord"))
+setGeneric("coord<-", \(x, i, value) standardGeneric("coord<-"))
 
-# plotting ---------------------------------------------------------------------
+setGeneric("coords", \(x, ...) standardGeneric("coords"))
+setGeneric("coords<-", \(x, value) standardGeneric("coords<-"))
 
-setGeneric("plotElement", function(x, ...) standardGeneric("plotElement"))
-setGeneric("plotImage", function(x, ...) standardGeneric("plotImage"))
-setGeneric("plotLabel", function(x, ...) standardGeneric("plotLabel"))
-setGeneric("plotShape", function(x, ...) standardGeneric("plotShape"))
-setGeneric("plotPoint", function(x, ...) standardGeneric("plotPoint"))
+setGeneric("coordNames", \(x, ...) standardGeneric("coordNames"))
+setGeneric("coordNames<-", \(x, value) standardGeneric("coordNames<-"))
+
+setGeneric("getCoord", \(x, ...) standardGeneric("getCoord"))
+setGeneric("setCoord", \(x, ...) standardGeneric("setCoord"))
+setGeneric("addCoord", \(x, ...) standardGeneric("addCoord"))
+setGeneric("rmvCoord", \(x, ...) standardGeneric("rmvCoord"))
+
+# plot ----
+
+setGeneric("plotImage", \(x, ...) standardGeneric("plotImage"))
+setGeneric("plotLabel", \(x, ...) standardGeneric("plotLabel"))
+setGeneric("plotShape", \(x, ...) standardGeneric("plotShape"))
+setGeneric("plotPoint", \(x, ...) standardGeneric("plotPoint"))
+setGeneric("pile", \(...) standardGeneric("pile"))
+
+# utils ----
+
+setGeneric("mask", \(x, y, ...) standardGeneric("mask"))
+#setGeneric("query", \(x, i, j, ...) standardGeneric("addTable"))

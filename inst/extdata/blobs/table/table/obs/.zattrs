@@ -1,8 +1,8 @@
 {
     "_index": "_index",
     "column-order": [
-        "region",
-        "instance_id"
+        "instance_id",
+        "region"
     ],
     "encoding-type": "dataframe",
     "encoding-version": "0.2.0"

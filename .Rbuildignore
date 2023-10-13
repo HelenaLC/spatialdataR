@@ -1,8 +1,10 @@
+devel
 ^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 vignettes/*html
+inst/extdata/cosmx
 inst/extdata/visium
 inst/extdata/mibitof
-inst/extdata/cosmx_io
+#inst/extdata/merfish
 inst/extdata/raccoon_scale
