@@ -91,5 +91,5 @@ and their names via `elementNames()`
 [Proposal PR]:https://github.com/ome/ngff/pull/138
 [design doc]: https://spatialdata.scverse.org/en/latest/design_doc.html
 [AnnData<>SCE]: https://github.com/scverse/scverseio/blob/main/doc/design.md
-[vignette]: https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html
+[vignette]: https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.html
 [datasets]: https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html
