@@ -28,15 +28,12 @@ abstract: >
   <p> ...
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE)
-```
-
 # Preamble
 
 ## Dependencies
 
 ```{r load-libs, message=FALSE, warning=FALSE}
+library(dplyr)
 library(ggplot2)
 library(patchwork)
 library(SpatialData)
@@ -123,11 +120,17 @@ DataFrame(sf)
 
 ### `PointFrame`
 
-`point` elements are represented as `PointFrame`s, which are essentially pointers (i.e., they are not realized into memory until coercing to a `data.frame`):
+`point` elements are represented as `PointFrame`s, which are essentially pointers (i.e., they are not realized into memory until coercing to a `data.frame`): 
 
-```{r eval=FALSE}
+```{r}
 (pf <- point(spd))
 head(as.data.frame(pf))
+```
+
+`r BiocStyle::CRANpkg("arrow")` allows *query* operations on the underlying *.parquet* file \`{a} la `dplyr`, e.g.:
+
+```{r}
+dplyr::filter(pf, x == y) |> select(x, y) |> as.data.frame()
 ```
 
 # Transformations
