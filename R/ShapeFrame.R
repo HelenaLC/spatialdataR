@@ -31,10 +31,10 @@
 #'
 #' @author Helena L. Crowell
 #'
-#' @importFrom S4Vectors DataFrame isEmpty metadata<-
+#' @importFrom S4Vectors DataFrame metadata<-
 #' @export
 ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
-    if (isEmpty(data))
+    if (nrow(data) == 0)
         data <- data.frame(
             data=numeric(),
             index=integer(),

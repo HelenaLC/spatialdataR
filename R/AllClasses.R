@@ -1,12 +1,7 @@
-#' @importClassesFrom S4Arrays Array
+#' @importClassesFrom S4Arrays Array 
 setClassUnion(
     "Array_OR_array_OR_df",
     c("Array", "array", "data.frame"))
-
-#' @importClassesFrom SingleCellExperiment SingleCellExperiment
-setClassUnion(
-    "SingleCellExperiment_OR_NULL",
-    c("SingleCellExperiment", "NULL"))
 
 .Zattrs <- setClass(
     Class="Zattrs",
@@ -30,16 +25,16 @@ setClassUnion(
     Class="LabelArray",
     contains="ZarrArray")
 
-setClassUnion(
-    "ImageArray_OR_LabelArray",
-    c("ImageArray", "LabelArray"))
-
 #' @importClassesFrom S4Vectors DFrame
 #' @exportClass ShapeFrame SpatialData
 .ShapeFrame <- setClass(
     Class="ShapeFrame",
     contains="DFrame",
     slots=c(zattrs="Zattrs"))
+
+setClassUnion(
+    "ImageArray_OR_LabelArray",
+    c("ImageArray", "LabelArray"))
 
 setClassUnion(
     "ZarrArray_OR_ShapeFrame",
@@ -73,19 +68,8 @@ setClassUnion(
     Class="SpatialData",
     contains="Annotated",
     representation(
-        images="list", # 'ImageArray's
-        labels="list", # 'LabelArray's
-        shapes="list", # 'ShapeFrame's
-        points="list", # 'PointFrame's
-        table="SingleCellExperiment_OR_NULL"))
-
-setOldClass("gg")
-
-#' @exportClass ggSD SpatialData
-ggSD <- setClass(
-    Class="ggSD",
-    contains="gg",
-    slots=c(metadata="list"))
-
-#' @export
-setMethod("show", "ggSD", function(object) show(asS3(object)))
+        images="list",  # 'ImageArray's
+        labels="list",  # 'LabelArray's
+        shapes="list",  # 'ShapeFrame's
+        points="list",  # 'PointFrame's
+        tables="list")) # 'SingleCellExperiment's

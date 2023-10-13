@@ -1,15 +1,16 @@
 Type: Package
+Version: 0.99.1
 Package: SpatialData
-Title: SpatialData objects in R
+Title: S4 classes to represent scverse's 'SpatialData' in R
 Description:
-  Defines S4Classes to represent scverse's 'SpatialData' class in R.
-  The class contains 5 elements, specifically,
-  images and labels ('ZarrArray's),
-  shapes and points ('DataFrame's),
-  and a table ('SingleCellExperiment').
+  Defines S4 classes to represent scverse's 'SpatialData' class in R,
+  as well as various methods to interact and visualize these data.
+  The class contains 5 layers (images, labels, shapes, points, tables)
+  that may contain an arbitrary number of elements; these are
+  represented as objects of S4 classes 'ImageArray', 'LabelArray',
+  'ShapeFrame', 'PointFrame' and 'SingleCellExperiment', respectively.
   The S4 'ZarrArray' class is implemented to represent images and labels
   with any 'A/array' representation (e.g., 'SparseArray', 'DelayedArray').
-Version: 0.99.0
 Depends: R (>= 4.3)
 Authors@R: c(
   person("Helena L.", "Crowell", 
@@ -35,6 +36,7 @@ Imports:
   reticulate,
   S4Arrays, 
   S4Vectors, 
+  SummarizedExperiment,
   SingleCellExperiment,
   utils, 
   zellkonverter
@@ -45,19 +47,19 @@ Suggests:
   patchwork,
   testthat (>= 3.0.0)
 biocViews: 
-    DataRepresentation, 
-    DataImport, 
-    Infrastructure, 
-    ImmunoOncology, 
-    GeneExpression, 
-    Transcriptomics, 
-    SingleCell, 
-    Spatial
+  DataImport, 
+  DataRepresentation, 
+  Infrastructure, 
+  ImmunoOncology, 
+  GeneExpression, 
+  Transcriptomics, 
+  SingleCell,
+  Spatial
 VignetteBuilder: knitr
-URL: https://github.com/HelenaLC/ImageArray
-BugReports: https://github.com/HelenaLC/ImageArray/issues
 RoxygenNote: 7.2.3
 Encoding: UTF-8
-License: BSD 3
+License: GPL (>=2)
 Config/testthat/edition: 3
 StagedInstall: no
+URL: https://github.com/HelenaLC/ImageArray
+BugReports: https://github.com/HelenaLC/ImageArray/issues

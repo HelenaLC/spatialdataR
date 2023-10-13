@@ -21,16 +21,17 @@ md <- Rarr::zarr_overview(
   as_data_frame=TRUE)
 ia <- readArray(path)
 
-test_that("axes", {
-    x <- axes(ia)
+test_that("axiis", {
+    x <- axiis(ia)
     expect_type(x, "character")
     expect_length(x, md$dim[[1]][1])
-    expect_error(axes(ia, "foo"))
-    expect_error(axes(ia, 12345))
-    expect_error(axes(ia, axes(is)))
-    expect_error(axes(ia, c("a", "b")))
-    expect_length(axes(ia, "space"), 2)
-    expect_length(axes(ia, "channel"), 1)
+    expect_error(axiis(ia, "foo"))
+    expect_error(axiis(ia, 12345))
+    expect_error(axiis(ia, axiis(is)))
+    expect_error(axiis(ia, c("a", "b")))
+    expect_length(axiis(ia, "space"), 2)
+    expect_length(axiis(ia, "channel"), 1)
+    expect_length(axiis(ia, c("space", "channel")), 3)
 })
 
 test_that("channels", {

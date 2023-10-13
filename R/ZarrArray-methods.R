@@ -49,7 +49,7 @@ setMethod("dim", "ZarrArray", function(x) {
 #' @rdname ZarrArray
 #' @export
 setMethod("dimnames", "ZarrArray", function(x) {
-    if (!is.data.frame(i@data))
+    if (!is.data.frame(x@data))
         dimnames(x@data)
 })
 

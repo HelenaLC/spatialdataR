@@ -1,5 +1,5 @@
 #' @importFrom methods is
-.validateSpatialData <- function(obj) {
+.validateSpatialData <- \(obj) {
     msg <- NULL
     is_ia <- \(.) is(., "ImageArray")
     is_la <- \(.) is(., "LabelArray")
@@ -20,6 +20,10 @@
     if (length(obj$points)) {
         if (!all(vapply(obj$points, is_pf, logical(1))))
             msg <- c(msg, "'points' should be a list of 'PointFrame's")
+    }
+    if (length(obj$tables)) {
+        if (!all(vapply(obj$points, is_pf, logical(1))))
+            msg <- c(msg, "'tables' should be a list of 'SingleCellExperiment's")
     }
     if (length(msg))
         return(msg)
