@@ -81,7 +81,12 @@ setMethod("translateElement", "SpatialDataElement",
         h=dim(y)[d-1]*t[d-1])
     y <- aperm(y)
     fun <- get(class(x))
-    fun(y, zattrs=zattrs(x), metadata=metadata(x))
+    md <- metadata(x)
+    wh <- .whZarrArray(x)
+    x0 <- wh$w[1]; y0 <- wh$h[1]
+    md$w <- c(x0, x0+dim(x)[d])
+    md$h <- c(y0, y0+dim(x)[d-1])
+    fun(y, zattrs=zattrs(x), metadata=md)
 }
 
 .scaleShapeFrame <- function(x, t) {

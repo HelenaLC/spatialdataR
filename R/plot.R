@@ -280,10 +280,9 @@ setMethod("pile", "ANY", \(...) pile(list(...)))
         y <- scaleElement(x, t=.t)
     }
     # transform & get axiis
-    y <- transformElement(y, coord)
-    wh <- lapply(.whZarrArray(y), \(.) 
-        c(.[1], .[1]+abs(diff(.))/t) )
-    list(za=y, wh=wh)
+    z <- transformElement(y, coord)
+    wh <- .whZarrArray(z)
+    list(za=z, wh=wh)
 }
 
 # check whether character string is a valid color
