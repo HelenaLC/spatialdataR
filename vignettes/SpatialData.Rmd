@@ -45,6 +45,8 @@ library(SingleCellExperiment)
 
 ## Introduction
 
+TODO
+
 # `SpatialData`
 
 The `SpatialData` class contains 5 **layers** that each may hold an arbitrary number of **elements**. Layers are represented as follows:
