@@ -1,16 +1,20 @@
 # `SpatialData` in R
 
+## [vignette][]
+
+...currently including `blobs`, `raccoon`, and `merfish` [datasets][]
+
 ## status
 
 <span style="color:red">TODOs</span> are shown in red,
 all else is currently (more or less) supported.
 
-### ideas
+### notes
 
-- <span style="color:red">`as(<ShapeFrame>, "LabelArray")` coercion;  
-this would probably make `mask()`ing a lot easier...</span>
-- <span style="color:red">`as(<LabelArray>, "ShapeFrame")` coercion;  
-this would probably make plotting a lot more efficient...</span>
+- <span style="color:red">`as(<ShapeFrame>, "LabelArray")` coercion  
+would probably make `mask()`ing a lot easier...</span>
+- <span style="color:red">`as(<LabelArray>, "ShapeFrame")` coercion  
+would probably make plotting a lot more efficient...</span>
 
 ### design
 
@@ -82,9 +86,10 @@ and their names via `elementNames()`
 - design document for [AnnData<>SCE][] integration
 
 <!-- Links -->
-[Link to tutorial]: https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/inst/SpatialData.html
 [OME-NGFF]: https://ngff.openmicroscopy.org/latest/
 [Proposal docs]: http://api.csswg.org/bikeshed/?url=https://raw.githubusercontent.com/ome/ngff/b92f540dc95440f2d6b7012185b09c2b862aa744/latest/index.bs
 [Proposal PR]:https://github.com/ome/ngff/pull/138
 [design doc]: https://spatialdata.scverse.org/en/latest/design_doc.html
 [AnnData<>SCE]: https://github.com/scverse/scverseio/blob/main/doc/design.md
+[vignette]: https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/vignettes/SpatialData.html
+[datasets]: https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html
