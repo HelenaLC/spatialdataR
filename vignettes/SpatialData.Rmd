@@ -3,12 +3,13 @@ title: "`SpatialData`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
 author:
-- name: Constantin Ahlmann-Eltze
-  affiliation: EMBL Genome Biology Unit, Heidelberg, Germany
 - name: Helena L Crowell
   affiliation:
+  - CNAG Centre for Genomic Regulation, Barcelona, Spain
   - Department of Molecular Life Sciences, University of Zurich, Switzerland
   - SIB Swiss Institute of Bioinformatics, University of Zurich, Switzerland
+- name: Constantin Ahlmann-Eltze
+  affiliation: EMBL Genome Biology Unit, Heidelberg, Germany
 - name: Tim Treis
   affiliation: Computational Health Center, Helmholtz Center Munich, Neuherberg, Germany
 output: 
