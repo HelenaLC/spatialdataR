@@ -54,6 +54,12 @@ NULL
 
 # image ----
 
+.geom <- \(r, wh) {
+    annotation_raster(r, 
+        wh[[1]][1], wh[[1]][2], 
+        -wh[[2]][2], -wh[[2]][1])
+}
+
 #' @rdname plotting
 #' @importFrom grDevices as.raster
 #' @importFrom ggplot2 annotation_raster
@@ -69,7 +75,8 @@ setMethod("plotImage", "SpatialData",
         a <- aperm(a, c(2, 3, 1))
         if (dim(a)[3] == 1) a <- a[, , 1]
         r <- as.raster(a, max(a))
-        geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
+        #geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
+        .rast <- .geom(r, wh)
         .plotElement(geom, wh[[1]], rev(wh[[2]]))
     })
 
@@ -133,7 +140,8 @@ setMethod("plotLabel", "SpatialData",
         r <- as.raster(c)
         r <- adjustcolor(r, alpha)
         r <- matrix(r, nrow(a), ncol(a), byrow=TRUE)
-        geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
+        #geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
+        geom <- .rast(r, wh)
         .plotElement(c(list(geom), l), wh[[1]], rev(wh[[2]]))
     })
 

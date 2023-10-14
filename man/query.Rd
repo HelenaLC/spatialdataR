@@ -33,7 +33,9 @@ image(spd, "two") <- # keep one & do crop
   query(img, lab, keep=3, crop=TRUE)
 
 plotImage(spd, i="one")
-plotImage(spd, i="two") 
+pile(
+  plotLabel(spd), 
+  plotImage(spd, i="two"))
 
 }
 \author{
