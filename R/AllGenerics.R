@@ -90,4 +90,4 @@ setGeneric("pile", \(...) standardGeneric("pile"))
 # utils ----
 
 setGeneric("mask", \(x, y, ...) standardGeneric("mask"))
-#setGeneric("query", \(x, i, j, ...) standardGeneric("addTable"))
+setGeneric("query", \(x, y, ...) standardGeneric("query"))

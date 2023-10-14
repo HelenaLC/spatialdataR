@@ -70,7 +70,7 @@ setMethod("translateElement", "SpatialDataElement",
 
 # scale ----
 
-#' @importFrom EBImage abind resize
+#' @importFrom EBImage resize
 .scaleZarrArray <- function(x, t) {
     d <- length(dim(x))
     if (length(t) != d)
