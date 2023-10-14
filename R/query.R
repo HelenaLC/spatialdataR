@@ -1,3 +1,54 @@
+#' @name query
+#' @title Query across spatial layers
+#' @description ...
+#' 
+#' @param x,y \code{ImageArray}, \code{LabelArray}
+#' @param keep Integer vector specifying the \code{y} values to retain.
+#' @param crop Logical scalar specifying whether to crop empty space.
+#' @return \code{ImageArray}
+#' @examples
+#' dir <- file.path("extdata", "blobs")
+#' dir <- system.file(dir, package="SpatialData")
+#' spd <- readSpatialData(dir)
+#' 
+#' img <- image(spd)
+#' lab <- label(spd)
+#' 
+#' image(spd, "one") <- # keep any & don't crop
+#'   query(img, lab, keep=NULL)
+#' image(spd, "two") <- # keep one & do crop
+#'   query(img, lab, keep=3, crop=TRUE)
+#' 
+#' plotImage(spd, i="one")
+#' pile(plotLabel(spd), plotImage(spd, i="two"))
+#' pile(plotImage(spd, i="two"), plotLabel(spd))
+#' 
+#' @author Helena L. Crowell
+#' @importFrom EBImage abind
+#' @export
+setMethod("query", 
+    c("ZarrArray", "LabelArray"), 
+    \(x, y, keep=NULL, crop=FALSE, ...) {
+        a <- as.array(x)
+        b <- as.array(y)
+        b <- if (is.null(keep)) b != 0 else b %in% keep
+        c <- apply(a, 1, \(.) .*b, simplify=FALSE)
+        c <- abind(c, along=0)
+        if (crop) {
+            j <- apply(c, 2, sum) > 0
+            k <- apply(c, 3, sum) > 0
+            h <- range(which(j))
+            w <- range(which(k))
+            metadata(x)$h <- h+c(-1, 0)
+            metadata(x)$w <- w+c(-1, 0)
+            j <- seq(h[1], h[2])
+            k <- seq(w[1], w[2])
+            c <- c[, j, k]
+        }
+        x@data <- c
+        return(x)
+    })
+
 #' #' @name query
 #' #' @rdname query
 #' #' 
