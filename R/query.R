@@ -20,8 +20,9 @@
 #'   query(img, lab, keep=3, crop=TRUE)
 #' 
 #' plotImage(spd, i="one")
-#' pile(plotLabel(spd), plotImage(spd, i="two"))
-#' pile(plotImage(spd, i="two"), plotLabel(spd))
+#' pile(
+#'   plotLabel(spd), 
+#'   plotImage(spd, i="two"))
 #' 
 #' @author Helena L. Crowell
 #' @importFrom EBImage abind
