@@ -11,6 +11,9 @@ all else is currently (more or less) supported.
 
 ### notes
 
+- I just discovered there are [ParquetDataFrame](https://github.com/LTLA/ParquetDataFrame)s, so will revise `PointFrame`s to inherit from that...
+- also, looks like 10x Xenium stores shapes are *.parquet*, so it would be nice to also use `ParquetDataFrame`s for those, and `Rarr` for images and labels only
+- also also, currently missing a delayed back-end for `Rarr`; so yeah, not good...
 - <span style="color:red">`as(<ShapeFrame>, "LabelArray")` coercion  
 would probably make `mask()`ing a lot easier...</span>
 - <span style="color:red">`as(<LabelArray>, "ShapeFrame")` coercion  
