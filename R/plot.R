@@ -77,7 +77,7 @@ setMethod("plotImage", "SpatialData",
         r <- as.raster(a, max(a))
         #geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
         .rast <- .geom(r, wh)
-        .plotElement(geom, wh[[1]], rev(wh[[2]]))
+        .plotElement(.rast, wh[[1]], rev(wh[[2]]))
     })
 
 # label ----
@@ -141,7 +141,7 @@ setMethod("plotLabel", "SpatialData",
         r <- adjustcolor(r, alpha)
         r <- matrix(r, nrow(a), ncol(a), byrow=TRUE)
         #geom <- annotation_raster(r, -Inf, Inf, -Inf, Inf)
-        geom <- .rast(r, wh)
+        geom <- .geom(r, wh)
         .plotElement(c(list(geom), l), wh[[1]], rev(wh[[2]]))
     })
 
