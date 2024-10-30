@@ -2,28 +2,53 @@
 % Please edit documentation in R/read.R
 \name{readSpatialData}
 \alias{readSpatialData}
-\title{Read `SpatialData` OME-Zarr}
+\alias{readImage}
+\alias{readLabel}
+\alias{readPoint}
+\alias{readShape}
+\alias{readTable}
+\title{Reading `SpatialData`}
 \usage{
-readSpatialData(path, ...)
+readImage(x)
+
+readLabel(x)
+
+readPoint(x)
+
+readShape(x)
+
+readTable(x)
+
+readSpatialData(
+  x,
+  images = NULL,
+  labels = NULL,
+  points = NULL,
+  shapes = NULL,
+  tables = NULL
+)
 }
 \arguments{
-\item{path}{A character string specifying the path to an
-OME-Zarr file adhering to \code{SpatialData} specification.}
+\item{x}{For \code{readImage/Label/Point/Shape/Table}, 
+path to a \code{SpatialData} element.
+For \code{readSpatialData},
+path to a \code{SpatialData}-.zarr store.}
 
-\item{...}{Further arguments to be passed to or from other methods.}
+\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
+The default, NULL, reads all elements; alternatively, may be FALSE 
+to skip a layer, or a integer vector specifying which elements to read.}
 }
 \value{
-\code{\link{SpatialData}}
+\itemize{
+\item{For element readers, a \code{ImageArray}, \code{LabelArray}, 
+\code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}
+\item{For \code{readSpatialData}, a \code{SpatialData}.}}
 }
 \description{
-...
+Reading `SpatialData`
 }
 \examples{
-dir <- file.path("extdata", "blobs")
-dir <- system.file(dir, package="SpatialData")
-(spd <- readSpatialData(dir))
-
-}
-\author{
-Constantin Ahlmann-Eltze, Helena L. Crowell
+x <- file.path("extdata", "merfish.zarr")
+x <- system.file(x, package="SpatialData")
+(x <- readSpatialData(x))
 }

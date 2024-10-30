@@ -1,10 +1,5 @@
-devel
-^\.github$
-^.*\.Rproj$
-^\.Rproj\.user$
-vignettes/*html
 inst/extdata/cosmx
 inst/extdata/visium
 inst/extdata/mibitof
-#inst/extdata/merfish
-inst/extdata/raccoon_scale
+inst/extdata/xenium1
+inst/extdata/visiumhd

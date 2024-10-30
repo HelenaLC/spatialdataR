@@ -1,52 +1,58 @@
-#' @rdname ShapeFrame
+#' @name ShapeFrame
 #' @title The `ShapeFrame` class
-#' @aliases
-#' ShapeFrame ShapeFrame-class
-#' coords,ShapeFrame-method
-#' scaleFrame
 #'
-#' @description
-#' A \code{\link{DataFrame}} with fixed structure
-#' and .zattrs stored as metadata.
-#' Each row corresponds to a shape, and is defined by its
-#' \itemize{
-#' \item{index: unique identifier}
-#' \item{data:
-#'   list of arrays containing xy-coordinates,
-#'   and (if shapes are circles) radii.}
-#' \item{type:
-#'   character string specifying the geometry
-#'   (\code{"circle"} or \code{"polygon"})}
-#' }
-#'
-#' @param x An object of class \code{ShapeFrame}.
-#' @param data A \code{\link{DataFrame}} of appropriate format.
-#' @param metadata A list of metadata corresponding to .zattrs.
-#' @param ... Further arguments to be passed to or from other methods.
+#' @param data ...
+#' @param meta ...
+#' @param metadata ....
 #'
 #' @return \code{ShapeFrame}
 #'
 #' @examples
-#' ShapeFrame()
+#' x <- file.path("extdata", "merfish.zarr")
+#' 
+#' y <- file.path(x, "shapes", "cells")
+#' (s <- readShape(system.file(y, package="SpatialData")))
+#' plot(sf::st_as_sf(data(s)), cex=0.2)
+#' 
+#' y <- file.path(x, "shapes", "anatomical")
+#' (s <- readShape(system.file(y, package="SpatialData")))
+#' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
-#' @author Helena L. Crowell
-#'
-#' @importFrom S4Vectors DataFrame metadata<-
+#' @importFrom S4Vectors metadata<-
 #' @export
-ShapeFrame <- function(data=DataFrame(), metadata=list(), ...) {
-    if (nrow(data) == 0)
-        data <- data.frame(
-            data=numeric(),
-            index=integer(),
-            type=character())
-    data <- DataFrame(data)
-    sf <- .ShapeFrame(data, ...)
-    metadata(sf) <- metadata
-    return(sf)
+ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+    x <- .ShapeFrame(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
 }
 
-as.array.ShapeFrame <- function(x) do.call(rbind, x$data)
+# TODO: it's really annoying that this doesn't just inherit
+# data.frame() operations, cuz data are in an extra slot... 
+# but else not sure how to assure validity, stash .zattrs etc.
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("as.array", "ShapeFrame", as.array.ShapeFrame)
+setMethod("data", "ShapeFrame", \(x) x@data)
+
+#' @rdname ShapeFrame
+#' @export
+setMethod("dim", "ShapeFrame", \(x) dim(data(x)))
+
+#' @rdname ShapeFrame
+#' @export
+setMethod("length", "ShapeFrame", \(x) nrow(data(x)))
+
+#' @rdname ShapeFrame
+#' @export
+setMethod("names", "ShapeFrame", \(x) {
+    setdiff(names(data(x)), "__null_dask_index__") })
+
+#' @importFrom utils .DollarNames
+#' @export
+.DollarNames.ShapeFrame <- \(x, pattern="") {
+    grep(pattern, names(x), value=TRUE)
+}
+
+#' @rdname ShapeFrame
+#' @exportMethod $
+setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])

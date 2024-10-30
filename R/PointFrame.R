@@ -1,60 +1,38 @@
 #' @name PointFrame
 #' @title The `PointFrame` class
-#' @aliases
-#' PointFrame PointFrame-class
-#' $,PointFrame-method
-#' dim,PointFrame-method
-#' length,PointFrame-method
-#' coord,PointFrame-method
-#' coords,PointFrame-method
-#'
-#' @description
-#' ...
-#'
-#' @param x An object of class \code{PointFrame}.
-#' @param data An object of class \code{\link{arrow}[Table]}.
-#' @param metadata A list
-#' @param i,j Indices for subsetting (see \code{?base::Extract}).
-#' @param name A character string specifying the column extract..
-#' @param drop Ignored.
-#' @param ... Further arguments to be passed to or from other methods.
 #'
 #' @return \code{PointFrame}
 #'
 #' @examples
-#' path <- "extdata/blobs/points/blobs_points"
-#' path <- system.file(path, package = "SpatialData")
-#' (pf <- readPoints(path))
-#'
-#' @author Helena L. Crowell
+#' x <- file.path("extdata", "merfish.zarr")
+#' x <- file.path(x, "points", "single_molecule")
+#' x <- system.file(x, package="SpatialData")
+#' (p <- readPoint(x))
+#' 
+#' head(as.data.frame(data(p)))
+#' (q <- filter(p, cell_type == "VISp_wm"))
+#' plotPoint(q, c="x", s=0.2)
 #'
 #' @importFrom S4Vectors metadata<-
 #' @export
-PointFrame <- function(data=NULL, metadata=list(), ...) {
-    if (is.null(data)) data <- data.frame()
-    pf <- .PointFrame(data=data, ...)
-    metadata(pf) <- metadata
-    return(pf)
+PointFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+    x <- .PointFrame(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
 }
-
-# TODO: subsetting; don't want to always read
-# everything but this is currently happening...
-# should be doable w/ 'arrow' to have a "smarter"
-# OI via queries & collecting only when necessary
 
 #' @rdname PointFrame
 #' @export
 setMethod("names", "PointFrame", \(x) {
-    setdiff(names(x@data), "__null_dask_index__") })
+    setdiff(names(data(x)), "__null_dask_index__") })
 
 #' @rdname PointFrame
 #' @export
-setMethod("dim", "PointFrame", \(x) {
-    c(length(x), length(names(x))) })
+setMethod("dim", "PointFrame", \(x) dim(data(x)))
 
 #' @rdname PointFrame
 #' @export
-setMethod("length", "PointFrame", \(x) nrow(x@data))
+setMethod("length", "PointFrame", \(x) nrow(data(x)))
 
 #' @importFrom utils .DollarNames
 #' @export
@@ -79,7 +57,7 @@ setMethod("[[", "PointFrame", \(x, i, ...) {
 setMethod("[", c("PointFrame", "numeric"), \(x, i, ...) {
     .i <- `__null_dask_index__` <- NULL # R CMD check
     j <- seq_len(length(x))[i]
-    x@data <- x@data |>
+    x@data <- data(x) |>
         mutate(.i=1+`__null_dask_index__`) |>
         filter(.i %in% j) |>
         select(-.i)
@@ -87,21 +65,9 @@ setMethod("[", c("PointFrame", "numeric"), \(x, i, ...) {
 })
 
 #' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "missing"), \(x, i, ...) return(x))
-
-#' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "logical"), \(x, i, ...) {
-    if (missing(i) || isTRUE(i)) return(x)
-    stopifnot(length(i) == length(x))
-    x[which(i)]
-})
-
-#' @rdname PointFrame
 #' @importFrom BiocGenerics as.data.frame
 #' @export
-setMethod("as.data.frame", "PointFrame", \(x) as.data.frame(x@data)[names(x)])
+setMethod("as.data.frame", "PointFrame", \(x) as.data.frame(data(x))[names(x)])
 
 setAs(
     from="PointFrame", to="data.frame",
@@ -109,8 +75,8 @@ setAs(
 
 #' @importFrom dplyr filter
 #' @export
-filter.PointFrame <- \(x, ...) { x@data <- filter(x@data, ...); x }
+filter.PointFrame <- \(x, ...) { x@data <- filter(data(x), ...); x }
 
 #' @importFrom dplyr select
 #' @export
-select.PointFrame <- \(x, ...) { x@data <- select(x@data, ...); x }
+select.PointFrame <- \(x, ...) { x@data <- select(data(x), ...); x }

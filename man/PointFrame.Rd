@@ -2,21 +2,16 @@
 % Please edit documentation in R/PointFrame.R
 \name{PointFrame}
 \alias{PointFrame}
-\alias{PointFrame-class}
-\alias{$,PointFrame-method}
+\alias{names,PointFrame-method}
 \alias{dim,PointFrame-method}
 \alias{length,PointFrame-method}
-\alias{coord,PointFrame-method}
-\alias{coords,PointFrame-method}
-\alias{names,PointFrame-method}
+\alias{$,PointFrame-method}
 \alias{[[,PointFrame,ANY,ANY-method}
 \alias{[,PointFrame,numeric,ANY,ANY-method}
-\alias{[,PointFrame,missing,ANY,ANY-method}
-\alias{[,PointFrame,logical,ANY,ANY-method}
 \alias{as.data.frame,PointFrame-method}
 \title{The `PointFrame` class}
 \usage{
-PointFrame(data = NULL, metadata = list(), ...)
+PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{names}{PointFrame}(x)
 
@@ -30,39 +25,22 @@ PointFrame(data = NULL, metadata = list(), ...)
 
 \S4method{[}{PointFrame,numeric,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
-\S4method{[}{PointFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,logical,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
 \S4method{as.data.frame}{PointFrame}(x)
-}
-\arguments{
-\item{data}{An object of class \code{\link{arrow}[Table]}.}
-
-\item{metadata}{A list}
-
-\item{...}{Further arguments to be passed to or from other methods.}
-
-\item{x}{An object of class \code{PointFrame}.}
-
-\item{name}{A character string specifying the column extract..}
-
-\item{i, j}{Indices for subsetting (see \code{?base::Extract}).}
-
-\item{drop}{Ignored.}
 }
 \value{
 \code{PointFrame}
 }
 \description{
-...
+The `PointFrame` class
 }
 \examples{
-path <- "extdata/blobs/points/blobs_points"
-path <- system.file(path, package = "SpatialData")
-(pf <- readPoints(path))
+x <- file.path("extdata", "merfish.zarr")
+x <- file.path(x, "points", "single_molecule")
+x <- system.file(x, package="SpatialData")
+(p <- readPoint(x))
 
-}
-\author{
-Helena L. Crowell
+head(as.data.frame(data(p)))
+(q <- filter(p, cell_type == "VISp_wm"))
+plotPoint(q, c="x", s=0.2)
+
 }
