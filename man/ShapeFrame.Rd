@@ -2,46 +2,47 @@
 % Please edit documentation in R/ShapeFrame.R
 \name{ShapeFrame}
 \alias{ShapeFrame}
-\alias{ShapeFrame-class}
-\alias{coords,ShapeFrame-method}
-\alias{scaleFrame}
-\alias{as.array,ShapeFrame-method}
+\alias{data,ShapeFrame-method}
+\alias{dim,ShapeFrame-method}
+\alias{length,ShapeFrame-method}
+\alias{names,ShapeFrame-method}
+\alias{$,ShapeFrame-method}
 \title{The `ShapeFrame` class}
 \usage{
-ShapeFrame(data = DataFrame(), metadata = list(), ...)
+ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
-\S4method{as.array}{ShapeFrame}(x)
+\S4method{data}{ShapeFrame}(x)
+
+\S4method{dim}{ShapeFrame}(x)
+
+\S4method{length}{ShapeFrame}(x)
+
+\S4method{names}{ShapeFrame}(x)
+
+\S4method{$}{ShapeFrame}(x, name)
 }
 \arguments{
-\item{data}{A \code{\link{DataFrame}} of appropriate format.}
+\item{data}{...}
 
-\item{metadata}{A list of metadata corresponding to .zattrs.}
+\item{meta}{...}
 
-\item{...}{Further arguments to be passed to or from other methods.}
-
-\item{x}{An object of class \code{ShapeFrame}.}
+\item{metadata}{....}
 }
 \value{
 \code{ShapeFrame}
 }
 \description{
-A \code{\link{DataFrame}} with fixed structure
-and .zattrs stored as metadata.
-Each row corresponds to a shape, and is defined by its
-\itemize{
-\item{index: unique identifier}
-\item{data:
-  list of arrays containing xy-coordinates,
-  and (if shapes are circles) radii.}
-\item{type:
-  character string specifying the geometry
-  (\code{"circle"} or \code{"polygon"})}
-}
+The `ShapeFrame` class
 }
 \examples{
-ShapeFrame()
+x <- file.path("extdata", "merfish.zarr")
 
-}
-\author{
-Helena L. Crowell
+y <- file.path(x, "shapes", "cells")
+(s <- readShape(system.file(y, package="SpatialData")))
+plot(sf::st_as_sf(data(s)), cex=0.2)
+
+y <- file.path(x, "shapes", "anatomical")
+(s <- readShape(system.file(y, package="SpatialData")))
+plot(sf::st_as_sf(data(s)), cex=0.2)
+
 }

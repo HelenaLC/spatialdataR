@@ -1,72 +1,58 @@
-#' @importClassesFrom S4Arrays Array 
-setClassUnion(
-    "Array_OR_array_OR_df",
-    c("Array", "array", "data.frame"))
-
 .Zattrs <- setClass(
     Class="Zattrs",
     contains="list")
 
-#' @exportClass ZarrArray SpatialData
-.ZarrArray <- setClass(
-    Class="ZarrArray",
-    contains=c("Array", "Annotated"),
-    # temporarily supporting pointers,
-    # for the purpose of development...
-    slots=c(data="Array_OR_array_OR_df", zattrs="Zattrs"))
+#' @importClassesFrom S4Arrays Array 
+setClassUnion(
+    "array_OR_df",
+    c("Array", "array", "data.frame"))
 
-#' @exportClass ImageArray SpatialData
 .ImageArray <- setClass(
     Class="ImageArray",
-    contains="ZarrArray")
+    contains=c("Annotated"),
+    slots=list(data="array_OR_df", meta="Zattrs"))
 
-#' @exportClass LabelArray SpatialData
 .LabelArray <- setClass(
     Class="LabelArray",
-    contains="ZarrArray")
+    contains=c("Annotated"),
+    slots=list(data="array_OR_df", meta="Zattrs"))
 
-#' @importClassesFrom S4Vectors DFrame
-#' @exportClass ShapeFrame SpatialData
-.ShapeFrame <- setClass(
-    Class="ShapeFrame",
-    contains="DFrame",
-    slots=c(zattrs="Zattrs"))
-
-setClassUnion(
-    "ImageArray_OR_LabelArray",
-    c("ImageArray", "LabelArray"))
-
-setClassUnion(
-    "ZarrArray_OR_ShapeFrame",
-    c("ZarrArray", "ShapeFrame"))
-
-#' @importFrom arrow Table
-#' @importFrom methods setOldClass
+#' #' @importFrom methods setOldClass
+#' #' @importFrom arrow Table
 setOldClass("Table")
 
-# 'arrow' doesn't export this class;
+# 'arrow' doesn't export theses;
 # this somehow does the trick...
+setClass("FileSystemDataset", "VIRTUAL")
 setClass("arrow_dplyr_query", "VIRTUAL")
 
+# TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
+# read_parquet gives a Table, dplyr calls give a query, but also wanna 
+# be able to store a normal data.frame, maybe?
 setClassUnion(
-    "Table_OR_df",
-    c("Table", "data.frame", "arrow_dplyr_query"))
+    "arrow_OR_df",
+    c("FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
 
-#' @exportClass PointFrame SpatialData
 .PointFrame <- setClass(
     Class="PointFrame",
-    contains=c("Table", "Annotated"),
-    slots=list(data="Table_OR_df", zattrs="Zattrs"))
+    contains=c("Annotated"),
+    slots=list(data="arrow_OR_df", meta="Zattrs"))
 
-# making it easier for methods shared b/w all elements
+#' @importClassesFrom S4Vectors DFrame
+.ShapeFrame <- setClass(
+    Class="ShapeFrame",
+    contains=c("Annotated"),
+    slots=list(data="arrow_OR_df", meta="Zattrs"))
+
 setClassUnion(
     "SpatialDataElement",
-    c("ZarrArray", "ShapeFrame", "PointFrame"))
+    c("ImageArray", "LabelArray", "PointFrame", "ShapeFrame"))
 
-#' @exportClass SpatialData SpatialData
+#' @rdname SpatialData
+#' @export
 .SpatialData <- setClass(
     Class="SpatialData",
-    contains="Annotated",
+    contains=c("list", "Annotated"),
     representation(
         images="list",  # 'ImageArray's
         labels="list",  # 'LabelArray's

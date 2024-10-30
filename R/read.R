@@ -1,220 +1,105 @@
-#' @rdname readArray
-#' @title Read `images/labels` element
-#' @description ...
+#' @name readSpatialData
+#' @title Reading `SpatialData`
+#' 
+#' @aliases readImage readLabel readPoint readShape readTable
 #'
-#' @param path A character string specifying
-#'   a .zarray or .zattrs file-containing directory.
-#' @param resolution A charactering specifiying
-#'   the image resolution (pyramid level) to read in.
-#' @param ... Further arguments to be passed to or from other methods.
+#' @param x 
+#'   For \code{readImage/Label/Point/Shape/Table}, 
+#'   path to a \code{SpatialData} element.
+#'   For \code{readSpatialData},
+#'   path to a \code{SpatialData}-.zarr store.
+#' @param images,labels,points,shapes,tables
+#'   Control which elements should be read for each layer.
+#'   The default, NULL, reads all elements; alternatively, may be FALSE 
+#'   to skip a layer, or a integer vector specifying which elements to read.
 #'
-#' @return \code{\link{ImageArray}}
+#' @return 
+#' \itemize{
+#' \item{For element readers, a \code{ImageArray}, \code{LabelArray}, 
+#' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}
+#' \item{For \code{readSpatialData}, a \code{SpatialData}.}}
 #'
 #' @examples
-#' path <- system.file("extdata", "blobs", package="SpatialData")
-#' (ia <- readArray(file.path(path, "images", "blobs_image")))
-#' (la <- readArray(file.path(path, "labels", "blobs_labels")))
-#'
-#' @author Helena L. Crowell
-#'
+#' x <- file.path("extdata", "merfish.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' (x <- readSpatialData(x))
+NULL
+
+#' @rdname readSpatialData
+#' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
-#' @importFrom Rarr read_zarr_array zarr_overview
 #' @export
-readArray <- function(path=".", resolution="0", ...) {
-    if (file.exists(file.path(path, ".zarray"))) {
-        json <- file.path(dirname(path), ".zattrs")
-        if (!file.exists(json))
-            stop("couldn't find .zattrs upstream of .zarray")
-        zarr <- path
-    } else {
-        json <- file.path(path, ".zattrs")
-        zarr <- file.path(path, resolution)
-        if (!file.exists(zarr))
-            stop("couldn't find .zarray under resolution /", resolution)
-    }
-    md <- fromJSON(json)
-    za <- zarr_overview(zarr, as_data_frame=TRUE)
-    # using overview for development purposes
-    # since we are missing delayed support atm
-
-    is_img <- !is.null(md$channels_metadata)
-    fun <- if (is_img) ImageArray else LabelArray
-    fun(data=za, metadata=list(), zattrs=Zattrs(md))
-}
-
-#' @rdname readShapes
-#' @title Read `shapes` element
-#' @description ...
-#'
-#' @param path A character string specifying
-#'   the path to a \code{shapes/} subdirectory.
-#' @param ... Further arguments to be passed to or from other methods.
-#'
-#' @return \code{\link[S4Vectors]{DataFrame}}
-#'
-#' @examples
-#' dir <- file.path("extdata", "blobs", "shapes", "blobs_polygons")
-#' dir <- system.file(dir, package="SpatialData")
-#' (sf <- readShapes(dir))
-#' as.data.frame(sf)
-#'
-#' @author Tim Treis, Helena L. Crowell
-#'
-#' @importFrom jsonlite fromJSON
-#' @importFrom S4Vectors DataFrame
-#' @importFrom Rarr read_zarr_array
-#' @export
-readShapes <- function(path, ...) {
-    # TODO: metadata are currently being ignored here...
-    # might need another data structure to accommodate these.
-    parts <- list.dirs(path, recursive=FALSE)
-    names(ps) <- ps <- c("coords", "Index", "radius", "offset0", "offset1")
-    ps <- lapply(ps, \(p) {
-        if (p %in% basename(parts))
-            read_zarr_array(file.path(path, p))
-    })
-    geom <- ifelse(!is.null(ps$radius), "circle", "polygon")
-    md <- fromJSON(file.path(path, ".zattrs"))
-    switch(geom,
-        circle={
-            df <- DataFrame(
-                data=I(asplit(ps$coords, 1)),
-                index=ps$Index,
-                radius=ps$radius,
-                type=rep(geom, length(ps$Index)))
-        },
-        polygon={
-            coords <- lapply(seq_along(ps$Index), \(.) {
-                idx <- seq(ps$offset0[[.]] + 1, ps$offset0[[. + 1]])
-                ps$coords[idx, , drop=FALSE]
-            })
-            df <- DataFrame(
-                data=I(coords),
-                index=ps$Index,
-                type=rep(geom, length(ps$Index)))
-        })
-    ShapeFrame(df, zattrs=Zattrs(md))
-}
-
-#' @rdname readPoints
-#' @title Read `points` element
-#' @description ...
-#'
-#' @param path A character string specifying
-#'   a .parquet file-containing directory.
-#' @param ... Further arguments to be passed to or from other methods.
-#'
-#' @return Arrow \code{\link{Dataset}}
-#'
-#' @examples
-#' dir <- "extdata/blobs/points/blobs_points"
-#' dir <- system.file(dir, package = "SpatialData")
-#' (pf <- readPoints(dir))
-#'
-#' @author Tim Treis
-#'
-#' @importFrom arrow read_parquet
-#' @export
-readPoints <- function(path, ...) {
-    path <- gsub("/$", "", path)
-    za <- fromJSON(file.path(path, ".zattrs"))
-    dirs <- list.files(path, full.names=TRUE, recursive=TRUE)
-    pq <- grep("*\\.parquet$", dirs, value=TRUE)
-    at <- read_parquet(pq, as_data_frame=FALSE)
-    PointFrame(data=at, zattrs=Zattrs(za))
-}
-
-#' @rdname readTable
-#' @title `SingleCellExperiment` from `AnnData`-Zarr
-#' @description ...
-#'
-#' @param path A character string specifying
-#'   the path to a `table/` subdirectory.
-#'
-#' @return \code{SingleCellExperiment}
-#'
-#' @examples
-#' dir <- file.path("extdata", "blobs", "table", "table")
-#' dir <- system.file(dir, package="SpatialData")
-#' (sce <- readTable(dir))
-#'
-#' @author Constantin Ahlmann-Eltze
-#'
-#' @importFrom reticulate import
-#' @importFrom jsonlite fromJSON
-#' @importFrom zellkonverter AnnData2SCE
-#' @importFrom SingleCellExperiment int_metadata<-
-#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
-#' @export
-readTable <- function(path) {
-    proc <- basiliskStart(.env)
-    on.exit(basiliskStop(proc))
-    sce <- basiliskRun(proc, function(zarr) {
-        # return value MUST be a pure R object,
-        # i.e., no reticulate Python objects
-        # or pointers to shared memory
-        ad <- import("anndata")
-        obj <- ad$read_zarr(zarr)
-        sce <- AnnData2SCE(obj)
-    }, zarr=path)
-    za <- fromJSON(file.path(path, ".zattrs"))
-    int_metadata(sce)$zattrs <- za
-    metadata(sce) <- list()
-    return(sce)
+readImage <- function(x) {
+    md <- fromJSON(file.path(x, ".zattrs"))
+    za <- ZarrArray(file.path(x, "0"))
+    ImageArray(data=za, meta=.Zattrs(md))
 }
 
 #' @rdname readSpatialData
-#' @title Read `SpatialData` OME-Zarr
-#' @description ...
-#'
-#' @param path A character string specifying the path to an
-#'   OME-Zarr file adhering to \code{SpatialData} specification.
-#' @param ... Further arguments to be passed to or from other methods.
-#'
-#' @return \code{\link{SpatialData}}
-#'
-#' @examples
-#' dir <- file.path("extdata", "blobs")
-#' dir <- system.file(dir, package="SpatialData")
-#' (spd <- readSpatialData(dir))
-#'
-#' @author Constantin Ahlmann-Eltze, Helena L. Crowell
-#'
+#' @importFrom Rarr ZarrArray
+#' @importFrom jsonlite fromJSON
 #' @export
-readSpatialData <- function(path, ...) {
-    layers <- list.dirs(path, recursive=FALSE)
-    
-    # used internally only atm
-    dots <- list(...)
-    i <- if (is.null(n <- dots$n)) TRUE else
-        if (length(n) == 1) seq_len(n) else n
-    
-    for (l in setdiff(LAYERS, "tables")) {
-        val <- if (l %in% basename(layers)) {
-            dir <- file.path(path, l)
-            sub <- list.dirs(dir, recursive=FALSE)
-            names(sub) <- basename(sub)
-            fun <- switch(l,
-                shapes=readShapes,
-                points=readPoints,
-                readArray)
-            lapply(sub[i], fun)
-        } else list()
-        assign(l, val)
-    }
-    
-    # TODO: update once the tables PR goes through
-    tables <- if ("table" %in% basename(layers)) {
-        tbl <- tryCatch(
-            error=function(e) NULL,
-            readTable(file.path(path, "table/table")))
-        if (is(tbl, "SingleCellExperiment")) {
-            key <- tbl$region[1]
-            tbl <- list(tbl)
-            names(tbl) <- key
-            tbl
-        }
-    }
-    
-    SpatialData(images=images, labels=labels, shapes=shapes, points=points, tables=tables)
+readLabel <- function(x) {
+    md <- fromJSON(file.path(x, ".zattrs"))
+    za <- ZarrArray(file.path(x, "0"))
+    LabelArray(data=za, meta=.Zattrs(md))
+}
+
+#' @rdname readSpatialData
+#' @importFrom jsonlite fromJSON
+#' @importFrom arrow open_dataset
+#' @export
+readPoint <- function(x) {
+    md <- fromJSON(file.path(x, ".zattrs"))
+    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    PointFrame(data=open_dataset(pq), meta=.Zattrs(md))
+}
+
+#' @rdname readSpatialData
+#' @importFrom jsonlite fromJSON
+#' @importFrom arrow open_dataset
+#' @export
+readShape <- function(x) {
+    require(geoarrow, quietly=TRUE)
+    md <- fromJSON(file.path(x, ".zattrs"))
+    # TODO: previously had read_parquet(), 
+    # but that doesn't work with geoparquet?
+    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    ShapeFrame(data=open_dataset(pq), meta=.Zattrs(md))
+}
+
+#' @importFrom basilisk BasiliskEnvironment
+.env <- BasiliskEnvironment(
+    pkgname="SpatialData", envname="anndata_env",
+    packages=c("anndata==0.9.1", "zarr==2.14.2"))
+
+#' @rdname readSpatialData
+#' @importFrom reticulate import
+#' @importFrom zellkonverter AnnData2SCE
+#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
+#' @export
+readTable <- function(x) {
+    # TODO: temporary, until AnnDataR supports
+    # reading AnnData from .zarr (.h5ad only atm)
+    proc <- basiliskStart(.env)
+    on.exit(basiliskStop(proc))
+    basiliskRun(proc, zarr=x, \(zarr) {
+        ad <- import("anndata")
+        ad <- ad$read_zarr(zarr)
+        AnnData2SCE(ad)
+    })
+}
+
+#' @rdname readSpatialData
+#' @export
+readSpatialData <- function(x, images=NULL, labels=NULL, points=NULL, shapes=NULL, tables=NULL) {
+    # TODO: validity checks
+    args <- as.list(environment())[.LAYERS]
+    skip <- vapply(args, isFALSE, logical(1))
+    lapply(.LAYERS[!skip], \(i) {
+        j <- list.files(file.path(x, i), full.names=TRUE)
+        if (is.numeric(args[[i]])) j <- j[args[[i]]]
+        i <- paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1))
+        setNames(lapply(j, get(paste0("read", i))), basename(j))
+    }) |> do.call(what=SpatialData)
 }

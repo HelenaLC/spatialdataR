@@ -14,6 +14,26 @@ setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
 
+# get nms ----
+
+setGeneric("imageNames", \(x, ...) standardGeneric("imageNames"))
+setGeneric("labelNames", \(x, ...) standardGeneric("labelNames"))
+setGeneric("shapeNames", \(x, ...) standardGeneric("shapeNames"))
+setGeneric("pointNames", \(x, ...) standardGeneric("pointNames"))
+setGeneric("tableNames", \(x, ...) standardGeneric("tableNames"))
+
+setMethod("images", "SpatialData", \(x) x$images)
+setMethod("labels", "SpatialData", \(x) x$labels)
+setMethod("shapes", "SpatialData", \(x) x$shapes)
+setMethod("points", "SpatialData", \(x) x$points)
+setMethod("tables", "SpatialData", \(x) x$tables)
+
+setMethod("imageNames", "SpatialData", \(x) names(images(x)))
+setMethod("labelNames", "SpatialData", \(x) names(labels(x)))
+setMethod("shapeNames", "SpatialData", \(x) names(shapes(x)))
+setMethod("pointNames", "SpatialData", \(x) names(points(x)))
+setMethod("tableNames", "SpatialData", \(x) names(tables(x)))
+
 # set one -----
 
 setGeneric("image<-", \(x, i, ..., value) standardGeneric("image<-"))
@@ -30,64 +50,26 @@ setGeneric("shapes<-", \(x, value) standardGeneric("shapes<-"))
 setGeneric("points<-", \(x, value) standardGeneric("points<-"))
 setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 
-setGeneric("element", \(x, ...) standardGeneric("element"))
-setGeneric("elements", \(x, ...) standardGeneric("elements"))
-setGeneric("elementNames", \(x, ...) standardGeneric("elementNames"))
+# trs ----
 
-# get nms ----
-setGeneric("imageNames", \(x, ...) standardGeneric("imageNames"))
-setGeneric("labelNames", \(x, ...) standardGeneric("labelNames"))
-setGeneric("shapeNames", \(x, ...) standardGeneric("shapeNames"))
-setGeneric("pointNames", \(x, ...) standardGeneric("pointNames"))
-setGeneric("tableNames", \(x, ...) standardGeneric("tableNames"))
+setGeneric("scale", \(x, ...) standardGeneric("scale"))
+setGeneric("rotate", \(x, ...) standardGeneric("rotate"))
+setGeneric("transform", \(x, ...) standardGeneric("transform"))
+setGeneric("translation", \(x, ...) standardGeneric("translation"))
 
-# set nms ----
-setGeneric("imageNames<-", \(x, value) standardGeneric("imageNames<-"))
-setGeneric("labelNames<-", \(x, value) standardGeneric("labelNames<-"))
-setGeneric("shapeNames<-", \(x, value) standardGeneric("shapeNames<-"))
-setGeneric("pointNames<-", \(x, value) standardGeneric("pointNames<-"))
-setGeneric("tableNames<-", \(x, value) standardGeneric("tableNames<-"))
+# uts ----
 
-setGeneric("geoms", \(x, ...) standardGeneric("geoms"))
-setGeneric("axiis", \(x, ...) standardGeneric("axiis"))
-setGeneric("channels", \(x, ...) standardGeneric("channels"))
-setGeneric("channels<-", \(x, value) standardGeneric("channels<-"))
-
-# transformations -----
-setGeneric("alignElements", \(...) standardGeneric("alignElements"))
-setGeneric("scaleElement", \(x, ...) standardGeneric("scaleElement"))
-setGeneric("rotateElement", \(x, ...) standardGeneric("rotateElement"))
-setGeneric("translateElement", \(x, ...) standardGeneric("translateElement"))
-setGeneric("transformElement", \(x, ...) standardGeneric("transformElement"))
-
-# zattrs ----
-
-setGeneric("zattrs", \(x, ...) standardGeneric("zattrs"))
-setGeneric("zattrs<-", \(x, value) standardGeneric("zattrs<-"))
-
-setGeneric("coord", \(x, ...) standardGeneric("coord"))
-setGeneric("coord<-", \(x, i, value) standardGeneric("coord<-"))
-
-setGeneric("coords", \(x, ...) standardGeneric("coords"))
-setGeneric("coords<-", \(x, value) standardGeneric("coords<-"))
-
-setGeneric("coordNames", \(x, ...) standardGeneric("coordNames"))
-setGeneric("coordNames<-", \(x, value) standardGeneric("coordNames<-"))
-
-setGeneric("getCoord", \(x, ...) standardGeneric("getCoord"))
-setGeneric("setCoord", \(x, ...) standardGeneric("setCoord"))
-setGeneric("addCoord", \(x, ...) standardGeneric("addCoord"))
-setGeneric("rmvCoord", \(x, ...) standardGeneric("rmvCoord"))
-
-# plot ----
-
-setGeneric("plotImage", \(x, ...) standardGeneric("plotImage"))
-setGeneric("plotLabel", \(x, ...) standardGeneric("plotLabel"))
-setGeneric("plotShape", \(x, ...) standardGeneric("plotShape"))
-setGeneric("plotPoint", \(x, ...) standardGeneric("plotPoint"))
-setGeneric("pile", \(...) standardGeneric("pile"))
-
-# utils ----
+setGeneric("data", \(x, ...) standardGeneric("data"))
+setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
 setGeneric("mask", \(x, y, ...) standardGeneric("mask"))
 setGeneric("query", \(x, y, ...) standardGeneric("query"))
+
+setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
+
+# plt ----
+
+setGeneric("plotImage", \(x, ...) standardGeneric("plotImage"))
+setGeneric("plotLabel", \(x, ...) standardGeneric("plotLabel"))
+setGeneric("plotPoint", \(x, ...) standardGeneric("plotPoint"))
+setGeneric("plotShape", \(x, ...) standardGeneric("plotShape"))

@@ -1,51 +1,30 @@
-Type: Package
-Version: 0.99.1
 Package: SpatialData
-Title: S4 classes to represent scverse's 'SpatialData' in R
-Description:
-  Defines S4 classes to represent scverse's 'SpatialData' class in R,
-  as well as various methods to interact and visualize these data.
-  The class contains 5 layers (images, labels, shapes, points, tables)
-  that may contain an arbitrary number of elements; these are
-  represented as objects of S4 classes 'ImageArray', 'LabelArray',
-  'ShapeFrame', 'PointFrame' and 'SingleCellExperiment', respectively.
-  The S4 'ZarrArray' class is implemented to represent images and labels
-  with any 'A/array' representation (e.g., 'SparseArray', 'DelayedArray').
-Depends: R (>= 4.3)
+Title: Representation of Python's SpatialData in R
+Depends: R (>= 4.4), SingleCellExperiment
+Version: 0.99.0
+Description: TODO
 Authors@R: c(
-  person("Helena L.", "Crowell", 
-    email="helena@crowell.eu", 
-    comment=c(ORCID="0000-0002-4801-1767"),
-    role=c("aut", "cre")),
-  person("Constantin", "Ahlmann-Eltze",
-    email="artjom31415@googlemail.com",
-    comment=c(ORCID="0000-0002-3762-068X"), 
-    role=c("aut")),
-  person("Tim", "Treis", role="aut"))
-Imports: 
-  arrow, 
-  basilisk,
-  BiocGenerics, 
-  EBImage, 
-  dplyr,
-  ggplot2, 
-  grDevices,
-  jsonlite, 
-  methods,
-  Rarr, 
-  reticulate,
-  S4Arrays, 
-  S4Vectors, 
-  SummarizedExperiment,
-  SingleCellExperiment,
-  utils, 
-  zellkonverter
-Suggests: 
-  BiocStyle,
-  knitr,
-  tidyr,
-  patchwork,
-  testthat (>= 3.0.0)
+	person("Helena L.", "Crowell", 
+	    role=c("aut", "cre"),
+	    email="helena@crowell.eu", 
+	    comment=c(ORCID="0000-0002-4801-1767")))
+Imports:
+    abind,
+    arrow,
+    basilisk,
+    dplyr,
+    EBImage,
+    geoarrow,
+    ggplot2,
+    jsonlite,
+    rlang,
+    sf,
+    S4Vectors,
+    zellkonverter
+Suggests:
+    BiocStyle,
+    ggnewscale,
+    knitr
 biocViews: 
   DataImport, 
   DataRepresentation, 
@@ -55,11 +34,7 @@ biocViews:
   Transcriptomics, 
   SingleCell,
   Spatial
-VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+License: Artistic-2.0
+RoxygenNote: 7.3.2
 Encoding: UTF-8
-License: GPL (>=2)
-Config/testthat/edition: 3
-StagedInstall: no
-URL: https://github.com/HelenaLC/ImageArray
-BugReports: https://github.com/HelenaLC/ImageArray/issues
+LazyData: false
