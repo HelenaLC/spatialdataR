@@ -20,9 +20,10 @@
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.}}
 #'
 #' @examples
-#' x <- file.path("extdata", "merfish.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' (x <- readSpatialData(x))
+#' tf = tempfile()
+#' dir.create(tf)
+#' base = unzip_merfish_demo(tf)
+#' (x <- readSpatialData(base))
 NULL
 
 #' @rdname readSpatialData
