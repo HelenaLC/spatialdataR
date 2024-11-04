@@ -7,9 +7,10 @@
 #' @return ggplot
 #'
 #' @examples
-#' x <- file.path("extdata", "merfish.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' (x <- readSpatialData(x, tables=FALSE))
+#' tf = tempfile()
+#' dir.create(tf)
+#' base = unzip_merfish_demo(tf)
+#' (x <- readSpatialData(base, tables=FALSE))
 #' 
 #' plotImage(x)
 #'
@@ -206,6 +207,7 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
     cbind(df, colData(se)[i, j])
 }
 
+# WON'T WORK POST 11/4/2024:
 # x <- file.path("extdata", "merfish.zarr")
 # x <- system.file(x, package="SpatialData")
 # x <- readSpatialData(x)
