@@ -33,7 +33,7 @@ NULL
 readImage <- function(x) {
     md <- fromJSON(file.path(x, ".zattrs"))
     za <- ZarrArray(file.path(x, "0"))
-    ImageArray(data=za, meta=.Zattrs(md))
+    ImageArray(data=za, meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData
@@ -43,7 +43,7 @@ readImage <- function(x) {
 readLabel <- function(x) {
     md <- fromJSON(file.path(x, ".zattrs"))
     za <- ZarrArray(file.path(x, "0"))
-    LabelArray(data=za, meta=.Zattrs(md))
+    LabelArray(data=za, meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData
@@ -53,7 +53,7 @@ readLabel <- function(x) {
 readPoint <- function(x) {
     md <- fromJSON(file.path(x, ".zattrs"))
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    PointFrame(data=open_dataset(pq), meta=.Zattrs(md))
+    PointFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData
@@ -66,7 +66,7 @@ readShape <- function(x) {
     # TODO: previously had read_parquet(), 
     # but that doesn't work with geoparquet?
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    ShapeFrame(data=open_dataset(pq), meta=.Zattrs(md))
+    ShapeFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
 
 #' @importFrom basilisk BasiliskEnvironment

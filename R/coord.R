@@ -1,9 +1,14 @@
-# TODO: better handling of .zattrs...
+# TODO: currently applying transformations only on 'data.frame's for plotting,
+# not the actual data (e.g., image)... but this might be necessary for queries?
+
+# TODO: for all layers, implement all transformations 
+# (translate, scale, rotate, affine, and sequential) 
+
+# TODO: better handling of .zattrs... e.g., accessors for 
+# axes names/types, CS shared between elements etc.
 
 setGeneric("getCS", \(x, ...) standardGeneric("getCS"))
 setGeneric("getTS", \(x, ...) standardGeneric("getTS"))
-
-# TODO: implement all transformations (translate, scale, rotate, affine, and sequential) for all layers
 
 # coordinate systems
 setMethod("getCS", "SpatialDataElement", \(x) {
@@ -23,7 +28,9 @@ setMethod("getTS", "SpatialDataElement", \(x, i=1) {
 
 #' @importFrom EBImage resize
 setMethod("scale", "ImageArray", \(x, t, ...) {
-    a <- as.array(data(x))
+    a <- as.array(data(x)) 
+    # TODO: this should be done w/o realizing 
+    # into memory, but EBImage needs an array?
     d <- length(dim(a))
     if (missing(t)) 
         t <- rep(1, d)
