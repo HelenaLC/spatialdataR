@@ -8,14 +8,15 @@
 #' @return \code{ShapeFrame}
 #'
 #' @examples
-#' x <- file.path("extdata", "merfish.zarr")
-#' 
-#' y <- file.path(x, "shapes", "cells")
-#' (s <- readShape(system.file(y, package="SpatialData")))
+#' tf = tempfile()
+#' dir.create(tf)
+#' base <- unzip_merfish_demo(tf)
+#' y <- file.path(base, "shapes", "cells")
+#' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #' 
-#' y <- file.path(x, "shapes", "anatomical")
-#' (s <- readShape(system.file(y, package="SpatialData")))
+#' y <- file.path(base, "shapes", "anatomical")
+#' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
 #' @importFrom S4Vectors metadata<-

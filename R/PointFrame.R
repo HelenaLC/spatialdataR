@@ -4,13 +4,14 @@
 #' @return \code{PointFrame}
 #'
 #' @examples
-#' x <- file.path("extdata", "merfish.zarr")
-#' x <- file.path(x, "points", "single_molecule")
-#' x <- system.file(x, package="SpatialData")
+#' tf = tempfile()
+#' dir.create(tf)
+#' base <- unzip_merfish_demo(tf)
+#' x <- file.path(base, "points", "single_molecule")
 #' (p <- readPoint(x))
 #' 
 #' head(as.data.frame(data(p)))
-#' (q <- filter(p, cell_type == "VISp_wm"))
+#' (q <- dplyr::filter(p, cell_type == "VISp_wm"))
 #' plotPoint(q, c="x", s=0.2)
 #'
 #' @importFrom S4Vectors metadata<-
