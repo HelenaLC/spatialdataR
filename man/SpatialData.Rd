@@ -157,8 +157,9 @@ SpatialData(images, labels, points, shapes, tables)
 ...
 }
 \examples{
-x <- file.path("extdata", "merfish.zarr")
-x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x, tables=TRUE))
+tf = tempfile()
+dir.create(tf)
+base = unzip_merfish_demo(tf)
+(x <- readSpatialData(base, tables=TRUE))
 
 }

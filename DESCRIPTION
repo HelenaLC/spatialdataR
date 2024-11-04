@@ -31,7 +31,8 @@ Imports:
     S4Arrays,
     Rarr,
     reticulate,
-    BiocFileCache
+    BiocFileCache,
+    methods
 Suggests:
     BiocStyle,
     ggnewscale,
@@ -48,4 +49,3 @@ biocViews:
 License: Artistic-2.0
 RoxygenNote: 7.3.2
 Encoding: UTF-8
-LazyData: false
