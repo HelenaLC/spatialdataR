@@ -8,7 +8,7 @@
 #'
 #' @export
 Zattrs <- \(x=list()) {
-    
+    .Zattrs(x)
 }
 
 # TODO: ideally some valid empty constructor for each type of element,
