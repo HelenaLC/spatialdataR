@@ -4,7 +4,10 @@
 \alias{merfish_demo_path}
 \title{check cache for merfish.zarr.zip and return path; retrieve/stash/return path if not found}
 \usage{
-merfish_demo_path(cache = BiocFileCache::BiocFileCache())
+merfish_demo_path(
+  cache = BiocFileCache::BiocFileCache(),
+  zipname = "merfish.zarr.zip"
+)
 }
 \arguments{
 \item{cache}{defaults to BiocFileCache::BiocFileCache(), will serve as destination or source

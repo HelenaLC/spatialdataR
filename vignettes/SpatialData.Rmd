@@ -27,9 +27,10 @@ library(SpatialData)
 # MERFISH
 
 ```{r merfish-load-data}
-x <- file.path("extdata", "merfish.zarr")
-x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x))
+tf = tempfile()
+dir.create(tf)
+merpath = unzip_merfish_demo(destination=tf)
+x = readSpatialData(merpath)
 ```
 
 ### handling
@@ -79,8 +80,12 @@ plotSpatialData() +
 # MibiTOF
 
 ```{r mibitof-load-data}
-x <- file.path("..", "inst", "extdata", "mibitof.zarr")
-(x <- readSpatialData(x))
+#x <- file.path("..", "inst", "extdata", "mibitof.zarr")
+#(x <- readSpatialData(x))
+td = tempfile()
+dir.create(td)
+mibipath = unzip_spd_demo(zipname="mibitof.zip", destination=td)
+x = readSpatialData(mibipath)
 ```
 
 ```{r mibitof-plot}
@@ -94,12 +99,12 @@ lapply(seq(3), \(i) {
 
 # VisiumHD
 
-```{r visiumhd-load-data}
+```{r visiumhd-load-data, eval=FALSE}
 x <- file.path("..", "inst", "extdata", "visiumhd.zarr")
 (x <- readSpatialData(x, tables=3))
 ```
 
-```{r visiumhd-plot}
+```{r visiumhd-plot, eval=FALSE}
 plotSpatialData() + plotImage(x, 4)
 ```
 
