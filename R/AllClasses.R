@@ -19,6 +19,7 @@ setClassUnion(
 
 #' #' @importFrom methods setOldClass
 #' #' @importFrom arrow Table
+#' @name Table
 setOldClass("Table")
 
 # 'arrow' doesn't export theses;
