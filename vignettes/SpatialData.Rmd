@@ -99,12 +99,14 @@ lapply(seq(3), \(i) {
 
 # VisiumHD
 
-```{r visiumhd-load-data, eval=FALSE}
-x <- file.path("..", "inst", "extdata", "visiumhd.zarr")
-(x <- readSpatialData(x, tables=3))
+```{r visiumhd-load-data}
+td = tempfile()
+dir.create(td)
+vishdpath = unzip_spd_demo(zipname="visium_hd_3.0.0_io.zip", destination=td)
+(x <- readSpatialData(vishdpath, tables=3))
 ```
 
-```{r visiumhd-plot, eval=FALSE}
+```{r visiumhd-plot}
 plotSpatialData() + plotImage(x, 4)
 ```
 
