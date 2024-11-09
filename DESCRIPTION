@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.4), SingleCellExperiment
-Version: 0.99.1
+Version: 0.99.3
 Description: TODO
 Authors@R: c(
 	person("Helena L.", "Crowell", 
@@ -36,7 +36,10 @@ Imports:
 Suggests:
     BiocStyle,
     ggnewscale,
-    knitr
+    knitr,
+    testthat
+Enhances:
+    paws
 biocViews: 
   DataImport, 
   DataRepresentation, 
@@ -49,3 +52,4 @@ biocViews:
 License: Artistic-2.0
 RoxygenNote: 7.3.2
 Encoding: UTF-8
+VignetteBuilder: knitr
