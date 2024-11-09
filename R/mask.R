@@ -1,4 +1,5 @@
 #' @rdname mask
+#' @name mask
 #' @title Masking
 #'
 #' @description ...
