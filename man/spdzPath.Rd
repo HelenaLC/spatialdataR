@@ -4,7 +4,7 @@
 \alias{spdzPath}
 \title{obtain path to cached zip archive of SpatialData zarr}
 \usage{
-spdzPath(cache = BiocFileCache::BiocFileCache(), zipname)
+spdzPath(cache = BiocFileCache::BiocFileCache(), zipname, source)
 }
 \arguments{
 \item{cache}{inherits from BiocFileCache in BiocFileCache package}
@@ -15,5 +15,5 @@ spdzPath(cache = BiocFileCache::BiocFileCache(), zipname)
 obtain path to cached zip archive of SpatialData zarr
 }
 \examples{
-spdzPath(zipname="merfish.zarr.zip")
+spdzPath(zipname="merfish.zarr.zip", source="biocOSN")
 }
