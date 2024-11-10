@@ -7,7 +7,8 @@
 unzip_spd_demo(
   zipname = "mibitof.zip",
   destination,
-  cache = BiocFileCache::BiocFileCache()
+  cache = BiocFileCache::BiocFileCache(),
+  source
 )
 }
 \arguments{
@@ -16,9 +17,11 @@ unzip_spd_demo(
 \item{destination}{character(1) a path to a folder that must exist}
 
 \item{cache}{defaults to BiocFileCache::BiocFileCache(), will serve as destination or source}
+
+\item{source}{character(1) one of "biocOSN", "sandbox", "local"}
 }
 \value{
-Returns path to contents of zipped archive, typicall has basename `data.zarr`.
+Returns path to base of unzipped archive
 }
 \description{
 unzip selected demo data to specified folder
@@ -26,6 +29,6 @@ unzip selected demo data to specified folder
 \examples{
 tf = tempfile()
 dir.create(tf)
-pa = unzip_spd_demo(zipname="mibitof.zip", destination=tf)
+pa = unzip_spd_demo(zipname="mibitof.zip", destination=tf, source="biocOSN")
 dir(pa, full.names=TRUE)
 }

@@ -110,6 +110,16 @@ vishdpath = unzip_spd_demo(zipname="visium_hd_3.0.0_io.zip", destination=td)
 plotSpatialData() + plotImage(x, 4)
 ```
 
+# Aligned breast cancer example
+
+```{r lkali}
+td = tempfile() 
+dir.create(td)
+pa = unzip_spd_demo(zipname="visium_associated_xenium_io_aligned.zip", dest=td)
+ali =readSpatialData(pa)
+ali
+```
+
 # Session info
 
 ```{r sessionInfo, echo=FALSE}
