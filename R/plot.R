@@ -91,7 +91,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
             theme(legend.key.size=unit(0.5, "lines")),
             guides(fill=guide_legend(override.aes=list(alpha=1))))
     } else {
-        thm <- theme(legend.position="none")
+        thm <- guides(fill="none")
     }
     val <- sort(setdiff(unique(df$z), NA))
     pal <- colorRampPalette(pal)(length(val))
