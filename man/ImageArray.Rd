@@ -3,19 +3,34 @@
 \name{ImageArray}
 \alias{ImageArray}
 \alias{dim,ImageArray-method}
-\title{ImageArray}
+\title{The `ImageArray` class}
 \usage{
 ImageArray(data = array(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{dim}{ImageArray}(x)
 }
+\arguments{
+\item{data}{\code{\link[Rarr]{ZarrArray}} for on-disk, 
+\code{array} for in-memory representation.}
+
+\item{meta}{...}
+
+\item{metadata}{....}
+}
 \value{
-...
+\code{ImageArray}
 }
 \description{
-ImageArray
+The `ImageArray` class
 }
 \examples{
-# TODO
+dir.create(td <- tempfile())
+pa <- unzip_merfish_demo(td)
+pa <- file.path(pa, "images", "rasterized")
+(ia <- readImage(pa))
+
+a <- as.array(data(ia))
+a <- aperm(a, c(2,3,1))
+plot(EBImage::Image(a/255))
 
 }

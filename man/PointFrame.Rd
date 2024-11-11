@@ -27,6 +27,16 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{as.data.frame}{PointFrame}(x)
 }
+\arguments{
+\item{data}{\code{arrow}-derived table for on-disk,
+\code{data.frame} for in-memory representation.}
+
+\item{meta}{...}
+
+\item{metadata}{....}
+
+\item{x}{object of class \code{\link{PointFrame}}}
+}
 \value{
 \code{PointFrame}
 }

@@ -2,6 +2,12 @@
 #' @title The `SpatialData` class
 #' 
 #' @description ...
+#' 
+#' @param images list of \code{\link{ImageArray}}s
+#' @param labels list of \code{\link{LabelArray}}s
+#' @param points list of \code{\link{PointFrame}}s
+#' @param shapes list of \code{\link{ShapeFrame}}s
+#' @param tables list of \code{SingleCellExperiment}s
 #'
 #' @return \code{SpatialData}
 #'

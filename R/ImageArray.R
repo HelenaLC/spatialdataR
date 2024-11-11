@@ -1,9 +1,22 @@
-#' ImageArray
+#' @name ImageArray
+#' @title The `ImageArray` class
+#' 
+#' @param data \code{\link[Rarr]{ZarrArray}} for on-disk, 
+#'   \code{array} for in-memory representation.
+#' @param meta ...
+#' @param metadata ....
 #'
-#' @return ...
+#' @return \code{ImageArray}
 #'
 #' @examples
-#' # TODO
+#' dir.create(td <- tempfile())
+#' pa <- unzip_merfish_demo(td)
+#' pa <- file.path(pa, "images", "rasterized")
+#' (ia <- readImage(pa))
+#' 
+#' a <- as.array(data(ia))
+#' a <- aperm(a, c(2,3,1))
+#' plot(EBImage::Image(a/255))
 #'
 #' @importFrom S4Vectors metadata<-
 #' @export

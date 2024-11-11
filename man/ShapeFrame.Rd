@@ -22,7 +22,8 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{$}{ShapeFrame}(x, name)
 }
 \arguments{
-\item{data}{...}
+\item{data}{\code{arrow}-derived table for on-disk,
+\code{data.frame} for in-memory representation.}
 
 \item{meta}{...}
 
