@@ -18,4 +18,20 @@ test_that("get one", {
     # i=character
     mapply(f=fun, t=typ, n=nms, \(f, t, n) 
         expect_is(get(f)(x, n), t))
+    # i=invalid
+    for (f in fun) {
+        expect_error(get(f)(x, 0))
+        expect_error(get(f)(x, "."))
+        expect_error(get(f)(x, c(1,1)))
+    }
+})
+
+test_that("set one", {
+    # value=NULL
+    for (f in fun) {
+        n <- length(get(paste0(f, "s"))(x))
+        x <- get(paste0(f, "<-"))(x, i=1, value=NULL)
+        m <- length(get(paste0(f, "s"))(x))
+        expect_true(m == (n-1))
+    }
 })
