@@ -29,11 +29,11 @@
 \alias{shapes<-,SpatialData,list-method}
 \alias{points<-,SpatialData,list-method}
 \alias{tables<-,SpatialData,list-method}
-\alias{image<-,SpatialData,character,PointFrame-method}
+\alias{image<-,SpatialData,character,ImageArray-method}
 \alias{label<-,SpatialData,character,LabelArray-method}
 \alias{point<-,SpatialData,character,PointFrame-method}
-\alias{shape<-,SpatialData,character,PointFrame-method}
-\alias{table<-,SpatialData,character,PointFrame-method}
+\alias{shape<-,SpatialData,character,ShapeFrame-method}
+\alias{table<-,SpatialData,character,SingleCellExperiment-method}
 \alias{image<-,SpatialData,numeric,ImageArray-method}
 \alias{label<-,SpatialData,numeric,LabelArray-method}
 \alias{point<-,SpatialData,numeric,PointFrame-method}
@@ -106,15 +106,15 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{tables}{SpatialData,list}(x) <- value
 
-\S4method{image}{SpatialData,character,PointFrame}(x, i) <- value
+\S4method{image}{SpatialData,character,ImageArray}(x, i) <- value
 
 \S4method{label}{SpatialData,character,LabelArray}(x, i) <- value
 
 \S4method{point}{SpatialData,character,PointFrame}(x, i) <- value
 
-\S4method{shape}{SpatialData,character,PointFrame}(x, i) <- value
+\S4method{shape}{SpatialData,character,ShapeFrame}(x, i) <- value
 
-\S4method{table}{SpatialData,character,PointFrame}(x, i) <- value
+\S4method{table}{SpatialData,character,SingleCellExperiment}(x, i) <- value
 
 \S4method{image}{SpatialData,numeric,ImageArray}(x, i = 1) <- value
 
