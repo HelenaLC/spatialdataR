@@ -1,7 +1,8 @@
 #' @name ShapeFrame
 #' @title The `ShapeFrame` class
 #'
-#' @param data ...
+#' @param data \code{arrow}-derived table for on-disk,
+#'   \code{data.frame} for in-memory representation.
 #' @param meta ...
 #' @param metadata ....
 #'

@@ -1,6 +1,12 @@
 #' @name PointFrame
 #' @title The `PointFrame` class
 #'
+#' @param x object of class \code{\link{PointFrame}}
+#' @param data \code{arrow}-derived table for on-disk,
+#'   \code{data.frame} for in-memory representation.
+#' @param meta ...
+#' @param metadata ....
+#'
 #' @return \code{PointFrame}
 #'
 #' @examples

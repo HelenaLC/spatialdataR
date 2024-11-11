@@ -156,6 +156,17 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{table}{SpatialData,ANY,ANY}(x, i) <- value
 }
+\arguments{
+\item{images}{list of \code{\link{ImageArray}}s}
+
+\item{labels}{list of \code{\link{LabelArray}}s}
+
+\item{points}{list of \code{\link{PointFrame}}s}
+
+\item{shapes}{list of \code{\link{ShapeFrame}}s}
+
+\item{tables}{list of \code{SingleCellExperiment}s}
+}
 \value{
 \code{SpatialData}
 }
