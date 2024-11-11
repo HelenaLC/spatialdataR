@@ -35,3 +35,12 @@ test_that("set one", {
         expect_true(m == (n-1))
     }
 })
+
+test_that("get nms", {
+    for (f in fun) {
+        get_lys <- get(paste0(f, "s"))
+        get_nms <- get(paste0(f, "Names"))
+        expect_is(get_nms(x), "character")
+        expect_identical(get_nms(x), names(get_lys(x)))
+    }
+})
