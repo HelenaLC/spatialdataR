@@ -48,8 +48,8 @@ to skip a layer, or a integer vector specifying which elements to read.}
 Reading `SpatialData`
 }
 \examples{
-tf = tempfile()
+tf <- tempfile()
 dir.create(tf)
-base = unzip_merfish_demo(tf)
+base <- unzip_merfish_demo(tf)
 (x <- readSpatialData(base))
 }

@@ -1,3 +1,6 @@
+vignettes/*html
+vignettes/*cache
+vignettes/*files
 inst/extdata/cosmx
 inst/extdata/visium
 inst/extdata/mibitof

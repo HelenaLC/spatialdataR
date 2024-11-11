@@ -34,7 +34,7 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 The `PointFrame` class
 }
 \examples{
-tf = tempfile()
+tf <- tempfile()
 dir.create(tf)
 base <- unzip_merfish_demo(tf)
 x <- file.path(base, "points", "single_molecule")

@@ -2,7 +2,8 @@
 % Please edit documentation in R/merfish_demo.R
 \name{spd_demo_cached_path}
 \alias{spd_demo_cached_path}
-\title{check cache for demonstration .zarr.zip and return path; retrieve data, cache it, return path if not found}
+\title{check cache for demonstration .zarr.zip and return path; 
+retrieve data, cache it, return path if not found}
 \usage{
 spd_demo_cached_path(
   cache = BiocFileCache::BiocFileCache(),
@@ -22,5 +23,6 @@ for data}
 Returns character(1) path to cached zip file.
 }
 \description{
-check cache for demonstration .zarr.zip and return path; retrieve data, cache it, return path if not found
+check cache for demonstration .zarr.zip and return path; 
+retrieve data, cache it, return path if not found
 }

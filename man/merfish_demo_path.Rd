@@ -2,7 +2,8 @@
 % Please edit documentation in R/merfish_demo.R
 \name{merfish_demo_path}
 \alias{merfish_demo_path}
-\title{check cache for merfish.zarr.zip and return path; retrieve/stash/return path if not found}
+\title{check cache for merfish.zarr.zip and return path; 
+retrieve/stash/return path if not found}
 \usage{
 merfish_demo_path(
   cache = BiocFileCache::BiocFileCache(),
@@ -10,12 +11,13 @@ merfish_demo_path(
 )
 }
 \arguments{
-\item{cache}{defaults to BiocFileCache::BiocFileCache(), will serve as destination or source
-for data}
+\item{cache}{defaults to BiocFileCache::BiocFileCache(), 
+will serve as destination or source for data}
 }
 \value{
 Returns character(1) path to cached zip file.
 }
 \description{
-check cache for merfish.zarr.zip and return path; retrieve/stash/return path if not found
+check cache for merfish.zarr.zip and return path; 
+retrieve/stash/return path if not found
 }

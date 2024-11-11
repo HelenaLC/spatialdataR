@@ -27,10 +27,9 @@ library(SpatialData)
 # MERFISH
 
 ```{r merfish-load-data}
-tf = tempfile()
-dir.create(tf)
-merpath = unzip_merfish_demo(destination=tf)
-x = readSpatialData(merpath)
+dir.create(td <- tempfile())
+pa <- unzip_merfish_demo(dest=td)
+x <- readSpatialData(pa)
 ```
 
 ### handling
@@ -50,11 +49,11 @@ shapeNames(x)
 shapes(x) 
 # single element
 shape(x, i=1) # default
-shape(x, i="single_molecule")
+shape(x, i="cells")
 # get (meta)data from an element
 # (arrow for point/shape, ZarrArray for label/image)
 data(shape(x)) 
-# .zattrs, currently just rendered as fromJSON would
+# .zattrs, currently just rendered as 'fromJSON' would
 meta(shape(x)) 
 ```
 
@@ -80,12 +79,9 @@ plotSpatialData() +
 # MibiTOF
 
 ```{r mibitof-load-data}
-#x <- file.path("..", "inst", "extdata", "mibitof.zarr")
-#(x <- readSpatialData(x))
-td = tempfile()
-dir.create(td)
-mibipath = unzip_spd_demo(zipname="mibitof.zip", destination=td)
-x = readSpatialData(mibipath)
+dir.create(td <- tempfile())
+pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
+x <- readSpatialData(pa)
 ```
 
 ```{r mibitof-plot}
@@ -100,10 +96,10 @@ lapply(seq(3), \(i) {
 # VisiumHD
 
 ```{r visiumhd-load-data}
-td = tempfile()
-dir.create(td)
-vishdpath = unzip_spd_demo(zipname="visium_hd_3.0.0_io.zip", destination=td)
-(x <- readSpatialData(vishdpath, tables=3))
+dir.create(td <- tempfile())
+nm <- "visium_hd_3.0.0_io.zip"
+pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+(x <- readSpatialData(pa, tables=3))
 ```
 
 ```{r visiumhd-plot}
@@ -113,11 +109,15 @@ plotSpatialData() + plotImage(x, 4)
 # Aligned breast cancer example
 
 ```{r lkali}
-td = tempfile() 
-dir.create(td)
-pa = unzip_spd_demo(zipname="visium_associated_xenium_io_aligned.zip", dest=td)
-ali =readSpatialData(pa)
-ali
+dir.create(td <- tempfile())
+nm <- "visium_associated_xenium_io_aligned.zip"
+pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+(x <- readSpatialData(pa))
+```
+
+```{r}
+plotSpatialData() +
+    plotImage(x, 3)
 ```
 
 # Session info

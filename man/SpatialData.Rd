@@ -7,6 +7,8 @@
 \alias{SpatialData}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,ANY,ANY-method}
+\alias{data,SpatialDataElement-method}
+\alias{meta,SpatialDataElement-method}
 \alias{images,SpatialData-method}
 \alias{labels,SpatialData-method}
 \alias{shapes,SpatialData-method}
@@ -59,6 +61,10 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{$}{SpatialData}(x, name)
 
 \S4method{[[}{SpatialData,ANY,ANY}(x, i, j, ...)
+
+\S4method{data}{SpatialDataElement}(x)
+
+\S4method{meta}{SpatialDataElement}(x)
 
 \S4method{images}{SpatialData}(x)
 
@@ -157,9 +163,9 @@ SpatialData(images, labels, points, shapes, tables)
 ...
 }
 \examples{
-tf = tempfile()
+tf <- tempfile()
 dir.create(tf)
-base = unzip_merfish_demo(tf)
+base <- unzip_merfish_demo(tf)
 (x <- readSpatialData(base, tables=TRUE))
 
 }
