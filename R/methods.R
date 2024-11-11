@@ -39,7 +39,12 @@ setMethod("[[", "SpatialData", \(x, i, ...) {
 
 # any ----
 
+#' @rdname SpatialData
+#' @export
 setMethod("data", "SpatialDataElement", \(x) x@data)
+
+#' @rdname SpatialData
+#' @export
 setMethod("meta", "SpatialDataElement", \(x) x@meta)
 
 # get all ----
