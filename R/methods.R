@@ -162,7 +162,7 @@ setReplaceMethod("tables",
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("image",
-    c("SpatialData", "character", "PointFrame"),
+    c("SpatialData", "character", "ImageArray"),
     \(x, i, value) { x@images[[i]] <- value; x })
 
 #' @rdname SpatialData
@@ -180,13 +180,13 @@ setReplaceMethod("point",
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("shape",
-    c("SpatialData", "character", "PointFrame"),
+    c("SpatialData", "character", "ShapeFrame"),
     \(x, i, value) { x@shapes[[i]] <- value; x })
 
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("table",
-    c("SpatialData", "character", "PointFrame"),
+    c("SpatialData", "character", "SingleCellExperiment"),
     \(x, i, value) { x@tables[[i]] <- value; x })
 
 # TODO: something like table(x)$cluster_id <- doesn't work atm... 
