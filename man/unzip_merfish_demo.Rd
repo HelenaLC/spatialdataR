@@ -18,8 +18,8 @@ Returns path to 'merfish.zarr'.
 unzip cached merfish demo data to specified folder
 }
 \examples{
-tf = tempfile()
+tf <- tempfile()
 dir.create(tf)
-pa = unzip_merfish_demo(tf)
+pa <- unzip_merfish_demo(tf)
 dir(pa, full.names=TRUE)
 }

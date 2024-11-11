@@ -8,7 +8,7 @@
 #' @return \code{ShapeFrame}
 #'
 #' @examples
-#' tf = tempfile()
+#' tf <- tempfile()
 #' dir.create(tf)
 #' base <- unzip_merfish_demo(tf)
 #' y <- file.path(base, "shapes", "cells")

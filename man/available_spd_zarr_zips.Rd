@@ -2,12 +2,14 @@
 % Please edit documentation in R/merfish_demo.R
 \name{available_spd_zarr_zips}
 \alias{available_spd_zarr_zips}
-\title{use paws::s3 to interrogate an NSF Open Storage Network bucket for zipped zarr archives for various platforms}
+\title{use 'paws::s3' to interrogate an NSF Open Storage Network 
+bucket for zipped zarr archives for various platforms}
 \usage{
 available_spd_zarr_zips()
 }
 \description{
-use paws::s3 to interrogate an NSF Open Storage Network bucket for zipped zarr archives for various platforms
+use 'paws::s3' to interrogate an NSF Open Storage Network 
+bucket for zipped zarr archives for various platforms
 }
 \examples{
 if (requireNamespace("paws")) {

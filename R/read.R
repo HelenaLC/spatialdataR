@@ -20,9 +20,9 @@
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.}}
 #'
 #' @examples
-#' tf = tempfile()
+#' tf <- tempfile()
 #' dir.create(tf)
-#' base = unzip_merfish_demo(tf)
+#' base <- unzip_merfish_demo(tf)
 #' (x <- readSpatialData(base))
 NULL
 

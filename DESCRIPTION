@@ -8,12 +8,10 @@ Authors@R: c(
 	    role=c("aut", "cre"),
 	    email="helena@crowell.eu", 
 	    comment=c(ORCID="0000-0002-4801-1767")),
-        person(given = "Vince",
-           family = "Carey",
-           role = c("aut"),
-           email = "stvjc@channing.harvard.edu",
-           comment = c(ORCID = "0000-0003-4046-0063"))
-        )
+    person("Vince", "Carey",
+        role=c("aut"),
+        email="stvjc@channing.harvard.edu",
+        comment=c(ORCID="0000-0003-4046-0063")))
 Imports:
     abind,
     arrow,
@@ -41,15 +39,17 @@ Suggests:
 Enhances:
     paws
 biocViews: 
-  DataImport, 
-  DataRepresentation, 
-  Infrastructure, 
-  ImmunoOncology, 
-  GeneExpression, 
-  Transcriptomics, 
-  SingleCell,
-  Spatial
+    DataImport, 
+    DataRepresentation, 
+    Infrastructure, 
+    ImmunoOncology, 
+    GeneExpression, 
+    Transcriptomics, 
+    SingleCell,
+    Spatial
 License: Artistic-2.0
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 VignetteBuilder: knitr
+URL: https://github.com/HelenaLC/SpatialData
+BugReports: https://github.com/HelenaLC/SpatialData/issues
