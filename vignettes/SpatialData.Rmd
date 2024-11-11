@@ -24,6 +24,20 @@ library(ggnewscale)
 library(SpatialData)
 ```
 
+# toy data
+
+```{r}
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+(x <- readSpatialData(x))
+```
+
+```{r}
+plotSpatialData() +
+    plotLabel(x) +
+    plotPoint(x, c="genes")
+```
+
 # MERFISH
 
 ```{r merfish-load-data}

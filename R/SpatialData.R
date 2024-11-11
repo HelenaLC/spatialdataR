@@ -12,10 +12,9 @@
 #' @return \code{SpatialData}
 #'
 #' @examples
-#' tf <- tempfile()
-#' dir.create(tf)
-#' base <- unzip_merfish_demo(tf)
-#' (x <- readSpatialData(base, tables=TRUE))
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' (x <- readSpatialData(x))
 #' 
 #' @export
 SpatialData <- \(images, labels, points, shapes, tables) {
