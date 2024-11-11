@@ -5,6 +5,10 @@ OSN_PATH_VISIUM_HD_DEMO = "https://mghp.osn.xsede.org/bir190004-bucket01/BiocSpa
 build_osn_path = function(zipname) {
   sprintf("https://mghp.osn.xsede.org/bir190004-bucket01/BiocSpatialData/%s", zipname)
 }
+
+build_sandbox_path = function(zipname) {
+  sprintf("https://s3.embl.de/spatialdata/spatialdata-sandbox/%s", zipname)
+}
  
 
 #' check cache for merfish.zarr.zip and return path; retrieve/stash/return path if not found
@@ -15,7 +19,7 @@ build_osn_path = function(zipname) {
 #' @export
 merfish_demo_path = function(cache = BiocFileCache::BiocFileCache(),
    zipname = "merfish.zarr.zip") {
-    .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname)
+    .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname, source="biocOSN")
 }
 
 #' unzip cached merfish demo data to specified folder
@@ -55,18 +59,18 @@ available_spd_zarr_zips = function() {
 #' @param cache inherits from BiocFileCache in BiocFileCache package
 #' @param zipname character(1) name of zip archive to find
 #' @examples
-#' spdzPath(zipname="merfish.zarr.zip")
+#' spdzPath(zipname="merfish.zarr.zip", source="biocOSN")
 #' @export
-spdzPath = function(cache = BiocFileCache::BiocFileCache(), zipname) {
+spdzPath = function(cache = BiocFileCache::BiocFileCache(), zipname, source) {
   if (missing(zipname)) stop("zipname must be supplied")
   if (requireNamespace("paws")) {  # protect user from bad request if paws is available
    avail = available_spd_zarr_zips()
    stopifnot(zipname %in% avail)
   }
-  .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname)
+  .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname, source)
 }
 
-.get_spdzip_path_in_cache_add_if_needed = function(cache=BiocFileCache::BiocFileCache(), zipname) {
+.get_spdzip_path_in_cache_add_if_needed = function(cache=BiocFileCache::BiocFileCache(), zipname, source) {
   info = BiocFileCache::bfcquery(cache, zipname)
   nrec = nrow(info)
   if (nrec > 1) {
@@ -76,36 +80,42 @@ spdzPath = function(cache = BiocFileCache::BiocFileCache(), zipname) {
     message("returning path to cached zip")
     return(info$rpath[nrec])
     }
-  message("retrieving from OSN, caching, and returning path")
-  BiocFileCache::bfcadd(cache, rname=zipname, fpath=build_osn_path(zipname), rtype="web")
-}
+  if (source == "biocOSN") pathbuilder = build_osn_path
+   else if (source == "sandbox") pathbuilder = build_sandbox_path
+   else if (source == "other") pathbuilder = force
+  message(sprintf("retrieving from %s, caching, and returning path", source))
+  BiocFileCache::bfcadd(cache, rname=zipname, fpath=pathbuilder(zipname), rtype="web")
+ }
+
 
 #' check cache for demonstration .zarr.zip and return path; retrieve data, cache it, return path if not found
 #' @import BiocFileCache
 #' @param cache defaults to BiocFileCache::BiocFileCache(), will serve as destination or source
+#' @param source character(1) one of "biocOSN", "sandbox", "local"
 #' for data
 #' @param zipname character(1) should be found in Bioconductor OSN bucket
 #' @return Returns character(1) path to cached zip file.
 #' @export
 spd_demo_cached_path = function(cache = BiocFileCache::BiocFileCache(),
-   zipname = "mibitof.zip") {
-    .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname)
+   zipname = "mibitof.zip", source) {
+    .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname, source=source)
 }
 
 #' unzip selected demo data to specified folder
 #' @param zipname character(1) should be name of zipped zarr archive found in Bioconductor OSN bucket
 #' @param destination character(1) a path to a folder that must exist
 #' @param cache defaults to BiocFileCache::BiocFileCache(), will serve as destination or source
+#' @param source character(1) one of "biocOSN", "sandbox", "local"
 #' @return Returns path to base of unzipped archive
 #' @examples
 #' tf = tempfile()
 #' dir.create(tf)
-#' pa = unzip_spd_demo(zipname="mibitof.zip", destination=tf)
+#' pa = unzip_spd_demo(zipname="mibitof.zip", destination=tf, source="biocOSN")
 #' dir(pa, full.names=TRUE)
 #' @export
-unzip_spd_demo = function(zipname = "mibitof.zip", destination, cache=BiocFileCache::BiocFileCache()) {
+unzip_spd_demo = function(zipname = "mibitof.zip", destination, cache=BiocFileCache::BiocFileCache(), source) {
   stopifnot(dir.exists(destination))
-  chk = try(unzip( spd_demo_cached_path(cache=cache, zipname=zipname), exdir=destination ))
+  chk = try(unzip( spd_demo_cached_path(cache=cache, zipname=zipname, source=source), exdir=destination ))
   if (inherits(chk, "try-error")) stop("problem with unzipping cached zip archive")
   dir(destination, full.names=TRUE)
 }

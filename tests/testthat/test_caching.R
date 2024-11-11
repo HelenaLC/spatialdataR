@@ -17,4 +17,20 @@ test_that("merfish demo zip has expected content", {
   parq = grep("parquet", cont)
   expect_true(length(parq) == 3L)
 })
+
+clean_cache = function(zipname) {
+ ca = BiocFileCache::BiocFileCache()
+ ans = BiocFileCache::bfcquery(ca, zipname)
+ if (nrow(ans)>0) BiocFileCache::bfcremove(ca, ans$rid)
+}
  
+test_that("sandbox data can be acquired and used", {
+  clean_cache("mibitof.zip")
+  tf = tempfile()
+  dir.create(tf)
+  dem = unzip_spd_demo(zipname="mibitof.zip", cache=BiocFileCache::BiocFileCache(), destination=tf, source="sandbox")
+  grab = readSpatialData(dem)
+  expect_true(all(dim(SpatialData::table(grab)) == c(36L, 3309L)))
+})
+
+
