@@ -8,3 +8,4 @@ inst/extdata/visium.zarr
 inst/extdata/mibitof.zarr
 inst/extdata/xenium1.zarr
 inst/extdata/visiumhd.zarr
+*.Rproj
