@@ -10,7 +10,7 @@ setClassUnion(
 .ImageArray <- setClass(
     Class="ImageArray",
     contains=c("Annotated"),
-    slots=list(data="array_OR_df", meta="Zattrs"))
+    slots=list(data="list", meta="Zattrs"))
 
 .LabelArray <- setClass(
     Class="LabelArray",

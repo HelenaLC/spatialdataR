@@ -31,9 +31,10 @@ NULL
 #' @importFrom jsonlite fromJSON
 #' @export
 readImage <- function(x) {
-    md <- fromJSON(file.path(x, ".zattrs"))
-    za <- ZarrArray(file.path(x, "0"))
-    ImageArray(data=za, meta=Zattrs(md))
+    # md <- fromJSON(file.path(x, ".zattrs"))
+    # za <- ZarrArray(file.path(x, "0"))
+    # ImageArray(data=za, meta=Zattrs(md))
+    ImageArray(x)
 }
 
 #' @rdname readSpatialData
