@@ -106,6 +106,7 @@ readTable_basilisk <- function(x) {
 #' @importFrom anndataR read_zarr to_SingleCellExperiment
 #' @export
 readTable_anndataR <- function(x) {
+    requireNamespace("anndataR")
     adata <- anndataR::read_zarr(x)
     anndataR::to_SingleCellExperiment(adata)
 }
