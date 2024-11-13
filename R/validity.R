@@ -21,12 +21,14 @@
     msg <- NULL
     # Checks if the points have the x,y coordinates, as they are hard-coded
     # in the plot functions
-    if (!is.null(data(point(object)))) {
-        np <- length(points(object))
-        for (i in c(1:np)) {
-            dfi <- data(point(object, i))
-            if (!all(c("x", "y") %in% names(dfi))) {
-                msg <- c(msg, paste0("'x' and 'y' missing in data point ", i))
+    if(length(points(object))) { # there are some cases where the points are empty
+        if (!is.null(data(point(object)))) {
+            np <- length(points(object))
+            for (i in c(1:np)) {
+                dfi <- data(point(object, i))
+                if (!all(c("x", "y") %in% names(dfi))) {
+                    msg <- c(msg, paste0("'x' and 'y' missing in data point ", i))
+                }
             }
         }
     }
