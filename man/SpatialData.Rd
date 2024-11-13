@@ -59,7 +59,7 @@
 \alias{table<-,SpatialData,ANY,ANY-method}
 \title{The `SpatialData` class}
 \usage{
-\S4method{data}{ImageArray}(x, width = 800, height = 800)
+\S4method{data}{ImageArray}(x, scale = 1)
 
 SpatialData(images, labels, points, shapes, tables)
 

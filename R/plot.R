@@ -39,7 +39,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-    as.array(aperm(data(x)/255, perm = c(3,2,1)))
+    as.array(aperm(.get_plot_data(x)/255, perm = c(3,2,1)))
 }
 
 .gg_i <- \(x) list(
