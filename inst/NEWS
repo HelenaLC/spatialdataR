@@ -1,0 +1,4 @@
+changes in version 0.99.6
+
+- option to read 'table' using 'anndataR' instead 
+  of 'anndata+zellkonverter' through 'basilisk'
