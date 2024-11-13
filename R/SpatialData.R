@@ -14,7 +14,7 @@
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
-#' (x <- readSpatialData(x))
+#' (x <- readSpatialData(x, tables=FALSE))
 #' 
 #' @export
 SpatialData <- \(images, labels, points, shapes, tables) {

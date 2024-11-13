@@ -1,3 +1,8 @@
+changes in version 0.99.10
+
+- add support for multiscales in 'ImageArray's
+  including show method to display available scales
+
 changes in version 0.99.9
 
 - add 'basilisk'-based interface to Python's 'spatialdata-io'

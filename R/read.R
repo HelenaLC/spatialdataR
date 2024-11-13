@@ -34,18 +34,12 @@ NULL
 #' @importFrom jsonlite fromJSON
 #' @export
 readImage <- function(x, ...) {
-  if(x == ""){
-    za_list = list()
-    meta = Zattrs()
-  } else {
     md <- fromJSON(file.path(x, ".zattrs"))
     paths <- .get_multiscales_dataset_paths(md)
-    za_list <- sapply(paths, function(ps){
-      ZarrArray(file.path(x, as.character(ps)))
-    }) 
-    meta = Zattrs(md)
-  }
-  ImageArray(data_list = za_list, meta = meta, ...)
+    za_list <- lapply(paths, function(ps)
+        ZarrArray(file.path(x, as.character(ps))))
+    meta <- Zattrs(md)
+    ImageArray(data=za_list, meta=meta, ...)
 }
 
 #' @rdname readSpatialData
@@ -140,6 +134,11 @@ readSpatialData <- function(x,
         j <- list.files(file.path(x, i), full.names=TRUE)
         if (is.numeric(args[[i]])) j <- j[args[[i]]]
         i <- paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1))
-        setNames(lapply(j, get(paste0("read", i)), anndataR=anndataR), basename(j))
+        args <- if (i == "tables") list(anndataR=anndataR)
+        lapply(j, \(.) {
+            f <- get(paste0("read", i))
+            out <- do.call(f, c(list(.), args))
+        }) |> 
+            setNames(basename(j)) 
     }) |> do.call(what=SpatialData)
 }
