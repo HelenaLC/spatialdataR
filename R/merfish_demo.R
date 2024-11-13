@@ -163,9 +163,10 @@ available_10x_xen_zips <- function() {
 #' path_to_10x_xen_demo()
 #' # see ?use_sdio
 #' @export
-path_to_10x_xen_demo = function(zipname="Xenium_V1_human_Breast_2fov_outs.zip") {
- .cache_add_if_needed_xendemo(cache=BiocFileCache::BiocFileCache(),
-    zipname=zipname, source="biocOSN")
+path_to_10x_xen_demo <- function(zipname="Xenium_V1_human_Breast_2fov_outs.zip") {
+    .cache_add_if_needed_xendemo(
+        cache=BiocFileCache::BiocFileCache(),
+        zipname=zipname, source="biocOSN")
 }
 
 .cache_add_if_needed_xendemo <- function(cache=BiocFileCache::BiocFileCache(), 

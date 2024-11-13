@@ -92,9 +92,10 @@ readShape <- function(x, ...) {
         ad <- ad$read_zarr(zarr)
         AnnData2SCE(ad)
     })
-    nm <- names(md <- metadata(sce))
+    nm <- "spatialdata_attrs"
+    md <- metadata(sce)[[nm]]
     int_metadata(sce)[[nm]] <- md[[nm]]
-    metadata(sce) <- list()
+    metadata(sce)[[nm]] <- NULL
     return(sce)
 }
 
@@ -126,13 +127,21 @@ readTable <- function(x, anndataR=FALSE) {
 #' @rdname readSpatialData
 #' @export
 readSpatialData <- function(x, 
-    images=NULL, labels=NULL, points=NULL, 
-    shapes=NULL, tables=NULL, anndataR=FALSE) {
+    images=TRUE, labels=TRUE, points=TRUE, 
+    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     lapply(.LAYERS[!skip], \(i) {
-        j <- list.files(file.path(x, i), full.names=TRUE)
-        if (is.numeric(args[[i]])) j <- j[args[[i]]]
+        y <- file.path(x, i)
+        j <- list.files(y, full.names=TRUE)
+        names(j) <- basename(j)
+        if (!isTRUE(opt <- args[[i]])) {
+            if (is.numeric(opt) && opt > (. <- length(j))) 
+                stop("'", i, "=", opt, "', but only ", ., " elements found")
+            if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
+                stop("couln't find ", i, " of name", .)
+            j <- j[opt]
+        } 
         i <- paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1))
         args <- if (i == "tables") list(anndataR=anndataR)
         lapply(j, \(.) {

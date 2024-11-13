@@ -24,12 +24,12 @@ readTable(x, anndataR = FALSE)
 
 readSpatialData(
   x,
-  images = NULL,
-  labels = NULL,
-  points = NULL,
-  shapes = NULL,
-  tables = NULL,
-  anndataR = FALSE
+  images = TRUE,
+  labels = TRUE,
+  points = TRUE,
+  shapes = TRUE,
+  tables = TRUE,
+  anndataR = TRUE
 )
 }
 \arguments{
