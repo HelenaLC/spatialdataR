@@ -77,6 +77,7 @@ readShape <- function(x) {
 #' @rdname readSpatialData
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
+#' @importFrom SingleCellExperiment int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
 readTable <- function(x) {
@@ -84,11 +85,15 @@ readTable <- function(x) {
     # reading AnnData from .zarr (.h5ad only atm)
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
+    sce <- basiliskRun(proc, zarr=x, \(zarr) {
         ad <- import("anndata")
         ad <- ad$read_zarr(zarr)
         AnnData2SCE(ad)
     })
+    nm <- names(md <- metadata(sce))
+    int_metadata(sce)[[nm]] <- md[[nm]]
+    metadata(sce) <- list()
+    return(sce)
 }
 
 #' @rdname readSpatialData
