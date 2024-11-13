@@ -112,7 +112,12 @@ setMethod("data", "ImageArray", \(x, width=800, height=800) {
     dim_a <- dim(a)
     (dim_a[2] > height & dim_a[3] > width)
   })
-  max(which(dim_list))
+  dim_list_ind <- which(dim_list)
+  if(any(dim_list_ind)){
+    return(max(dim_list_ind))
+  } else {
+    return(1)
+  }
 }
 
 #' @rdname ImageArray
