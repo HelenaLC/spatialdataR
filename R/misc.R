@@ -17,14 +17,18 @@ NULL
     coolcat("- labels(%d): %s", l <- labelNames(object))
     coolcat("- shapes(%d): %s", s <- shapeNames(object))
     coolcat("- points(%d): %s", p <- pointNames(object))
-    coolcat("- tables(%d): %s", t <- tableNames(object))
+    coolcat("- tables(%d): %s", tableNames(object))
     cat("coordinate systems:\n")
-    e <- c(i, l, s, p, t)
+    e <- c(i, l, s, p)
     g <- .coord2graph(object)
-    for (c in setdiff(nodes(g), e)) {
+    t <- nodeData(g, nodes(g), "type")
+    for (c in nodes(g)[t == "space"]) {
+        pa <- suppressWarnings(sp.between(g, e, c))
+        ss <- strsplit(names(pa), ":")
+        ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
-            paste0("- ", c, "(%d): %s"), 
-            graph::inEdges(c, g)[[1]])
+            paste0("- ", c, "(%d): %s"),
+            vapply(ss, \(.) .[1], character(1)))
     }
 }
 
