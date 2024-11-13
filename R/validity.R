@@ -35,6 +35,26 @@
     return(msg)
 }
 
+.image_validity <- function(object) {
+    msg <- NULL
+
+    if (length(images(object))) {
+        ni <- length(ni)
+        for (i in c(1:ni)) {
+            ai <- as.array(aperm(data(image(x,1))/255, perm=c(3,2,1)))
+            for (j in dim(ai)[3]) {
+                all_numeric <- all(sapply(ai[,,1], is.numeric))
+                if (!all_numeric) {
+                    msg <- c(msg, paste0("Image ", i, " channel ", j,
+                        " not numeric"))
+                }
+            }
+        }
+    }
+
+    return(msg)
+}
+
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
     typ <- c(
