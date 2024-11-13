@@ -34,6 +34,8 @@ merfish_demo_path <- function(cache=BiocFileCache::BiocFileCache(), zipname="mer
 #' dir.create(tf)
 #' pa <- unzip_merfish_demo(tf)
 #' dir(pa, full.names=TRUE)
+#' 
+#' @importFrom utils unzip
 #' @export
 unzip_merfish_demo <- function(destination, cache=BiocFileCache::BiocFileCache()) {
     stopifnot(dir.exists(destination))

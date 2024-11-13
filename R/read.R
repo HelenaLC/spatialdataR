@@ -145,7 +145,6 @@ readSpatialData <- function(x,
         lapply(j, \(.) {
             f <- get(paste0("read", i))
             out <- do.call(f, c(list(.), args))
-        }) |> 
-            setNames(basename(j)) 
+        })
     }) |> do.call(what=SpatialData)
 }
