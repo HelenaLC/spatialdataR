@@ -79,18 +79,19 @@ setMethod("data", "ImageArray", \(x, scale=1) x@data[[scale]])
 #' @export
 setMethod("dim", "ImageArray", \(x) dim(data(x)))
 
-.guess_scale <- \(x, width, height) {
-    dim_list <- vapply(x@data, \(a) {
-        dim_a <- dim(a)
-        (dim_a[2] > height & dim_a[3] > width)
-    }, logical(length(x@data)))
-    dim_list_ind <- which(dim_list)
-    if (any(dim_list_ind))
-        return(max(dim_list_ind))
-    return(1)
-}
-
-.get_plot_data <- \(x, width=800, height=800) {
-    image_scale_ind <- .guess_scale(x, width, height)
-    x@data[[image_scale_ind]]
-}
+# TODO: these scaling parameters are currently broken due to annotation_raster
+# .guess_scale <- \(x, width, height) {
+#     dim_list <- vapply(x@data, \(a) {
+#         dim_a <- dim(a)
+#         (dim_a[2] > height & dim_a[3] > width)
+#     }, logical(length(x@data)))
+#     dim_list_ind <- which(dim_list)
+#     if (any(dim_list_ind))
+#         return(max(dim_list_ind))
+#     return(1)
+# }
+# 
+# .get_plot_data <- \(x, width=800, height=800) {
+#     image_scale_ind <- .guess_scale(x, width, height)
+#     x@data[[image_scale_ind]]
+# }
