@@ -8,7 +8,7 @@
         if (!is(sce, "SingleCellExperiment")) {
             msg <- c(msg, paste0("Table ", i, " is not a SingleCellExperiment"))
         }
-        md <- SummarizedExperiment::metadata(se)[[1]]
+        md <- S4Vectors::metadata(sce)[[1]]
         if (!all(c("region_key", "instance_key") %in% names(md))) {
             msg <- c(msg, paste0("region_key/instance_key not present in ",
                                  i, "-th sce metadata"))
