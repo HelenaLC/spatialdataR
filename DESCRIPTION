@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.4), SingleCellExperiment
-Version: 0.99.5
+Version: 0.99.7
 Description: TODO
 Authors@R: c(
 	person("Helena L.", "Crowell", 
@@ -11,7 +11,11 @@ Authors@R: c(
     person("Vince", "Carey",
         role=c("aut"),
         email="stvjc@channing.harvard.edu",
-        comment=c(ORCID="0000-0003-4046-0063")))
+        comment=c(ORCID="0000-0003-4046-0063")),
+    person("Louise", "Deconinck",
+        role=c("aut"),
+        email="louise.deconinck@gmail.com",
+        comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
     abind,
     arrow,
@@ -36,7 +40,11 @@ Suggests:
     BiocStyle,
     ggnewscale,
     knitr,
-    testthat
+    testthat,
+    anndataR
+Remotes:
+    keller-mark/pizzarr,
+    keller-mark/anndataR
 Enhances:
     paws
 biocViews: 

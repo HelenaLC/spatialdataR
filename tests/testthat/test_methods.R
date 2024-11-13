@@ -55,3 +55,9 @@ test_that("get nms", {
         expect_identical(get_nms(x), names(get_lys(x)))
     }
 })
+
+test_that("get table anndataR basilisk", {
+    table_anndataR <- readSpatialData(x, anndataR=TRUE)
+    table_basilisk <- readSpatialData(x, anndataR=FALSE)
+    expect_identical(table_anndataR, table_basilisk)
+})
