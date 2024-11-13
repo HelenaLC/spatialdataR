@@ -4,6 +4,22 @@
 # TODO: for all layers, implement all transformations 
 # (translate, scale, rotate, affine, and sequential) 
 
+#' @name .coord2graph
+#' @rdname coord2graph
+#' @title CS graph representation
+#' 
+#' @param x \code{SpatialData} object
+#' 
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
+#' g <- .coord2graph(x)
+#' # visualize element-coordinate system relations as graph
+#' graph::plot(g)
+#' # retrieve transformation from element to target space
+#' graph::edgeData(g, "blobs_labels", "translation", "data")
+#' 
 #' @importFrom graph graphAM nodes
 #'   addNode nodeData<- nodeDataDefaults<-
 #'   addEdge edgeData<- edgeDataDefaults<-
