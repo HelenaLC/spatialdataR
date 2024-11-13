@@ -19,7 +19,7 @@
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialData", .validateSpatialData)
 
-.validateZattrs_multiscales <- \(x, mgs) {
+.validateZattrs_multiscales <- \(x, msg) {
     if (is.null(ms <- x$multiscales))
         msg <- c(msg, "missing 'multiscales'")
     # MUST contain
