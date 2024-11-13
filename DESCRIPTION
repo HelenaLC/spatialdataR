@@ -24,6 +24,7 @@ Imports:
     EBImage,
     geoarrow,
     ggplot2,
+    graph,
     jsonlite,
     rlang,
     sf,
