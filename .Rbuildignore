@@ -8,3 +8,4 @@ inst/extdata/xenium1
 inst/extdata/visiumhd
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$

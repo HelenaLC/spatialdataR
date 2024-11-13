@@ -25,7 +25,6 @@ Imports:
     arrow,
     basilisk,
     dplyr,
-    EBImage,
     geoarrow,
     ggplot2,
     graph,
