@@ -17,15 +17,13 @@ setClassUnion(
     contains=c("Annotated"),
     slots=list(data="array_OR_df", meta="Zattrs"))
 
-#' #' @importFrom methods setOldClass
-#' #' @importFrom arrow Table
-#' @name Table
-setOldClass("Table")
+# these are 'R6ClassGenerator's;
 
 # 'arrow' doesn't export theses;
 # this somehow does the trick...
 setClass("FileSystemDataset", "VIRTUAL")
 setClass("arrow_dplyr_query", "VIRTUAL")
+setClass("Table", "VIRTUAL")
 
 # TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
 # read_parquet gives a Table, dplyr calls give a query, but also wanna 
