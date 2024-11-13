@@ -4,8 +4,34 @@
 # TODO: for all layers, implement all transformations 
 # (translate, scale, rotate, affine, and sequential) 
 
-# TODO: better handling of .zattrs... e.g., accessors for 
-# axes names/types, CS shared between elements etc.
+#' @importFrom graph graphAM nodes
+#'   addNode nodeData<- nodeDataDefaults<-
+#'   addEdge edgeData<- edgeDataDefaults<-
+.coord2graph <- \(x) {
+    g <- graphAM(edgemode="directed")
+    edgeDataDefaults(g, "data") <- list()
+    nodeDataDefaults(g, "type") <- character()
+    names(ls) <- ls <- setdiff(.LAYERS, "tables")
+    for (l in ls) for (e in names(x[[l]])) {
+        md <- meta(x[[l]][[e]])
+        ms <- md$multiscales
+        if (!is.null(ms)) md <- ms
+        ct <- md$coordinateTransformations
+        ct <- if (length(ct) == 1) ct[[1]] else ct
+        g <- addNode(e, g)
+        nodeData(g, e, "type") <- "element"
+        for (i in seq(nrow(ct))) {
+            n <- ct$output$name[i]
+            if (!n %in% nodes(g)) {
+                g <- addNode(n, g)
+                nodeData(g, n, "type") <- "space"
+            }
+            g <- addEdge(e, n, g)
+            edgeData(g, e, n, "data") <- ct$type[i]
+        }
+    }
+    return(g)
+}
 
 setGeneric("getCS", \(x, ...) standardGeneric("getCS"))
 setGeneric("getTS", \(x, ...) standardGeneric("getTS"))
