@@ -67,7 +67,8 @@ setGeneric("query", \(x, y, ...) standardGeneric("query"))
 
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
-setGeneric("getRegionData", \(x, ...) standardGeneric("getRegionData"))
+setGeneric("getRegionData", \(x, re, ...) standardGeneric("getRegionData"))
+setGeneric("getMetadata", \(x, re, ...) standardGeneric("getMetadata"))
 
 # plt ----
 
