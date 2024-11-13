@@ -1,6 +1,7 @@
 # TODO: everything...
 
 .tables_validity <- function(object) {
+    msg <- NULL
     nt <- length(tables(object))
     for (i in c(1:nt)) {
         sce <- table(object, i)
@@ -17,10 +18,10 @@
 }
 
 .points_validity <- function(object) {
+    msg <- NULL
     # Checks if the points have the x,y coordinates, as they are hard-coded
     # in the plot functions
-    if (!is.null(data(point(object))))
-    {
+    if (!is.null(data(point(object)))) {
         np <- length(points(object))
         for (i in c(1:np)) {
             dfi <- data(point(object, i))
