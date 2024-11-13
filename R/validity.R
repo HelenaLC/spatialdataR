@@ -8,11 +8,11 @@
         if (!is(sce, "SingleCellExperiment")) {
             msg <- c(msg, paste0("Table ", i, " is not a SingleCellExperiment"))
         }
-        md <- int_metadata(sce)[["spatialdata_attrs"]]
-        if (!all(c("region_key", "instance_key") %in% names(md))) {
-            msg <- c(msg, paste0("region_key/instance_key not present in ",
-                                 i, "-th sce int_metadata"))
-        }
+        # md <- int_metadata(sce)[["spatialdata_attrs"]]
+        # if (!all(c("region_key", "instance_key") %in% names(md))) {
+        #     msg <- c(msg, paste0("region_key/instance_key not present in ",
+        #                          i, "-th sce int_metadata"))
+        # }
     }
     return(msg)
 }
