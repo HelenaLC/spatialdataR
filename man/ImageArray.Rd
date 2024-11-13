@@ -5,13 +5,12 @@
 \alias{dim,ImageArray-method}
 \title{The `ImageArray` class}
 \usage{
-ImageArray(data = array(), meta = Zattrs(), metadata = list(), ...)
+ImageArray(data_list = list(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
-\item{data}{\code{\link[Rarr]{ZarrArray}} for on-disk, 
-\code{array} for in-memory representation.}
+\item{data_list}{a list of arrays}
 
 \item{meta}{...}
 

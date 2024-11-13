@@ -1,7 +1,7 @@
 #' @name ImageArray
 #' @title The `ImageArray` class
 #' 
-#' @param x zarr store of the image
+#' @param data_list a list of arrays
 #' @param meta ...
 #' @param metadata ....
 #'

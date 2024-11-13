@@ -30,7 +30,7 @@ NULL
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
-readImage <- function(x, ...) {
+readImage <- function(x) {
   if(x == ""){
     za_list = list()
     meta = Zattrs()
