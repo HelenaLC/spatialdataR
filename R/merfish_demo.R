@@ -160,13 +160,8 @@ available_10x_xen_zips <- function() {
 #' provide path to a zip file from 10x genomics for Xenium platform
 #' @param zipname character(1)
 #' @examples
-#' p1 = path_to_10x_xen_demo()
-#' td = tempfile()
-#' dir.create(td)
-#' unzip(p1, exdir=td)
-#' target = tempfile()
-#' use_sdio("xenium")(td)$write(target)
-#' br2fov = SpatialData::readSpatialData(target)
+#' path_to_10x_xen_demo()
+#' # see ?use_sdio
 #' @export
 path_to_10x_xen_demo = function(zipname="Xenium_V1_human_Breast_2fov_outs.zip") {
  .cache_add_if_needed_xendemo(cache=BiocFileCache::BiocFileCache(),
