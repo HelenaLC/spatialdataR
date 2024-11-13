@@ -18,6 +18,7 @@
 #' @import ggplot2
 NULL
 
+#' @importFrom grDevices col2rgb
 .str_is_col <- \(x) !inherits(tryCatch(error=\(e) e, col2rgb(x)), "error")
 
 .theme <- list(
@@ -76,7 +77,7 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
 # label ----
 
 #' @rdname plotSpatialData
-#' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices hcl.colors colorRampPalette
 #' @importFrom abind abind
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
@@ -202,6 +203,7 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
         do.call(geo, c(list(data=df, mapping=aes), dot)))
 })
 
+#' @importFrom SummarizedExperiment colData
 .get_tbl <- \(df, x, i) {
     md <- metadata(se <- table(x))[[1]]
     se <- se[, se[[md$region_key]] == i]

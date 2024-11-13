@@ -84,6 +84,7 @@
 #' x <- readSpatialData(x, tables=FALSE)
 #' g <- .coord2graph(x)
 #' .get_path(g, "blobs_labels", "sequence")
+#' @importFrom graph edgeData
 .get_path <- \(g, i, j) {
     p <- sp.between(g, i, j)
     p <- p[[1]]$path_detail

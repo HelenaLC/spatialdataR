@@ -1,6 +1,6 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
-Depends: R (>= 4.4), SingleCellExperiment
+Depends: R (>= 4.4)
 Version: 0.99.11
 Description: TODO
 Authors@R: c(
@@ -32,6 +32,8 @@ Imports:
     rlang,
     sf,
     S4Vectors,
+    SingleCellExperiment,
+    SummarizedExperiment,
     zellkonverter,
     BiocGenerics,
     S4Arrays,
