@@ -40,11 +40,12 @@ Imports:
     BiocFileCache,
     methods
 Suggests:
+    anndataR,
     BiocStyle,
     ggnewscale,
     knitr,
-    testthat,
-    anndataR
+    patchwork,
+    testthat
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
