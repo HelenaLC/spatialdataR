@@ -67,6 +67,8 @@ setGeneric("query", \(x, y, ...) standardGeneric("query"))
 
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
+setGeneric("getRegionData", \(x, ...) standardGeneric("getRegionData"))
+
 # plt ----
 
 setGeneric("plotImage", \(x, ...) standardGeneric("plotImage"))
