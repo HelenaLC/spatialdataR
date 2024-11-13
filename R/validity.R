@@ -8,10 +8,10 @@
         if (!is(sce, "SingleCellExperiment")) {
             msg <- c(msg, paste0("Table ", i, " is not a SingleCellExperiment"))
         }
-        md <- S4Vectors::metadata(sce)[[1]]
+        md <- int_metadata(sce)[["spatialdata_attrs"]]
         if (!all(c("region_key", "instance_key") %in% names(md))) {
             msg <- c(msg, paste0("region_key/instance_key not present in ",
-                                 i, "-th sce metadata"))
+                                 i, "-th sce int_metadata"))
         }
     }
     return(msg)
