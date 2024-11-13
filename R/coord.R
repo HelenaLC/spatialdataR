@@ -27,7 +27,8 @@
                 nodeData(g, n, "type") <- "space"
             }
             g <- addEdge(e, n, g)
-            edgeData(g, e, n, "data") <- ct$type[i]
+            d <- ct[[ct$type[i]]][i]
+            edgeData(g, e, n, "data") <- d
         }
     }
     return(g)
