@@ -21,11 +21,11 @@ readTable(x)
 
 readSpatialData(
   x,
-  images = NULL,
-  labels = NULL,
-  points = NULL,
-  shapes = NULL,
-  tables = NULL
+  images = TRUE,
+  labels = TRUE,
+  points = TRUE,
+  shapes = TRUE,
+  tables = TRUE
 )
 }
 \arguments{

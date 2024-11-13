@@ -93,8 +93,7 @@ readTable <- function(x) {
 
 #' @rdname readSpatialData
 #' @export
-readSpatialData <- function(x, images=NULL, labels=NULL, points=NULL, shapes=NULL, tables=NULL) {
-    # TODO: validity checks
+readSpatialData <- function(x, images=TRUE, labels=TRUE, points=TRUE, shapes=TRUE, tables=TRUE) {
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     lapply(.LAYERS[!skip], \(i) {
