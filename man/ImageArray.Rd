@@ -28,8 +28,4 @@ pa <- unzip_merfish_demo(td)
 pa <- file.path(pa, "images", "rasterized")
 (ia <- readImage(pa))
 
-a <- as.array(data(ia))
-a <- aperm(a, c(2,3,1))
-plot(EBImage::Image(a/255))
-
 }
