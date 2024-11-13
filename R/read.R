@@ -12,6 +12,9 @@
 #'   Control which elements should be read for each layer.
 #'   The default, NULL, reads all elements; alternatively, may be FALSE 
 #'   to skip a layer, or a integer vector specifying which elements to read.
+#' @param anndataR, logical, default FALSE
+#'   Uses \code{anndataR} to read tables if TRUE.
+#'   Uses \code{basilisk}, \code{anndata} and \code{zellkonverter} to read tables if FALSE.
 #'
 #' @return 
 #' \itemize{
@@ -30,7 +33,7 @@ NULL
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
-readImage <- function(x) {
+readImage <- function(x, ...) {
     md <- fromJSON(file.path(x, ".zattrs"))
     za <- ZarrArray(file.path(x, "0"))
     ImageArray(data=za, meta=Zattrs(md))
@@ -40,7 +43,7 @@ readImage <- function(x) {
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
-readLabel <- function(x) {
+readLabel <- function(x, ...) {
     md <- fromJSON(file.path(x, ".zattrs"))
     za <- ZarrArray(file.path(x, "0"))
     LabelArray(data=za, meta=Zattrs(md))
@@ -50,7 +53,7 @@ readLabel <- function(x) {
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export
-readPoint <- function(x) {
+readPoint <- function(x, ...) {
     md <- fromJSON(file.path(x, ".zattrs"))
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     PointFrame(data=open_dataset(pq), meta=Zattrs(md))
@@ -60,7 +63,7 @@ readPoint <- function(x) {
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export
-readShape <- function(x) {
+readShape <- function(x, ...) {
     require(geoarrow, quietly=TRUE)
     md <- fromJSON(file.path(x, ".zattrs"))
     # TODO: previously had read_parquet(), 
@@ -74,14 +77,20 @@ readShape <- function(x) {
     pkgname="SpatialData", envname="anndata_env",
     packages=c("anndata==0.9.1", "zarr==2.14.2"))
 
+readTable <- function(x, anndataR = FALSE) {
+    if(anndataR) {
+        readTable_anndataR(x)
+    } else {
+        readTable_basilisk(x)
+    }
+}
+
 #' @rdname readSpatialData
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @export
-readTable <- function(x) {
-    # TODO: temporary, until AnnDataR supports
-    # reading AnnData from .zarr (.h5ad only atm)
+readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
     basiliskRun(proc, zarr=x, \(zarr) {
@@ -92,8 +101,19 @@ readTable <- function(x) {
 }
 
 #' @rdname readSpatialData
+#' @importFrom anndataR read_zarr to_SingleCellExperiment
 #' @export
-readSpatialData <- function(x, images=NULL, labels=NULL, points=NULL, shapes=NULL, tables=NULL) {
+readTable_anndataR <- function(x) {
+    if (!requireNamespace('anndataR', quietly = TRUE)){
+        stop("Install 'anndataR' to use this function.\nInstall this version: `remotes::install_github(\"keller-mark/anndataR\", ref = \"spatialdata\")`")
+    }
+    adata <- anndataR::read_zarr(x)
+    anndataR::to_SingleCellExperiment(adata)
+}
+
+#' @rdname readSpatialData
+#' @export
+readSpatialData <- function(x, images=NULL, labels=NULL, points=NULL, shapes=NULL, tables=NULL, anndataR = FALSE) {
     # TODO: validity checks
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
@@ -101,6 +121,6 @@ readSpatialData <- function(x, images=NULL, labels=NULL, points=NULL, shapes=NUL
         j <- list.files(file.path(x, i), full.names=TRUE)
         if (is.numeric(args[[i]])) j <- j[args[[i]]]
         i <- paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1))
-        setNames(lapply(j, get(paste0("read", i))), basename(j))
+        setNames(lapply(j, get(paste0("read", i)), anndataR = anndataR), basename(j))
     }) |> do.call(what=SpatialData)
 }
