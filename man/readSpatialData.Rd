@@ -7,7 +7,6 @@
 \alias{readPoint}
 \alias{readShape}
 \alias{readTable}
-\alias{.readTable_anndataR}
 \title{Reading `SpatialData`}
 \usage{
 readImage(x, ...)
@@ -17,8 +16,6 @@ readLabel(x, ...)
 readPoint(x, ...)
 
 readShape(x, ...)
-
-.readTable_anndataR(x)
 
 readTable(x, anndataR = FALSE)
 

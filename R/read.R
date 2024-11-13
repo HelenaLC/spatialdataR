@@ -99,8 +99,6 @@ readShape <- function(x, ...) {
     return(sce)
 }
 
-#' @rdname readSpatialData
-#' @importFrom anndataR read_zarr to_SingleCellExperiment
 .readTable_anndataR <- function(x) {
     if (!requireNamespace('anndataR', quietly=TRUE)) {
         stop("To use this function, install the 'anndataR' package via\n",
