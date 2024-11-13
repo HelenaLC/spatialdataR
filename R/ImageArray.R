@@ -76,12 +76,12 @@ ImageArray <- function(data_list = list(), meta = Zattrs(), metadata=list(), ...
 
 #' @rdname SpatialData
 #' @export
-setMethod("data", "ImageArray", \(x, width=800, height=800) {
-  .data_image(x,width,height)
+setMethod("data", "ImageArray", \(x, scale = 1) {
+  x@data[[scale]]
 })
 
 #' @noRd
-.data_image <- function(x, width, height){
+.get_plot_data <- function(x, width=800, height=800){
   image_scale_ind <- .get_image_scale_ind(x, width, height)
   x@data[[image_scale_ind]]
 }
