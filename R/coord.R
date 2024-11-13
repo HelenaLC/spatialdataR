@@ -26,6 +26,7 @@
 .coord2graph <- \(x) {
     g <- graphAM(edgemode="directed")
     edgeDataDefaults(g, "data") <- list()
+    edgeDataDefaults(g, "type") <- character()
     nodeDataDefaults(g, "type") <- character()
     names(ls) <- ls <- setdiff(.LAYERS, "tables")
     for (l in ls) for (e in names(x[[l]])) {
@@ -42,9 +43,31 @@
                 g <- addNode(n, g)
                 nodeData(g, n, "type") <- "space"
             }
-            g <- addEdge(e, n, g)
-            d <- ct[[ct$type[i]]][i]
-            edgeData(g, e, n, "data") <- d
+            t <- ct$type[i]
+            if (t == "sequence") {
+                sq <- ct$transformations[i][[1]]
+                . <- e
+                for (j in seq(nrow(sq))) {
+                    if (j == nrow(sq)) {
+                        m <- n
+                    } else {
+                        m <- paste(e, n, j, sep="_")
+                        g <- addNode(m, g)
+                        nodeData(g, m, "type") <- "none"
+                    }
+                    t <- sq$type[j]
+                    d <- sq[[t]][[j]]
+                    g <- addEdge(., m, g)
+                    edgeData(g, ., m, "type") <- t
+                    edgeData(g, ., m, "data") <- t
+                    . <- m
+                }
+            } else {
+                g <- addEdge(e, n, g)
+                d <- ct[[ct$type[i]]][i]
+                edgeData(g, e, n, "type") <- t
+                edgeData(g, e, n, "data") <- d
+            }
         }
     }
     return(g)

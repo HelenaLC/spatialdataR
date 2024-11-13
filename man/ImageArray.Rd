@@ -2,19 +2,22 @@
 % Please edit documentation in R/ImageArray.R
 \name{ImageArray}
 \alias{ImageArray}
+\alias{data,ImageArray-method}
 \alias{dim,ImageArray-method}
 \title{The `ImageArray` class}
 \usage{
-ImageArray(data_list = list(), meta = Zattrs(), metadata = list(), ...)
+ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
+
+\S4method{data}{ImageArray}(x, scale = 1)
 
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
-\item{data_list}{a list of arrays}
-
 \item{meta}{...}
 
 \item{metadata}{....}
+
+\item{data_list}{a list of arrays}
 }
 \value{
 \code{ImageArray}
