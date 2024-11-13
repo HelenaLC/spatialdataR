@@ -1,3 +1,7 @@
+changes in version 0.99.8
+
+- updated show method to include information on coordinate systems
+
 changes in version 0.99.7
 
 - added utility '.coord2graph()' in coord.R to represent
