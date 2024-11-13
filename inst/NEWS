@@ -1,3 +1,8 @@
+changes in version 0.99.7
+
+- added utility '.coord2graph()' in coord.R to represent
+  element-coordinate system relationships as graph
+
 changes in version 0.99.6
 
 - option to read 'table' using 'anndataR' instead 
