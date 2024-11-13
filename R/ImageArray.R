@@ -2,7 +2,8 @@
 #' @title The `ImageArray` class
 #' 
 #' @param x zarr store of the image
-#' @param .. additional arguements
+#' @param meta ...
+#' @param metadata ....
 #'
 #' @return \code{ImageArray}
 #'
@@ -18,20 +19,25 @@
 #'
 #' @importFrom S4Vectors metadata<-
 #' @export
-ImageArray <- function(x, ...) {
+ImageArray <- function(x = "", meta = Zattrs(), metadata=list(), ...) {
   
     # get .zattr
-    md <- fromJSON(file.path(x, ".zattrs"))
-    paths <- .get_multiscales_dataset_paths(md)
-    
-    # get ZarrArrays
-    za_list <- sapply(paths, function(ps){
-      ZarrArray(file.path(x, as.character(ps)))
-    })
+    if(x == ""){
+      za_list = list()
+      meta = Zattrs()
+    } else {
+      md <- fromJSON(file.path(x, ".zattrs"))
+      paths <- .get_multiscales_dataset_paths(md)
+      
+      # get ZarrArrays
+      za_list <- sapply(paths, function(ps){
+        ZarrArray(file.path(x, as.character(ps)))
+      }) 
+    }
 
     # create ImageArray from ZarrArray list
-    x <- .ImageArray(data=za_list, meta=Zattrs(md), ...)
-    # metadata(x) <- metadata
+    x <- .ImageArray(data=za_list, meta=meta, ...)
+    metadata(x) <- metadata
     return(x)
 }
 
@@ -86,6 +92,27 @@ ImageArray <- function(x, ...) {
   } else {
     stop("ImageArray paths are ill-defined, no 'multiscales' attribute under '.zattrs'")
   }
+}
+
+#' @rdname SpatialData
+#' @export
+setMethod("data", "ImageArray", \(x, width=800, height=800) {
+  .data_image(x,width,height)
+})
+
+#' @noRd
+.data_image <- function(x, width, height){
+  image_scale_ind <- .get_image_scale_ind(x, width, height)
+  x@data[[image_scale_ind]]
+}
+
+#' @noRd
+.get_image_scale_ind <- function(x, width, height){
+  dim_list <- sapply(x@data,function(a){
+    dim_a <- dim(a)
+    (dim_a[2] > height & dim_a[3] > width)
+  })
+  max(which(dim_list))
 }
 
 #' @rdname ImageArray
