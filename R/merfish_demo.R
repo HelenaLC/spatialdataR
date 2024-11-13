@@ -6,6 +6,10 @@ build_osn_path <- function(zipname) {
     sprintf("https://mghp.osn.xsede.org/bir190004-bucket01/BiocSpatialData/%s", zipname)
 }
 
+build_osn_xdemo_path <- function(zipname) {
+    sprintf("https://mghp.osn.xsede.org/bir190004-bucket01/BiocXenDemo/%s", zipname)
+}
+
 build_sandbox_path <- function(zipname) {
     sprintf("https://s3.embl.de/spatialdata/spatialdata-sandbox/%s", zipname)
 }
@@ -80,7 +84,7 @@ spdzPath <- function(cache=BiocFileCache::BiocFileCache(), zipname, source) {
     info <- BiocFileCache::bfcquery(cache, zipname)
     nrec <- nrow(info)
     if (nrec > 1) {
-        message("multiple 'merfish.zarr.zip' found in cache, using last recorded")
+        message(sprintf("multiple %s found in cache, using last recorded", zipname))
     }
     if (nrec == 1) {
         message("returning path to cached zip")
@@ -128,4 +132,54 @@ unzip_spd_demo <- function(zipname="mibitof.zip", destination, cache=BiocFileCac
     if (inherits(chk, "try-error")) 
         stop("problem with unzipping cached zip archive")
     dir(destination, full.names=TRUE)
+}
+
+#' use 'paws::s3' to interrogate an NSF Open Storage Network 
+#' bucket for zipped 10x-produced Xenium outputs
+#' @examples
+#' if (requireNamespace("paws")) {
+#'   available_10x_xen_zips()
+#' }
+#' @export
+available_10x_xen_zips <- function() {
+    if (!requireNamespace("paws")) 
+        stop("install 'paws' to use this function; without it",
+            " we can't check existence of data in OSN bucket")
+#  x = curl::curl("https://mghp.osn.xsede.org/bir190004-bucket01")
+#  y = xml2::read_xml(x)
+#  z = xml2::as_list(y)
+    message("checking Bioconductor OSN bucket...")
+    s3 <- paws::s3(
+        credentials=list(anonymous=TRUE),
+        endpoint="https://mghp.osn.xsede.org")
+    zz <- s3$list_objects("bir190004-bucket01") 
+    allk <- lapply(zz$Contents, "[[", "Key")
+    basename(grep("BiocXenDemo\\/", allk, value=TRUE))
+}
+
+#' provide path to a zip file from 10x genomics for Xenium platform
+#' @param zipname character(1)
+#' @examples
+#' path_to_10x_xen_demo()
+#' # see ?use_sdio
+#' @export
+path_to_10x_xen_demo = function(zipname="Xenium_V1_human_Breast_2fov_outs.zip") {
+ .cache_add_if_needed_xendemo(cache=BiocFileCache::BiocFileCache(),
+    zipname=zipname, source="biocOSN")
+}
+
+.cache_add_if_needed_xendemo <- function(cache=BiocFileCache::BiocFileCache(), 
+       zipname="Xenium_V1_human_Breast_2fov_outs.zip", source="biocOSN") {
+    info <- BiocFileCache::bfcquery(cache, zipname)
+    nrec <- nrow(info)
+    if (nrec > 1) {
+        message(sprintf("multiple %s found in cache, using last recorded", zipname))
+    }
+    if (nrec == 1) {
+        message("returning path to cached zip")
+        return(info$rpath[nrec])
+    }
+    fp = build_osn_xdemo_path(zipname)
+    message(sprintf("retrieving from %s, caching, and returning path", source))
+    BiocFileCache::bfcadd(cache, rname=zipname, fpath=fp, rtype="web")
 }
