@@ -5,7 +5,7 @@
     nt <- length(tables(object))
     for (i in c(1:nt)) {
         sce <- table(object, i)
-        if (!is("SingleCellExperiment", sce)) {
+        if (!is(sce, "SingleCellExperiment")) {
             msg <- c(msg, paste0("Table ", i, " is not a SingleCellExperiment"))
         }
         md <- SingleCellExperiment::metadata(se)[[1]]
