@@ -163,7 +163,7 @@ meta(point(x))
 In this example data, we do not have a `label` for the `shape` polygons. Such labels could be morphological regions annotated by pathologists.
 
 ```{r merfish-plot}
-i <- sample(length(p <- point(x, i=1), 2e3)
+i <- sample(length(p <- point(x, i=1), 2e3))
 point(x, "2k") <- p[i]
 plotSpatialData() +
     # plotImage(x) +
