@@ -17,11 +17,14 @@ test_that("readElement()", {
 
 test_that("readSpatialData()", {
     expect_is(readSpatialData(x), "SpatialData")
-    a <- list(x=x, images=NULL, labels=NULL, shapes=NULL, points=NULL, tables=NULL)
-    # setting any layer to FALSE should skip it
-    for (. in names(args)) {
-        b <- a; b[[.]] <- FALSE
+    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE, tables=TRUE)
+    for (. in names(a)) {
+        # setting any layer to FALSE should skip it
+        b <- c(list(x=x), a); b[[.]] <- FALSE
         obj <- do.call(readSpatialData, b)
         expect_length(get(.)(obj), 0)
+        # setting layer to out of bounds index fails
+        b <- c(list(x=x), a); b[[.]] <- 100
+        expect_error(do.call(readSpatialData, b))
     }
 })

@@ -102,8 +102,7 @@ x <- readSpatialData(pa)
 lapply(seq(3), \(i) {
     plotSpatialData() + 
         plotImage(x, i) + 
-        new_scale_fill() +
-        plotLabel(x, i, c="Cluster", a=0.2)
+        new_scale_fill()
 }) |> wrap_plots(nrow=1) + plot_layout(guides="collect")
 ```
 
