@@ -92,9 +92,10 @@ readShape <- function(x, ...) {
         ad <- ad$read_zarr(zarr)
         AnnData2SCE(ad)
     })
-    nm <- names(md <- metadata(sce))
+    nm <- "spatialdata_attrs"
+    md <- metadata(sce)[[nm]]
     int_metadata(sce)[[nm]] <- md[[nm]]
-    metadata(sce) <- list()
+    metadata(sce)[[nm]] <- NULL
     return(sce)
 }
 
