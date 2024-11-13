@@ -53,6 +53,26 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
 }
 
+# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]
+# input.axes input.name  output.axes output.name        scale        type  translation
+# 1 c("c", "....        cyx c("c", "....      global 1, 3.863....       scale             
+#     2 c("c", "....        cyx c("c", "....      global              translation 0, 4548,....
+
+# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$translation[[2]][2] # 4548
+# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$translation[[2]][3] # 1154
+
+# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$scale[[1]][2] # 3.863114
+# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$scale[[1]][2] # 3.507775
+
+
+
+# .gg_i <- \(x, o=c(0,0)) list(
+#   d=dim(x)
+#   ggplot2::annotation_raster(x, o[1], d[2] * , o[2], d[1], interpolate = FALSE) # ,
+#   # xlim(0,dim(x)[2]),
+#   # ylim(0,dim(x)[1])
+# )
+
 .gg_i <- \(x) list(
   ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate=FALSE),
   xlim(0,dim(x)[2]),
@@ -61,7 +81,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @rdname plotImage
 #' @export
-setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
+setMethod("plotImage", "SpatialData", \(x, i=1, j=1, ...) {
    df <- .df_i(y <- image(x, i))
    .gg_i(df)
 })
