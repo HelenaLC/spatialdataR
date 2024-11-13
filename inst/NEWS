@@ -1,3 +1,8 @@
+changes in version 0.99.11
+
+- in 'readSpatialData()', provide option to specify 
+  TRUE/FALSE/index/character to control reading
+
 changes in version 0.99.10
 
 - add support for multiscales in 'ImageArray's
