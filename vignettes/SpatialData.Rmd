@@ -14,7 +14,7 @@ vignette: |
 # Preamble
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r load-libs}
@@ -26,13 +26,13 @@ library(SpatialData)
 
 # toy data
 
-```{r}
+```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 (x <- readSpatialData(x))
 ```
 
-```{r}
+```{r blobs-plot}
 plotSpatialData() +
     plotLabel(x) +
     plotPoint(x, c="genes")
@@ -40,7 +40,7 @@ plotSpatialData() +
 
 # MERFISH
 
-```{r merfish-load-data}
+```{r merfish-read}
 dir.create(td <- tempfile())
 pa <- unzip_merfish_demo(dest=td)
 x <- readSpatialData(pa)
