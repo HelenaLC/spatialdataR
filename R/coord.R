@@ -56,10 +56,10 @@
                         nodeData(g, m, "type") <- "none"
                     }
                     t <- sq$type[j]
-                    d <- sq[[t]][[j]]
+                    d <- sq[[t]][j]
                     g <- addEdge(., m, g)
                     edgeData(g, ., m, "type") <- t
-                    edgeData(g, ., m, "data") <- t
+                    edgeData(g, ., m, "data") <- d
                     . <- m
                 }
             } else {
@@ -71,6 +71,25 @@
         }
     }
     return(g)
+}
+
+#' @name .get_path
+#' @rdname get_path
+#' @title get transformations path
+#' @param g \code{\link[graph]{graphAM}}
+#' @param i,j source and target node label
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
+#' g <- .coord2graph(x)
+#' .get_path(g, "blobs_labels", "sequence")
+.get_path <- \(g, i, j) {
+    p <- sp.between(g, i, j)
+    p <- p[[1]]$path_detail
+    n <- length(p)-1
+    lapply(seq_len(n), \(.)
+        edgeData(g, p[.], p[.+1])[[1]])
 }
 
 setGeneric("getCS", \(x, ...) standardGeneric("getCS"))
