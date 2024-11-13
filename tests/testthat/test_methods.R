@@ -34,13 +34,16 @@ test_that("set one", {
         m <- length(get(paste0(f, "s"))(x))
         expect_true(m == (n-1))
     }
+    # value=in/valid
     obj <- list(
         ImageArray(), LabelArray(), 
         ShapeFrame(), PointFrame(), 
         SingleCellExperiment())
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
-        x <- get(paste0(f, "<-"))(x, i=".", value=o)
+        set <- get(paste0(f, "<-"))
+        x <- set(x, i=".", value=o)
         expect_is(get(f)(x, "."), t)
+        expect_error(set(x, i=1, value=1))
     })
 })
 

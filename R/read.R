@@ -79,15 +79,20 @@ readShape <- function(x, ...) {
 
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
+#' @importFrom SingleCellExperiment int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
+    sce <- basiliskRun(proc, zarr=x, \(zarr) {
         ad <- import("anndata")
         ad <- ad$read_zarr(zarr)
         AnnData2SCE(ad)
     })
+    nm <- names(md <- metadata(sce))
+    int_metadata(sce)[[nm]] <- md[[nm]]
+    metadata(sce) <- list()
+    return(sce)
 }
 
 #' @rdname readSpatialData
@@ -120,7 +125,6 @@ readTable <- function(x, anndataR=FALSE) {
 readSpatialData <- function(x, 
     images=NULL, labels=NULL, points=NULL, 
     shapes=NULL, tables=NULL, anndataR=FALSE) {
-    # TODO: validity checks
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     lapply(.LAYERS[!skip], \(i) {
