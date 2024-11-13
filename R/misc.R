@@ -27,11 +27,11 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showImageArray <- function(object) {
     n.object <- length(object@data)
     cat("class: ImageArray", ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    print_list <- lapply(object@data, function(x){
-      paste0("dim: (", paste(dim(x), collapse = ","), ")")
-    })
+    if(n.object > 1){
+      cat("Scales 1-", n.object, "\n", sep = "")
+    }
     for(i in 1:n.object){
-      cat(ifelse(n.object > 1,  paste0("Scale ", i, " "), ""), print_list[[i]], "\n", sep = "")
+      cat(i, ": (", paste(dim(object@data[[i]]), collapse = ","), ")", "\n", sep = "")
     }
 }
 
