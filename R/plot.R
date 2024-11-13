@@ -39,35 +39,36 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-    a <- as.array(data(x)/255)
-    c <- if (dim(a)[1] == 1) rep(1, 3) else seq(3)
-    z <- do.call(rgb, lapply(c, \(.) a[., , ]))
-    data.frame(x=c(col(a[1, , ])), y=c(row(a[1, , ])), z=c(z))
+    as.array(aperm(data(x)/255, perm = c(3,2,1)))
 }
 
-.gg_i <- \(df) list(
-    scale_fill_identity(),
-    geom_tile(aes(x, y, fill=z), df))
+.gg_i <- \(x) list(
+  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate = FALSE),
+  xlim(0,dim(x)[2]),
+  ylim(0,dim(x)[1])
+)
 
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
-    df <- .df_i(y <- image(x, i))
-    if (!is.null(t <- getTS(y, j)))
-        for (. in seq(nrow(t))) {
-            typ <- t$type[.]
-            dat <- t[[typ]][.][[1]]
-            switch(typ, 
-                translation={
-                    df$x <- df$x+dat[3]
-                    df$y <- df$y+dat[2]
-                }, 
-                scale={
-                    df$x <- df$x*dat[3]
-                    df$y <- df$y*dat[2]
-                })
-        }
-    .gg_i(df)
+    # df <- .df_i(y <- image(x, i))
+    # if (!is.null(t <- getTS(y, j)))
+    #     for (. in seq(nrow(t))) {
+    #         typ <- t$type[.]
+    #         dat <- t[[typ]][.][[1]]
+    #         switch(typ, 
+    #             translation={
+    #                 df$x <- df$x+dat[3]
+    #                 df$y <- df$y+dat[2]
+    #             }, 
+    #             scale={
+    #                 df$x <- df$x*dat[3]
+    #                 df$y <- df$y*dat[2]
+    #             })
+    #     }
+    # .gg_i(df)
+   df <- .df_i(y <- image(x, i))
+   .gg_i(df)
 })
     
 # label ----

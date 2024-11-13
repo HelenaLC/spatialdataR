@@ -33,8 +33,14 @@ setMethod("show", "SpatialData", .showSpatialData)
 
 #' @importFrom S4Vectors coolcat
 .showImageArray <- function(object) {
-    cat("class: ImageArray\n")
-    cat("dim:", dim(object@data))
+    n.object <- length(object@data)
+    cat("class: ImageArray", ifelse(n.object > 1, "(MultiScale)", ""),"\n")
+    if(n.object > 1){
+      cat("Scales 1-", n.object, "\n", sep = "")
+    }
+    for(i in 1:n.object){
+      cat(i, ": (", paste(dim(object@data[[i]]), collapse = ","), ")", "\n", sep = "")
+    }
 }
 
 #' @rdname misc
