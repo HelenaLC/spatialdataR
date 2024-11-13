@@ -19,24 +19,8 @@
 #'
 #' @importFrom S4Vectors metadata<-
 #' @export
-ImageArray <- function(x = "", meta = Zattrs(), metadata=list(), ...) {
-  
-    # get .zattr
-    if(x == ""){
-      za_list = list()
-      meta = Zattrs()
-    } else {
-      md <- fromJSON(file.path(x, ".zattrs"))
-      paths <- .get_multiscales_dataset_paths(md)
-      
-      # get ZarrArrays
-      za_list <- sapply(paths, function(ps){
-        ZarrArray(file.path(x, as.character(ps)))
-      }) 
-    }
-
-    # create ImageArray from ZarrArray list
-    x <- .ImageArray(data=za_list, meta=meta, ...)
+ImageArray <- function(data_list = list(), meta = Zattrs(), metadata=list(), ...) {
+    x <- .ImageArray(data=data_list, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
