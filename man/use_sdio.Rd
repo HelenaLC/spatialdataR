@@ -2,13 +2,27 @@
 % Please edit documentation in R/sdio.R
 \name{use_sdio}
 \alias{use_sdio}
-\title{use a reader}
+\title{use spatialdata-io to transform manufacturer output to zarr with specific folder structure}
 \usage{
-use_sdio(platform = "xenium")
+use_sdio(platform = "xenium", srcdir, dest)
+}
+\arguments{
+\item{platform}{character(1) must be an element of `available_sdio()` output}
+
+\item{srcdir}{character(1) path to folder holding manufacturer output files}
+
+\item{dest}{character(1) a path to a desired destination for zarr representation}
 }
 \description{
-use a reader
+use spatialdata-io to transform manufacturer output to zarr with specific folder structure
 }
 \examples{
-use_sdio("xenium") # not basilisk-standards compliant -- leaks python reference into R
+p1 = path_to_10x_xen_demo()
+td = tempfile()
+dir.create(td)
+unzip(p1, exdir=td)
+target = tempfile()
+use_sdio("xenium", srcdir=td, dest=target)
+br2fov = SpatialData::readSpatialData(target)
+br2fov
 }
