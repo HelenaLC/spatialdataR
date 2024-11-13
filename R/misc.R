@@ -35,7 +35,8 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showImageArray <- function(object) {
     n.object <- length(object@data)
     cat("class: ImageArray", ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    coolcat("Scales (%d): %s", sapply(object@data, function(x) paste0("(", paste0(dim(x), collapse = ","), ")")))
+    scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
+    coolcat("Scales (%d): %s", scales)
 }
 
 #' @rdname misc
