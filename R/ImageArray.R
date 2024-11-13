@@ -45,30 +45,30 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @noRd
 .validate_multiscales_dataset_path <- function(md) {
-  # validate multiscales 
-  if("multiscales" %in% names(md)){
-    md_multiscales <- md[["multiscales"]]
+    # validate 'multiscales' 
+    if ("multiscales" %in% names(md)) {
+        ms <- md[["multiscales"]]
     
-    # validate datasets 
-    if("datasets" %in% names(md_multiscales)){
-      md_datasets <- md_multiscales[["datasets"]]
-      
-      # validate paths
-      path_check <- sapply(md_datasets, function(ds){
-        if("path" %in% colnames(ds))
-          return(TRUE)
-        return(FALSE)
-      })
-      
-      if(!all(path_check)){
-        stop("ImageArray paths are ill-defined, no 'path' attribute under 'multiscale-datasets'")
-      }
+        # validate 'datasets' 
+        if("datasets" %in% names(ms)) {
+          ds <- ms[["datasets"]]
+          
+          # validate 'paths'
+          valid <- vapply(ds, \(ds) "path" %in% colnames(ds), logical(1))
+          
+          if (!all(valid)) {
+            stop("'ImageArray' paths are ill-defined,",
+                " no 'path' attribute under 'multiscale-datasets'")
+          } 
+          
+        } else {
+            stop("'ImageArray' paths are ill-defined,",
+                " no 'datasets' attribute under 'multiscale'")
+        }
     } else {
-      stop("ImageArray paths are ill-defined, no 'datasets' attribute under 'multiscale'")
+        stop("'ImageArray' paths are ill-defined,",
+            " no 'multiscales' attribute under '.zattrs'")
     }
-  } else {
-    stop("ImageArray paths are ill-defined, no 'multiscales' attribute under '.zattrs'")
-  }
 }
 
 #' @rdname ImageArray
