@@ -85,6 +85,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=NULL, c=NULL, a=0.5,
     if(is.numeric(i)){
         i <- labelNames(x)[i]
     }
+
     y <- as.matrix(data(label(x, i)))
     df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
     if (!is.null(c)) {
@@ -93,10 +94,6 @@ setMethod("plotLabel", "SpatialData", \(x, i=NULL, c=NULL, a=0.5,
         se <- se_md$sce
         md <- se_md$md
         
-        # se <- table(x)
-        # md <- metadata(se)[[1]]
-        # re <- labelNames(x)[i]
-        # se <- se[, se[[md$region_key]] == re]
         cs <- match(df$z, se[[md$instance_key]])
         df$z <- se[[c]][cs]
         thm <- list(
