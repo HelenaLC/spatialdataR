@@ -207,16 +207,3 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
     i <- match(df[[md$instance_key]], se[[md$instance_key]])
     cbind(df, colData(se)[i, j])
 }
-
-# WON'T WORK POST 11/4/2024:
-# x <- file.path("extdata", "merfish.zarr")
-# x <- system.file(x, package="SpatialData")
-# x <- readSpatialData(x)
-# x@tables$table$foo <- runif(ncol(table(x)))
-# plotSpatialData() +
-#     plotShape(x, i=2, c="foo", s="x", a=1) +
-#     scale_size_continuous(range=c(0, 2)) +
-#     scale_color_viridis_c(option="E")
-# plotSpatialData() +
-#     plotShape(x, i=1, c=NULL) +
-#     theme(panel.background=element_rect(fill="black"))

@@ -18,8 +18,6 @@ setClassUnion(
     slots=list(data="array_OR_df", meta="Zattrs"))
 
 # these are 'R6ClassGenerator's;
-
-# 'arrow' doesn't export theses;
 # this somehow does the trick...
 setClass("FileSystemDataset", "VIRTUAL")
 setClass("arrow_dplyr_query", "VIRTUAL")
