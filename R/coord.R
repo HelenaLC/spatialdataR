@@ -76,15 +76,19 @@
 #' @name .get_path
 #' @rdname get_path
 #' @title get transformations path
+#' 
 #' @param g \code{\link[graph]{graphAM}}
 #' @param i,j source and target node label
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
 #' g <- .coord2graph(x)
 #' .get_path(g, "blobs_labels", "sequence")
+#' 
 #' @importFrom graph edgeData
+#' @importFrom RBGL sp.between
 .get_path <- \(g, i, j) {
     p <- sp.between(g, i, j)
     p <- p[[1]]$path_detail

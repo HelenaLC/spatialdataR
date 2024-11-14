@@ -20,4 +20,5 @@ x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 g <- .coord2graph(x)
 .get_path(g, "blobs_labels", "sequence")
+
 }

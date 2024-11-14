@@ -40,7 +40,7 @@ merfish_demo_path <- function(cache=BiocFileCache::BiocFileCache(), zipname="mer
 unzip_merfish_demo <- function(destination, cache=BiocFileCache::BiocFileCache()) {
     stopifnot(dir.exists(destination))
     unzip(merfish_demo_path(cache=cache), exdir=destination)
-    dir(destination, patt="merfish.zarr", full.names=TRUE)
+    dir(destination, pattern="merfish.zarr", full.names=TRUE)
 }
 
 #' use 'paws::s3' to interrogate an NSF Open Storage Network 

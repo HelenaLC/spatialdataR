@@ -82,8 +82,14 @@ setAs(
 
 #' @importFrom dplyr filter
 #' @export
-filter.PointFrame <- \(x, ...) { x@data <- filter(data(x), ...); x }
+filter.PointFrame <- \(.data, ...) { 
+    .data@data <- filter(data(.data), ...)
+    return(.data)
+}
 
 #' @importFrom dplyr select
 #' @export
-select.PointFrame <- \(x, ...) { x@data <- select(data(x), ...); x }
+select.PointFrame <- \(.data, ...) { 
+    .data@data <- select(data(.data), ...)
+    return(.data)
+}

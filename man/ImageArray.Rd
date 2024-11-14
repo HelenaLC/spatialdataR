@@ -13,11 +13,11 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
+\item{data}{a list of arrays}
+
 \item{meta}{...}
 
 \item{metadata}{....}
-
-\item{data_list}{a list of arrays}
 }
 \value{
 \code{ImageArray}

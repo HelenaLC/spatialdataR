@@ -1,6 +1,17 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
+#' @aliases
+#' SpatialData-class
+#' $,SpatialData-method
+#' [[,SpatialData-method
+#' image images image<- images<- imageNames 
+#' label labell label<- labels<- labelNames 
+#' point points point<- points<- pointNames 
+#' image images image<- images<- imageNames 
+#' shape shapes shape<- shapes<- shapeNames 
+#' table tables table<- tables<- tableNames 
+#' 
 #' @description ...
 #' 
 #' @param images list of \code{\link{ImageArray}}s
