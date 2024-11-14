@@ -18,6 +18,10 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \item{meta}{...}
 
 \item{metadata}{....}
+
+\item{x}{\code{ImageArray}}
+
+\item{scale}{scalar index specifying which resolution to extract.}
 }
 \value{
 \code{ImageArray}

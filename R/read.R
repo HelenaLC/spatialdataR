@@ -83,7 +83,7 @@ readShape <- function(x, ...) {
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
 #' @importFrom S4Vectors metadata metadata<-
-#' @importFrom SingleCellExperiment int_metadata
+#' @importFrom SingleCellExperiment int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)
