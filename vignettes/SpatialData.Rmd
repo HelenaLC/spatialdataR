@@ -154,30 +154,6 @@ pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
-## label
-
-Explore the label related functionalities. In this MibiTOF example, we only have two slots named `"single_molecule"` and `"2k"`.
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$labels$point16_image
-x$labels$point23_image
-x$labels$point8_image
-
-# character vector
-pointNames(x) 
-# list of elements in layer
-points(x) 
-# single element
-point(x, i=1) # default
-point(x, i="2k")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(point(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(point(x)) 
-```
-
 ```{r mibitof-plot}
 lapply(seq(3), \(i) {
     plotSpatialData() + 
@@ -201,32 +177,6 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 plotSpatialData() + plotImage(x, i=4)
 ```
 
-## table
-
-Explore the label related functionalities. In this MibiTOF example, we only have two slots named `"single_molecule"` and `"2k"`. 
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$table$square_002um
-x$table$square_008um
-x$table$square_016um
-
-# character vector
-tableNames(x) 
-# list of elements in layer
-tables(x) 
-# single element
-SpatialData::table(x, i=1) # default
-SpatialData::table(x, i="square_002um")
-SpatialData::table(x, i="square_008um")
-SpatialData::table(x, i="square_016um")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(SpatialData::table(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(SpatialData::table(x)) 
-```
-
 # CyCIF (MCMICRO output)
 
 Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
@@ -238,7 +188,7 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
-# IMC (Steinbock output)
+# IMC (Steinbock)
 
 4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB; 14 images, 14 labels, 1 table.
 
