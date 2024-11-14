@@ -196,7 +196,7 @@ plotSpatialData() +
 
 Colorectal carcinoma, 25 MB, no shape no points.
 
-```{r mibitof-load-data}
+```{r mibitof-read}
 dir.create(td <- tempfile())
 pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
 x <- readSpatialData(pa)
@@ -242,7 +242,7 @@ lapply(seq(3), \(i) {
 
 Mouse intestin 1GB. In this example data of VisiumHD, we have 4 resolution of the images, and 3 shape files at 2, 8, and 16 $\mu$m
 
-```{r visiumhd-load-data}
+```{r visiumhd-read}
 dir.create(td <- tempfile())
 nm <- "visium_hd_3.0.0_io.zip"
 pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
