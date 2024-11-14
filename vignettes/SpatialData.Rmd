@@ -116,7 +116,14 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 ```
 
 ```{r visiumhd-plot}
-plotSpatialData() + plotImage(x, 4)
+plotSpatialData() + 
+  plotImage(x, 4)
+```
+
+```{r visiumhd-plot}
+plotSpatialData() + 
+  plotImage(x, 2) + 
+  plotShape(x, i = "Visium_HD_Mouse_Small_Intestine_square_016um")
 ```
 
 # Aligned breast cancer example
