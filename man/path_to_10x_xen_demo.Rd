@@ -7,7 +7,7 @@
 path_to_10x_xen_demo(zipname = "Xenium_V1_human_Breast_2fov_outs.zip")
 }
 \arguments{
-\item{zipname}{character(1)}
+\item{zipname}{character(1) name of zip archive to find}
 }
 \description{
 provide path to a zip file from 10x genomics for Xenium platform

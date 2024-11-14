@@ -13,11 +13,14 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
-\item{data}{a list of arrays}
+\item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
 
-\item{meta}{...}
+\item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{....}
+\item{metadata}{optional list of arbitrary 
+content describing the overall object.}
+
+\item{...}{option arguments passed to and from other methods.}
 
 \item{x}{\code{ImageArray}}
 

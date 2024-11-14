@@ -6,6 +6,9 @@
 \usage{
 Zattrs(x = list())
 }
+\arguments{
+\item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
+}
 \value{
 \code{Zattrs}
 }

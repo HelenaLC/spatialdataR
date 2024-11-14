@@ -18,7 +18,7 @@ get transformations path
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
-g <- .coord2graph(x)
-.get_path(g, "blobs_labels", "sequence")
+g <- SpatialData:::.coord2graph(x)
+SpatialData:::.get_path(g, "blobs_labels", "sequence")
 
 }

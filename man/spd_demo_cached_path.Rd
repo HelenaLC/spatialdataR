@@ -12,12 +12,11 @@ spd_demo_cached_path(
 )
 }
 \arguments{
-\item{cache}{defaults to BiocFileCache::BiocFileCache(), will serve as destination or source}
+\item{cache}{defaults to \code{BiocFileCache::BiocFileCache()}}
 
 \item{zipname}{character(1) should be found in Bioconductor OSN bucket}
 
-\item{source}{character(1) one of "biocOSN", "sandbox", "local"
-for data}
+\item{source}{character(1) one of "biocOSN", "sandbox", "local"}
 }
 \value{
 Returns character(1) path to cached zip file.

@@ -196,6 +196,20 @@ SpatialData(images, labels, points, shapes, tables)
 \item{shapes}{list of \code{\link{ShapeFrame}}s}
 
 \item{tables}{list of \code{SingleCellExperiment}s}
+
+\item{x}{\code{SpatialData}}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
+
+\item{i}{character string, scalar or vector of indices
+specifying the element to extract from a given layer.}
+
+\item{j}{ignored.}
+
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{value}{(list of) element(s) with layer-compliant object(s), 
+or NULL/\code{list()} to remove an element/layer completely.}
 }
 \value{
 \code{SpatialData}
