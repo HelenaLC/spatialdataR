@@ -109,7 +109,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     val <- sort(setdiff(unique(df$z), NA))
     pal <- colorRampPalette(pal)(length(val))
     list(thm, 
-        geom_tile(aes(x, y, fill=factor(.data[[z]])), df, alpha=a),
+        geom_tile(aes(x, y, fill=factor(.data$z)), df, alpha=a),
         scale_fill_manual(c, values=pal, breaks=val, na.value=NA))
 })
 
