@@ -47,13 +47,14 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-    plot_data <- .get_plot_data(x)/255
-    plot_data <- as.array(aperm(plot_data, perm = c(3,2,1)))
-    plot_data <- if (dim(plot_data)[3] == 1) plot_data[,,rep(1,3)] else plot_data
+    a <- .get_plot_data(x)
+    a <- as.array(aperm(a, perm=c(3,2,1)))
+    a <- if (dim(a)[3] == 1) a[,,rep(1,3)]/255 else a
+    a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
 }
 
 .gg_i <- \(x) list(
-  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate = FALSE),
+  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate=FALSE),
   xlim(0,dim(x)[2]),
   ylim(0,dim(x)[1])
 )
