@@ -143,14 +143,12 @@ Explore the point related functionalities. In this Merfish example, we only have
 ```{r eval=FALSE}
 # object should behave like a names list
 x$points$single_molecule
-x$points$`2k`
 # character vector
 pointNames(x) 
 # list of elements in layer
 points(x) 
 # single element
 point(x, i=1) # default
-point(x, i="2k")
 # get (meta)data from an element
 # (arrow for point/shape, ZarrArray for label/image)
 data(point(x)) 
@@ -163,10 +161,10 @@ meta(point(x))
 In this example data, we do not have a `label` for the `shape` polygons. Such labels could be morphological regions annotated by pathologists.
 
 ```{r merfish-plot}
-i <- sample(length(p <- point(x, i=1), 2e3))
+i <- sample(length(p <- point(x, i=1)), 2e3)
 point(x, "2k") <- p[i]
 plotSpatialData() +
-    # plotImage(x) +
+    plotImage(x) +
     plotPoint(x, i="2k", c="cell_type", s=0.2) +
     new_scale_color() +
     plotShape(x, i="anatomical") +
@@ -249,15 +247,10 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 (x <- readSpatialData(pa, tables=NULL))
 ```
 
-```{r}
-plotSpatialData() + 
-  plotImage(x, i=4)
-```
-
 ```{r visiumhd-plot}
 plotSpatialData() + 
-  plotImage(x, i=4) # +
-  # plotShape(x, i=3, s=0.1)
+  plotImage(x, i=2) +
+  plotShape(x, i=3, s=0.1)
 # + 
 #   ylim(c(5000, 10000)) + 
 #   xlim(c(0, 5000))
