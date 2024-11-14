@@ -118,7 +118,8 @@ plotSpatialData() +
 ## MERFISH
 
 ```{r merfish-read}
-dir.create(td <- tempfile())
+td <- tempfile()
+dir.create(td) # problem in action related to file reference (URL?) scheme
 pa <- unzip_merfish_demo(dest=td)
 x <- readSpatialData(pa)
 ```
