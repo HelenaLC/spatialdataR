@@ -48,7 +48,9 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
   plot_data <- as.array(.get_plot_data(x)/255)
-  if (dim(plot_data)[1] == 1) plot_data[rep(1,3),,] else plot_data
+  plot_data <- if (dim(plot_data)[1] == 1) plot_data[rep(1,3),,] else plot_data
+  # plot_data <- apply(plot_data, c(2, 3), \(.) do.call(rgb, as.list(.)))
+  plot_data
 }
 
 .gg_i <- \(x, w, h) list(
