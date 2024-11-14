@@ -33,6 +33,7 @@ Imports:
     dplyr,
     geoarrow,
     ggplot2,
+    ggforce,
     graph,
     jsonlite,
     RBGL,
