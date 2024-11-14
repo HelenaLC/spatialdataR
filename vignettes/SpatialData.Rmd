@@ -2,38 +2,20 @@
 title: "`SpatialData`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
-author: Helena Lucia Crowell
+author: 
+  - name: Helena Lucia Crowell
+  - name: Louise Deconinck
+  - name: Artür Manukyan
+  - name: Dario Righelli
+  - name: Estella Dong
+  - name: Vince Carey
 output:
   BiocStyle::html_document
 vignette: |
-  %\VignetteIndexEntry{merfish}
+  %\VignetteIndexEntry{SpatialData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-# Preamble
-
-The `SpatialData` package contains a set of reader and plotting functions for spatial transcriptomics data stored as `.zarr` files, designed to work with the [SpatialData](https://bioconductor.org/packages/SpatialData) Bioconductor object class. We adapt the concept from Python [SpatialData](https://spatialdata.scverse.org/en/latest/index.html), and we follow the [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout) to implement.
-
-Images and label we have `Rarr` delayedArray backend, point shape we have parquet backend using `arrow.` As such, all data are represented out of memory, which allows fast.
-
-Each SpatialData object is composed of a five-layer spatial elements, namely Image, Label, Point, Shape, and Table. Each spatial element can have multiple instances.
-
-For storing count matrices and vendor-generated metadata, we rely on the `SingleCellExperiment` data structure, and we refer to this layer with the term Table. We support conversion of table with `anndataR`.
-
-Ideally, Table can be a summarization based on Point and Shape. For example, a Xenium dataset can have
-
-## handling
-
-Nested folder structure
-
-## Coordinate system
-
-ome stored in zattr.
-
-## Examples
-
-one example from local storage cache (blob) - show of blob example, what are parentheses?, subset (TODO: easy: based on metadata,) other examples using spatialdata-io.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
@@ -46,7 +28,25 @@ library(ggnewscale)
 library(SpatialData)
 ```
 
-# toy data
+# Introduction
+
+The `SpatialData` package contains a set of reader and plotting functions for 
+spatial omics data stored as [SpatialData](https://spatialdata.scverse.org/en/latest/index.html) 
+`.zarr` files, following [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout).
+
+Each `SpatialData` object is composed of five layers: images, labels, shapes, 
+points, and tables. Each layer may contain an arbitrary number of elements.
+
+Images and labels are represented as `ZarrArray`s (`r BiocStyle::Biocpkg("Rarr")`). 
+Points and shapes are represented as `r BiocStyle::CRANpkg("arrow")` objects linked 
+to an on-disk *.parquet* file. As such, all data are represented out of memory.
+
+Element annotation as well as cross-layer summarizations (e.g., count matrices)
+are represented as `r BiocStyle::Biocpkg("SingleCellExperiment")` as tables.
+
+## Handling
+
+For demonstration, we read in a toy dataset that is available through the package:
 
 ```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
@@ -54,110 +54,74 @@ x <- system.file(x, package="SpatialData")
 (x <- readSpatialData(x))
 ```
 
+`SpatialData` object behave like a list, thereby supporting flexible accession, 
+e.g., via `$` and `[[`, using character or integer indices etc. Specifically,
+
+- `image/label/shape/point/table()` retrieve one element
+- `images/labels/shapes/points/tables()` retrieve one layer
+- `image/label/shape/point/tableNames()` retrieve element names
+
+Let's demonstrate these capabilities using the image layer:
+
+```{r get, results="hide"}
+shapeNames(x) # there are two images
+shapes(x) # this is a list of them
+shape(x, i=1) # this is the 1st one
+shape(x, "blobs_polygons") # this is the 3nd one
+x$shapes$blobs_circles # list-like handling also works
+```
+
+Each element is made up of two key components: 
+
+- `data`: the actual array or table (for images/labels and shapes/points, respectively)
+- `meta`: list of metadata retrieved from an OME-NGFF compliant *.zattrs* (stored as `Zattrs`)
+
+```{r data/meta}
+data(shape(x))
+meta(shape(x)) 
+```
+
+## Multiscales
+
+```{r ms}
+image(x, "blobs_multiscale_image")
+```
+
+## Coordinates
+
+`Zattrs` specify an explicit relationship between elements and coordinate systems.
+We can represent these are a graph as follows:
+
+```{r cs-graph}
+(g <- SpatialData:::.coord2graph(x))
+graph::plot(g)
+```
+
+The above representation greatly facilitates queries of the transformation(s) 
+required to spatially align elements. `blobs_labels`, for example, requires a
+sequential transformation (scaling and translation) for the `sequence` space:
+
+```{r cs-path}
+SpatialData:::.get_path(g, "blobs_labels", "sequence")
+```
+
+## Visualization
+
 ```{r blobs-plot}
 plotSpatialData() +
-    plotImage(x) +
     plotLabel(x) +
     plotPoint(x, c="genes")
 ```
 
-# TODO shape: blobs_circles blobs_multipolygons blobs_polygons: 1 and 3 works, but not 2
+# Technologies
 
-# adding plotLabel makes the color darker, no matter 1 or 2, also just adds another fill object.
-
-```{r}
-plotSpatialData() +
-    plotShape(x, i=1) +
-    plotLabel(x, i=1) +
-    plotPoint(x, c="genes")
-```
-
-# MERFISH
+## MERFISH
 
 ```{r merfish-read}
 dir.create(td <- tempfile())
 pa <- unzip_merfish_demo(dest=td)
 x <- readSpatialData(pa)
 ```
-
-### handling
-
-Here we returned a SpatialData object with 5 layers: images, labels, shapes, points, and tables.
-
-```{r}
-x
-```
-
-To retrieve the cell-resolution count matrix as a `SingleCellExperiment` object. Note that here the spatial coordinates are not stored in the `colData()`.
-
-```{r}
-sce <- table(x)
-sce
-```
-
-## shape
-
-all these should work (where `shape` could be `image/label/point/table`)...
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$shapes$anatomical
-# character vector
-shapeNames(x) 
-# list of elements in layer
-shapes(x) 
-# single element
-shape(x, i=1) # default
-shape(x, i="cells")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(shape(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(shape(x)) 
-```
-
-## image
-
-Explore the image related functionalities. In this Merfish example, we only have one slot named `"rasterized"`. While in the upcoming future, we intend to enable multi-scaled image storage at different resolution of the OME-TIFF.
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$image$rasterized
-# character vector
-imageNames(x) 
-# list of elements in layer
-images(x) 
-# single element
-image(x, i=1) # default
-image(x, i="rasterized")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(image(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(image(x)) 
-```
-
-## point
-
-Explore the point related functionalities. In this Merfish example, we only have two slots named `"single_molecule"` and `"2k"`.
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$points$single_molecule
-# character vector
-pointNames(x) 
-# list of elements in layer
-points(x) 
-# single element
-point(x, i=1) # default
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(point(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(point(x)) 
-```
-
-### plotting
 
 In this example data, we do not have a `label` for the `shape` polygons. Such labels could be morphological regions annotated by pathologists.
 
@@ -172,20 +136,10 @@ plotSpatialData() +
     scale_color_manual(values=hcl.colors(6, "Spectral")) 
 ```
 
-We could also show plot the transcript without cell segmentation. There are 2000 cells, but 3714642 molecules, so it takes a long time to compile.
+We could also show plot the transcript without cell segmentation. 
+There are only 2,000 cells, but 3,714,642 molecules, so it takes a long time to compile.
 
-```{r merfish-plot}
-i <- sample(length(p <- point(x)), 2e3)
-point(x, "2k") <- p[i]
-plotSpatialData() +
-    plotImage(x) +
-    plotPoint(x, i="2k", c="cell_type", s=0.01) +
-    new_scale_color() +
-    plotShape(x, i="cells") +
-    scale_color_continuous() 
-```
-
-```{r}
+```{r eval=FALSE}
 plotSpatialData() +
     plotShape(x, i=2, c="black", f=NA) +
     scale_size_continuous(range=c(0, 3))
@@ -193,40 +147,12 @@ plotSpatialData() +
 
 # MibiTOF
 
-Colorectal carcinoma, 25 MB, no shape no points.
+Colorectal carcinoma, 25 MB; no shapes, no points.
 
 ```{r mibitof-read}
 dir.create(td <- tempfile())
 pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
-x <- readSpatialData(pa)
-```
-
-```{r}
-x
-```
-
-## label
-
-Explore the label related functionalities. In this MibiTOF example, we only have two slots named `"single_molecule"` and `"2k"`.
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$labels$point16_image
-x$labels$point23_image
-x$labels$point8_image
-
-# character vector
-pointNames(x) 
-# list of elements in layer
-points(x) 
-# single element
-point(x, i=1) # default
-point(x, i="2k")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(point(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(point(x)) 
+(x <- readSpatialData(pa))
 ```
 
 ```{r mibitof-plot}
@@ -239,7 +165,7 @@ lapply(seq(3), \(i) {
 
 # VisiumHD
 
-Mouse intestin 1GB. In this example data of VisiumHD, we have 4 resolution of the images, and 3 shape files at 2, 8, and 16 $\mu$m
+Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
 
 ```{r visiumhd-read}
 dir.create(td <- tempfile())
@@ -252,53 +178,24 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 plotSpatialData() + 
   plotImage(x, i=2) +
   plotShape(x, i=3, s=0.1)
-# + 
-#   ylim(c(5000, 10000)) + 
-#   xlim(c(0, 5000))
-#   # new_scale_fill() +
-#   #       plotLabel(x, c="Cluster", a=0.2)
-```
-
-## table
-Explore the label related functionalities. In this MibiTOF example, we only have two slots named `"single_molecule"` and `"2k"`. 
-```{r eval=FALSE}
-# object should behave like a names list
-x$table$square_002um
-x$table$square_008um
-x$table$square_016um
-
-# character vector
-tableNames(x) 
-# list of elements in layer
-tables(x) 
-# single element
-SpatialData::table(x, i=1) # default
-SpatialData::table(x, i="square_002um")
-SpatialData::table(x, i="square_008um")
-SpatialData::table(x, i="square_016um")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(SpatialData::table(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
-meta(SpatialData::table(x)) 
 ```
 
 # CyCIF (MCMICRO output)
 
-Small lung adenocarcinoma, 250 MB, mcmicro_io. One image, 2 lables, and 2 tables.
+Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
 
-```{r lkali}
+```{r mcmicro-read}
 dir.create(td <- tempfile())
 nm <- "mcmicro_io.zip"
 pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
-# Imaging Mass Cytometry (Steinbock output)
+# IMC (Steinbock)
 
-4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB. 14 images and 14 labels, 1 table.
+4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB; 14 images, 14 labels, 1 table.
 
-```{r lkali}
+```{r steinbock-read}
 dir.create(td <- tempfile())
 nm <- "steinbock_io.zip"
 pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
