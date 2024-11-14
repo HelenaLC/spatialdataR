@@ -16,10 +16,14 @@ build_sandbox_path <- function(zipname) {
 
 #' check cache for merfish.zarr.zip and return path; 
 #' retrieve/stash/return path if not found
-#' @import BiocFileCache
+#' 
 #' @param cache defaults to BiocFileCache::BiocFileCache(), 
 #'   will serve as destination or source for data
+#' @param zipname character(1) name of zip archive to find
+#' 
 #' @return Returns character(1) path to cached zip file.
+#' 
+#' @import BiocFileCache
 #' @export
 merfish_demo_path <- function(cache=BiocFileCache::BiocFileCache(), zipname="merfish.zarr.zip") {
     .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname, source="biocOSN")
@@ -67,8 +71,9 @@ available_spd_zarr_zips <- function() {
 }
 
 #' obtain path to cached zip archive of SpatialData zarr
-#' @param cache inherits from BiocFileCache in BiocFileCache package
+#' @param cache inherits from \code{BiocFileCache::BiocFileCache()}
 #' @param zipname character(1) name of zip archive to find
+#' @param source character(1) one of "biocOSN", "sandbox", "local"
 #' @examples
 #' spdzPath(zipname="merfish.zarr.zip", source="biocOSN")
 #' @export
@@ -102,12 +107,14 @@ spdzPath <- function(cache=BiocFileCache::BiocFileCache(), zipname, source) {
 
 #' check cache for demonstration .zarr.zip and return path; 
 #' retrieve data, cache it, return path if not found
-#' @import BiocFileCache
-#' @param cache defaults to BiocFileCache::BiocFileCache(), will serve as destination or source
+#' 
+#' @param cache defaults to \code{BiocFileCache::BiocFileCache()}
 #' @param source character(1) one of "biocOSN", "sandbox", "local"
-#' for data
 #' @param zipname character(1) should be found in Bioconductor OSN bucket
+#' 
 #' @return Returns character(1) path to cached zip file.
+#' 
+#' @import BiocFileCache
 #' @export
 spd_demo_cached_path <- function(cache=BiocFileCache::BiocFileCache(), zipname="mibitof.zip", source) {
     .get_spdzip_path_in_cache_add_if_needed(cache=cache, zipname=zipname, source=source)
@@ -160,7 +167,7 @@ available_10x_xen_zips <- function() {
 }
 
 #' provide path to a zip file from 10x genomics for Xenium platform
-#' @param zipname character(1)
+#' @param zipname character(1) name of zip archive to find
 #' @examples
 #' path_to_10x_xen_demo()
 #' # see ?use_sdio
@@ -182,7 +189,7 @@ path_to_10x_xen_demo <- function(zipname="Xenium_V1_human_Breast_2fov_outs.zip")
         message("returning path to cached zip")
         return(info$rpath[nrec])
     }
-    fp = build_osn_xdemo_path(zipname)
+    fp <- build_osn_xdemo_path(zipname)
     message(sprintf("retrieving from %s, caching, and returning path", source))
     BiocFileCache::bfcadd(cache, rname=zipname, fpath=fp, rtype="web")
 }
