@@ -7,7 +7,7 @@ Description: Interface to Python's 'SpatialData', currently including:
     data and writing to .zarr, on-disk representation of images/labels as
     'ZarrArray's ('Rarr') and shapes/points as 'arrow' objects, and method 
     drafts for visualization and coordinate system handling. In addition,
-    'scverse' data examples have been made available through the ONS, 
+    'scverse' data examples have been made available through the NSF OSN, 
     are accessible from within R, and cached using 'BiocFileCache'.
 Authors@R: c(
 	person("Helena L.", "Crowell", 
