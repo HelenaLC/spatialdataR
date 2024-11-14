@@ -4,6 +4,13 @@
 #' 
 #' @description ...
 #'
+#' @param x \code{\link{SpatialData}} object.
+#' @param i element to use from a given layer.
+#' @param j name of target coordinate system. 
+#' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
+#' @param pal character vector of colors; will interpolate 
+#'   automatically when insufficient values are provided.
+#'
 #' @return ggplot
 #'
 #' @examples
@@ -18,6 +25,7 @@
 #' @import ggplot2
 NULL
 
+#' @importFrom grDevices col2rgb
 .str_is_col <- \(x) !inherits(tryCatch(error=\(e) e, col2rgb(x)), "error")
 
 .theme <- list(
@@ -39,7 +47,9 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-    as.array(aperm(data(x)/255, perm = c(3,2,1)))
+    plot_data <- .get_plot_data(x)/255
+    plot_data <- as.array(aperm(plot_data, perm = c(3,2,1)))
+    plot_data <- if (dim(plot_data)[3] == 1) plot_data[,,rep(1,3)] else plot_data
 }
 
 .gg_i <- \(x) list(
@@ -74,11 +84,13 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
 # label ----
 
 #' @rdname plotSpatialData
-#' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices hcl.colors colorRampPalette
+#' @importFrom S4Vectors metadata
 #' @importFrom abind abind
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     pal=hcl.colors(11, "Spectral")) {
+    .data <- NULL # R CMD check
     y <- as.matrix(data(label(x, i)))
     df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
     if (!is.null(c)) {
@@ -97,7 +109,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     val <- sort(setdiff(unique(df$z), NA))
     pal <- colorRampPalette(pal)(length(val))
     list(thm, 
-        geom_tile(aes(x, y, fill=factor(z)), df, alpha=a),
+        geom_tile(aes(x, y, fill=factor(.data$z)), df, alpha=a),
         scale_fill_manual(c, values=pal, breaks=val, na.value=NA))
 })
 
@@ -200,6 +212,8 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
         do.call(geo, c(list(data=df, mapping=aes), dot)))
 })
 
+#' @importFrom SummarizedExperiment colData
+#' @importFrom S4Vectors metadata
 .get_tbl <- \(df, x, i) {
     md <- metadata(se <- table(x))[[1]]
     se <- se[, se[[md$region_key]] == i]

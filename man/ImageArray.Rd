@@ -2,19 +2,29 @@
 % Please edit documentation in R/ImageArray.R
 \name{ImageArray}
 \alias{ImageArray}
+\alias{data,ImageArray-method}
 \alias{dim,ImageArray-method}
 \title{The `ImageArray` class}
 \usage{
-ImageArray(data_list = list(), meta = Zattrs(), metadata = list(), ...)
+ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
+
+\S4method{data}{ImageArray}(x, scale = 1)
 
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
-\item{data_list}{a list of arrays}
+\item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
 
-\item{meta}{...}
+\item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{....}
+\item{metadata}{optional list of arbitrary 
+content describing the overall object.}
+
+\item{...}{option arguments passed to and from other methods.}
+
+\item{x}{\code{ImageArray}}
+
+\item{scale}{scalar index specifying which resolution to extract.}
 }
 \value{
 \code{ImageArray}
@@ -27,9 +37,5 @@ dir.create(td <- tempfile())
 pa <- unzip_merfish_demo(td)
 pa <- file.path(pa, "images", "rasterized")
 (ia <- readImage(pa))
-
-a <- as.array(data(ia))
-a <- aperm(a, c(2,3,1))
-plot(EBImage::Image(a/255))
 
 }

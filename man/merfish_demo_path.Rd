@@ -13,6 +13,8 @@ merfish_demo_path(
 \arguments{
 \item{cache}{defaults to BiocFileCache::BiocFileCache(), 
 will serve as destination or source for data}
+
+\item{zipname}{character(1) name of zip archive to find}
 }
 \value{
 Returns character(1) path to cached zip file.

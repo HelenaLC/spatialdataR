@@ -22,4 +22,5 @@ tf <- tempfile()
 dir.create(tf)
 pa <- unzip_merfish_demo(tf)
 dir(pa, full.names=TRUE)
+
 }
