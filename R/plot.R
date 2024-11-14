@@ -44,33 +44,52 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
   if (dim(plot_data)[1] == 1) plot_data[rep(1,3),,] else plot_data
 }
 
-.gg_i <- \(x, dat) list(
-  ggplot2::annotation_raster(aperm(x, perm = c(2,3,1)), dat[1,3], dat[2,3], -dat[1,2], -dat[2,2], interpolate = FALSE),
-  scale_y_reverse(limits = c(dat[2,2], dat[1,2])),
-  xlim(dat[1,3], dat[2,3])
+.gg_i <- \(x, w, h) list(
+  # ggplot2::annotation_raster(aperm(x, perm = c(2,3,1)), dat[1,3], dat[2,3], -dat[1,2], -dat[2,2], interpolate = FALSE),
+  # scale_y_reverse(limits = c(dat[2,2], dat[1,2])),
+  # xlim(dat[1,3], dat[2,3])
+  ggplot2::annotation_raster(aperm(x, perm = c(2,3,1)), w[2], w[1], -h[1], -h[2], interpolate = FALSE),
+  scale_y_reverse(limits = c(h[2], h[1])),
+  xlim(w[1], w[2])
 )
 
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
   df <- .df_i(y <- image(x, i))
-  extent <- rbind(rep(0,3), dim(data(y,1)))
-  if (!is.null(t <- getTS(y, j)))
+  # extent <- rbind(rep(0,3), dim(data(y,1)))
+  extent <- dim(data(y,1))
+  w <- c(0, extent[3])
+  h <- c(0, extent[2])
+  if (!is.null(t <- getTS(y, j))){
     for (. in seq(nrow(t))) {
+      print(t)
       typ <- t$type[.]
       dat <- t[[typ]][.][[1]]
       switch(typ,
              translation={
-               extent[,2] <- extent[,2]+dat[2]
-               extent[,3] <- extent[,3]+dat[3]
+               # extent[,2] <- extent[,2]+dat[2]
+               # extent[,3] <- extent[,3]+dat[3]
+               h <- h+dat[2]
+               w <- w+dat[3]
              },
              scale={
-               extent[,2] <- extent[,2]*dat[2]
-               extent[,3] <- extent[,3]*dat[3]
+               # extent[,2] <- extent[,2]*dat[2]
+               # extent[,3] <- extent[,3]*dat[3]
+               h <- h*dat[2]
+               w <- w*dat[3]
              })
-    }
-  .gg_i(df, extent)
+    } 
+  }
+  # .gg_i(df, extent)
+  .gg_i(df, w, h)
 })
+
+temp <- function(t){
+  print(t)
+  print(t)
+  print(t)
+}
     
 # label ----
 
