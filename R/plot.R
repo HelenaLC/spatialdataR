@@ -47,36 +47,22 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-    plot_data <- .get_plot_data(x)/255
-    plot_data <- as.array(aperm(plot_data, perm = c(3,2,1)))
-    plot_data <- if (dim(plot_data)[3] == 1) plot_data[,,rep(1,3)] else plot_data
+    a <- .get_plot_data(x)
+    a <- as.array(aperm(a, perm=c(3,2,1)))
+    if (max(a) > 1) a <- a/255
+    a <- if (dim(a)[3] == 1) a[,,rep(1,3)] else a
+    a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
 }
 
 .gg_i <- \(x) list(
-  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate = FALSE),
+  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate=FALSE),
   xlim(0,dim(x)[2]),
   ylim(0,dim(x)[1])
 )
 
-#' @rdname plotSpatialData
+#' @rdname plotImage
 #' @export
-setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
-    # df <- .df_i(y <- image(x, i))
-    # if (!is.null(t <- getTS(y, j)))
-    #     for (. in seq(nrow(t))) {
-    #         typ <- t$type[.]
-    #         dat <- t[[typ]][.][[1]]
-    #         switch(typ, 
-    #             translation={
-    #                 df$x <- df$x+dat[3]
-    #                 df$y <- df$y+dat[2]
-    #             }, 
-    #             scale={
-    #                 df$x <- df$x*dat[3]
-    #                 df$y <- df$y*dat[2]
-    #             })
-    #     }
-    # .gg_i(df)
+setMethod("plotImage", "SpatialData", \(x, i=1, j=1, ...) {
    df <- .df_i(y <- image(x, i))
    .gg_i(df)
 })
@@ -115,6 +101,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
 
 # point ----
 
+
 .gg_p <- \(df, c, s, a) {
     aes <- aes(.data[["x"]], .data[["y"]])
     dot <- list()
@@ -135,7 +122,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     }
     dot$alpha <- a
     list(
-        do.call(geom_point, c(list(data=df, mapping=aes), dot)),
+        do.call(geom_point, c(list(data=df, mapping=aes), dot)), 
         if (lgd == "discrete") list(
             theme(legend.key.size=unit(0, "lines")),
             guides(col=guide_legend(override.aes=list(alpha=1, size=2)))
@@ -148,13 +135,23 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     )
 }
 
-#' @rdname plotSpatialData
+#' @param x SpatialData 
+#' @param i Index of which slot of the Shape layer. Default value is 1.
+#' @param c Color border of the shape to plot. Default value is NULL.
+#' @param s Column name of interest in the shape coordinate file. If the geometry
+#' is "POINT" (i.e. a circle), the default column name is "radius". Otherwise it 
+#' is not needed for other geometry shapes such as "POLYGON".
+#' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
+#' with decreasing visibility. Default value is 0.2.
+#'
+#' @rdname plotPoint
 #' @export
 setMethod("plotPoint", "SpatialData", \(x, i=1, c=NULL, s=1, a=1) {
     .gg_p(as.data.frame(data(point(x, i))), c, s, a)
 })
 
-#' @rdname plotSpatialData
+
+#' @rdname plotPoint
 #' @export
 setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
     plotSpatialData() + .gg_p(as.data.frame(data(x)), c, s, a)
@@ -162,10 +159,14 @@ setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
 
 # shape ----
 
-#' @rdname plotSpatialData
+
+#' @param s Size of the shape to plot. Default is "radius".
+#'
+#' @rdname plotShape
 #' @importFrom sf st_as_sf st_coordinates st_geometry_type
+#' @importFrom ggforce geom_circle
 #' @export
-setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
+setMethod("plotShape", signature = "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
     if (is.numeric(i)) 
         i <- shapeNames(x)[i]
     df <- data(shape(x, i))
@@ -177,8 +178,9 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
     dot <- list(fill=f, alpha=a)
     # TODO: need separate plotting for different types of shapes
     switch(typ,
+        # POINT means circle
         POINT={
-            geo <- geom_point
+            geo <- geom_circle
             names(xs) <- xs <- setdiff(names(df), "geometry")
             df <- data.frame(xy, lapply(xs, \(.) df[[.]]))
             names(df) <- c("x", "y", xs)
@@ -193,7 +195,9 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
             if (is.numeric(s)) {
                 dot$size <- s
             } else if (!is.null(s)) {
-                aes$size <- aes(.data[[s]])[[1]]
+              aes$x0 <- df$x
+              aes$y0 <- df$y
+              aes$r <- aes(.data[[s]])[[1]]
             } else stop("invalid 's'")
         },
         POLYGON={
@@ -212,12 +216,14 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
         do.call(geo, c(list(data=df, mapping=aes), dot)))
 })
 
+
 #' @importFrom SummarizedExperiment colData
 #' @importFrom S4Vectors metadata
 .get_tbl <- \(df, x, i) {
-    md <- metadata(se <- table(x))[[1]]
-    se <- se[, se[[md$region_key]] == i]
-    j <- setdiff(names(colData(se)), names(df))
-    i <- match(df[[md$instance_key]], se[[md$instance_key]])
-    cbind(df, colData(se)[i, j])
+  md <- metadata(se <- table(x))[[1]]
+  se <- se[, se[[md$region_key]] == i]
+  j <- setdiff(names(colData(se)), names(df))
+  i <- match(df[[md$instance_key]], se[[md$instance_key]])
+  cbind(df, colData(se)[i, j])
 }
+
