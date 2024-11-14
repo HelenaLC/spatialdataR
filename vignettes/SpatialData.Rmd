@@ -92,7 +92,7 @@ plotSpatialData() +
 
 # MibiTOF
 
-```{r mibitof-load-data}
+```{r mibitof-read}
 dir.create(td <- tempfile())
 pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
 x <- readSpatialData(pa)
@@ -108,7 +108,7 @@ lapply(seq(3), \(i) {
 
 # VisiumHD
 
-```{r visiumhd-load-data}
+```{r visiumhd-read}
 dir.create(td <- tempfile())
 nm <- "visium_hd_3.0.0_io.zip"
 pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
