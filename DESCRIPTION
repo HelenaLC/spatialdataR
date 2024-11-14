@@ -54,6 +54,7 @@ Suggests:
     ggnewscale,
     knitr,
     patchwork,
+    Rgraphviz,
     testthat
 Remotes:
     keller-mark/pizzarr,
