@@ -67,7 +67,7 @@ readPoint <- function(x, ...) {
 #' @importFrom arrow open_dataset
 #' @export
 readShape <- function(x, ...) {
-    require(geoarrow, quietly=TRUE)
+    requireNamespace("geoarrow", quietly=TRUE)
     md <- fromJSON(file.path(x, ".zattrs"))
     # TODO: previously had read_parquet(), 
     # but that doesn't work with geoparquet?
@@ -82,7 +82,8 @@ readShape <- function(x, ...) {
 
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
-#' @importFrom SingleCellExperiment int_metadata<-
+#' @importFrom S4Vectors metadata metadata<-
+#' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)

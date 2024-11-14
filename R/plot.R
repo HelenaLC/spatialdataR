@@ -4,6 +4,13 @@
 #' 
 #' @description ...
 #'
+#' @param x \code{\link{SpatialData}} object.
+#' @param i element to use from a given layer.
+#' @param j name of target coordinate system. 
+#' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
+#' @param pal character vector of colors; will interpolate 
+#'   automatically when insufficient values are provided.
+#'
 #' @return ggplot
 #'
 #' @examples
@@ -78,6 +85,7 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
 
 #' @rdname plotSpatialData
 #' @importFrom grDevices hcl.colors colorRampPalette
+#' @importFrom S4Vectors metadata
 #' @importFrom abind abind
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
@@ -204,6 +212,7 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
 })
 
 #' @importFrom SummarizedExperiment colData
+#' @importFrom S4Vectors metadata
 .get_tbl <- \(df, x, i) {
     md <- metadata(se <- table(x))[[1]]
     se <- se[, se[[md$region_key]] == i]
