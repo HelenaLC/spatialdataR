@@ -2,7 +2,7 @@
 # not the actual data (e.g., image)... but this might be necessary for queries?
 
 # TODO: for all layers, implement all transformations 
-# (translate, scale, rotate, affine, and sequential) 
+# (translate, scale, rotate, affine, and sequential)
 
 #' @name .coord2graph
 #' @rdname coord2graph
