@@ -53,26 +53,6 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
 }
 
-# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]
-# input.axes input.name  output.axes output.name        scale        type  translation
-# 1 c("c", "....        cyx c("c", "....      global 1, 3.863....       scale             
-#     2 c("c", "....        cyx c("c", "....      global              translation 0, 4548,....
-
-# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$translation[[2]][2] # 4548
-# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$translation[[2]][3] # 1154
-
-# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$scale[[1]][2] # 3.863114
-# meta(image(x))[[1]][[2]][[1]]$transformations[[1]]$scale[[1]][2] # 3.507775
-
-
-
-# .gg_i <- \(x, o=c(0,0)) list(
-#   d=dim(x)
-#   ggplot2::annotation_raster(x, o[1], d[2] * , o[2], d[1], interpolate = FALSE) # ,
-#   # xlim(0,dim(x)[2]),
-#   # ylim(0,dim(x)[1])
-# )
-
 .gg_i <- \(x) list(
   ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate=FALSE),
   xlim(0,dim(x)[2]),
@@ -155,6 +135,13 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
 }
 
 #' @param x SpatialData 
+#' @param i Index of which slot of the Shape layer. Default value is 1.
+#' @param c Color border of the shape to plot. Default value is NULL.
+#' @param s Column name of interest in the shape coordinate file. If the geometry
+#' is "POINT" (i.e. a circle), the default column name is "radius". Otherwise it 
+#' is not needed for other geometry shapes such as "POLYGON".
+#' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
+#' with decreasing visibility. Default value is 0.2.
 #'
 #' @rdname plotPoint
 #' @export
