@@ -31,11 +31,20 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \item{data}{\code{arrow}-derived table for on-disk,
 \code{data.frame} for in-memory representation.}
 
-\item{meta}{...}
+\item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{....}
+\item{metadata}{optional list of arbitrary 
+content describing the overall object.}
 
-\item{x}{object of class \code{\link{PointFrame}}}
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{x, .data}{\code{PointFrame}}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
+
+\item{i, j}{indices for subsetting (see \code{?base::Extract}).}
+
+\item{drop}{ignored.}
 }
 \value{
 \code{PointFrame}

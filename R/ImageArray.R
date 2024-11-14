@@ -1,9 +1,13 @@
 #' @name ImageArray
 #' @title The `ImageArray` class
 #' 
-#' @param data_list a list of arrays
-#' @param meta ...
-#' @param metadata ....
+#' @param x \code{ImageArray}
+#' @param data list of \code{\link[Rarr]{ZarrArray}}s
+#' @param meta \code{\link{Zattrs}}
+#' @param metadata optional list of arbitrary 
+#'   content describing the overall object.
+#' @param scale scalar index specifying which resolution to extract.
+#' @param ... option arguments passed to and from other methods.
 #'
 #' @return \code{ImageArray}
 #'
@@ -14,6 +18,7 @@
 #' (ia <- readImage(pa))
 #'
 #' @importFrom S4Vectors metadata<-
+#' @importFrom methods new
 #' @export
 ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
     x <- .ImageArray(data=data, meta=meta, ...)
@@ -73,7 +78,10 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ImageArray
 #' @export
-setMethod("data", "ImageArray", \(x, scale=1) x@data[[scale]])
+setMethod("data", "ImageArray", \(x, scale=1) {
+    if (scale <= (n <- length(x@data))) return(x@data[[scale]])
+    stop("'scale=", scale, "' but only ", n, " resolution(s) available")
+})
 
 #' @rdname ImageArray
 #' @export

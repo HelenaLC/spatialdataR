@@ -1,6 +1,8 @@
 #' @name Zattrs
 #' @title The `Zattrs` class
 #'
+#' @param x list extracted from a OME-NGFF compliant .zattrs file.
+#' 
 #' @return \code{Zattrs}
 #'
 #' @examples

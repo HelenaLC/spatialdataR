@@ -2,6 +2,9 @@
 #' @title Miscellaneous `Miro` methods
 #' @description ...
 #'
+#' @param object \code{\link{SpatialData}} object or one of its 
+#'   elements, i.e., an Image/LabelArray or Point/ShapeFrame.
+#'
 #' @return \code{NULL}
 #'
 #' @author Helena L. Crowell
@@ -10,7 +13,9 @@
 #' # TODO
 NULL
 
+#' @importFrom RBGL sp.between
 #' @importFrom S4Vectors coolcat
+#' @importFrom graph nodeData nodes
 .showSpatialData <- function(object) {
     cat("class: SpatialData\n")
     coolcat("- images(%d): %s", i <- imageNames(object))

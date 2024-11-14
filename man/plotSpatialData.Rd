@@ -25,6 +25,18 @@ plotSpatialData()
 
 \S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2)
 }
+\arguments{
+\item{x}{\code{\link{SpatialData}} object.}
+
+\item{i}{element to use from a given layer.}
+
+\item{j}{name of target coordinate system.}
+
+\item{c, f, s, a}{plotting aesthetics; color, fill, size, alpha.}
+
+\item{pal}{character vector of colors; will interpolate 
+automatically when insufficient values are provided.}
+}
 \value{
 ggplot
 }

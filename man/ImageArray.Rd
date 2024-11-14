@@ -13,11 +13,18 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{dim}{ImageArray}(x)
 }
 \arguments{
-\item{meta}{...}
+\item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
 
-\item{metadata}{....}
+\item{meta}{\code{\link{Zattrs}}}
 
-\item{data_list}{a list of arrays}
+\item{metadata}{optional list of arbitrary 
+content describing the overall object.}
+
+\item{...}{option arguments passed to and from other methods.}
+
+\item{x}{\code{ImageArray}}
+
+\item{scale}{scalar index specifying which resolution to extract.}
 }
 \value{
 \code{ImageArray}

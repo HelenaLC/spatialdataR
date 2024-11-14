@@ -1,11 +1,16 @@
 #' @name PointFrame
 #' @title The `PointFrame` class
 #'
-#' @param x object of class \code{\link{PointFrame}}
+#' @param x,.data \code{PointFrame}
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
-#' @param meta ...
-#' @param metadata ....
+#' @param meta \code{\link{Zattrs}}
+#' @param metadata optional list of arbitrary 
+#'   content describing the overall object.
+#' @param drop ignored.
+#' @param i,j indices for subsetting (see \code{?base::Extract}).
+#' @param name character string for extraction (see \code{?base::`$`}).
+#' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{PointFrame}
 #'
@@ -21,6 +26,7 @@
 #' plotPoint(q, c="x", s=0.2)
 #'
 #' @importFrom S4Vectors metadata<-
+#' @importFrom methods new
 #' @export
 PointFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
     x <- .PointFrame(data=data, meta=meta, ...)
@@ -82,8 +88,14 @@ setAs(
 
 #' @importFrom dplyr filter
 #' @export
-filter.PointFrame <- \(x, ...) { x@data <- filter(data(x), ...); x }
+filter.PointFrame <- \(.data, ...) { 
+    .data@data <- filter(data(.data), ...)
+    return(.data)
+}
 
 #' @importFrom dplyr select
 #' @export
-select.PointFrame <- \(x, ...) { x@data <- select(data(x), ...); x }
+select.PointFrame <- \(.data, ...) { 
+    .data@data <- select(data(.data), ...)
+    return(.data)
+}

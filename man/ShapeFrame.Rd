@@ -25,9 +25,16 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \item{data}{\code{arrow}-derived table for on-disk,
 \code{data.frame} for in-memory representation.}
 
-\item{meta}{...}
+\item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{....}
+\item{metadata}{optional list of arbitrary 
+content describing the overall object.}
+
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{x}{\code{ShapeFrame}}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
 }
 \value{
 \code{ShapeFrame}
