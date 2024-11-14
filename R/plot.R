@@ -49,7 +49,8 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 .df_i <- \(x) {
     a <- .get_plot_data(x)
     a <- as.array(aperm(a, perm=c(3,2,1)))
-    a <- if (dim(a)[3] == 1) a[,,rep(1,3)]/255 else a
+    if (max(a) > 1) a <- a/255
+    a <- if (dim(a)[3] == 1) a[,,rep(1,3)] else a
     a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
 }
 
