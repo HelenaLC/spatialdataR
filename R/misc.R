@@ -2,6 +2,9 @@
 #' @title Miscellaneous `Miro` methods
 #' @description ...
 #'
+#' @param object \code{\link{SpatialData}} object or one of its 
+#'   elements, i.e., an Image/LabelArray or Point/ShapeFrame.
+#'
 #' @return \code{NULL}
 #'
 #' @author Helena L. Crowell
@@ -10,21 +13,27 @@
 #' # TODO
 NULL
 
+#' @importFrom RBGL sp.between
 #' @importFrom S4Vectors coolcat
+#' @importFrom graph nodeData nodes
 .showSpatialData <- function(object) {
     cat("class: SpatialData\n")
     coolcat("- images(%d): %s", i <- imageNames(object))
     coolcat("- labels(%d): %s", l <- labelNames(object))
     coolcat("- shapes(%d): %s", s <- shapeNames(object))
     coolcat("- points(%d): %s", p <- pointNames(object))
-    coolcat("- tables(%d): %s", t <- tableNames(object))
+    coolcat("- tables(%d): %s", tableNames(object))
     cat("coordinate systems:\n")
-    e <- c(i, l, s, p, t)
+    e <- c(i, l, s, p)
     g <- .coord2graph(object)
-    for (c in setdiff(nodes(g), e)) {
+    t <- nodeData(g, nodes(g), "type")
+    for (c in nodes(g)[t == "space"]) {
+        pa <- suppressWarnings(sp.between(g, e, c))
+        ss <- strsplit(names(pa), ":")
+        ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
-            paste0("- ", c, "(%d): %s"), 
-            graph::inEdges(c, g)[[1]])
+            paste0("- ", c, "(%d): %s"),
+            vapply(ss, \(.) .[1], character(1)))
     }
 }
 
@@ -35,12 +44,8 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showImageArray <- function(object) {
     n.object <- length(object@data)
     cat("class: ImageArray", ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    if(n.object > 1){
-      cat("Scales 1-", n.object, "\n", sep = "")
-    }
-    for(i in 1:n.object){
-      cat(i, ": (", paste(dim(object@data[[i]]), collapse = ","), ")", "\n", sep = "")
-    }
+    scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
+    coolcat("Scales (%d): %s", scales)
 }
 
 #' @rdname misc

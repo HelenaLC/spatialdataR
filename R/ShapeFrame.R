@@ -1,10 +1,14 @@
 #' @name ShapeFrame
 #' @title The `ShapeFrame` class
 #'
+#' @param x \code{ShapeFrame}
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
-#' @param meta ...
-#' @param metadata ....
+#' @param meta \code{\link{Zattrs}}
+#' @param metadata optional list of arbitrary 
+#'   content describing the overall object.
+#' @param name character string for extraction (see \code{?base::`$`}).
+#' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{ShapeFrame}
 #'
@@ -21,6 +25,7 @@
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
 #' @importFrom S4Vectors metadata<-
+#' @importFrom methods new
 #' @export
 ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
     x <- .ShapeFrame(data=data, meta=meta, ...)

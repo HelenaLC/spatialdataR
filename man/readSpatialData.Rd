@@ -7,7 +7,6 @@
 \alias{readPoint}
 \alias{readShape}
 \alias{readTable}
-\alias{.readTable_anndataR}
 \title{Reading `SpatialData`}
 \usage{
 readImage(x, ...)
@@ -17,8 +16,6 @@ readLabel(x, ...)
 readPoint(x, ...)
 
 readShape(x, ...)
-
-.readTable_anndataR(x)
 
 readTable(x, anndataR = FALSE)
 
@@ -38,9 +35,11 @@ path to a \code{SpatialData} element.
 For \code{readSpatialData},
 path to a \code{SpatialData}-.zarr store.}
 
-\item{anndataR, }{logical, default FALSE
-Uses \code{anndataR} to read tables if TRUE.
-Uses \code{basilisk}, \code{anndata} and \code{zellkonverter} to read tables if FALSE.}
+\item{...}{option arguments passed to and from other methods.}
+
+\item{anndataR}{logical specifying whether 
+to use \code{anndataR} to read tables; by default (FALSE), 
+\code{basilisk}, \code{anndata} and \code{zellkonverter} are used.}
 
 \item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
 The default, NULL, reads all elements; alternatively, may be FALSE 

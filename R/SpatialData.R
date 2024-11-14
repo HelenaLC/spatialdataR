@@ -1,6 +1,17 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
+#' @aliases
+#' SpatialData-class
+#' $,SpatialData-method
+#' [[,SpatialData-method
+#' image images image<- images<- imageNames 
+#' label labell label<- labels<- labelNames 
+#' point points point<- points<- pointNames 
+#' image images image<- images<- imageNames 
+#' shape shapes shape<- shapes<- shapeNames 
+#' table tables table<- tables<- tableNames 
+#' 
 #' @description ...
 #' 
 #' @param images list of \code{\link{ImageArray}}s
@@ -8,6 +19,14 @@
 #' @param points list of \code{\link{PointFrame}}s
 #' @param shapes list of \code{\link{ShapeFrame}}s
 #' @param tables list of \code{SingleCellExperiment}s
+#' @param x \code{SpatialData}
+#' @param i character string, scalar or vector of indices
+#'   specifying the element to extract from a given layer.
+#' @param j ignored.
+#' @param name character string for extraction (see \code{?base::`$`}).
+#' @param value (list of) element(s) with layer-compliant object(s), 
+#'   or NULL/\code{list()} to remove an element/layer completely.
+#' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{SpatialData}
 #'
