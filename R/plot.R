@@ -40,20 +40,22 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 .df_i <- \(x) {
-  a <- as.array(data(x)/255)
-  c <- if (dim(a)[1] == 1) rep(1, 3) else seq(3)
-  z <- do.call(rgb, lapply(c, \(.) a[., , ]))
-  data.frame(x=c(col(a[1, , ])), y=c(row(a[1, , ])), z=c(z))
+  plot_data <- .get_plot_data(x)/255
+  orig_dim <- dim(data(x,1))[c(2,3,1)]
+  plot_data <- as.array(aperm(plot_data, perm = c(2,3,1)))
+  plot_data <- if (dim(plot_data)[3] == 1) plot_data[,,rep(1,3)] else plot_data
+  return(list(array = plot_data, dim=orig_dim))
 }
 
-.gg_i <- \(df) list(
-  scale_fill_identity(),
-  geom_tile(aes(x, y, fill=z), df))
+.gg_i <- \(x) list(
+  ggplot2::annotation_raster(x$array, 0, x$dim[2], 0, -x$dim[1], interpolate = FALSE),
+  xlim(0,x$dim[2]),
+  scale_y_reverse(limits = c(x$dim[1], 0))
+)
 
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
-  df <- .df_i(y <- image(x, i))
   # if (!is.null(t <- getTS(y, j)))
   #   for (. in seq(nrow(t))) {
   #     typ <- t$type[.]
@@ -68,6 +70,7 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
   #              df$y <- df$y*dat[2]
   #            })
   #   }
+  df <- .df_i(y <- image(x, i))
   .gg_i(df)
 })
     
