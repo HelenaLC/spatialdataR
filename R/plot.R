@@ -7,6 +7,7 @@
 #' @param x \code{\link{SpatialData}} object.
 #' @param i element to use from a given layer.
 #' @param j name of target coordinate system. 
+#' @param k index of the scale of an image (default: NULL)
 #' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
 #' @param pal character vector of colors; will interpolate 
 #'   automatically when insufficient values are provided.
@@ -46,8 +47,8 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
-.df_i <- \(x) {
-    a <- .get_plot_data(x)
+.df_i <- \(x, k = NULL) {
+    a <- .get_plot_data(x, k)
     if (max(a) > 1) a <- a/255
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
     a <- apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
@@ -61,8 +62,8 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @rdname plotImage
 #' @export
-setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
-  df <- .df_i(y <- image(x, i))
+setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
+  df <- .df_i(y <- image(x, i), k)
   extent <- dim(data(y,1))
   w <- c(0, extent[3])
   h <- c(0, extent[2])
@@ -88,12 +89,6 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1) {
 #   df <- .df_i(y <- image(x, i))
 #   .gg_i(df)
 # })
-
-temp <- function(t){
-  print(t)
-  print(t)
-  print(t)
-}
     
 # label ----
 
