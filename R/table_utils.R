@@ -37,7 +37,7 @@ setMethod("getTable", c("SpatialData", "ANY", "ANY"), \(x, region = NULL, table_
 
 setMethod("getElementAnnotators", c("SpatialData", "character"), \(x, element) {
     annotators <- lapply(tables(x), \(table) {
-        md <- metadata(table)[[1]]
+        md <- getTableAttrs(table)
         regions <- md$region
         if (element %in% regions) {
             table
@@ -46,21 +46,39 @@ setMethod("getElementAnnotators", c("SpatialData", "character"), \(x, element) {
     annotators[lengths(annotators) != 0] # filter out when no table was found
 })
 
+setMethod("getTableAttrs", c("SingleCellExperiment"), \(x) {
+    int_metadata(x)$spatialdata_attrs
+})
+
 # very very basic
 # tested with PointArray
-getValues <- function(value_key, element=NULL, sdata=NULL, element_name=NULL, table_name=NULL) {
-    if(!is.null(element) && value_key %in% names(element)){
-        return(element[[value_key]])
-    }
+# get the values from an element:
+# value_key: name of the column/channel
+# element: the spatial element to get the values from
+# sdata: the spatial data object
+# element_name: the name of the element to get the values from
+# table_name: the name of the table to get the values from
 
-    if(!is.null(sdata) && !is.null(element_name) && !is.null(table_name)){
-        table <- getRegionData(sdata, re = element_name)
+# if you provide a table name, subset using element_name if porvided, and get the value_key column or channel
+getValues <- function(value_key, element=NULL, sdata=NULL, element_name=NULL, table_name=NULL) {
+
+    # if table name is provided, get the table and subset using element_name if provided
+    # then return the value_key column or channel
+    if(!is.null(table_name)){
+        table <- getTable(sdata, table_name=table_name)
+
+        if(!is.null(element_name)){
+            md <- getTableAttrs(table)
+            table <- table[, table[[md$region_key]] == element_name]
+        }
+
+        if(value_key %in% colnames(table)){
+            return(table[,value_key])
+        }
         if(value_key %in% rownames(table)){
             return(table[value_key])
         }
-        if(value_key %in% colnames(table)){
-            return(table[value_key])
-        }
+
     }
 
 }

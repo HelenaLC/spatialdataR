@@ -33,3 +33,9 @@ rownames(table(sdata))
 ```{r}
 getValues(value_key = "channel_0_sum", sdata = sdata, element_name="blobs_labels", table_name="table")
 ```
+
+## Which element is a table annotating
+
+```{r}
+
+```
