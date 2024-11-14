@@ -7,9 +7,11 @@
 spdzPath(cache = BiocFileCache::BiocFileCache(), zipname, source)
 }
 \arguments{
-\item{cache}{inherits from BiocFileCache in BiocFileCache package}
+\item{cache}{inherits from \code{BiocFileCache::BiocFileCache()}}
 
 \item{zipname}{character(1) name of zip archive to find}
+
+\item{source}{character(1) one of "biocOSN", "sandbox", "local"}
 }
 \description{
 obtain path to cached zip archive of SpatialData zarr

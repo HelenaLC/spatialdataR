@@ -12,9 +12,10 @@
 #'   Control which elements should be read for each layer.
 #'   The default, NULL, reads all elements; alternatively, may be FALSE 
 #'   to skip a layer, or a integer vector specifying which elements to read.
-#' @param anndataR, logical, default FALSE
-#'   Uses \code{anndataR} to read tables if TRUE.
-#'   Uses \code{basilisk}, \code{anndata} and \code{zellkonverter} to read tables if FALSE.
+#' @param anndataR logical specifying whether 
+#'   to use \code{anndataR} to read tables; by default (FALSE), 
+#'   \code{basilisk}, \code{anndata} and \code{zellkonverter} are used.
+#' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
 #' \itemize{
@@ -67,7 +68,7 @@ readPoint <- function(x, ...) {
 #' @importFrom arrow open_dataset
 #' @export
 readShape <- function(x, ...) {
-    require(geoarrow, quietly=TRUE)
+    requireNamespace("geoarrow", quietly=TRUE)
     md <- fromJSON(file.path(x, ".zattrs"))
     # TODO: previously had read_parquet(), 
     # but that doesn't work with geoparquet?
@@ -82,7 +83,8 @@ readShape <- function(x, ...) {
 
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
-#' @importFrom SingleCellExperiment int_metadata<-
+#' @importFrom S4Vectors metadata metadata<-
+#' @importFrom SingleCellExperiment int_metadata int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)

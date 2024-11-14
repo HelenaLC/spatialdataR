@@ -4,6 +4,13 @@
 #' 
 #' @description ...
 #'
+#' @param x \code{\link{SpatialData}} object.
+#' @param i element to use from a given layer.
+#' @param j name of target coordinate system. 
+#' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
+#' @param pal character vector of colors; will interpolate 
+#'   automatically when insufficient values are provided.
+#'
 #' @return ggplot
 #'
 #' @examples
@@ -95,10 +102,12 @@ temp <- function(t){
 
 #' @rdname plotSpatialData
 #' @importFrom grDevices hcl.colors colorRampPalette
+#' @importFrom S4Vectors metadata
 #' @importFrom abind abind
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     pal=hcl.colors(11, "Spectral")) {
+    .data <- NULL # R CMD check
     y <- as.matrix(data(label(x, i)))
     df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
     if (!is.null(c)) {
@@ -117,7 +126,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     val <- sort(setdiff(unique(df$z), NA))
     pal <- colorRampPalette(pal)(length(val))
     list(thm, 
-        geom_tile(aes(x, y, fill=factor(z)), df, alpha=a),
+        geom_tile(aes(x, y, fill=factor(.data$z)), df, alpha=a),
         scale_fill_manual(c, values=pal, breaks=val, na.value=NA))
 })
 
@@ -221,6 +230,7 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
 })
 
 #' @importFrom SummarizedExperiment colData
+#' @importFrom S4Vectors metadata
 .get_tbl <- \(df, x, i) {
     md <- metadata(se <- table(x))[[1]]
     se <- se[, se[[md$region_key]] == i]

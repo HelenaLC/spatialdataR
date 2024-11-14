@@ -19,6 +19,10 @@
 
 \S4method{show}{ShapeFrame}(object)
 }
+\arguments{
+\item{object}{\code{\link{SpatialData}} object or one of its 
+elements, i.e., an Image/LabelArray or Point/ShapeFrame.}
+}
 \value{
 \code{NULL}
 }
