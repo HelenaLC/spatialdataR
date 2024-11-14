@@ -19,18 +19,18 @@
 #'
 #' @return 
 #' \itemize{
+#' \item{For \code{readSpatialData}, a \code{SpatialData}.},
 #' \item{For element readers, a \code{ImageArray}, \code{LabelArray}, 
-#' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}
-#' \item{For \code{readSpatialData}, a \code{SpatialData}.}}
+#' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 #'
 #' @examples
 #' tf <- tempfile()
 #' dir.create(tf)
 #' base <- unzip_merfish_demo(tf)
 #' (x <- readSpatialData(base))
-NULL
 
-#' @rdname readSpatialData
+
+#' @rdname readImage
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -43,7 +43,7 @@ readImage <- function(x, ...) {
     ImageArray(data=za_list, meta=meta, ...)
 }
 
-#' @rdname readSpatialData
+#' @rdname readLabel
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -53,7 +53,7 @@ readLabel <- function(x, ...) {
     LabelArray(data=za, meta=Zattrs(md))
 }
 
-#' @rdname readSpatialData
+#' @rdname readPoint
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export
@@ -63,7 +63,7 @@ readPoint <- function(x, ...) {
     PointFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
 
-#' @rdname readSpatialData
+#' @rdname readShape
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export
@@ -113,6 +113,12 @@ readShape <- function(x, ...) {
     adata <- anndataR::read_zarr(x)
     anndataR::to_SingleCellExperiment(adata)
 }
+
+#' @importFrom basilisk BasiliskEnvironment
+.env <- BasiliskEnvironment(
+  pkgname="SpatialData", envname="anndata_env",
+  packages=c("anndata==0.9.1", "zarr==2.14.2"))
+
 
 #' @rdname readSpatialData
 #' @export
