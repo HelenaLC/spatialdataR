@@ -1,9 +1,11 @@
 #' @name ImageArray
 #' @title The `ImageArray` class
 #' 
+#' @param x \code{ImageArray}
 #' @param data a list of arrays
 #' @param meta ...
 #' @param metadata ....
+#' @param scale scalar index specifying which resolution to extract.
 #'
 #' @return \code{ImageArray}
 #'
@@ -73,7 +75,10 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ImageArray
 #' @export
-setMethod("data", "ImageArray", \(x, scale=1) x@data[[scale]])
+setMethod("data", "ImageArray", \(x, scale=1) {
+    if (scale <= (n <- length(x@data))) return(x@data[[scale]])
+    stop("'scale=", scale, "' but only ", n, " resolution(s) available")
+})
 
 #' @rdname ImageArray
 #' @export
