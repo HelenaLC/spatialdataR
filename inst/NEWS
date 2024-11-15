@@ -4,6 +4,8 @@ changes in version 0.99.12
 - include more information on elements in show method
 - basic vignette sections on data representation, handling etc.
 - added 'ggforce' dependency for visualizing circular shapes
+- added 'do_tx_to_ext()' to align spatial elements within Py
+- fixed problem with 'basilisk' environment
 
 changes in version 0.99.11
 

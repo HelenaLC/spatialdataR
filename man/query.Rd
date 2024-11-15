@@ -2,13 +2,22 @@
 % Please edit documentation in R/query.R
 \name{query}
 \alias{query}
-\alias{query,PointFrame-method}
+\alias{query,SpatialData-method}
+\alias{query,ImageArray-method}
+\alias{query,LabelArray-method}
 \alias{query,ShapeFrame-method}
+\alias{query,PointFrame-method}
 \title{spatial queries}
 \usage{
-\S4method{query}{PointFrame}(x, ...)
+\S4method{query}{SpatialData}(x, ...)
+
+\S4method{query}{ImageArray}(x, ...)
+
+\S4method{query}{LabelArray}(x, ...)
 
 \S4method{query}{ShapeFrame}(x, ...)
+
+\S4method{query}{PointFrame}(x, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element}
@@ -24,11 +33,14 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-p <- query(point(x), xmin=20, xmax=80, ymin=30, ymax=60)
-dim(point(x, "p") <- p)
-plotSpatialData() + plotPoint(x, "p")
+image(x, "i") <- query(image(x), xmin=0, xmax=60, ymin=0, ymax=40)
+label(x, "l") <- query(label(x), xmin=0, xmax=60, ymin=0, ymax=40)
+shape(x, "s") <- query(shape(x), xmin=0, xmax=60, ymin=0, ymax=40)
+point(x, "p") <- query(point(x), xmin=0, xmax=60, ymin=0, ymax=40)
 
-s <- query(shape(x), xmin=20, xmax=80, ymin=30, ymax=60)
-dim(shape(x, "s") <- s)
-plotSpatialData() + plotShape(x, "s")
+plotSpatialData() + 
+  plotImage(x, "i") +
+  plotLabel(x, "l") +
+  plotPoint(x, "p") +
+  plotShape(x, "s")
 }
