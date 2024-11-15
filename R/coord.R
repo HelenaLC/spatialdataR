@@ -99,6 +99,8 @@
 
 setGeneric("getCS", \(x, ...) standardGeneric("getCS"))
 setGeneric("getTS", \(x, ...) standardGeneric("getTS"))
+setGeneric("setCS", \(x, ...) standardGeneric("setCS"))
+setGeneric("setTS", \(x, ...) standardGeneric("setTS"))
 
 # coordinate systems
 setMethod("getCS", "SpatialDataElement", \(x) {
@@ -108,12 +110,36 @@ setMethod("getCS", "SpatialDataElement", \(x) {
     if (length(cs) == 1) cs[[1]] else cs
 })
 
+# TODO: check the validity of this function
+setMethod("setCS", "SpatialDataElement", \(x,c) {
+  ms <- (md <- meta(x))$multiscales
+  if (!is.null(ms)){
+    cs <- md$coordinateTransformations
+    if (length(cs) == 1){
+      md$multiscales$coordinateTransformations <- c
+    } else{
+      md$multiscales$coordinateTransformations[[1]] <- c
+    }
+  }
+  md
+})
+
 # transformations
 setMethod("getTS", "SpatialDataElement", \(x, i=1) {
     y <- getCS(x)
     if (is.character(i)) 
         i <- which(y$output$name == i)
     y[i, ]$transformations[[1]]
+})
+
+# transformations
+setMethod("setTS", "SpatialDataElement", \(x, i=1, t) {
+  y <- getCS(x)
+  if (is.character(i)) 
+    i <- which(y$output$name == i)
+  y[i, ]$transformations[[1]] <- t
+  x@meta <- Zattrs(setCS(x,y))
+  x
 })
 
 #' #' @importFrom EBImage resize

@@ -52,9 +52,9 @@ setMethod("query", "SpatialData", \(x, ...) {
       dat <- dat[-1]
       switch(typ,
              translation={
-               args$ymin <-  args$ymin-dat[1]
-               args$xmin <-  args$xmin-dat[2]
-               args$ymax <-  args$ymax-dat[1]
+               args$ymin <- args$ymin-dat[1]
+               args$xmin <- args$xmin-dat[2]
+               args$ymax <- args$ymax-dat[1]
                args$xmax <- args$xmax-dat[2]
              },
              scale={
@@ -70,11 +70,20 @@ setMethod("query", "SpatialData", \(x, ...) {
   args
 }
 
+.set_transformation <- \(x, cs, t_name, new_t){
+  t <- getTS(x, cs)
+  ind <- which(t[["type"]]==t_name)
+  t[[t_name]][[ind]] <- new_t
+  x <- setTS(x, cs, t)
+  x
+}
+
 #' @rdname query
 #' @export
 setMethod("query", "ImageArray", \(x, cs, ...) {
     args <- list(...)
     .check_bb(args)
+    old_args <- args
     args <- .get_bounding_box_corners_in_intrinsic_coordinates(x, cs = 1, ...)
     d <- dim(x)[-1]
     if (args$ymax > d[1]) args$ymax <- d[1]
@@ -83,6 +92,7 @@ setMethod("query", "ImageArray", \(x, cs, ...) {
         seq(args$ymin, args$ymax),
         seq(args$xmin, args$xmax), drop = FALSE]
     x@data <- list(a)
+    x <- .set_transformation(x, cs = 1, t_name = "translation", new_t = c(0, old_args$ymin, old_args$xmin))
     return(x)
 })
 
