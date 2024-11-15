@@ -4,10 +4,10 @@
 \alias{mask}
 \title{Masking}
 \arguments{
-\item{x, y}{...}
+\item{x, y}{\code{\link{SpatialData}} element}
 }
 \value{
-...
+\code{\link{SingleCellExperiment}}
 }
 \description{
 ...
