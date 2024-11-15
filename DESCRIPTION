@@ -1,14 +1,15 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.4)
-Version: 0.99.12
+Version: 0.99.13
 Description: Interface to Python's 'SpatialData', currently including:
     reticulate-based use of 'spatialdata-io' for reading of manufracturer
     data and writing to .zarr, on-disk representation of images/labels as
     'ZarrArray's ('Rarr') and shapes/points as 'arrow' objects, and method 
     drafts for visualization and coordinate system handling. In addition,
     'scverse' data examples have been made available through the NSF OSN, 
-    are accessible from within R, and cached using 'BiocFileCache'.
+    are accessible from within R, and cached using 'BiocFileCache'. Also,
+    there's an interface to aligning data into a common (identity) space.
 Authors@R: c(
 	person("Helena L.", "Crowell", 
 	    role=c("aut", "cre"),
