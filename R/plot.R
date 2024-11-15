@@ -60,14 +60,11 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
   xlim(w[1], w[2])
 )
 
-#' @rdname plotSpatialData
-#' @export
-setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
-  df <- .df_i(y <- image(x, i), k)
-  extent <- dim(data(y,1))
+.get_extent <- \(x, cs = NULL){
+  extent <- dim(data(x,1))
   w <- c(0, extent[3])
   h <- c(0, extent[2])
-  if (!is.null(t <- getTS(y, j))){
+  if (!is.null(t <- getTS(x, cs))){
     for (. in seq(nrow(t))) {
       typ <- t$type[.]
       dat <- t[[typ]][.][[1]]
@@ -82,13 +79,16 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
              })
     } 
   }
-  .gg_i(df, w, h)
-})
+  list(w=w,h=h)
+}
 
-# setMethod("plotImage", "SpatialData", \(x, i=1, j=1, ...) {
-#   df <- .df_i(y <- image(x, i))
-#   .gg_i(df)
-# })
+#' @rdname plotSpatialData
+#' @export
+setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
+  df <- .df_i(y <- image(x, i), k)
+  extent <- .get_extent(y, cs = j)
+  .gg_i(df, extent$w, extent$h)
+})
     
 # label ----
 
