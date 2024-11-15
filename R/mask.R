@@ -4,9 +4,9 @@
 #'
 #' @description ...
 #' 
-#' @param x,y ...
+#' @param x,y \code{\link{SpatialData}} element
 #'
-#' @return ...
+#' @return \code{\link{SingleCellExperiment}}
 #'
 #' @examples
 #' # TODO

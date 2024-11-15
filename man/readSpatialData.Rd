@@ -10,6 +10,24 @@
 \title{Reading `SpatialData`}
 \usage{
 readImage(x, ...)
+
+readLabel(x, ...)
+
+readPoint(x, ...)
+
+readShape(x, ...)
+
+readTable(x, anndataR = FALSE)
+
+readSpatialData(
+  x,
+  images = TRUE,
+  labels = TRUE,
+  points = TRUE,
+  shapes = TRUE,
+  tables = TRUE,
+  anndataR = TRUE
+)
 }
 \arguments{
 \item{x}{For \code{readImage/Label/Point/Shape/Table}, 
@@ -19,13 +37,13 @@ path to a \code{SpatialData}-.zarr store.}
 
 \item{...}{option arguments passed to and from other methods.}
 
-\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
-The default, NULL, reads all elements; alternatively, may be FALSE 
-to skip a layer, or a integer vector specifying which elements to read.}
-
 \item{anndataR}{logical specifying whether 
 to use \code{anndataR} to read tables; by default (FALSE), 
 \code{basilisk}, \code{anndata} and \code{zellkonverter} are used.}
+
+\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
+The default, NULL, reads all elements; alternatively, may be FALSE 
+to skip a layer, or a integer vector specifying which elements to read.}
 }
 \value{
 \itemize{
