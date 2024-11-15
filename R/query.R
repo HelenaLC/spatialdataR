@@ -20,14 +20,6 @@
 #'   plotLabel(x, "l") +
 #'   plotPoint(x, "p") +
 #'   plotShape(x, "s")
-#'   
-#' # or...
-#' y <- query(x, xmin=0, xmax=60, ymin=0, ymax=40)
-#' plotSpatialData() + 
-#'   plotImage(y) +
-#'   plotLabel(y) +
-#'   plotPoint(y) +
-#'   plotShape(y)
 NULL
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
