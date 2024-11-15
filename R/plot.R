@@ -60,7 +60,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
   ylim(0,dim(x)[1])
 )
 
-#' @rdname plotImage
+#' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1, ...) {
    df <- .df_i(y <- image(x, i))
@@ -100,7 +100,6 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
 })
 
 # point ----
-
 
 .gg_p <- \(df, c, s, a) {
     aes <- aes(.data[["x"]], .data[["y"]])
@@ -144,14 +143,14 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
 #' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
 #' with decreasing visibility. Default value is 0.2.
 #'
-#' @rdname plotPoint
+#' @rdname plotSpatialData
 #' @export
 setMethod("plotPoint", "SpatialData", \(x, i=1, c=NULL, s=1, a=1) {
     .gg_p(as.data.frame(data(point(x, i))), c, s, a)
 })
 
 
-#' @rdname plotPoint
+#' @rdname plotSpatialData
 #' @export
 setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
     plotSpatialData() + .gg_p(as.data.frame(data(x)), c, s, a)
@@ -159,10 +158,9 @@ setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
 
 # shape ----
 
-
 #' @param s Size of the shape to plot. Default is "radius".
 #'
-#' @rdname plotShape
+#' @rdname plotSpatialData
 #' @importFrom sf st_as_sf st_coordinates st_geometry_type
 #' @importFrom ggforce geom_circle
 #' @export
@@ -226,4 +224,3 @@ setMethod("plotShape", signature = "SpatialData", \(x, i=1, c=NULL, f="white", s
   i <- match(df[[md$instance_key]], se[[md$instance_key]])
   cbind(df, colData(se)[i, j])
 }
-

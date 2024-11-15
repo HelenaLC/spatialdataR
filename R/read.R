@@ -30,7 +30,7 @@
 #' (x <- readSpatialData(base))
 
 
-#' @rdname readImage
+#' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -43,7 +43,7 @@ readImage <- function(x, ...) {
     ImageArray(data=za_list, meta=meta, ...)
 }
 
-#' @rdname readLabel
+#' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -53,7 +53,7 @@ readLabel <- function(x, ...) {
     LabelArray(data=za, meta=Zattrs(md))
 }
 
-#' @rdname readPoint
+#' @rdname readSpatialData
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export
@@ -63,7 +63,7 @@ readPoint <- function(x, ...) {
     PointFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
 
-#' @rdname readShape
+#' @rdname readSpatialData
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
 #' @export

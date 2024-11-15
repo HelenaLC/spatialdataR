@@ -17,19 +17,20 @@
 #' @param srcdir character(1) path to folder holding a zarr store
 #' @param dest character(1) a path to a desired destination for new zarr representation
 #' @param coordinate_system character(1) defaults to "global"
-#' \dots arguments for passage to python `transform_to_data_extent`,
-#' can include "maintain_positioning" (logical (1)) or numerics for
-#'   target_unit_to_pixels,
-#'   target_width,
-#'   target_height,
-#'   target_depth.
+#' @param ... arguments for passage to python `transform_to_data_extent`;
+#'   can include "maintain_positioning" (logical (1)) or numerics for
+#'   target_unit_to_pixels, target_width, target_height, target_depth.
+#'   
 #' @examples
-#' src = system.file("extdata", "blobs.zarr", package="SpatialData")
-#' td = tempfile()
-#' do_tx_to_ext(srcdir=src, dest=td, coordinate_system="global",
-#'     maintain_positioning=FALSE, target_width=400.)
-#' post = readSpatialData(td)
-#' post
+#' src <- system.file("extdata", "blobs.zarr", package="SpatialData")
+#' td <- tempfile()
+#' do_tx_to_ext(
+#'   srcdir=src, dest=td, 
+#'   coordinate_system="global",
+#'   maintain_positioning=FALSE, 
+#'   target_width=400.)
+#' (sd <- readSpatialData(td))
+#' 
 #' @export
 do_tx_to_ext <- function(srcdir, dest, coordinate_system, ...) {
     if (dir.exists(dest)) 
@@ -38,11 +39,11 @@ do_tx_to_ext <- function(srcdir, dest, coordinate_system, ...) {
     # avoid package-specific import
     proc <- basilisk::basiliskStart(.env, testload="spatialdata") 
     on.exit(basilisk::basiliskStop(proc))
-    basilisk::basiliskRun(proc, function(srcdir, dest, coordinate_system, ...) {
+    basilisk::basiliskRun(proc, \(srcdir, dest, coordinate_system, ...) {
         sd <- reticulate::import("spatialdata")
-        ini = sd$read_zarr(srcdir)
-        txfun = sd$`_core`$operations$`_utils`$transform_to_data_extent
-        post = txfun(ini, coordinate_system, ... )
+        ini <- sd$read_zarr(srcdir)
+        txfun <- sd$`_core`$operations$`_utils`$transform_to_data_extent
+        post <- txfun(ini, coordinate_system, ... )
         post$write(dest)
     }, srcdir=srcdir, dest=dest, coordinate_system=coordinate_system, ...)
 }
