@@ -87,6 +87,7 @@ setMethod("data", "ImageArray", \(x, scale=1) {
 #' @export
 setMethod("dim", "ImageArray", \(x) dim(data(x)))
 
+#' @noRd
 .guess_scale <- \(x, width, height) {
     dim_list <- sapply(x@data, \(a) {
       dim_a <- dim(a)
@@ -99,6 +100,7 @@ setMethod("dim", "ImageArray", \(x) dim(data(x)))
 }
 
 # TODO: default width and height should be defined somewhere and changed
+#' @noRd
 .get_plot_data <- \(x, k = NULL, width=800, height=800) {
     image_scale_ind <- .guess_scale(x, width, height)
     if(!is.null(k))

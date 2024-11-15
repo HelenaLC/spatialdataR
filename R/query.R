@@ -41,17 +41,47 @@ setMethod("query", "SpatialData", \(x, ...) {
     return(x)  
 })
 
+#' @noRd
+.get_bounding_box_corners_in_intrinsic_coordinates <- \(x, cs = 1, ...){
+  args <- list(...)
+  .check_bb(args)
+  if (!is.null(t <- getTS(x, cs))){
+    for (. in rev(seq(nrow(t)))) {
+      typ <- t$type[.]
+      dat <- t[[typ]][.][[1]]
+      dat <- dat[-1]
+      switch(typ,
+             translation={
+               args$ymin <-  args$ymin-dat[1]
+               args$xmin <-  args$xmin-dat[2]
+               args$ymax <-  args$ymax-dat[1]
+               args$xmax <- args$xmax-dat[2]
+             },
+             scale={
+               args$ymin <- args$ymin/dat[1]
+               args$xmin <- args$xmin/dat[2]
+               args$ymax <- args$ymax/dat[1]
+               args$xmax <- args$xmax/dat[2]
+             })
+    } 
+  }
+  args[c("xmin", "ymin")] <- sapply(args[c("xmin", "ymin")], floor)
+  args[c("xmax", "ymax")] <- sapply(args[c("xmax", "ymax")], ceiling)
+  args
+}
+
 #' @rdname query
 #' @export
-setMethod("query", "ImageArray", \(x, ...) {
+setMethod("query", "ImageArray", \(x, cs, ...) {
     args <- list(...)
     .check_bb(args)
+    args <- .get_bounding_box_corners_in_intrinsic_coordinates(x, cs = 1, ...)
     d <- dim(x)[-1]
     if (args$ymax > d[1]) args$ymax <- d[1]
     if (args$xmax > d[2]) args$xmax <- d[2]
     a <- data(x)[,
         seq(args$ymin, args$ymax),
-        seq(args$xmin, args$xmax)]
+        seq(args$xmin, args$xmax), drop = FALSE]
     x@data <- list(a)
     return(x)
 })
