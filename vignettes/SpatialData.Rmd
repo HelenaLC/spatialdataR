@@ -146,6 +146,19 @@ plotSpatialData() +
     scale_size_continuous(range=c(0, 3))
 ```
 
+Lets crop the image and visualize and put it next to the original image
+
+```{r eval=FALSE}
+g1 <- plotSpatialData() +
+    plotImage(x)
+x
+qa <- query(x$images[[1]], xmin = 1500, xmax = 2300, ymin = 4800, ymax = 5500)
+x2 <- .SpatialData(images = list(qa))
+g2 <- plotSpatialData() +
+  plotImage(x2)
+g1 | g2
+```
+
 # MibiTOF
 
 Colorectal carcinoma, 25 MB; no shapes, no points.
