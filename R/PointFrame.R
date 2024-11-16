@@ -64,16 +64,34 @@ setMethod("$", "PointFrame", \(x, name) {
 setMethod("[[", "PointFrame", \(x, i, ...) {
     collect(select(x@data, all_of(i)))[[1]] })
 
+# sub ----
+
+#' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "missing", "ANY"), 
+    \(x, i, j, ...) x[seq_len(nrow(x)), j])
+
+#' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "ANY", "missing"), 
+    \(x, i, j, ...) x[i, seq_len(ncol(x))])
+
+#' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "missing", "missing"), 
+    \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
+
 #' @rdname PointFrame
 #' @importFrom dplyr mutate filter select
 #' @export
-setMethod("[", c("PointFrame", "numeric"), \(x, i, ...) {
+setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
     .i <- `__null_dask_index__` <- NULL # R CMD check
-    j <- seq_len(length(x))[i]
+    i <- seq_len(nrow(x))[i]
     x@data <- data(x) |>
         mutate(.i=1+`__null_dask_index__`) |>
-        filter(.i %in% j) |>
+        filter(.i %in% i) |>
         select(-.i)
+    x@data <- x@data[, j]
     return(x)
 })
 
