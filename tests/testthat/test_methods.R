@@ -57,10 +57,55 @@ test_that("get nms", {
     }
 })
 
-test_that(".readTable_anndataR/basilisk()", {
-    table_anndataR <- readSpatialData(x, anndataR=TRUE)
-    table_basilisk <- readSpatialData(x, anndataR=FALSE)
-    expect_identical(table_anndataR, table_basilisk)
+# $ ----
+
+test_that("$", {
+    mapply(i=paste0(fun, "s"), n=nms, t=typ, \(i, n, t) {
+        # object-wide
+        f <- parse(text=sprintf("x$%s", i))
+        expect_is(y <- eval(f), "list")
+        # element-wise
+        expect_is(names(y), "character")
+        expect_length(names(y), length(y))
+        f <- parse(text=sprintf("y$%s", n))
+        expect_is(eval(f), t)
+    })
+})
+
+# sub ----
+
+test_that("[,Shape/PointFrame", {
+    for (y in list(shape(x), point(x))) {
+        # one index subsets in vector-like fashion
+        expect_equal(dim(y[1]), c(1, ncol(y)))
+        # two indices subset in array-like fashion
+        expect_equal(nrow(y[1,]), 1) # no j
+        expect_equal(ncol(y[,1]), 1) # no i
+        expect_equal(dim(y[1,1]), c(1,1)) # both
+        expect_identical(dim(y[,]), dim(y)) # none
+        expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
+    }
+})
+
+test_that("[,LabelArray", {
+    y <- label(x)
+    # logical
+    expect_identical(y[TRUE,TRUE], y) 
+    expect_equal(dim(y[FALSE,FALSE]), c(0,0)) 
+    expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y))) 
+    expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0)) 
+    i <- logical(nrow(y)); j <- logical(ncol(y))
+    n <- replicate(2, sample(seq(2, 10), 1))
+    i[sample(nrow(y), n[1])] <- TRUE
+    j[sample(ncol(y), n[2])] <- TRUE
+    expect_equal(nrow(y[i,]), n[1])
+    expect_equal(ncol(y[,j]), n[2])
+    # numeric
+    expect_identical(y[,], y) # none
+    expect_equal(nrow(y[1,]), 1) # no j
+    expect_equal(ncol(y[,1]), 1) # no i
+    expect_equal(dim(y[1,1]), c(1,1)) # both
+    # TODO: multiscales
 })
 
 # test_that("[,ImageArray", {
