@@ -7,6 +7,7 @@
 #' @param x \code{\link{SpatialData}} object.
 #' @param i element to use from a given layer.
 #' @param j name of target coordinate system. 
+#' @param k index of the scale of an image (default: NULL)
 #' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
 #' @param pal character vector of colors; will interpolate 
 #'   automatically when insufficient values are provided.
@@ -46,25 +47,47 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
-.df_i <- \(x) {
-    a <- .get_plot_data(x)
-    a <- as.array(aperm(a, perm=c(3,2,1)))
+.df_i <- \(x, k = NULL) {
+    a <- .get_plot_data(x, k)
     if (max(a) > 1) a <- a/255
-    a <- if (dim(a)[3] == 1) a[,,rep(1,3)] else a
-    a <- apply(a, c(1, 2), \(.) do.call(rgb, as.list(.)))
+    a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
+    a <- apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
 }
 
-.gg_i <- \(x) list(
-  ggplot2::annotation_raster(x, 0, dim(x)[2], 0, dim(x)[1], interpolate=FALSE),
-  xlim(0,dim(x)[2]),
-  ylim(0,dim(x)[1])
+.gg_i <- \(x, w, h) list(
+  ggplot2::annotation_raster(x, w[2], w[1], -h[1], -h[2], interpolate = FALSE),
+  scale_y_reverse(limits = c(h[2], h[1])),
+  xlim(w[1], w[2])
 )
+
+.get_extent <- \(x, cs = NULL){
+  extent <- dim(data(x,1))
+  w <- c(0, extent[3])
+  h <- c(0, extent[2])
+  if (!is.null(t <- getTS(x, cs))){
+    for (. in seq(nrow(t))) {
+      typ <- t$type[.]
+      dat <- t[[typ]][.][[1]]
+      switch(typ,
+             translation={
+               h <- h+dat[2]
+               w <- w+dat[3]
+             },
+             scale={
+               h <- h*dat[2]
+               w <- w*dat[3]
+             })
+    } 
+  }
+  list(w=w,h=h)
+}
 
 #' @rdname plotSpatialData
 #' @export
-setMethod("plotImage", "SpatialData", \(x, i=1, j=1, ...) {
-   df <- .df_i(y <- image(x, i))
-   .gg_i(df)
+setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
+  df <- .df_i(y <- image(x, i), k)
+  extent <- .get_extent(y, cs = j)
+  .gg_i(df, extent$w, extent$h)
 })
     
 # label ----

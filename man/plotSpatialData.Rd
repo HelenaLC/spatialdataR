@@ -15,7 +15,7 @@
 \usage{
 plotSpatialData()
 
-\S4method{plotImage}{SpatialData}(x, i = 1, j = 1, ...)
+\S4method{plotImage}{SpatialData}(x, i = 1, j = 1, k = NULL)
 
 \S4method{plotLabel}{SpatialData}(x, i = 1, c = NULL, a = 0.5, pal = hcl.colors(11, "Spectral"))
 
@@ -31,6 +31,8 @@ plotSpatialData()
 \item{i}{Index of which slot of the Shape layer. Default value is 1.}
 
 \item{j}{name of target coordinate system.}
+
+\item{k}{index of the scale of an image (default: NULL)}
 
 \item{c, f, s, a}{plotting aesthetics; color, fill, size, alpha.}
 
