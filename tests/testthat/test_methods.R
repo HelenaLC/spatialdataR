@@ -62,3 +62,11 @@ test_that(".readTable_anndataR/basilisk()", {
     table_basilisk <- readSpatialData(x, anndataR=FALSE)
     expect_identical(table_anndataR, table_basilisk)
 })
+
+# test_that("[,ImageArray", {
+#     d <- \(.) dim(data(., 1))
+#     i <- image(x, "blobs_image")
+#     expect_identical(d(i[TRUE,,])[1], d(i)[1])
+#     expect_identical(d(i[,TRUE,])[2], d(i)[2])
+#     expect_identical(d(i[,,TRUE])[3], d(i)[3])
+# })

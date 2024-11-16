@@ -37,6 +37,38 @@ setMethod("[[", "SpatialData", \(x, i, ...) {
     return(i)
 }
 
+# sub ----
+
+#' #' @rdname SpatialData
+#' #' @exportMethod [
+#' setMethod("[", "SpatialData", \(x, i, j, k, ..., drop=FALSE) {
+#'     x <- x0
+#'     i <- c("images", "labels")
+#'     j <- TRUE
+#'     k <- list(
+#'         list(seq(3), seq(5), seq(10)),
+#'         list(seq(5), seq(10)))
+#'     # if (missing(i)) i <- TRUE
+#'     # if (missing(j)) j <- TRUE
+#'     # TODO: validity
+#'     n <- c(i=length(i), j=length(j), k=length(k))
+#'     stopifnot(length(m <- unique(setdiff(n, 1))) == 1)
+#'     for (o in names(n)[n == 1]) assign(o, rep(get(o), m))
+#'     
+#'     if (is.character(i)) i <- which(.LAYERS %in% i)
+#'     if (is.logical(i)) i <- which(.LAYERS %in% .LAYERS[i])
+#'     
+#'     for (l in i) {
+#'         for (e in j) {
+#'             y <- x[[.LAYERS[l]]][[e]]
+#'             y <- do.call(`[`, c(list(y), k[[l]]))
+#'             x[[.LAYERS[l]]][e] <- list(y)
+#'         }
+#'     }
+#'     x
+#'     return(x)
+#' })
+
 # any ----
 
 #' @rdname SpatialData
@@ -124,6 +156,11 @@ setMethod("table", "SpatialData", \(x, i=1) {
         y[[.check_i(x, i, "tables")]] else y })
 
 # set all ----
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("[[", c("SpatialData", "character"), 
+    \(x, i, value) {attr(x, i) <- value; return(x) })
 
 # |_value=list ----
 

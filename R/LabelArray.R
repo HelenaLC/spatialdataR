@@ -25,3 +25,13 @@ LabelArray <- function(data=array(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname LabelArray
 #' @export
 setMethod("dim", "LabelArray", \(x) dim(data(x)))
+
+#' @rdname LabelArray
+#' @exportMethod [
+setMethod("[", "LabelArray", \(x, i, j, ..., drop=FALSE) {
+    # TODO: subsetting for multiscales
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE
+    x@data <- data(x)[i, j, drop=FALSE]
+    return(x)
+})

@@ -39,10 +39,6 @@ ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("data", "ShapeFrame", \(x) x@data)
-
-#' @rdname ShapeFrame
-#' @export
 setMethod("dim", "ShapeFrame", \(x) dim(data(x)))
 
 #' @rdname ShapeFrame
@@ -63,3 +59,11 @@ setMethod("names", "ShapeFrame", \(x) {
 #' @rdname ShapeFrame
 #' @exportMethod $
 setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])
+
+#' @rdname ShapeFrame
+#' @export
+setMethod("[", c("ShapeFrame", "numeric"), \(x, i, ...) {
+    j <- seq_len(length(x))[i]
+    x@data <- x@data[j, ]
+    return(x)
+})

@@ -52,6 +52,7 @@
 \alias{shape,SpatialData-method}
 \alias{point,SpatialData-method}
 \alias{table,SpatialData-method}
+\alias{[[<-,SpatialData,character,ANY,ANY-method}
 \alias{images<-,SpatialData,list-method}
 \alias{labels<-,SpatialData,list-method}
 \alias{shapes<-,SpatialData,list-method}
@@ -125,6 +126,8 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{point}{SpatialData}(x, i = 1)
 
 \S4method{table}{SpatialData}(x, i = 1)
+
+\S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
 
 \S4method{images}{SpatialData,list}(x) <- value
 
