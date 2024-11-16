@@ -130,6 +130,7 @@ In this example data, we do not have a `label` for the `shape` polygons. Such la
 i <- sample(length(p <- point(x, i=1)), 2e3)
 point(x, "2k") <- p[i]
 plotSpatialData() +
+    plotImage(x) +
     plotPoint(x, i="2k", c="cell_type", s=0.2) +
     new_scale_color() +
     plotShape(x, i="anatomical") +
@@ -143,6 +144,19 @@ There are only 2,000 cells, but 3,714,642 molecules, so it takes a long time to 
 plotSpatialData() +
     plotShape(x, i=2, c="black", f=NA) +
     scale_size_continuous(range=c(0, 3))
+```
+
+Lets crop the image and visualize and put it next to the original image
+
+```{r eval=FALSE}
+g1 <- plotSpatialData() +
+    plotImage(x)
+x
+qa <- query(x$images[[1]], xmin = 1500, xmax = 2300, ymin = 4800, ymax = 5500)
+x2 <- .SpatialData(images = list(qa))
+g2 <- plotSpatialData() +
+  plotImage(x2)
+g1 | g2
 ```
 
 # MibiTOF
@@ -175,7 +189,9 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 ```
 
 ```{r visiumhd-plot}
-plotSpatialData() + plotImage(x, i=4)
+plotSpatialData() + 
+  plotImage(x, i=2) +
+  plotShape(x, i=3, s=0.1)
 ```
 
 # CyCIF (MCMICRO output)

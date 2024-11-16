@@ -114,7 +114,6 @@ readShape <- function(x, ...) {
     anndataR::to_SingleCellExperiment(adata)
 }
 
-
 #' @rdname readSpatialData
 #' @export
 readTable <- function(x, anndataR=FALSE) {

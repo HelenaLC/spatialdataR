@@ -11,7 +11,7 @@
 \usage{
 \S4method{query}{SpatialData}(x, ...)
 
-\S4method{query}{ImageArray}(x, ...)
+\S4method{query}{ImageArray}(x, cs, ...)
 
 \S4method{query}{LabelArray}(x, ...)
 
