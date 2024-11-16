@@ -71,10 +71,12 @@ setMethod("query", "SpatialData", \(x, ...) {
 }
 
 .set_transformation <- \(x, cs, t_name, new_t){
-  t <- getTS(x, cs)
-  ind <- which(t[["type"]]==t_name)
-  t[[t_name]][[ind]] <- new_t
-  x <- setTS(x, cs, t)
+  if (!is.null(t <- getTS(x, cs))){
+    t <- getTS(x, cs)
+    ind <- which(t[["type"]]==t_name)
+    t[[t_name]][[ind]] <- new_t
+    x <- setTS(x, cs, t)
+  }
   x
 }
 
