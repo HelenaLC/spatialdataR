@@ -41,61 +41,49 @@ setMethod("query", "SpatialData", \(x, ...) {
     return(x)  
 })
 
-#' @noRd
-.get_bounding_box_corners_in_intrinsic_coordinates <- \(x, cs = 1, ...){
-  args <- list(...)
-  .check_bb(args)
-  if (!is.null(t <- getTS(x, cs))){
-    for (. in rev(seq(nrow(t)))) {
-      typ <- t$type[.]
-      dat <- t[[typ]][.][[1]]
-      dat <- dat[-1]
-      switch(typ,
-             translation={
-               args$ymin <- args$ymin-dat[1]
-               args$xmin <- args$xmin-dat[2]
-               args$ymax <- args$ymax-dat[1]
-               args$xmax <- args$xmax-dat[2]
-             },
-             scale={
-               args$ymin <- args$ymin/dat[1]
-               args$xmin <- args$xmin/dat[2]
-               args$ymax <- args$ymax/dat[1]
-               args$xmax <- args$xmax/dat[2]
-             })
-    } 
-  }
-  args[c("xmin", "ymin")] <- sapply(args[c("xmin", "ymin")], floor)
-  args[c("xmax", "ymax")] <- sapply(args[c("xmax", "ymax")], ceiling)
-  args
+.transform <- \(xy, ts, rev=FALSE) {
+    if (rev) ts <- rev(ts)
+    for (. in seq_along(ts)) {
+        t <- ts[[.]]$type
+        d <- ts[[.]]$data
+        if (length(d) == 3)
+            d <- d[-1]
+        switch(t, 
+            identity={},
+            scale={
+                op <- ifelse(rev, `/`, `*`)
+                xy$x <- op(xy$x, d[2])
+                xy$y <- op(xy$y, d[1])
+            },
+            translation={
+                op <- ifelse(rev, `-`, `+`)
+                xy$x <- op(xy$x, d[2])
+                xy$y <- op(xy$y, d[1])
+            })
+    }
+    return(xy)
 }
 
-.set_transformation <- \(x, cs, t_name, new_t){
-  if (!is.null(t <- getTS(x, cs))){
-    t <- getTS(x, cs)
-    ind <- which(t[["type"]]==t_name)
-    t[[t_name]][[ind]] <- new_t
-    x <- setTS(x, cs, t)
-  }
-  x
-}
-
-#' @rdname query
-#' @export
 setMethod("query", "ImageArray", \(x, cs, ...) {
-    args <- list(...)
-    .check_bb(args)
-    old_args <- args
-    args <- .get_bounding_box_corners_in_intrinsic_coordinates(x, cs = 1, ...)
-    d <- dim(x)[-1]
-    if (args$ymax > d[1]) args$ymax <- d[1]
-    if (args$xmax > d[2]) args$xmax <- d[2]
-    a <- data(x)[,
-        seq(args$ymin, args$ymax),
-        seq(args$xmin, args$xmax), drop = FALSE]
-    x@data <- list(a)
-    x <- .set_transformation(x, cs = 1, t_name = "translation", new_t = c(0, old_args$ymin, old_args$xmin))
-    return(x)
+    qu <- list(...)
+    .check_bb(qu)
+    ts <- .get_path(.coord2graph(x), "self", cs)
+    # transform query into target space
+    xy <- split(unlist(qu), grepl("^y", names(qu)))
+    xy <- data.frame(xy); names(xy) <- c("x", "y")
+    xy <- .transform(xy, ts, TRUE)
+    x <- x[, # crop (i.e., subset) array dimensions 2-3
+        do.call(seq, as.list(xy[[2]])),
+        do.call(seq, as.list(xy[[1]]))]
+    # transform array dimensions into target space
+    os <- data.frame(x=c(0, dim(x)[3]), y=c(0, dim(x)[2]))
+    os <- vapply(.transform(os, ts), min, numeric(1))
+    # add transformation of type translation as to
+    # offset origin by difference between new & old
+    os <- unlist(qu[c("xmin", "ymin")]) - os
+    addCT(x, 
+        name=cs, type="translation", 
+        data=c(0, os[2], os[1]))
 })
 
 #' @rdname query
