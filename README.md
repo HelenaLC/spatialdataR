@@ -1,5 +1,7 @@
 # "SpatialData" R package
 
+> [DEMO](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.html)
+
 This package explores strategies for Bioconductor-oriented solutions to
 importing and analyzing data from Spatial Transcriptomics platforms.
 
