@@ -35,6 +35,14 @@
 #' x <- system.file(x, package="SpatialData")
 #' (x <- readSpatialData(x, tables=FALSE))
 #' 
+#' # subsetting
+#' # layers are taken in order of appearance
+#' # (images, labels, points, shapes, tables)
+#' x[-4] # drop layer
+#' x[4, -2] # drop element
+#' x["shapes", c(1, 3)] # subset layer
+#' x[c(1, 2), list(1, c(1, 2))] # multiple
+#' 
 #' @export
 SpatialData <- \(images, labels, points, shapes, tables) {
     if (missing(images)) images <- list()

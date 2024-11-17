@@ -80,30 +80,49 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @export
 setMethod("data", "ImageArray", \(x, scale=1) {
     if (scale <= (n <- length(x@data))) return(x@data[[scale]])
-    stop("'scale=", scale, "' but only ", n, " resolution(s) available")
+    stop("'scale", scale, "' but only ", n, " resolution(s) available")
 })
 
 #' @rdname ImageArray
 #' @export
 setMethod("dim", "ImageArray", \(x) dim(data(x)))
 
-#' @noRd
-.guess_scale <- \(x, width, height) {
-    dim_list <- sapply(x@data, \(a) {
-      dim_a <- dim(a)
-      (dim_a[2] > height & dim_a[3] > width)
-    })
-    dim_list_ind <- which(dim_list)
-    if (any(dim_list_ind))
-        return(max(dim_list_ind))
-    return(1)
+#' #' @rdname ImageArray
+#' #' @exportMethod [
+#' setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
+#'     # TODO: subsetting for multiscales
+#'     if (missing(i)) i <- TRUE
+#'     if (missing(j)) j <- TRUE
+#'     if (missing(k)) k <- TRUE
+#'     # get scale factor between pyramid layers
+#'     is <- seq_along(x@data)
+#'     as <- lapply(is, \(.) data(x, .))
+#'     ds <- vapply(as, dim, numeric(3))
+#'     sf <- if (length(is) == 1) 1 else {
+#'         cumprod(vapply(
+#'         is[-1], \(.) ds[,.]/ds[,.-1], numeric(3))[, 1])
+#'     }
+#'     # validity
+#'     if (isTRUE(j)) j <- seq(ds[2,1])
+#'     if (isTRUE(k)) k <- seq(ds[3,1])
+#'     # for (. in seq_along(ij <- list(j=j, k=k)))
+#'     #     if ((ds[.+1,1] %% length(ij[[.]])) != 0 |
+#'     #         max(ij[[.]]) %% (min(ds[.+1,])*min(sf)) != 0)
+#'     #         stop("invalid '", names(ij)[.], "'")
+#'     for (. in seq_along(sf)) {
+#'         .j <- if (!isTRUE(j)) unique(ceiling(j*sf[.])) else j
+#'         .k <- if (!isTRUE(k)) unique(ceiling(k*sf[.])) else k
+#'         x@data[[.]] <- data(x, .)[i, .j, .k, drop=FALSE]
+#'     }
+#'     return(x)
+#' })
+
+.guess_scale <- \(x, w, h) {
+    lys <- vapply(x@data, \(a) dim(a)[2] > h & dim(a)[3] > w, logical(1))
+    if (any(idx <- which(lys))) max(idx) else 1
 }
 
-# TODO: default width and height should be defined somewhere and changed
-#' @noRd
-.get_plot_data <- \(x, k = NULL, width=800, height=800) {
-    image_scale_ind <- .guess_scale(x, width, height)
-    if(!is.null(k))
-      return(x@data[[as.integer(k)]])
-    x@data[[image_scale_ind]]
+.get_plot_data <- \(x, k=NULL, width=800, height=800) {
+    if (!is.null(k)) return(data(x, k))
+    data(x, .guess_scale(x, width, height))
 }

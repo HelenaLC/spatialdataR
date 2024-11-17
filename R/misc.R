@@ -20,8 +20,8 @@ NULL
     cat("class: SpatialData\n")
     i <- imageNames(object)
     l <- labelNames(object)
-    s <- shapeNames(object)
     p <- pointNames(object)
+    s <- shapeNames(object)
     t <- tableNames(object)
     # images
     d <- lapply(images(object), dim)
@@ -35,6 +35,11 @@ NULL
     cat(sprintf("- labels(%s):\n", length(l)))
     for (. in seq_along(l)) 
         cat(sprintf("  - %s (%s)\n", l[.], d[.]))
+    # points
+    d <- lapply(points(object), length)
+    cat(sprintf("- points(%s):\n", length(p)))
+    for (. in seq_along(p)) 
+        cat(sprintf("  - %s (%s)\n", p[.], d[.]))
     # shapes
     nc <- vapply(shapes(object), ncol, numeric(1))
     geom <- ifelse(nc == 1, "polygon", "circle")
@@ -43,11 +48,6 @@ NULL
     cat(sprintf("- shapes(%s):\n", length(s)))
     for (. in seq_along(s)) 
         cat(sprintf("  - %s (%s)\n", s[.], d[.]))
-    # points
-    d <- lapply(points(object), length)
-    cat(sprintf("- points(%s):\n", length(p)))
-    for (. in seq_along(p)) 
-        cat(sprintf("  - %s (%s)\n", p[.], d[.]))
     # tables
     d <- lapply(tables(object), dim)
     d <- lapply(d, paste, collapse=",")

@@ -110,8 +110,10 @@ readShape <- function(x, ...) {
         stop("To use this function, install the 'pizzarr' package via\n",
             "`BiocManager::install(\"keller-mark/pizzarr\")`")
     }
-    adata <- anndataR::read_zarr(x)
-    anndataR::to_SingleCellExperiment(adata)
+    suppressWarnings({ # suppress warnings related to hidden files
+        adata <- anndataR::read_zarr(x)
+        anndataR::to_SingleCellExperiment(adata)
+    })
 }
 
 #' @rdname readSpatialData
@@ -142,11 +144,8 @@ readSpatialData <- function(x,
                 stop("couln't find ", i, " of name", .)
             j <- j[opt]
         } 
-        i <- paste0(toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1))
         args <- if (i == "tables") list(anndataR=anndataR)
-        lapply(j, \(.) {
-            f <- get(paste0("read", i))
-            out <- do.call(f, c(list(.), args))
-        })
+        f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
+        lapply(j, \(.) do.call(f, c(list(.), args)))
     }) |> do.call(what=SpatialData)
 }

@@ -2,9 +2,18 @@
 % Please edit documentation in R/Zattrs.R
 \name{Zattrs}
 \alias{Zattrs}
+\alias{$,Zattrs-method}
+\alias{axes,Zattrs-method}
+\alias{axes,SpatialDataElement-method}
 \title{The `Zattrs` class}
 \usage{
 Zattrs(x = list())
+
+\S4method{$}{Zattrs}(x, name)
+
+\S4method{axes}{Zattrs}(x, ...)
+
+\S4method{axes}{SpatialDataElement}(x, ...)
 }
 \arguments{
 \item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
