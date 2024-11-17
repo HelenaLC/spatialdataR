@@ -58,27 +58,16 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 }
 
 .get_wh <- \(x, i, j) {
-    g <- .coord2graph(x)
-    p <- .get_path(g, i, j)
-    d <- dim(data(image(x, i), 1))
-    h <- c(0, d[2]); w <- c(0, d[3])
-    for (. in seq_along(p)) {
-        t <- p[[.]]$type
-        d <- p[[.]]$data
-        switch(t, 
-            identity={ },
-            translation={ h <- h+d[2]; w <- h+d[3] }, 
-            scale={ h <- h*d[2]; w <- h*d[3] },
-            stop("transformation of type '", t, "' not yet supported"))
-    }
-    list(w=w, h=h)
+    ds <- dim(data(image(x, i), 1))
+    ts <- .get_path(.coord2graph(x), i, j)
+    wh <- data.frame(x=c(0, ds[3]), y=c(0, ds[2]))
+    wh <- .transform(wh, ts)
+    list(w=wh[, 1], h=wh[, 2])
 }
 
-.gg_i <- \(x, w, h) list(
-    ggplot2::annotation_raster(x, w[2], w[1], -h[1], -h[2], interpolate=FALSE),
-    scale_y_reverse(limits=c(h[2], h[1])),
-    xlim(w[1], w[2])
-)
+.gg_i <- \(x, w, h, dpi) list(
+    scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
+    ggplot2::annotation_raster(x, w[2],w[1], -h[1],-h[2], interpolate=FALSE))
 
 #' @rdname plotSpatialData
 #' @export
@@ -92,7 +81,7 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
     wh <- .get_wh(x, i, j)
     .gg_i(df, wh$w, wh$h)
 })
-    
+
 # label ----
 
 #' @rdname plotSpatialData
@@ -162,6 +151,10 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     )
 }
 
+#' @name plotSpatialData
+#' @rdname plotSpatialData
+#' @title Visualization
+#' 
 #' @param x SpatialData 
 #' @param i Index of which slot of the Shape layer. Default value is 1.
 #' @param c Color border of the shape to plot. Default value is NULL.
@@ -170,7 +163,14 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
 #' is not needed for other geometry shapes such as "POLYGON".
 #' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
 #' with decreasing visibility. Default value is 0.2.
-#'
+NULL
+
+# x = 'PointFrame'
+# j = target space
+.df_p <- \(x, j) {
+    df <- as.data.frame(data(x))
+}
+
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotPoint", "SpatialData", \(x, i=1, c=NULL, s=1, a=1) {
