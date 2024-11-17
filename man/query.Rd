@@ -3,15 +3,12 @@
 \name{query}
 \alias{query}
 \alias{query,SpatialData-method}
-\alias{query,ImageArray-method}
 \alias{query,LabelArray-method}
 \alias{query,ShapeFrame-method}
 \alias{query,PointFrame-method}
 \title{spatial queries}
 \usage{
 \S4method{query}{SpatialData}(x, ...)
-
-\S4method{query}{ImageArray}(x, cs, ...)
 
 \S4method{query}{LabelArray}(x, ...)
 

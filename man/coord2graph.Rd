@@ -16,9 +16,14 @@ CS graph representation
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
+
+# element-wise
+g <- SpatialData:::.coord2graph(image(x))
+SpatialData:::.get_path(g, "self", "global")
+
+# object-wide
 g <- SpatialData:::.coord2graph(x)
-# visualize element-coordinate system relations as graph
-graph::plot(g)
+graphics.off(); graph::plot(g)
 # retrieve transformation from element to target space
 graph::edgeData(g, "blobs_labels", "translation", "data")
 
