@@ -52,7 +52,7 @@ SpatialData <- \(images, labels, points, shapes, tables) {
     if (missing(tables)) tables <- list()
     .SpatialData(
         images=images, labels=labels, 
-        shapes=shapes, points=points, tables=tables)
+        points=points, shapes=shapes, tables=tables)
 }
     
 . <- c("images", "labels", "points", "shapes", "tables")
