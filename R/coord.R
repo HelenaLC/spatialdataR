@@ -14,9 +14,14 @@
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
+#' 
+#' # element-wise
+#' g <- SpatialData:::.coord2graph(image(x))
+#' SpatialData:::.get_path(g, "self", "global")
+#' 
+#' # object-wide
 #' g <- SpatialData:::.coord2graph(x)
-#' # visualize element-coordinate system relations as graph
-#' graph::plot(g)
+#' graphics.off(); graph::plot(g)
 #' # retrieve transformation from element to target space
 #' graph::edgeData(g, "blobs_labels", "translation", "data")
 #' 
@@ -24,13 +29,20 @@
 #'   addNode nodeData<- nodeDataDefaults<-
 #'   addEdge edgeData<- edgeDataDefaults<-
 .coord2graph <- \(x) {
+    # initialize empty directed graph with node & edge attributes
     g <- graphAM(edgemode="directed")
     edgeDataDefaults(g, "data") <- list()
     edgeDataDefaults(g, "type") <- character()
     nodeDataDefaults(g, "type") <- character()
     names(ls) <- ls <- setdiff(.LAYERS, "tables")
-    for (l in ls) for (e in names(x[[l]])) {
-        md <- meta(x[[l]][[e]])
+    .md <- if (!is(x, "SpatialData")) {
+        list("mock"=list("self"=meta(x)))
+    } else lapply(ls, \(l) {
+        names(es) <- es <- names(x[[l]])
+        lapply(es, \(e) meta(x[[l]][[e]]))
+    })
+    for (l in names(.md)) for (e in names(.md[[l]])) {
+        md <- .md[[l]][[e]]
         ms <- md$multiscales
         if (!is.null(ms)) md <- ms
         ct <- md$coordinateTransformations
@@ -97,18 +109,134 @@
         edgeData(g, p[.], p[.+1])[[1]])
 }
 
-setGeneric("getCS", \(x, ...) standardGeneric("getCS"))
-setGeneric("getTS", \(x, ...) standardGeneric("getTS"))
+#' @name coord
+#' @title Coordinate transformations
+#' @aliases rmvCT
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
+#'
+#' # view available coordinate transformations
+#' coordTransData(z <- meta(label(x)))
+#'
+#' # add
+#' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
+#' coordTransData(addCT(z, "new", "translation", c(12, 34)))
+#' 
+#' # rmv
+#' coordTransData(rmvCT(z, 2)) # by index
+#' coordTransData(rmvCT(z, "scale")) # by name
+#' coordTransData(rmvCT(z, 1)) # identity is protected
+NULL
+
+# rmv ----
+
+setGeneric("rmvCT", \(x, ...) standardGeneric("rmvCT"))
+
+#' @rdname coord
+#' @export
+setMethod("rmvCT", "SpatialDataElement", 
+    \(x, i) { x@meta <- rmvCT(meta(x), i); x })
+
+#' @rdname coord
+#' @export
+setMethod("rmvCT", "Zattrs", \(x, i) {
+    nms <- coordTransName(x)
+    if (is.numeric(i)) i <- nms[i]
+    nan <- setdiff(i, nms)
+    if (length(nan)) stop(
+        "couln't find 'coordTrans' of name(s) ", 
+        paste(dQuote(nan), collapse=","))
+    # prevent against dropping identity
+    i <- match(i, nms, nomatch=0)
+    i <- i[coordTransType(x)[i] != "identity"]
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (length(i)) {
+        # utility to drop empty columns
+        j <- \(.) vapply(., \(.) !is.null(unlist(.)), logical(1))
+        if (!is.null(x[[ms]])) {
+            y <- x[[ms]][[ct]][[1]][-i, ]
+            x[[ms]][[ct]][[1]] <- y[, j(y)]
+        } else {
+            y <- x[[ct]][-i, ]
+            x[[ct]] <- y[, j(y)]
+        }
+    }
+    return(x)
+})
+
+# add ----
+
+setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
+
+#' @rdname coord
+#' @export
+setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
+    x@meta <- addCT(meta(x), name, type, data); x })
+
+#' @rdname coord
+#' @export
+setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
+    stopifnot(
+        is.character(name), length(name) == 1,
+        is.character(type), length(type) == 1)
+    type <- match.arg(type, c("scale", "rotate", "translation", "affine"))
+    ms <- "multiscales"
+    ts <- "transformations"
+    ct <- "coordinateTransformations"
+    if (!is.null(x[[ms]])) {
+        # use existing as skeleton
+        fd <- (df <- coordTransData(x))[1, ]
+        fd <- fd[, c("input", "output", "type")]
+        fd$type <- type
+        fd$output$name <- name
+        fd[[fd$type]] <- list(data)
+        # append to existing if 'name' already present 
+        idx <- match(name, coordTransName(x))
+        typ <- coordTransType(x)[idx]
+        if (!is.na(typ) && typ == "identity") {
+            df <- df[0, ]
+            app <- FALSE
+        } else if (app <- !is.na(idx)) {
+            if (seq <- (typ == "sequence")) {
+                df <- df[idx, ][[ts]][[1]]
+                fd$output$name <- df$output$name[1]
+            } else {
+                df <- df[idx, ]
+                if (is.null(df[[ts]])) {
+                    
+                } else {
+                    df[[ts]][[1]] <- df
+                }
+                # fd$type <- type
+                # fd[[fd$type]] <- list(data)
+            }
+        } else {
+            # fd$type <- type
+            # fd[[fd$type]] <- list(data)
+        }
+        na <- setdiff(names(df), names(fd))
+        for (. in na) fd[[.]] <- list(NULL)
+        na <- setdiff(names(fd), names(df))
+        for (. in na) df[[.]] <- if (nrow(df) > 0) list(NULL) else list()
+        fd <- fd[, names(col) <- col <- names(df)]
+        # combine
+        rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
+        new <- rbind(df, fd)
+        if (app) {
+            x[[ms]][[ct]][[1]]$type[idx] <- "sequence"
+            x[[ms]][[ct]][[1]][idx, ]$transformations[[1]] <- new
+        } else {
+            x[[ms]][[ct]] <- new
+        }
+    }
+    return(x)
+})
+
 setGeneric("setCS", \(x, ...) standardGeneric("setCS"))
 setGeneric("setTS", \(x, ...) standardGeneric("setTS"))
-
-# coordinate systems
-setMethod("getCS", "SpatialDataElement", \(x) {
-    ms <- (md <- meta(x))$multiscales
-    if (!is.null(ms)) md <- md$multiscales
-    cs <- md$coordinateTransformations
-    if (length(cs) == 1) cs[[1]] else cs
-})
 
 # TODO: check the validity of this function
 setMethod("setCS", "SpatialDataElement", \(x, c) {
@@ -122,14 +250,6 @@ setMethod("setCS", "SpatialDataElement", \(x, c) {
         }
     }
     md
-})
-
-# transformations
-setMethod("getTS", "SpatialDataElement", \(x, i=1) {
-    y <- getCS(x)
-    if (is.character(i)) 
-        i <- which(y$output$name == i)
-    y[i, ]$transformations[[1]]
 })
 
 # transformations
