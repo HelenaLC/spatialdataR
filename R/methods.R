@@ -263,9 +263,9 @@ setReplaceMethod("image",
     c("SpatialData", "numeric", "ImageArray"), 
     \(x, i=1, value) { 
         i <- ifelse(
-            i > (n <- length(points(x))), 
+            i > (n <- length(images(x))), 
             paste0("image", n+1), 
-            pointNames(x)[i])
+            imageNames(x)[i])
         `image<-`(x=x, i=i, value=value)
     })
 
@@ -275,9 +275,9 @@ setReplaceMethod("label",
     c("SpatialData", "numeric", "LabelArray"), 
     \(x, i=1, value) { 
         i <- ifelse(
-            i > (n <- length(points(x))), 
+            i > (n <- length(labels(x))), 
             paste0("label", n+1), 
-            pointNames(x)[i])
+            labelNames(x)[i])
         `label<-`(x=x, i=i, value=value)
     })
 
@@ -299,9 +299,9 @@ setReplaceMethod("shape",
     c("SpatialData", "numeric", "ShapeFrame"), 
     \(x, i=1, value) { 
         i <- ifelse(
-            i > (n <- length(points(x))), 
+            i > (n <- length(shapes(x))), 
             paste0("shape", n+1), 
-            pointNames(x)[i])
+            shapeNames(x)[i])
         `shape<-`(x=x, i=i, value=value)
     })
 
