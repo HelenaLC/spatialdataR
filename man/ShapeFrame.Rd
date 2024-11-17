@@ -2,16 +2,17 @@
 % Please edit documentation in R/ShapeFrame.R
 \name{ShapeFrame}
 \alias{ShapeFrame}
-\alias{data,ShapeFrame-method}
 \alias{dim,ShapeFrame-method}
 \alias{length,ShapeFrame-method}
 \alias{names,ShapeFrame-method}
 \alias{$,ShapeFrame-method}
+\alias{[,ShapeFrame,missing,ANY,ANY-method}
+\alias{[,ShapeFrame,ANY,missing,ANY-method}
+\alias{[,ShapeFrame,missing,missing,ANY-method}
+\alias{[,ShapeFrame,numeric,numeric,ANY-method}
 \title{The `ShapeFrame` class}
 \usage{
 ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
-
-\S4method{data}{ShapeFrame}(x)
 
 \S4method{dim}{ShapeFrame}(x)
 
@@ -20,6 +21,14 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{names}{ShapeFrame}(x)
 
 \S4method{$}{ShapeFrame}(x, name)
+
+\S4method{[}{ShapeFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{ShapeFrame,ANY,missing,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{ShapeFrame,missing,missing,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{ShapeFrame,numeric,numeric,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
 \item{data}{\code{arrow}-derived table for on-disk,

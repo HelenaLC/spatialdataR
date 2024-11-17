@@ -47,7 +47,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
-.df_i <- \(x, k = NULL) {
+.df_i <- \(x, k=NULL) {
     a <- .get_plot_data(x, k)
     if (max(a) > 1) a <- a/255
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
@@ -55,39 +55,40 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 }
 
 .gg_i <- \(x, w, h) list(
-  ggplot2::annotation_raster(x, w[2], w[1], -h[1], -h[2], interpolate = FALSE),
-  scale_y_reverse(limits = c(h[2], h[1])),
-  xlim(w[1], w[2])
+    ggplot2::annotation_raster(x, w[2], w[1], -h[1], -h[2], interpolate=FALSE),
+    scale_y_reverse(limits=c(h[2], h[1])),
+    xlim(w[1], w[2])
 )
 
-.get_extent <- \(x, cs = NULL){
-  extent <- dim(data(x,1))
-  w <- c(0, extent[3])
-  h <- c(0, extent[2])
-  if (!is.null(t <- getTS(x, cs))){
-    for (. in seq(nrow(t))) {
-      typ <- t$type[.]
-      dat <- t[[typ]][.][[1]]
-      switch(typ,
-             translation={
-               h <- h+dat[2]
-               w <- w+dat[3]
-             },
-             scale={
-               h <- h*dat[2]
-               w <- w*dat[3]
-             })
-    } 
-  }
-  list(w=w,h=h)
+.get_wh <- \(x, i, j) {
+    g <- .coord2graph(x)
+    p <- .get_path(g, i, j)
+    d <- dim(data(image(x, i), 1))
+    h <- c(0, d[2])
+    w <- c(0, d[3])
+    for (. in seq_along(p)) {
+        t <- p[[.]]$type
+        d <- p[[.]]$data
+        switch(t, 
+            translation={
+                h <- h+d[2]
+                w <- h+d[3]
+            }, 
+            scale={
+                h <- h*d[2]
+                w <- h*d[3]
+            },
+            stop("transformation of type '", t, "' not yet supported"))
+    }
+    list(w=w, h=h)
 }
 
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
-  df <- .df_i(y <- image(x, i), k)
-  extent <- .get_extent(y, cs = j)
-  .gg_i(df, extent$w, extent$h)
+    df <- .df_i(y <- image(x, i), k)
+    wh <- .get_wh(x, i, j)
+    .gg_i(df, wh$w, wh$h)
 })
     
 # label ----

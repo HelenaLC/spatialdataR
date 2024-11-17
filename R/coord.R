@@ -111,17 +111,17 @@ setMethod("getCS", "SpatialDataElement", \(x) {
 })
 
 # TODO: check the validity of this function
-setMethod("setCS", "SpatialDataElement", \(x,c) {
-  ms <- (md <- meta(x))$multiscales
-  if (!is.null(ms)){
-    cs <- md$coordinateTransformations
-    if (length(cs) == 1){
-      md$multiscales$coordinateTransformations <- c
-    } else{
-      md$multiscales$coordinateTransformations[[1]] <- c
+setMethod("setCS", "SpatialDataElement", \(x, c) {
+    ms <- (md <- meta(x))$multiscales
+    if (!is.null(ms)){
+        cs <- md$coordinateTransformations
+        if (length(cs) == 1) {
+            md$multiscales$coordinateTransformations <- c
+        } else{
+            md$multiscales$coordinateTransformations[[1]] <- c
+        }
     }
-  }
-  md
+    md
 })
 
 # transformations
@@ -134,12 +134,12 @@ setMethod("getTS", "SpatialDataElement", \(x, i=1) {
 
 # transformations
 setMethod("setTS", "SpatialDataElement", \(x, i=1, t) {
-  y <- getCS(x)
-  if (is.character(i)) 
-    i <- which(y$output$name == i)
-  y[i, ]$transformations[[1]] <- t
-  x@meta <- Zattrs(setCS(x,y))
-  x
+    y <- getCS(x)
+    if (is.character(i)) 
+        i <- which(y$output$name == i)
+    y[i, ]$transformations[[1]] <- t
+    x@meta <- Zattrs(setCS(x,y))
+    x
 })
 
 #' #' @importFrom EBImage resize

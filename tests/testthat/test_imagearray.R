@@ -1,58 +1,38 @@
-library(SpatialData)
+rgb <- seq_len(255)
 
-test_that("create ImageArray", {
-  
-  # single scale image
-  mat <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  img <- .ImageArray(data = list(mat))
-  img_object <- ImageArray(data = list(mat))
-  img_object <- ImageArray(data = list())
-  img_object <- ImageArray(data = list(), meta = Zattrs())
-  
-  # single scale image error
-  expect_error(ImageArray(data = mat))
-  expect_error(ImageArray(data = mat, meta = list()))
-  expect_error(ImageArray(data = mat, meta = 1))
-  
-  # multi scale image
-  mat1 <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  mat2 <- array(sample(1:255, size = 3*10*10, replace = TRUE), dim = c(3, 10, 10))
-  mat3 <- array(sample(1:255, size = 3*5*5, replace = TRUE), dim = c(3, 5, 5))
-  mat <- list(mat1, mat2, mat3)
-  img <- .ImageArray(data = mat)
-  img <- ImageArray(data = mat)
-  
-  expect_equal(1L,1L)
+test_that("ImageArray()", {
+    val <- sample(rgb, 3*20*20, replace=TRUE)
+    mat <- array(val, dim=c(3, 20, 20))
+    # invalid
+    expect_error(ImageArray(mat))
+    expect_error(ImageArray(mat, 1))
+    expect_error(ImageArray(mat, list()))
+    # single scale
+    expect_silent(ImageArray(list()))
+    expect_silent(ImageArray(list(mat)))
+    expect_silent(ImageArray(list(mat), Zattrs()))
+    # multiscale
+    dim <- lapply(c(20, 10, 5), \(.) c(3, rep(., 2)))
+    lys <- lapply(dim, \(.) array(sample(rgb, prod(.), replace=TRUE), dim=.))
+    expect_silent(ImageArray(lys))
 })
 
-test_that("ImageArray data method", {
-  
-  # single scale image
-  mat <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  img <- .ImageArray(data = list(mat))
-  expect_equal(mat, data(img))
-  expect_equal(mat, data(img, 1))
-  
-  # error
-  expect_error(data(img, 2))
-
-  expect_equal(1L,1L)
+test_that("data,ImageArray", {
+    mtx <- array(sample(rgb, dim <- 3*20*20, replace=TRUE), dim=dim)
+    img <- ImageArray(list(mtx))
+    expect_silent(mty <- data(img, 1))
+    expect_identical(mtx, mty)
+    expect_error(data(img, 2))
 })
 
-test_that("ImageArray ploting", {
-  
-  # single scale image
-  mat1 <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  mat2 <- array(sample(1:255, size = 3*10*10, replace = TRUE), dim = c(3, 10, 10))
-  mat <- list(mat1, mat2)
-  img <- ImageArray(data = mat)
-  
-  # checks
-  expect_equal(.get_plot_data(img), mat1)
-  expect_equal(.get_plot_data(img,1), mat1)
-  expect_equal(.get_plot_data(img,2), mat2)
-  expect_true(all(dim(.get_plot_data(img,1)) == c(3,20,20)))
-  expect_true(all(dim(.get_plot_data(img,2)) == c(3,10,10)))
-  
-  
+test_that(".guess_scale", {
+    img <- ImageArray(
+        lys <- lapply(dim <- lapply(c(6, 3), \(.) c(3, rep(., 2))), 
+        \(.) array(sample(rgb, prod(.), replace=TRUE), dim=.)))
+    # manual scale
+    expect_identical(.get_plot_data(img, k=1), lys[[1]]) 
+    expect_identical(.get_plot_data(img, k=2), lys[[2]])
+    # automatic scale
+    expect_identical(.get_plot_data(img, k=NULL, width=5, height=5), lys[[1]]) 
+    expect_identical(.get_plot_data(img, k=NULL, width=2, height=2), lys[[2]])
 })
