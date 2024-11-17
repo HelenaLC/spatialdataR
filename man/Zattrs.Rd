@@ -4,7 +4,13 @@
 \alias{Zattrs}
 \alias{$,Zattrs-method}
 \alias{axes,Zattrs-method}
+\alias{coordTransData,Zattrs-method}
+\alias{coordTransName,Zattrs-method}
+\alias{coordTransType,Zattrs-method}
 \alias{axes,SpatialDataElement-method}
+\alias{coordTransData,SpatialDataElement-method}
+\alias{coordTransName,SpatialDataElement-method}
+\alias{coordTransType,SpatialDataElement-method}
 \title{The `Zattrs` class}
 \usage{
 Zattrs(x = list())
@@ -13,7 +19,19 @@ Zattrs(x = list())
 
 \S4method{axes}{Zattrs}(x, ...)
 
+\S4method{coordTransData}{Zattrs}(x, ...)
+
+\S4method{coordTransName}{Zattrs}(x, ...)
+
+\S4method{coordTransType}{Zattrs}(x, ...)
+
 \S4method{axes}{SpatialDataElement}(x, ...)
+
+\S4method{coordTransData}{SpatialDataElement}(x, ...)
+
+\S4method{coordTransName}{SpatialDataElement}(x, ...)
+
+\S4method{coordTransType}{SpatialDataElement}(x, ...)
 }
 \arguments{
 \item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
