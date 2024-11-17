@@ -70,6 +70,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
         t <- p[[.]]$type
         d <- p[[.]]$data
         switch(t, 
+            identity={ },
             translation={
                 h <- h+d[2]
                 w <- h+d[3]
@@ -86,7 +87,12 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
-    df <- .df_i(y <- image(x, i), k)
+    if (is.numeric(i)) 
+        i <- imageNames(x)[i]
+    y <- image(x, i)
+    if (is.numeric(j)) 
+        j <- coordTransName(y)[j]
+    df <- .df_i(y, k)
     wh <- .get_wh(x, i, j)
     .gg_i(df, wh$w, wh$h)
 })
