@@ -67,7 +67,8 @@ Suggests:
     pizzarr,
     Rgraphviz,
     testthat,
-    magick
+    magick,
+    paws
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
