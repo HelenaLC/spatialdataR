@@ -64,6 +64,7 @@ Suggests:
     ggnewscale,
     knitr,
     patchwork,
+    pizzarr,
     Rgraphviz,
     testthat,
     magick

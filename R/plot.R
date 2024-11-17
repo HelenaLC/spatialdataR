@@ -177,7 +177,6 @@ setMethod("plotPoint", "SpatialData", \(x, i=1, c=NULL, s=1, a=1) {
     .gg_p(as.data.frame(data(point(x, i))), c, s, a)
 })
 
-
 #' @rdname plotSpatialData
 #' @export
 setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
