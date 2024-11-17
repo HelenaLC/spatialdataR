@@ -45,6 +45,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 # image ----
 
+#' @importFrom methods as
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
 #' @importFrom DelayedArray realize
@@ -52,7 +53,8 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     a <- .get_plot_data(x, k)
     if (max(a) > 1) a <- a/255
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
-    apply(realize(a), c(2, 3), \(.) do.call(rgb, as.list(.)))
+    a <- realize(as(a, "DelayedArray"))
+    apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
 }
 
 .get_wh <- \(x, i, j) {
@@ -97,11 +99,12 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
 #' @importFrom grDevices hcl.colors colorRampPalette
 #' @importFrom S4Vectors metadata
 #' @importFrom abind abind
+#' @importFrom methods as
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     pal=hcl.colors(11, "Spectral")) {
     .data <- NULL # R CMD check
-    y <- as.matrix(data(label(x, i)))
+    y <- as.matrix(as(data(label(x, i)), "DelayedArray"))
     df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
     if (!is.null(c)) {
         se <- table(x)
@@ -133,6 +136,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
             aes$colour <- aes(.data[[c]])[[1]]
             lgd <- scale_type(df[[c]])
         } else if (.str_is_col(c)) {
+            lgd <- "none"
             dot$colour <- c
         }
     } else lgd <- "none"
