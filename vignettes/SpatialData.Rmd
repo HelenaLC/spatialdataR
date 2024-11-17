@@ -148,26 +148,19 @@ plotSpatialData() +
 We could also show plot the transcript without cell segmentation. 
 There are only 2,000 cells, but 3,714,642 molecules, so it takes a long time to compile.
 
-```{r eval=FALSE}
-plotSpatialData() +
-    plotShape(x, i=2, c="black", f=NA) +
-    scale_size_continuous(range=c(0, 3))
-```
-
-Lets crop the image and visualize and put it next to the original image
+Lets crop the image and visualize and put it next to the original image:
 
 ```{r eval=FALSE}
-g1 <- plotSpatialData() +
-    plotImage(x)
-x
-qa <- query(x$images[[1]], xmin = 1500, xmax = 2300, ymin = 4800, ymax = 5500)
-x2 <- .SpatialData(images = list(qa))
-g2 <- plotSpatialData() +
-  plotImage(x2)
-g1 | g2
+bb <- list(xmin=1500, xmax=2300, ymin=4800, ymax=5500)
+bb <- list(xmin=1500, xmax=2300, ymin=5500, ymax=6500)
+crop <- do.call(query, c(list(x=image(x)), bb))
+y <- SpatialData(images=list("foo"=crop))
+p <- plotSpatialData() + plotImage(x)
+q <- plotSpatialData() + plotImage(y)
+p | q
 ```
 
-# MibiTOF
+## MibiTOF
 
 Colorectal carcinoma, 25 MB; no shapes, no points.
 
@@ -178,11 +171,11 @@ pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
 ```
 
 ```{r mibitof-plot}
-wrap_plots(nrow=1, lapply(seq(1), \(.) 
+wrap_plots(nrow=1, lapply(seq(3), \(.) 
     plotSpatialData() + plotImage(x, .) + plotLabel(x, .)))
 ```
 
-# VisiumHD
+## VisiumHD
 
 Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
 
@@ -199,7 +192,7 @@ plotSpatialData() +
   plotShape(x, i=3, s=0.1)
 ```
 
-# CyCIF (MCMICRO output)
+## CyCIF (MCMICRO output)
 
 Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
 
@@ -210,7 +203,7 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
-# IMC (Steinbock)
+## IMC (Steinbock)
 
 4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB; 14 images, 14 labels, 1 table.
 
