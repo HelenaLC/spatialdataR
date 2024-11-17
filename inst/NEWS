@@ -1,3 +1,10 @@
+changes in version 0.99.15
+
+- added methods for coordinate transormation handling, namely:
+  'rmvCT()' for removal and 'addCT()' for adding/appending
+- major rewrite of 'ImageArray' plotting & bounding box 'query'
+- added vignettes demos of bounding box queries & multiscale plotting
+
 changes in version 0.99.14
 
 - added unit tests for image plotting, element & object handling
