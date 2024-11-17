@@ -150,14 +150,13 @@ There are only 2,000 cells, but 3,714,642 molecules, so it takes a long time to 
 
 Lets crop the image and visualize and put it next to the original image:
 
-```{r eval=FALSE}
-bb <- list(xmin=1500, xmax=2300, ymin=4800, ymax=5500)
-bb <- list(xmin=1500, xmax=2300, ymin=5500, ymax=6500)
-crop <- do.call(query, c(list(x=image(x)), bb))
-y <- SpatialData(images=list("foo"=crop))
-p <- plotSpatialData() + plotImage(x)
-q <- plotSpatialData() + plotImage(y)
-p | q
+```{r}
+qu <- list(xmin=1800, xmax=2400, ymin=5000, ymax=5400)
+bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="yellow", fill=NA)
+args <- c(list(x=image(x), cs="global"), qu)
+y <- SpatialData(images=list("."=do.call(query, args)))
+plotSpatialData() + plotImage(x) + bb | 
+plotSpatialData() + plotImage(y)
 ```
 
 ## MibiTOF
@@ -183,13 +182,16 @@ Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
 dir.create(td <- tempfile())
 nm <- "visium_hd_3.0.0_io.zip"
 pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
-(x <- readSpatialData(pa, tables=NULL))
+(x <- readSpatialData(pa, images=4, shapes=3, tables=NULL))
 ```
 
 ```{r visiumhd-plot}
-plotSpatialData() + 
-  plotImage(x, i=2) +
-  plotShape(x, i=3, s=0.1)
+qu <- list(xmin=100, xmax=300, ymin=200, ymax=400)
+bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="black", fill=NA)
+args <- c(list(x=image(x), cs="downscaled_lowres"), qu)
+y <- SpatialData(images=list("."=do.call(query, args)))
+plotSpatialData() + plotImage(x) + bb |
+plotSpatialData() + plotImage(y)
 ```
 
 ## CyCIF (MCMICRO output)
