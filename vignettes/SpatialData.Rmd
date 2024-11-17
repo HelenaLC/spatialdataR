@@ -108,6 +108,15 @@ SpatialData:::.get_path(g, "blobs_labels", "sequence")
 ## Visualization
 
 ```{r blobs-plot}
+# layered
+plotSpatialData() +
+    plotImage(x) +
+    plotLabel(x) +
+    plotShape(x, 1) +
+    plotShape(x, 3) +
+    new_scale_color() +
+    plotPoint(x, c="genes")
+# multiscales
 wrap_plots(nrow=1, lapply(seq(3), \(.) 
     plotSpatialData() + plotImage(x, i=2, k=.)))
 ```
@@ -169,11 +178,8 @@ pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
 ```
 
 ```{r mibitof-plot}
-lapply(seq(3), \(i) {
-    plotSpatialData() + 
-        plotImage(x, i) + 
-        new_scale_fill()
-}) |> wrap_plots(nrow=1) + plot_layout(guides="collect")
+wrap_plots(nrow=1, lapply(seq(1), \(.) 
+    plotSpatialData() + plotImage(x, .) + plotLabel(x, .)))
 ```
 
 # VisiumHD
