@@ -6,10 +6,13 @@
 #' @exportMethod $
 setMethod("$", "SpatialData", \(x, name) attr(x, name))
 
+#' @export
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
 })
+
+#' @export
 setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     attr(x, grep(i, names(attributes(x)), value=TRUE))
 })

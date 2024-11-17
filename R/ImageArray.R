@@ -78,9 +78,9 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ImageArray
 #' @export
-setMethod("data", "ImageArray", \(x, scale=1) {
-    if (scale <= (n <- length(x@data))) return(x@data[[scale]])
-    stop("'scale", scale, "' but only ", n, " resolution(s) available")
+setMethod("data", "ImageArray", \(x, i=1) {
+    if (i <= (n <- length(x@data))) return(x@data[[i]])
+    stop("'scale", i, "' but only ", n, " resolution(s) available")
 })
 
 #' @rdname ImageArray

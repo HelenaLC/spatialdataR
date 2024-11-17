@@ -8,7 +8,7 @@
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 
-\S4method{data}{ImageArray}(x, scale = 1)
+\S4method{data}{ImageArray}(x, i = 1)
 
 \S4method{dim}{ImageArray}(x)
 }

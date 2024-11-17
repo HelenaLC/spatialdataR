@@ -47,11 +47,29 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
+#' @importFrom DelayedArray realize
 .df_i <- \(x, k=NULL) {
     a <- .get_plot_data(x, k)
     if (max(a) > 1) a <- a/255
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
-    a <- apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
+    apply(realize(a), c(2, 3), \(.) do.call(rgb, as.list(.)))
+}
+
+.get_wh <- \(x, i, j) {
+    g <- .coord2graph(x)
+    p <- .get_path(g, i, j)
+    d <- dim(data(image(x, i), 1))
+    h <- c(0, d[2]); w <- c(0, d[3])
+    for (. in seq_along(p)) {
+        t <- p[[.]]$type
+        d <- p[[.]]$data
+        switch(t, 
+            identity={ },
+            translation={ h <- h+d[2]; w <- h+d[3] }, 
+            scale={ h <- h*d[2]; w <- h*d[3] },
+            stop("transformation of type '", t, "' not yet supported"))
+    }
+    list(w=w, h=h)
 }
 
 .gg_i <- \(x, w, h) list(
@@ -59,30 +77,6 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     scale_y_reverse(limits=c(h[2], h[1])),
     xlim(w[1], w[2])
 )
-
-.get_wh <- \(x, i, j) {
-    g <- .coord2graph(x)
-    p <- .get_path(g, i, j)
-    d <- dim(data(image(x, i), 1))
-    h <- c(0, d[2])
-    w <- c(0, d[3])
-    for (. in seq_along(p)) {
-        t <- p[[.]]$type
-        d <- p[[.]]$data
-        switch(t, 
-            identity={ },
-            translation={
-                h <- h+d[2]
-                w <- h+d[3]
-            }, 
-            scale={
-                h <- h*d[2]
-                w <- h*d[3]
-            },
-            stop("transformation of type '", t, "' not yet supported"))
-    }
-    list(w=w, h=h)
-}
 
 #' @rdname plotSpatialData
 #' @export

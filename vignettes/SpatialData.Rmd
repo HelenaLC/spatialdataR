@@ -108,9 +108,8 @@ SpatialData:::.get_path(g, "blobs_labels", "sequence")
 ## Visualization
 
 ```{r blobs-plot}
-plotSpatialData() +
-    plotLabel(x) +
-    plotPoint(x, c="genes")
+wrap_plots(nrow=1, lapply(seq(3), \(.) 
+    plotSpatialData() + plotImage(x, i=2, k=.)))
 ```
 
 # Technologies
