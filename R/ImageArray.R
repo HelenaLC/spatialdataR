@@ -87,35 +87,39 @@ setMethod("data", "ImageArray", \(x, i=1) {
 #' @export
 setMethod("dim", "ImageArray", \(x) dim(data(x)))
 
-#' #' @rdname ImageArray
-#' #' @exportMethod [
-#' setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
-#'     # TODO: subsetting for multiscales
-#'     if (missing(i)) i <- TRUE
-#'     if (missing(j)) j <- TRUE
-#'     if (missing(k)) k <- TRUE
-#'     # get scale factor between pyramid layers
-#'     is <- seq_along(x@data)
-#'     as <- lapply(is, \(.) data(x, .))
-#'     ds <- vapply(as, dim, numeric(3))
-#'     sf <- if (length(is) == 1) 1 else {
-#'         cumprod(vapply(
-#'         is[-1], \(.) ds[,.]/ds[,.-1], numeric(3))[, 1])
-#'     }
-#'     # validity
-#'     if (isTRUE(j)) j <- seq(ds[2,1])
-#'     if (isTRUE(k)) k <- seq(ds[3,1])
-#'     # for (. in seq_along(ij <- list(j=j, k=k)))
-#'     #     if ((ds[.+1,1] %% length(ij[[.]])) != 0 |
-#'     #         max(ij[[.]]) %% (min(ds[.+1,])*min(sf)) != 0)
-#'     #         stop("invalid '", names(ij)[.], "'")
-#'     for (. in seq_along(sf)) {
-#'         .j <- if (!isTRUE(j)) unique(ceiling(j*sf[.])) else j
-#'         .k <- if (!isTRUE(k)) unique(ceiling(k*sf[.])) else k
-#'         x@data[[.]] <- data(x, .)[i, .j, .k, drop=FALSE]
-#'     }
-#'     return(x)
-#' })
+#' @rdname ImageArray
+#' @exportMethod [
+setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE
+    if (missing(k)) k <- TRUE
+    if (length(data(x)) == 1) {
+        x@data <- data(x)[, i, j, drop=FALSE]
+        return(x)
+    }
+    # TODO: subsetting for multiscales
+    # get scale factor between pyramid layers
+    is <- seq_along(x@data)
+    as <- lapply(is, \(.) data(x, .))
+    ds <- vapply(as, dim, numeric(3))
+    sf <- if (length(is) == 1) 1 else {
+        cumprod(vapply(
+        is[-1], \(.) ds[,.]/ds[,.-1], numeric(3))[, 1])
+    }
+    # validity
+    if (isTRUE(j)) j <- seq(ds[2,1])
+    if (isTRUE(k)) k <- seq(ds[3,1])
+    # for (. in seq_along(ij <- list(j=j, k=k)))
+    #     if ((ds[.+1,1] %% length(ij[[.]])) != 0 |
+    #         max(ij[[.]]) %% (min(ds[.+1,])*min(sf)) != 0)
+    #         stop("invalid '", names(ij)[.], "'")
+    for (. in seq_along(sf)) {
+        .j <- if (!isTRUE(j)) unique(ceiling(j*sf[.])) else j
+        .k <- if (!isTRUE(k)) unique(ceiling(k*sf[.])) else k
+        x@data[[.]] <- data(x, .)[i, .j, .k, drop=FALSE]
+    }
+    return(x)
+})
 
 .guess_scale <- \(x, w, h) {
     lys <- vapply(x@data, \(a) dim(a)[2] > h & dim(a)[3] > w, logical(1))
