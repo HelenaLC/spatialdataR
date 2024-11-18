@@ -65,10 +65,16 @@ setMethod("[", "SpatialData", \(x, i, j, ..., drop=FALSE) {
     if (isTRUE(j)) {
         j <- replicate(length(i), TRUE, FALSE)
     } else {
-        if (length(i) == 1) {
+        n <- length(i)
+        m <- length(j)
+        if (n == 1) {
             if (!is.list(j)) j <- list(j)
         } else {
-            if (length(i) != length(j)) stop()
+            if (m > 1 && n == 1) {
+                i <- rep(i, m) # recycle 'i'
+            } else if (n > 1 && m == 1) {
+                j <- rep(j, n) # recycle 'j'
+            } else if (n != m) stop("invalid combination of 'i' and 'j'")
         }
     }
     for (. in setdiff(seq_along(.LAYERS), i)) x[[.]] <- list()

@@ -32,7 +32,23 @@ test_that("get one", {
 # set ----
 
 test_that("set all", {
-    
+    obj <- list(
+        ImageArray(), LabelArray(), 
+        ShapeFrame(), PointFrame(), 
+        SingleCellExperiment())
+    names(obj) <- .LAYERS
+    for (. in .LAYERS) {
+        y <- x; y[[.]] <- list()
+        expect_length(y[[.]], 0)
+        # character
+        y[[.]] <- list(obj[[.]])
+        expect_length(y[[.]], 1)
+        expect_identical(y[[.]][[1]], obj[[.]])
+        # index
+        y[[.]][[2]] <- obj[[.]]
+        expect_length(y[[.]], 2)
+        expect_identical(y[[.]][[2]], obj[[.]])
+    }
 })
 
 test_that("set one", {
@@ -142,6 +158,8 @@ test_that("[,SpatialData", {
     # logical
     expect_true(all(.n(x[TRUE]) == .n(x)))
     expect_true(all(.n(x[FALSE]) == 0))
+    # i=missing
+    expect_true(all(.n(x[,1]) == 1))
     idx <- seq_along(nms <- .LAYERS)
     mapply(i=idx, n=nms, \(i, n) {
         # i=positive
@@ -164,7 +182,8 @@ test_that("[,SpatialData", {
     n <- .n(x); n[-i] <- 0
     expect_identical(.n(y), n)
     y <- x[c(1, 2), c(1, 2)]
-    expect_identical(imageNames(y), imageNames(x)[1])
+    . <- imageNames(x)
+    expect_identical(imageNames(y), .[1])
     expect_identical(labelNames(y), labelNames(x)[2])
     expect_error(x[c(1, 2), list(1, 9)]) # any out of bounds
     expect_error(x[c(1, 2), c(1, 2, 3)]) # mismatching length
@@ -172,11 +191,22 @@ test_that("[,SpatialData", {
     expect_identical(x[c(1, 2), c(1, 1)], x[c(1, 2), list(1, 1)])
     expect_equivalent(.n(x[c(1, 2), list(1, c(1, 2))]), c(1, 2, 0, 0, 0))
     # j=negative
-    expect_identical(imageNames(x[1,-100]), imageNames(x))
-    expect_identical(imageNames(x[1,-1]), imageNames(x)[-1])
+    expect_identical(imageNames(x[1,-100]), .)
+    expect_identical(imageNames(x[1,-1]), .[-1])
+    # j=missing
+    expect_identical(imageNames(x[1,]), .)
     # j=character
-    j <- imageNames(x)
-    expect_identical(imageNames(`[`(x, 1, j)), j)
-    expect_identical(imageNames(`[`(x, 1, j[2])), j[2])
-    expect_error(x[1,"."]); expect_error(x[1,c(".", j)])
+    expect_identical(imageNames(`[`(x, 1, .)), .)
+    expect_identical(imageNames(`[`(x, 1, .[2])), .[2])
+    expect_error(x[1,"."]); expect_error(x[1,c(".", .)])
+    # length 'j' > 'i'
+    y <- x[1, c(1,2)]
+    expect_length(labels(y), 0)
+    expect_length(images(y), length(.))
+    expect_identical(imageNames(y), .)
+    # length 'i' > 'j'
+    y <- x[c(1,2), 1]
+    expect_length(shapes(y), 0)
+    expect_identical(images(y), images(x)[1])
+    expect_identical(labels(y), labels(x)[1])
 })
