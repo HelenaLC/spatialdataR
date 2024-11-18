@@ -203,11 +203,9 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
             if (.str_is_col(c)) {
                 dot$col <- c
             } else if (is.character(c)) {
-                if (!c %in% names(df)) {
-                    df <- .get_tbl(df, x, i)
-                }
+                if (!c %in% names(df)) stop("invalid 'c'")
                 aes$colour <- aes(.data[[c]])[[1]]
-            } else stop("invalid 'c'")
+            }
             if (is.numeric(s)) {
                 geo <- geom_point
                 dot$size <- s
