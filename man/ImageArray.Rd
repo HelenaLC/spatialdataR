@@ -9,7 +9,7 @@
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 
-\S4method{data}{ImageArray}(x, i = 1)
+\S4method{data}{ImageArray}(x, k = 1)
 
 \S4method{dim}{ImageArray}(x)
 
@@ -27,7 +27,11 @@ content describing the overall object.}
 
 \item{x}{\code{ImageArray}}
 
-\item{k}{scalar index specifying which resolution to extract.}
+\item{k}{scalar index specifying which scale to extract.}
+
+\item{i, j}{indices specifying elements to extract.}
+
+\item{drop}{ignored.}
 }
 \value{
 \code{ImageArray}

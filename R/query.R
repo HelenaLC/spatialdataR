@@ -1,25 +1,19 @@
 #' @name query
 #' @title spatial queries
 #'
-#' @param x \code{SpatialData} element
+#' @param x \code{SpatialData} element.
+#' @param j scalar character or integer; index or name of coordinate space.
+#' @param ... option arguments passed to and from other methods.
 #'
-#' @return ...
+#' @return same as input
 #'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
-#' image(x, "i") <- query(image(x), xmin=0, xmax=60, ymin=0, ymax=40)
-#' label(x, "l") <- query(label(x), xmin=0, xmax=60, ymin=0, ymax=40)
-#' shape(x, "s") <- query(shape(x), xmin=0, xmax=60, ymin=0, ymax=40)
-#' point(x, "p") <- query(point(x), xmin=0, xmax=60, ymin=0, ymax=40)
-#' 
-#' plotSpatialData() + 
-#'   plotImage(x, "i") +
-#'   plotLabel(x, "l") +
-#'   plotPoint(x, "p") +
-#'   plotShape(x, "s")
+#' image(x, "i") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+#' plotSpatialData() + plotImage(x, "i")
 NULL
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
@@ -65,13 +59,15 @@ setMethod("query", "SpatialData", \(x, ...) {
     return(xy)
 }
 
+#' @rdname query
+#' @export
 setMethod("query", "ImageArray", \(x, j, ...) {
     qu <- list(...)
     .check_bb(qu)
     if (missing(j)) j <- 1
     if (is.numeric(j)) j <- CTname(x)[j]
     stopifnot(length(j) == 1)
-    . <- grep(j, CTname(i))
+    . <- grep(j, CTname(x))
     if (!length(.) || is.na(.)) stop("invalid 'j'")
     # transform query into target space
     ts <- .get_path(.coord2graph(x), "self", j)

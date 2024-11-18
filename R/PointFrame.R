@@ -1,15 +1,15 @@
 #' @name PointFrame
 #' @title The `PointFrame` class
 #'
-#' @param x,.data \code{PointFrame}
+#' @param x \code{PointFrame}
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.
-#' @param drop ignored.
-#' @param i,j indices for subsetting (see \code{?base::Extract}).
 #' @param name character string for extraction (see \code{?base::`$`}).
+#' @param i,j indices for subsetting (see \code{?base::Extract}).
+#' @param drop ignored.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{PointFrame}

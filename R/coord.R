@@ -115,6 +115,8 @@
 #' 
 #' @param x \code{\link{SpatialData}} element 
 #'   or \code{\link{Zattrs}} of an element
+#' @param i scalar charcter or integer; 
+#'   name or index of coordinate space
 #' @param name character(1); name of coordinate space
 #' @param type character(1); type of transformation
 #' @param data transformation data; size and shape depend on transformation and
@@ -229,14 +231,23 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         for (. in na) df[[.]] <- if (nrow(df) > 0) list(NULL) else list()
         fd <- fd[, names(col) <- col <- names(df)]
         # combine
-        rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
+        if (app && !seq) {
+            # append to other
+            rownames(df) <- rownames(df$input) <- rownames(df$output) <- 1
+            rownames(fd) <- rownames(fd$input) <- rownames(fd$output) <- 2
+        } else {
+            # append to table or sequence
+            rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
+        }
         new <- rbind(df, fd)
         if (app) {
             x[[ms]][[ct]][[1]]$type[idx] <- "sequence"
             x[[ms]][[ct]][[1]][idx, ]$transformations[[1]] <- new
         } else {
-            x[[ms]][[ct]] <- new
+            x[[ms]][[ct]][[1]] <- new
         }
+    } else {
+        # TODO: non-multiscale
     }
     return(x)
 })

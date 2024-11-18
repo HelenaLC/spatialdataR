@@ -26,9 +26,9 @@ plotSpatialData()
 \S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2)
 }
 \arguments{
-\item{x}{SpatialData}
+\item{x}{\code{\link{SpatialData}} object.}
 
-\item{i}{Index of which slot of the Shape layer. Default value is 1.}
+\item{i}{element to use from a given layer.}
 
 \item{j}{name of target coordinate system.}
 
@@ -36,15 +36,8 @@ plotSpatialData()
 
 \item{c, f, s, a}{plotting aesthetics; color, fill, size, alpha.}
 
-\item{a}{Transparency of the shape to plot. A value ranges from 0 to 1, 
-with decreasing visibility. Default value is 0.2.}
-
 \item{pal}{character vector of colors; will interpolate 
 automatically when insufficient values are provided.}
-
-\item{s}{Size of the shape to plot. Default is "radius".}
-
-\item{c}{Color border of the shape to plot. Default value is NULL.}
 }
 \value{
 ggplot

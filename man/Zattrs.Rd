@@ -2,6 +2,10 @@
 % Please edit documentation in R/Zattrs.R
 \name{Zattrs}
 \alias{Zattrs}
+\alias{axes}
+\alias{CTdata}
+\alias{CTname}
+\alias{CTtype}
 \alias{$,Zattrs-method}
 \alias{axes,Zattrs-method}
 \alias{CTdata,Zattrs-method}
@@ -37,6 +41,8 @@ Zattrs(x = list())
 \item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
 
 \item{name}{character string for extraction (see ?base::`$`).}
+
+\item{...}{option arguments passed to and from other methods.}
 }
 \value{
 \code{Zattrs}

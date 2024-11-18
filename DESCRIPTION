@@ -73,8 +73,6 @@ Suggests:
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
-Enhances:
-    paws
 biocViews: 
     DataImport, 
     DataRepresentation, 

@@ -6,6 +6,8 @@
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.
+#' @param i,j indices specifying elements to extract.
+#' @param drop ignored.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return \code{LabelArray}

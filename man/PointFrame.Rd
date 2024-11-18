@@ -47,7 +47,7 @@ content describing the overall object.}
 
 \item{...}{optional arguments passed to and from other methods.}
 
-\item{x, .data}{\code{PointFrame}}
+\item{x}{\code{PointFrame}}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 

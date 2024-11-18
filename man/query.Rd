@@ -3,12 +3,15 @@
 \name{query}
 \alias{query}
 \alias{query,SpatialData-method}
+\alias{query,ImageArray-method}
 \alias{query,LabelArray-method}
 \alias{query,ShapeFrame-method}
 \alias{query,PointFrame-method}
 \title{spatial queries}
 \usage{
 \S4method{query}{SpatialData}(x, ...)
+
+\S4method{query}{ImageArray}(x, j, ...)
 
 \S4method{query}{LabelArray}(x, ...)
 
@@ -17,10 +20,14 @@
 \S4method{query}{PointFrame}(x, ...)
 }
 \arguments{
-\item{x}{\code{SpatialData} element}
+\item{x}{\code{SpatialData} element.}
+
+\item{...}{option arguments passed to and from other methods.}
+
+\item{j}{scalar character or integer; index or name of coordinate space.}
 }
 \value{
-...
+same as input
 }
 \description{
 spatial queries
@@ -30,14 +37,6 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-image(x, "i") <- query(image(x), xmin=0, xmax=60, ymin=0, ymax=40)
-label(x, "l") <- query(label(x), xmin=0, xmax=60, ymin=0, ymax=40)
-shape(x, "s") <- query(shape(x), xmin=0, xmax=60, ymin=0, ymax=40)
-point(x, "p") <- query(point(x), xmin=0, xmax=60, ymin=0, ymax=40)
-
-plotSpatialData() + 
-  plotImage(x, "i") +
-  plotLabel(x, "l") +
-  plotPoint(x, "p") +
-  plotShape(x, "s")
+image(x, "i") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+plotSpatialData() + plotImage(x, "i")
 }
