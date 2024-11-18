@@ -27,7 +27,7 @@ content describing the overall object.}
 
 \item{x}{\code{ImageArray}}
 
-\item{scale}{scalar index specifying which resolution to extract.}
+\item{k}{scalar index specifying which resolution to extract.}
 }
 \value{
 \code{ImageArray}
