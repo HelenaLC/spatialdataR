@@ -183,9 +183,7 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
     type <- match.arg(type, c("scale", "rotate", "translation", "affine"))
-    ms <- "multiscales"
-    ts <- "transformations"
-    ct <- "coordinateTransformations"
+    ms <- "multiscales"; ts <- "transformations"; ct <- "coordinateTransformations"
     if (!is.null(x[[ms]])) {
         # use existing as skeleton
         fd <- (df <- coordTransData(x))[1, ]
