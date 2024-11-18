@@ -112,10 +112,10 @@ setMethod("query", "ShapeFrame", \(x, ...) {
     df <- st_as_sf(data(x))
     xy <- st_coordinates(df)
     i <- 
-        xy[, 1] > args$xmin & 
-        xy[, 1] < args$xmax & 
-        xy[, 2] > args$ymin & 
-        xy[, 2] < args$ymax 
+        xy[, 1] >= args$xmin & 
+        xy[, 1] <= args$xmax & 
+        xy[, 2] >= args$ymin & 
+        xy[, 2] <= args$ymax 
     x@data <- data(x)[which(i), ]
     return(x)  
 })
@@ -125,7 +125,9 @@ setMethod("query", "ShapeFrame", \(x, ...) {
 setMethod("query", "PointFrame", \(x, ...) {
     args <- list(...)
     .check_bb(args)
-    filter(x, 
-        x > args$xmin, x < args$xmax, 
-        y > args$ymin, y < args$ymax)    
+    y <- filter(x, 
+        x >= args$xmin, x <= args$xmax, 
+        y >= args$ymin, y <= args$ymax)    
+    x@data <- y@data
+    return(x)
 })
