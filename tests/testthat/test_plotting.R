@@ -67,3 +67,27 @@ test_that("plotPoint()", {
     expect_identical(q$layers[[1]]$data, df)
     expect_is(q$layers[[1]]$mapping$colour, "quosure")
 })
+
+test_that("plotShape()", {
+    # invalid
+    expect_error(plotShape(x, "."))
+    expect_error(plotShape(x, 100))
+    # circles
+    y <- shape(x, i <- "blobs_circles")
+    q <- p + plotShape(x, i)
+    expect_s3_class(q, "ggplot")
+    df <- st_coordinates(st_as_sf(data(y)))
+    fd <- q$layers[[1]]$data[, c("x", "y")]
+    expect_equivalent(as.matrix(df), as.matrix(fd))
+    expect_null(q$layers[[1]]$mapping$colour)
+    expect_s3_class(q$layers[[1]]$geom, "GeomCircle")
+    # polygons
+    y <- shape(x, i <- "blobs_polygons")
+    q <- p + plotShape(x, i, c=NA)
+    expect_s3_class(q, "ggplot")
+    df <- st_coordinates(st_as_sf(data(y)))[, c(1, 2)]
+    fd <- q$layers[[1]]$data[, c("x", "y")]
+    expect_equivalent(as.matrix(df), as.matrix(fd))
+    expect_null(q$layers[[1]]$mapping$colour)
+    expect_s3_class(q$layers[[1]]$geom, "GeomPolygon")
+})
