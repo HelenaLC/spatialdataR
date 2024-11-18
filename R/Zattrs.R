@@ -1,8 +1,10 @@
 #' @name Zattrs
 #' @title The `Zattrs` class
+#' @aliases axes CTdata CTname CTtype
 #'
 #' @param x list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
+#' @param ... option arguments passed to and from other methods.
 #' 
 #' @return \code{Zattrs}
 #'

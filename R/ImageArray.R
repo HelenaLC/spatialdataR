@@ -6,7 +6,9 @@
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.
-#' @param k scalar index specifying which resolution to extract.
+#' @param i,j indices specifying elements to extract.
+#' @param k scalar index specifying which scale to extract.
+#' @param drop ignored.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return \code{ImageArray}
@@ -78,8 +80,8 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ImageArray
 #' @export
-setMethod("data", "ImageArray", \(x, i=1) {
-    if (i <= (n <- length(x@data))) return(x@data[[i]])
+setMethod("data", "ImageArray", \(x, k=1) {
+    if (k <= (n <- length(x@data))) return(x@data[[k]])
     stop("'scale", i, "' but only ", n, " resolution(s) available")
 })
 

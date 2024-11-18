@@ -44,6 +44,10 @@ content describing the overall object.}
 \item{x}{\code{ShapeFrame}}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
+
+\item{i, j}{indices specifying elements to extract.}
+
+\item{drop}{ignored.}
 }
 \value{
 \code{ShapeFrame}

@@ -23,6 +23,10 @@ content describing the overall object.}
 \item{...}{option arguments passed to and from other methods.}
 
 \item{x}{\code{LabelArray}}
+
+\item{i, j}{indices specifying elements to extract.}
+
+\item{drop}{ignored.}
 }
 \value{
 \code{LabelArray}

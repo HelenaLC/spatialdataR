@@ -151,25 +151,19 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     )
 }
 
-#' @name plotSpatialData
-#' @rdname plotSpatialData
-#' @title Visualization
-#' 
-#' @param x SpatialData 
-#' @param i Index of which slot of the Shape layer. Default value is 1.
-#' @param c Color border of the shape to plot. Default value is NULL.
-#' @param s Column name of interest in the shape coordinate file. If the geometry
-#' is "POINT" (i.e. a circle), the default column name is "radius". Otherwise it 
-#' is not needed for other geometry shapes such as "POLYGON".
-#' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
-#' with decreasing visibility. Default value is 0.2.
-NULL
-
-# x = 'PointFrame'
-# j = target space
-.df_p <- \(x, j) {
-    df <- as.data.frame(data(x))
-}
+#' #' @name plotSpatialData
+#' #' @rdname plotSpatialData
+#' #' @title Visualization
+#' #' 
+#' #' @param x SpatialData 
+#' #' @param i Index of which slot of the Shape layer. Default value is 1.
+#' #' @param c Color border of the shape to plot. Default value is NULL.
+#' #' @param s Column name of interest in the shape coordinate file. If the geometry
+#' #' is "POINT" (i.e. a circle), the default column name is "radius". Otherwise it 
+#' #' is not needed for other geometry shapes such as "POLYGON".
+#' #' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
+#' #' with decreasing visibility. Default value is 0.2.
+#' NULL
 
 #' @rdname plotSpatialData
 #' @export
@@ -185,13 +179,11 @@ setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
 
 # shape ----
 
-#' @param s Size of the shape to plot. Default is "radius".
-#'
 #' @rdname plotSpatialData
 #' @importFrom sf st_as_sf st_coordinates st_geometry_type
 #' @importFrom ggforce geom_circle
 #' @export
-setMethod("plotShape", signature = "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
+setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
     if (is.numeric(i)) 
         i <- shapeNames(x)[i]
     df <- data(shape(x, i))

@@ -22,6 +22,9 @@
 \item{x}{\code{\link{SpatialData}} element 
 or \code{\link{Zattrs}} of an element}
 
+\item{i}{scalar charcter or integer; 
+name or index of coordinate space}
+
 \item{name}{character(1); name of coordinate space}
 
 \item{type}{character(1); type of transformation}
