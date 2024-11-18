@@ -213,61 +213,59 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     ms <- "multiscales"
     ts <- "transformations"
     ct <- "coordinateTransformations"
-    if (!is.null(x[[ms]])) {
-        # use existing as skeleton
-        fd <- (df <- CTdata(x))[1, ]
-        fd <- fd[, c("input", "output", "type")]
-        fd$type <- type
-        fd$output$name <- name
-        fd[[fd$type]] <- list(data)
-        # append to existing if 'name' already present 
-        idx <- match(name, CTname(x))
-        typ <- CTtype(x)[idx]
-        if (!is.na(typ) && typ == "identity") {
-            df <- df[0, ]
-            app <- FALSE
-        } else if (app <- !is.na(idx)) {
-            if (seq <- (typ == "sequence")) {
-                df <- df[idx, ][[ts]][[1]]
-                fd$output$name <- df$output$name[1]
-            } else {
-                df <- df[idx, ]
-                if (is.null(df[[ts]])) {
-                    
-                } else {
-                    df[[ts]][[1]] <- df
-                }
-                # fd$type <- type
-                # fd[[fd$type]] <- list(data)
-            }
+    # use existing as skeleton
+    fd <- (df <- CTdata(x))[1, ]
+    fd <- fd[, c("input", "output", "type")]
+    fd$type <- type
+    fd$output$name <- name
+    fd[[fd$type]] <- list(data)
+    # append to existing if 'name' already present 
+    idx <- match(name, CTname(x))
+    typ <- CTtype(x)[idx]
+    if (!is.na(typ) && typ == "identity") {
+        df <- df[0, ]
+        app <- FALSE
+    } else if (app <- !is.na(idx)) {
+        if (seq <- (typ == "sequence")) {
+            df <- df[idx, ][[ts]][[1]]
+            fd$output$name <- df$output$name[1]
         } else {
+            df <- df[idx, ]
+            if (is.null(df[[ts]])) {
+                
+            } else {
+                df[[ts]][[1]] <- df
+            }
             # fd$type <- type
             # fd[[fd$type]] <- list(data)
         }
-        na <- setdiff(names(df), names(fd))
-        for (. in na) fd[[.]] <- list(NULL)
-        na <- setdiff(names(fd), names(df))
-        for (. in na) df[[.]] <- if (nrow(df) > 0) list(NULL) else list()
-        fd <- fd[, names(col) <- col <- names(df)]
-        # combine
-        if (app && !seq) {
-            # append to other
-            rownames(df) <- rownames(df$input) <- rownames(df$output) <- 1
-            rownames(fd) <- rownames(fd$input) <- rownames(fd$output) <- 2
-        } else {
-            # append to table or sequence
-            rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
-        }
-        new <- rbind(df, fd)
-        if (app) {
-            x[[ms]][[ct]][[1]]$type[idx] <- "sequence"
-            x[[ms]][[ct]][[1]][idx, ]$transformations[[1]] <- new
-        } else {
-            x[[ms]][[ct]][[1]] <- new
-        }
     } else {
-        # TODO: non-multiscale
+        # fd$type <- type
+        # fd[[fd$type]] <- list(data)
     }
+    na <- setdiff(names(df), names(fd))
+    for (. in na) fd[[.]] <- list(NULL)
+    na <- setdiff(names(fd), names(df))
+    for (. in na) df[[.]] <- if (nrow(df) > 0) list(NULL) else list()
+    fd <- fd[, names(col) <- col <- names(df)]
+    # combine
+    if (app && !seq) {
+        # append to other
+        rownames(df) <- rownames(df$input) <- rownames(df$output) <- 1
+        rownames(fd) <- rownames(fd$input) <- rownames(fd$output) <- 2
+    } else {
+        # append to table or sequence
+        rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
+    }
+    new <- rbind(df, fd)
+    if (is_ms <- !is.null(x[[ms]])) {
+        .x <- x[[ms]][[ct]][[1]]
+    } else .x <- x[[ct]]
+    if (app) {
+        .x$type[idx] <- "sequence"
+        .x[idx, ]$transformations[[1]] <- new
+    } else .x <- new
+    if (is_ms) x[[ms]][[ct]][[1]] <- .x else x[[ct]] <- .x
     return(x)
 })
 
