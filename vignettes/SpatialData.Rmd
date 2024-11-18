@@ -32,7 +32,7 @@ library(SpatialData)
 
 The `SpatialData` package contains a set of reader and plotting functions for 
 spatial omics data stored as [SpatialData](https://spatialdata.scverse.org/en/latest/index.html) 
-`.zarr` files, following [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout).
+`.zarr` files that follow [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout).
 
 Each `SpatialData` object is composed of five layers: images, labels, shapes, 
 points, and tables. Each layer may contain an arbitrary number of elements.
@@ -81,13 +81,24 @@ data(shape(x))
 meta(shape(x)) 
 ```
 
-## Multiscales
+## Transformations
 
-```{r ms}
-image(x, "blobs_multiscale_image")
+To facilitate .zattrs handling, we provide a set of functions to access and modify its contents. Specifically,
+
+- `axes` to access a given element's dimension names and types
+- `CTdata/name/type` to access coordinate transformation components
+- `rmv/addCT` to remove, add, or append coordinate transformations
+
+```{r cs-methods}
+z <- meta(label(x))
+axes(z)
+CTdata(z)
+CTname(rmvCT(z, "scale"))
+CTname(addCT(z, 
+    name="D'Artagnan", 
+    type="scale", 
+    data=c(19, 94)))
 ```
-
-## Coordinates
 
 `Zattrs` specify an explicit relationship between elements and coordinate systems.
 We can represent these are a graph as follows:
@@ -103,6 +114,23 @@ sequential transformation (scaling and translation) for the `sequence` space:
 
 ```{r cs-path}
 SpatialData:::.get_path(g, "blobs_labels", "sequence")
+```
+
+## Multiscales
+
+`Image/LabelArray`s are linked to potentially multiscale .zarr stores.
+Their show method includes the scales available for a given element:
+
+```{r ms-show}
+image(x, "blobs_image")
+image(x, "blobs_multiscale_image")
+```
+
+Internally, multiscale `ZarrArray`s are stored as a list, e.g.:
+
+```{r ms-dims}
+i <- image(x, "blobs_multiscale_image")
+vapply(i@data, dim, numeric(3))
 ```
 
 ## Visualization
@@ -121,16 +149,30 @@ wrap_plots(nrow=1, lapply(seq(3), \(.)
     plotSpatialData() + plotImage(x, i=2, k=.)))
 ```
 
+# Datasets
+
+Data from a variety of technologies has been made available as `SpatialData` .zarr stores here 
+[here](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html).
+These, in turn, have been deposited in Bioconductor's NSF Open Storage Network bucket,
+and can be retrieved from there with support for caching using `r BiocStyle::Biocpkg("BiocFileCache")`.
+
+Here, we interrogate the bucket for available (zipped) .zarr archives:
+
+```{r ons-list}
+available_spd_zarr_zips()
+```
+
+Any of the above can be retrieved (once) into some location, and read into R:
+
+```{r ons-read}
+dir.create(td <- tempfile())
+pa <- unzip_merfish_demo(td)
+(x <- readSpatialData(pa))
+```
+
 # Technologies
 
 ## MERFISH
-
-```{r merfish-read}
-td <- tempfile()
-dir.create(td) # problem in action related to file reference (URL?) scheme
-pa <- unzip_merfish_demo(dest=td)
-x <- readSpatialData(pa)
-```
 
 In this example data, we do not have a `label` for the `shape` polygons. Such labels could be morphological regions annotated by pathologists.
 
@@ -153,10 +195,8 @@ Lets crop the image and visualize and put it next to the original image:
 ```{r}
 qu <- list(xmin=1800, xmax=2400, ymin=5000, ymax=5400)
 bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="yellow", fill=NA)
-args <- c(list(x=image(x), cs="global"), qu)
-y <- SpatialData(images=list("."=do.call(query, args)))
-plotSpatialData() + plotImage(x) + bb | 
-plotSpatialData() + plotImage(y)
+y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
+plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
 ```
 
 ## MibiTOF
@@ -188,10 +228,8 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 ```{r visiumhd-plot}
 qu <- list(xmin=100, xmax=300, ymin=200, ymax=400)
 bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="black", fill=NA)
-args <- c(list(x=image(x), cs="downscaled_lowres"), qu)
-y <- SpatialData(images=list("."=do.call(query, args)))
-plotSpatialData() + plotImage(x) + bb |
-plotSpatialData() + plotImage(y)
+y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
+plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
 ```
 
 ## CyCIF (MCMICRO output)
