@@ -2,6 +2,14 @@ library(SpatialData)
 
 context("checking cache operations for zipped zarr")
 
+test_that("available_sdio()", {
+    expect_error(available_sdio(1))
+    x <- available_sdio()
+    expect_is(x, "character")
+    expect_true(length(x) > 0)
+    expect_true(any(grepl("^(vis|xen)", x)))
+})
+
 test_that("OSN payloads exist", {
     if (requireNamespace("paws"))
         expect_true(length(available_spd_zarr_zips()) > 0L)
