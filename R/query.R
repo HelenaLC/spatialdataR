@@ -64,11 +64,13 @@ setMethod("query", "SpatialData", \(x, ...) {
     return(xy)
 }
 
-setMethod("query", "ImageArray", \(x, cs, ...) {
+setMethod("query", "ImageArray", \(x, j, ...) {
     qu <- list(...)
     .check_bb(qu)
-    ts <- .get_path(.coord2graph(x), "self", cs)
+    if (missing(j)) j <- 1
+    if (is.numeric(j)) j <- coordTransName(x)[j]
     # transform query into target space
+    ts <- .get_path(.coord2graph(x), "self", j)
     xy <- split(unlist(qu), grepl("^y", names(qu)))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
     xy <- .transform(xy, ts, TRUE)
@@ -81,9 +83,10 @@ setMethod("query", "ImageArray", \(x, cs, ...) {
     # add transformation of type translation as to
     # offset origin by difference between new & old
     os <- unlist(qu[c("xmin", "ymin")]) - os
-    addCT(x, 
-        name=cs, type="translation", 
+    if (!all(os == 0)) x <- addCT(x, 
+        name=j, type="translation", 
         data=c(0, os[2], os[1]))
+    return(x)
 })
 
 #' @rdname query
