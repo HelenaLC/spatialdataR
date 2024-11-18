@@ -35,6 +35,32 @@ test_that("rmvCT", {
     expect_identical(CTname(rmvCT(y, i)), CTname(y)[-i])
 })
 
+test_that("addCT", {
+    # get 1st element from each layer
+    ls <- setdiff(.LAYERS, "tables")
+    es <- lapply(ls, \(.) x[.,1][[.]][[1]])
+    for (y in es) {
+        t <- "identity"
+        expect_silent(addCT(y, ".", t, NULL))
+        expect_error(addCT(y, ".", t, 12345))
+        t <- "rotate"
+        expect_silent(addCT(y, ".", t, 1)) 
+        expect_error(addCT(y, ".", t, -12345)) # negative value
+        expect_error(addCT(y, ".", t, c(1,1))) # too many
+        expect_error(addCT(y, ".", t, character(1))) # not a number
+        t <- "scale"
+        d <- ifelse(is(y, "ImageArray"), 3, 2)
+        expect_silent(addCT(y, ".", t, 1+numeric(d)))
+        expect_error(addCT(y, ".", t, numeric(d))) # zeroes
+        expect_error(addCT(y, ".", t, character(d))) # character
+        expect_error(addCT(y, ".", t, 1+numeric(d+1))) # wrong length
+        t <- "translation"
+        expect_silent(addCT(y, ".", t, numeric(d)))
+        expect_error(addCT(y, ".", t, character(d))) # character
+        expect_error(addCT(y, ".", t, numeric(d+1))) # wrong length
+    }
+})
+
 test_that(".coord2graph", {
     # object-wide
     g <- .coord2graph(x)

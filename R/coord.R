@@ -190,14 +190,29 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     x@meta <- addCT(meta(x), name, type, data); x })
 
+.check_ct <- \(x, type, data) {
+    d <- ifelse(is.character(a <- axes(x)), length(a), nrow(a))
+    f <- \(t) stop("invalid 'data' for transformation of 'type' ", dQuote(t))
+    t <- match.arg(type, c("identity", "scale", "rotate", "translation", "affine"))
+    . <- switch(t, 
+        identity=is.null(data),
+        translation=length(data) == d & is.numeric(data),
+        rotate=length(data) == 1 & is.numeric(data) & data > 0,
+        scale=length(data) == d & is.numeric(data) & all(data > 0),
+        TRUE)
+    if (!.) f(t)
+}
+
 #' @rdname coord
 #' @export
 setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
-    type <- match.arg(type, c("scale", "rotate", "translation", "affine"))
-    ms <- "multiscales"; ts <- "transformations"; ct <- "coordinateTransformations"
+    .check_ct(x, type, data)
+    ms <- "multiscales"
+    ts <- "transformations"
+    ct <- "coordinateTransformations"
     if (!is.null(x[[ms]])) {
         # use existing as skeleton
         fd <- (df <- CTdata(x))[1, ]
