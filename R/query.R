@@ -69,9 +69,9 @@ setMethod("query", "ImageArray", \(x, j, ...) {
     qu <- list(...)
     .check_bb(qu)
     if (missing(j)) j <- 1
-    if (is.numeric(j)) j <- coordTransName(x)[j]
+    if (is.numeric(j)) j <- CTname(x)[j]
     stopifnot(length(j) == 1)
-    . <- grep(j, coordTransName(i))
+    . <- grep(j, CTname(i))
     if (!length(.) || is.na(.)) stop("invalid 'j'")
     # transform query into target space
     ts <- .get_path(.coord2graph(x), "self", j)

@@ -76,7 +76,7 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
         i <- imageNames(x)[i]
     y <- image(x, i)
     if (is.numeric(j)) 
-        j <- coordTransName(y)[j]
+        j <- CTname(y)[j]
     df <- .df_i(y, k)
     wh <- .get_wh(x, i, j)
     .gg_i(df, wh$w, wh$h)
