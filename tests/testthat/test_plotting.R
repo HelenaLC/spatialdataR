@@ -38,6 +38,24 @@ test_that("plotImage()", {
     })
 })
 
+test_that("plotLabel()", {
+    p <- plotSpatialData()
+    # simple
+    y <- label(x, i <- "blobs_labels")
+    y <- y[,seq_len(32)] # subset to make things harder
+    q <- p + plotLabel(x, i, c=NULL)
+    expect_s3_class(q, "ggplot")
+    expect_equal(q$coordinates$ratio, 1)
+    expect_is(q$layers[[1]]$mapping$fill, "quosure")
+    # alpha
+    q <- p + plotLabel(x, i, a=a <- runif(1))
+    expect_identical(q$layers[[1]]$aes_params$alpha, a)
+    expect_error(show(plotSpatialData() + plotLabel(x, i, a=".....")))
+    expect_error(show(plotSpatialData() + plotLabel(x, i, a=c(1, 2))))
+    # TODO: use 'annotation_raster'
+    # TODO: multiscale plotting
+})
+
 test_that("plotPoint()", {
     p <- plotSpatialData()
     y <- point(x, i <- "blobs_points")
@@ -52,7 +70,7 @@ test_that("plotPoint()", {
     expect_identical(q$layers[[1]]$data, df)
     expect_null(q$layers[[1]]$mapping$colour)
     # coloring by color
-    q <- p + plotPoint(x, i, c=. <- "black")
+    q <- p + plotPoint(x, i, c=. <- "red")
     expect_identical(q$layers[[1]]$data, df)
     expect_identical(q$layers[[1]]$aes_params$colour, .)
     # coloring by coord
@@ -69,16 +87,14 @@ test_that("plotPoint()", {
     expect_is(q$layers[[1]]$mapping$colour, "quosure")
 })
 
-test_that("plotShape()", {
+test_that("plotShape(),circles", {
+    p <- plotSpatialData()
     # invalid
     expect_error(plotShape(x, "."))
     expect_error(plotShape(x, 100))
-})
-test_that("plotShape(),circles", {
-    p <- plotSpatialData()
     # simple
     y <- shape(x, i <- "blobs_circles")
-    q <- p + plotShape(x, i)
+    q <- p + plotShape(x, i, c=NULL)
     expect_s3_class(q, "ggplot")
     df <- st_coordinates(st_as_sf(data(y)))
     fd <- q$layers[[1]]$data[, c("x", "y")]
@@ -90,17 +106,33 @@ test_that("plotShape(),circles", {
     expect_s3_class(q$layers[[1]]$geom, "GeomPoint")
     expect_identical(q$layers[[1]]$aes_params$size, s)
     expect_error(show(plotSpatialData() + plotShape(x, i, s=".")))
+    # color
+    expect_error(plotShape(x, i, c="."))
+    q <- p + plotShape(x, i, c=NA) # none
+    expect_null(q$layers[[1]]$mapping$colour)
+    q <- p + plotShape(x, i, c=c <- 1) # numeric
+    expect_null(q$layers[[1]]$mapping$colour)
+    q <- p + plotShape(x, i, c=c <- "red") # string
+    expect_identical(q$layers[[1]]$aes_params$col, c)
 })
 
 test_that("plotShape(),polygons", {
     p <- plotSpatialData()
-    # simple
     y <- shape(x, i <- "blobs_polygons")
-    q <- p + plotShape(x, i, c=NA)
+    # simple
+    q <- p + plotShape(x, i, c=NULL)
     expect_s3_class(q, "ggplot")
     df <- st_coordinates(st_as_sf(data(y)))[, c(1, 2)]
     fd <- q$layers[[1]]$data[, c("x", "y")]
     expect_equivalent(as.matrix(df), as.matrix(fd))
-    expect_null(q$layers[[1]]$mapping$colour)
     expect_s3_class(q$layers[[1]]$geom, "GeomPolygon")
+    expect_is(q$layers[[1]]$mapping$colour, "quosure")
+    # color
+    expect_error(plotShape(x, i, c="."))
+    q <- p + plotShape(x, i, c=NA) # none
+    expect_null(q$layers[[1]]$mapping$colour)
+    q <- p + plotShape(x, i, c=c <- 1) # numeric
+    expect_identical(q$layers[[1]]$aes_params$col, c)
+    q <- p + plotShape(x, i, c=c <- "red") # string
+    expect_identical(q$layers[[1]]$aes_params$col, c)
 })
