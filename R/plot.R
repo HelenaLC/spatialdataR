@@ -127,7 +127,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
         } else if (.str_is_col(c)) {
             lgd <- "none"
             dot$colour <- c
-        }
+        } else stop("invalid 'c'")
     } else lgd <- "none"
     if (is.character(s)) {
         if (s %in% names(df)) {
