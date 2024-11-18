@@ -6,7 +6,7 @@
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.
-#' @param scale scalar index specifying which resolution to extract.
+#' @param k scalar index specifying which resolution to extract.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return \code{ImageArray}
