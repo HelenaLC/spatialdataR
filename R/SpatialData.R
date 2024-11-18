@@ -1,8 +1,7 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @aliases 
-#' data meta
+#' @aliases data meta
 #' image images image<- images<- imageNames 
 #' label labels label<- labels<- labelNames 
 #' point points point<- points<- pointNames 
