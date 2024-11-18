@@ -20,3 +20,38 @@ test_that("axes", {
     expect_is(y, "character")
     expect_length(y, 2)
 })
+
+test_that("rmvCT", {
+    y <- label(x)
+    # invalid index/name
+    expect_error(rmvCT(y, 100))
+    expect_error(rmvCT(y, "."))
+    expect_error(rmvCT(y, c(".", CTname(y)[1])))
+    # by name
+    i <- sample(CTname(y), 2) 
+    expect_identical(CTname(rmvCT(y, i)), setdiff(CTname(y), i))
+    # by index
+    i <- sample(seq_along(CTname(y)), 2) 
+    expect_identical(CTname(rmvCT(y, i)), CTname(y)[-i])
+})
+
+test_that(".coord2graph", {
+    # object-wide
+    g <- .coord2graph(x)
+    expect_is(g, "graph")
+    # graph should contain node for
+    # every element & transformation
+    ns <- lapply(setdiff(.LAYERS, "tables"), 
+        \(l) lapply(names(x[[l]]), 
+        \(e) c(e, CTname(x[[l]][[e]]))))
+    ns <- sort(unique(unlist(ns)))
+    expect_true(all(ns %in% sort(nodes(g))))
+    # element-wise
+    for (l in setdiff(.LAYERS, "tables")) 
+        for (e in names(x[[l]])) {
+            y <- x[[l]][[e]]
+            g <- .coord2graph(y)
+            expect_is(g, "graph")
+            expect_true("self" %in% nodes(g))
+        }
+})

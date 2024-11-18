@@ -153,14 +153,18 @@ setMethod("rmvCT", "SpatialDataElement",
 #' @export
 setMethod("rmvCT", "Zattrs", \(x, i) {
     nms <- CTname(x)
-    if (is.numeric(i)) i <- nms[i]
+    if (is.numeric(i)) {
+        if (any(i > length(nms)))
+            stop("invalid 'i'")
+        i <- nms[i]
+    }
     nan <- setdiff(i, nms)
     if (length(nan)) stop(
         "couln't find 'coordTrans' of name(s) ", 
         paste(dQuote(nan), collapse=","))
-    # prevent against dropping identity
-    i <- match(i, nms, nomatch=0)
-    i <- i[CTtype(x)[i] != "identity"]
+    i <- match(i, nms)
+    # # prevent against dropping identity
+    # i <- i[CTtype(x)[i] != "identity"]
     ms <- "multiscales"
     ct <- "coordinateTransformations"
     if (length(i)) {
