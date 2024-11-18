@@ -26,6 +26,10 @@ test_that("get one", {
         expect_error(get(f)(x, 0))
         expect_error(get(f)(x, "."))
         expect_error(get(f)(x, c(1,1)))
+        set <- get(paste0(f, "s<-"))
+        y <- set(x, list())
+        expect_length(get(f)(y), 0)
+        expect_silent(get(f, y, 9))
     }
 })
 
@@ -187,6 +191,9 @@ test_that("[,SpatialData", {
     expect_identical(labelNames(y), labelNames(x)[2])
     expect_error(x[c(1, 2), list(1, 9)]) # any out of bounds
     expect_error(x[c(1, 2), c(1, 2, 3)]) # mismatching length
+    y <- x[c(1, 2), list(TRUE, FALSE)]
+    expect_length(labels(y), 0)
+    expect_identical(images(y), images(x))
     # vector or list handling for simple indexing
     expect_identical(x[c(1, 2), c(1, 1)], x[c(1, 2), list(1, 1)])
     expect_equivalent(.n(x[c(1, 2), list(1, c(1, 2))]), c(1, 2, 0, 0, 0))
