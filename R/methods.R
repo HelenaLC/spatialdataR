@@ -20,29 +20,6 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     attr(x, grep(i, names(attributes(x)), value=TRUE))
 })
 
-#' @importFrom utils getFromNamespace
-.check_i <- \(x, i, e) {
-    e <- match.arg(e, .LAYERS)
-    stopifnot(length(i) == 1)
-    if (!length(x[[e]]))
-        stop("'SpatialData' object does not contain any '", e, "'")
-    if (is.character(i)) {
-        fun <- paste0(gsub("s$", "", e), "Names")
-        fun <- get(fun)
-        #fun <- getFromNamespace(fun, "SpatialData")
-        stopifnot(
-            i %in% fun(x),
-            sum(!is.na(match(fun(x), i))) == 1)
-    } else {
-        fun <- get(e)
-        #fun <- getFromNamespace(e, "SpatialData")
-        stopifnot(
-            round(i) == i,
-            i %in% seq_along(fun(x)))
-    }
-    return(i)
-}
-
 # sub ----
 
 #' @rdname SpatialData
@@ -156,35 +133,39 @@ setMethod("tableNames", "SpatialData", \(x) names(x$tables))
 
 # get one ----
 
-#' @rdname SpatialData
-#' @export
-setMethod("image", "SpatialData", \(x, i=1) {
-    if (length(y <- images(x)))
-        y[[.check_i(x, i, "images")]] else y })
+#' @importFrom utils getFromNamespace
+.get_ele <- \(x, e, l) {
+    l <- match.arg(l, .LAYERS)
+    stopifnot(length(e) == 1)
+    es <- x[[l]]
+    if (!length(es)) return(.)
+    if (is.character(e)) {
+        e <- match.arg(e, names(es))
+    } else stopifnot(
+        round(e) == e, 
+        e %in% seq_along(es))
+    return(x[[l]][[e]])
+}
 
 #' @rdname SpatialData
 #' @export
-setMethod("label", "SpatialData", \(x, i=1) {
-    if (length(y <- labels(x)))
-        y[[.check_i(x, i, "labels")]] else y })
+setMethod("image", "SpatialData", \(x, i=1) .get_ele(x, i, "images"))
 
 #' @rdname SpatialData
 #' @export
-setMethod("point", "SpatialData", \(x, i=1) {
-    if (length(y <- points(x)))
-        y[[.check_i(x, i, "points")]] else y })
+setMethod("label", "SpatialData", \(x, i=1) .get_ele(x, i, "labels"))
 
 #' @rdname SpatialData
 #' @export
-setMethod("shape", "SpatialData", \(x, i=1) {
-    if (length(y <- shapes(x)))
-        y[[.check_i(x, i, "shapes")]] else y })
+setMethod("point", "SpatialData", \(x, i=1) .get_ele(x, i, "points"))
 
 #' @rdname SpatialData
 #' @export
-setMethod("table", "SpatialData", \(x, i=1) {
-    if (length(y <- tables(x)))
-        y[[.check_i(x, i, "tables")]] else y })
+setMethod("shape", "SpatialData", \(x, i=1) .get_ele(x, i, "shapes"))
+
+#' @rdname SpatialData
+#' @export
+setMethod("table", "SpatialData", \(x, i=1) .get_ele(x, i, "tables"))
 
 # set all ----
 
@@ -196,7 +177,7 @@ setReplaceMethod("[[", c("SpatialData", "numeric"),
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("[[", c("SpatialData", "character"), 
-    \(x, i, value) {attr(x, i) <- value; return(x) })
+    \(x, i, value) { attr(x, match.arg(i, .LAYERS)) <- value; return(x) })
 
 # |_value=list ----
 
