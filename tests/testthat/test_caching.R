@@ -28,14 +28,19 @@ test_that("use_sdio()", {
 })
 
 test_that("OSN payloads exist", {
-    if (requireNamespace("paws"))
-        expect_true(length(available_spd_zarr_zips()) > 0L)
+    if (requireNamespace("paws", quietly=TRUE)) {
+        x <- available_spd_zarr_zips()
+        expect_gt(length(x), 0)
+        expect_is(x, "character")
+        expect_true(all(grepl("\\.zip$", x)))
+    }
 })
 
 test_that("merfish demo zip has expected content", {
     tf <- tempfile()
     dir.create(tf)
-    dem <- unzip_merfish_demo(cache=BiocFileCache::BiocFileCache(), destination=tf)
+    bfc <- BiocFileCache::BiocFileCache()
+    dem <- unzip_merfish_demo(cache=bfc, destination=tf)
     cont <- dir(tf, full.names=TRUE, recursive=TRUE)
     expect_true(length(cont) == 29L)
     parq <- grep("parquet", cont)
