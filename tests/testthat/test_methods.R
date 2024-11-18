@@ -7,6 +7,8 @@ fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
 typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
 
+# get ----
+
 test_that("get all", {
     for (f in paste0(fun, "s"))
         expect_is(get(f)(x), "list")
@@ -27,6 +29,12 @@ test_that("get one", {
     }
 })
 
+# set ----
+
+test_that("set all", {
+    
+})
+
 test_that("set one", {
     # value=NULL
     for (f in fun) {
@@ -42,18 +50,30 @@ test_that("set one", {
         SingleCellExperiment())
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
         set <- get(paste0(f, "<-"))
+        nms <- get(paste0(f, "Names"))
+        # character
         x <- set(x, i=".", value=o)
+        expect_true("." %in% nms(x))
         expect_is(get(f)(x, "."), t)
+        # numeric
+        x <- set(x, i=1, value=o)
+        expect_is(get(f)(x, 1), t)
+        # missing
+        n <- \(.) length(get(paste0(f, "s"))(.))
+        expect_silent(set(x, value=o))
+        y <- set(x, value=NULL)
+        expect_equal(n(y), n(x)-1)
+        # invalid
         expect_error(set(x, i=1, value=1))
     })
 })
 
 test_that("get nms", {
     for (f in fun) {
-        get_lys <- get(paste0(f, "s"))
-        get_nms <- get(paste0(f, "Names"))
-        expect_is(get_nms(x), "character")
-        expect_identical(get_nms(x), names(get_lys(x)))
+        lys <- get(paste0(f, "s"))
+        nms <- get(paste0(f, "Names"))
+        expect_is(nms(x), "character")
+        expect_identical(nms(x), names(lys(x)))
     }
 })
 

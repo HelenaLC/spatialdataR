@@ -52,19 +52,19 @@ test_that("addCT", {
         t <- "rotate"
         expect_error(addCT(y, ".", t, -12345)) # negative
         expect_error(addCT(y, ".", t, c(1,1))) # too many
-        expect_error(addCT(y, ".", t, ".")) # character
+        expect_error(addCT(y, ".", t, ".")) # not a number
         expect_silent(z <- addCT(y, ".", t, v <- 1)) 
         .check_data(z, v)
         t <- "scale"
         d <- ifelse(is(y, "ImageArray"), 3, 2)
         expect_error(addCT(y, ".", t, numeric(d))) # zeroes
-        expect_error(addCT(y, ".", t, character(d))) # character
         expect_error(addCT(y, ".", t, 1+numeric(d+1))) # too many
+        expect_error(addCT(y, ".", t, character(d))) # not a number
         expect_silent(z <- addCT(y, ".", t, v <- 1+numeric(d)))
         .check_data(z, v)
         t <- "translation"
         expect_error(addCT(y, ".", t, numeric(d+1))) # too many
-        expect_error(addCT(y, ".", t, character(d))) # character
+        expect_error(addCT(y, ".", t, character(d))) # not a number
         expect_silent(z <- addCT(y, ".", t, v <- numeric(d)))
         .check_data(z, v)
     }
