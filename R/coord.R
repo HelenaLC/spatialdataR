@@ -111,23 +111,31 @@
 
 #' @name coord
 #' @title Coordinate transformations
-#' @aliases rmvCT
+#' @aliases addCT rmvCT 
+#' 
+#' @param x \code{\link{SpatialData}} element 
+#'   or \code{\link{Zattrs}} of an element
+#' @param name character(1); name of coordinate space
+#' @param type character(1); type of transformation
+#' @param data transformation data; size and shape depend on transformation and
+#'   element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
 #'
 #' # view available coordinate transformations
-#' coordTransData(z <- meta(label(x)))
+#' CTdata(z <- meta(label(x)))
 #'
 #' # add
 #' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
-#' coordTransData(addCT(z, "new", "translation", c(12, 34)))
+#' CTdata(addCT(z, "new", "translation", c(12, 34)))
 #' 
 #' # rmv
-#' coordTransData(rmvCT(z, 2)) # by index
-#' coordTransData(rmvCT(z, "scale")) # by name
-#' coordTransData(rmvCT(z, 1)) # identity is protected
+#' CTdata(rmvCT(z, 2)) # by index
+#' CTdata(rmvCT(z, "scale")) # by name
+#' CTdata(rmvCT(z, 1)) # identity is protected
 NULL
 
 # rmv ----
@@ -142,7 +150,7 @@ setMethod("rmvCT", "SpatialDataElement",
 #' @rdname coord
 #' @export
 setMethod("rmvCT", "Zattrs", \(x, i) {
-    nms <- coordTransName(x)
+    nms <- CTname(x)
     if (is.numeric(i)) i <- nms[i]
     nan <- setdiff(i, nms)
     if (length(nan)) stop(
@@ -150,7 +158,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
         paste(dQuote(nan), collapse=","))
     # prevent against dropping identity
     i <- match(i, nms, nomatch=0)
-    i <- i[coordTransType(x)[i] != "identity"]
+    i <- i[CTtype(x)[i] != "identity"]
     ms <- "multiscales"
     ct <- "coordinateTransformations"
     if (length(i)) {
@@ -186,14 +194,14 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     ms <- "multiscales"; ts <- "transformations"; ct <- "coordinateTransformations"
     if (!is.null(x[[ms]])) {
         # use existing as skeleton
-        fd <- (df <- coordTransData(x))[1, ]
+        fd <- (df <- CTdata(x))[1, ]
         fd <- fd[, c("input", "output", "type")]
         fd$type <- type
         fd$output$name <- name
         fd[[fd$type]] <- list(data)
         # append to existing if 'name' already present 
-        idx <- match(name, coordTransName(x))
-        typ <- coordTransType(x)[idx]
+        idx <- match(name, CTname(x))
+        typ <- CTtype(x)[idx]
         if (!is.na(typ) && typ == "identity") {
             df <- df[0, ]
             app <- FALSE
@@ -231,33 +239,6 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         }
     }
     return(x)
-})
-
-setGeneric("setCS", \(x, ...) standardGeneric("setCS"))
-setGeneric("setTS", \(x, ...) standardGeneric("setTS"))
-
-# TODO: check the validity of this function
-setMethod("setCS", "SpatialDataElement", \(x, c) {
-    ms <- (md <- meta(x))$multiscales
-    if (!is.null(ms)){
-        cs <- md$coordinateTransformations
-        if (length(cs) == 1) {
-            md$multiscales$coordinateTransformations <- c
-        } else{
-            md$multiscales$coordinateTransformations[[1]] <- c
-        }
-    }
-    md
-})
-
-# transformations
-setMethod("setTS", "SpatialDataElement", \(x, i=1, t) {
-    y <- getCS(x)
-    if (is.character(i)) 
-        i <- which(y$output$name == i)
-    y[i, ]$transformations[[1]] <- t
-    x@meta <- Zattrs(setCS(x,y))
-    x
 })
 
 #' #' @importFrom EBImage resize

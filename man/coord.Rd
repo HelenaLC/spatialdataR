@@ -2,6 +2,7 @@
 % Please edit documentation in R/coord.R
 \name{coord}
 \alias{coord}
+\alias{addCT}
 \alias{rmvCT}
 \alias{rmvCT,SpatialDataElement-method}
 \alias{rmvCT,Zattrs-method}
@@ -17,6 +18,17 @@
 
 \S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL)
 }
+\arguments{
+\item{x}{\code{\link{SpatialData}} element 
+or \code{\link{Zattrs}} of an element}
+
+\item{name}{character(1); name of coordinate space}
+
+\item{type}{character(1); type of transformation}
+
+\item{data}{transformation data; size and shape depend on transformation and
+element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)}
+}
 \description{
 Coordinate transformations
 }
@@ -26,14 +38,14 @@ x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
 # view available coordinate transformations
-coordTransData(z <- meta(label(x)))
+CTdata(z <- meta(label(x)))
 
 # add
 addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
-coordTransData(addCT(z, "new", "translation", c(12, 34)))
+CTdata(addCT(z, "new", "translation", c(12, 34)))
 
 # rmv
-coordTransData(rmvCT(z, 2)) # by index
-coordTransData(rmvCT(z, "scale")) # by name
-coordTransData(rmvCT(z, 1)) # identity is protected
+CTdata(rmvCT(z, 2)) # by index
+CTdata(rmvCT(z, "scale")) # by name
+CTdata(rmvCT(z, 1)) # identity is protected
 }
