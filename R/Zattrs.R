@@ -2,11 +2,20 @@
 #' @title The `Zattrs` class
 #'
 #' @param x list extracted from a OME-NGFF compliant .zattrs file.
+#' @param name character string for extraction (see ?base::`$`).
 #' 
 #' @return \code{Zattrs}
 #'
 #' @examples
-#' Zattrs()
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
+#' 
+#' z <- meta(label(x))
+#' axes(z) 
+#' CTdata(z)
+#' CTname(z)
+#' CTtype(z)
 #'
 #' @export
 Zattrs <- \(x=list()) {
@@ -26,9 +35,9 @@ Zattrs <- \(x=list()) {
 setMethod("$", "Zattrs", \(x, name) x[[name]])
 
 setGeneric("axes", \(x, ...) standardGeneric("axes"))
-setGeneric("coordTransData", \(x, ...) standardGeneric("coordTransData"))
-setGeneric("coordTransName", \(x, ...) standardGeneric("coordTransName"))
-setGeneric("coordTransType", \(x, ...) standardGeneric("coordTransType"))
+setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
+setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
+setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))
 
 #' @rdname Zattrs
 #' @export
@@ -40,7 +49,7 @@ setMethod("axes", "Zattrs", \(x, ...) {
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransData", "Zattrs", \(x, ...) {
+setMethod("CTdata", "Zattrs", \(x, ...) {
     ms <- x$multiscales
     if (!is.null(ms)) x <- ms
     x <- x$coordinateTransformations
@@ -49,11 +58,11 @@ setMethod("coordTransData", "Zattrs", \(x, ...) {
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransName", "Zattrs", \(x, ...) coordTransData(x)$output$name)
+setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransType", "Zattrs", \(x, ...) coordTransData(x)$type)
+setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
 
 #' @rdname Zattrs
 #' @export
@@ -61,12 +70,12 @@ setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransData", "SpatialDataElement", \(x, ...) coordTransData(meta(x)))
+setMethod("CTdata", "SpatialDataElement", \(x, ...) CTdata(meta(x)))
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransName", "SpatialDataElement", \(x, ...) coordTransName(meta(x)))
+setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
 
 #' @rdname Zattrs
 #' @export
-setMethod("coordTransType", "SpatialDataElement", \(x, ...) coordTransType(meta(x)))
+setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
