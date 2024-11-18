@@ -6,12 +6,15 @@
 #' @exportMethod $
 setMethod("$", "SpatialData", \(x, name) attr(x, name))
 
+#' @rdname SpatialData
+#' @importFrom methods callNextMethod
 #' @export
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
 })
 
+#' @rdname SpatialData
 #' @export
 setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     attr(x, grep(i, names(attributes(x)), value=TRUE))
@@ -42,6 +45,8 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
 
 # sub ----
 
+#' @rdname SpatialData
+#' @export
 setMethod("[", "SpatialData", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
