@@ -49,10 +49,11 @@ test_that("plotPoint()", {
     # simple
     q <- p + plotPoint(x, i)
     expect_s3_class(q, "ggplot")
-    expect_null(q$layers[[1]]$mapping$colour)
     expect_identical(q$layers[[1]]$data, df)
+    expect_null(q$layers[[1]]$mapping$colour)
     # coloring by color
     q <- p + plotPoint(x, i, c=. <- "black")
+    expect_identical(q$layers[[1]]$data, df)
     expect_identical(q$layers[[1]]$aes_params$colour, .)
     # coloring by coord
     q <- p + plotPoint(x, i, c="x")
@@ -72,7 +73,10 @@ test_that("plotShape()", {
     # invalid
     expect_error(plotShape(x, "."))
     expect_error(plotShape(x, 100))
-    # circles
+})
+test_that("plotShape(),circles", {
+    p <- plotSpatialData()
+    # simple
     y <- shape(x, i <- "blobs_circles")
     q <- p + plotShape(x, i)
     expect_s3_class(q, "ggplot")
@@ -81,7 +85,16 @@ test_that("plotShape()", {
     expect_equivalent(as.matrix(df), as.matrix(fd))
     expect_null(q$layers[[1]]$mapping$colour)
     expect_s3_class(q$layers[[1]]$geom, "GeomCircle")
-    # polygons
+    # size
+    q <- p + plotShape(x, i, s=s <- runif(1, 1, 10))
+    expect_s3_class(q$layers[[1]]$geom, "GeomPoint")
+    expect_identical(q$layers[[1]]$aes_params$size, s)
+    expect_error(show(plotSpatialData() + plotShape(x, i, s=".")))
+})
+
+test_that("plotShape(),polygons", {
+    p <- plotSpatialData()
+    # simple
     y <- shape(x, i <- "blobs_polygons")
     q <- p + plotShape(x, i, c=NA)
     expect_s3_class(q, "ggplot")

@@ -197,7 +197,6 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
     switch(typ,
         # POINT means circle
         POINT={
-            geo <- geom_circle
             names(xs) <- xs <- setdiff(names(df), "geometry")
             df <- data.frame(xy, lapply(xs, \(.) df[[.]]))
             names(df) <- c("x", "y", xs)
@@ -210,8 +209,10 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
                 aes$colour <- aes(.data[[c]])[[1]]
             } else stop("invalid 'c'")
             if (is.numeric(s)) {
+                geo <- geom_point
                 dot$size <- s
             } else if (!is.null(s)) {
+                geo <- geom_circle
               aes$x0 <- df$x
               aes$y0 <- df$y
               aes$r <- aes(.data[[s]])[[1]]
