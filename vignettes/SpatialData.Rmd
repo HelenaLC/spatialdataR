@@ -156,7 +156,7 @@ Data from a variety of technologies has been made available as `SpatialData` .za
 These, in turn, have been deposited in Bioconductor's NSF Open Storage Network bucket,
 and can be retrieved from there with support for caching using `r BiocStyle::Biocpkg("BiocFileCache")`.
 
-Here, we interrogate the bucket for available (zipped) .zarr archives:
+We can interrogate the bucket for available (zipped) .zarr archives:
 
 ```{r ons-list}
 available_spd_zarr_zips()
@@ -174,7 +174,12 @@ pa <- unzip_merfish_demo(td)
 
 ## MERFISH
 
-In this example data, we do not have a `label` for the `shape` polygons. Such labels could be morphological regions annotated by pathologists.
+In this example data, we do not have a `label` for the `shape` polygons. 
+Such labels could be morphological regions annotated by pathologists.
+
+There are only `r length(shape(x, "cells"))` cells, but 
+`r format(length(point(x, "single_molecule")), big.mark=",")`` molecules, 
+so that we downsample a random subset of 2,000 molecules for visualization:
 
 ```{r merfish-plot}
 i <- sample(length(p <- point(x, i=1)), 2e3)
@@ -186,11 +191,6 @@ plotSpatialData() +
     plotShape(x, i="anatomical") +
     scale_color_manual(values=hcl.colors(6, "Spectral")) 
 ```
-
-We could also show plot the transcript without cell segmentation. 
-There are only 2,000 cells, but 3,714,642 molecules, so it takes a long time to compile.
-
-Lets crop the image and visualize and put it next to the original image:
 
 ```{r}
 qu <- list(xmin=1800, xmax=2400, ymin=5000, ymax=5400)
@@ -232,7 +232,7 @@ y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
 plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
 ```
 
-## CyCIF (MCMICRO output)
+## CyCIF (MCMICRO)
 
 Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
 
