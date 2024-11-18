@@ -32,6 +32,9 @@
 \alias{table<-}
 \alias{tables<-}
 \alias{tableNames}
+\alias{[[,SpatialData,numeric,ANY-method}
+\alias{[[,SpatialData,character,ANY-method}
+\alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{data,SpatialDataElement-method}
 \alias{meta,SpatialDataElement-method}
 \alias{images,SpatialData-method}
@@ -86,6 +89,12 @@
 SpatialData(images, labels, points, shapes, tables)
 
 \S4method{$}{SpatialData}(x, name)
+
+\S4method{[[}{SpatialData,numeric,ANY}(x, i, j, ...)
+
+\S4method{[[}{SpatialData,character,ANY}(x, i, j, ...)
+
+\S4method{[}{SpatialData,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 
 \S4method{data}{SpatialDataElement}(x)
 
@@ -203,12 +212,12 @@ SpatialData(images, labels, points, shapes, tables)
 \item{i}{character string, scalar or vector of indices
 specifying the element to extract from a given layer.}
 
-\item{value}{(list of) element(s) with layer-compliant object(s), 
-or NULL/\code{list()} to remove an element/layer completely.}
-
 \item{j}{ignored.}
 
 \item{...}{optional arguments passed to and from other methods.}
+
+\item{value}{(list of) element(s) with layer-compliant object(s), 
+or NULL/\code{list()} to remove an element/layer completely.}
 }
 \value{
 \code{SpatialData}
