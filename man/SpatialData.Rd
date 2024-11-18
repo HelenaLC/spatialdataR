@@ -5,15 +5,15 @@
 \alias{SpatialData-class}
 \alias{.SpatialData}
 \alias{SpatialData}
-\alias{$,SpatialData-method}
-\alias{[[,SpatialData-method}
+\alias{data}
+\alias{meta}
 \alias{image}
 \alias{images}
 \alias{image<-}
 \alias{images<-}
 \alias{imageNames}
 \alias{label}
-\alias{labell}
+\alias{labels}
 \alias{label<-}
 \alias{labels<-}
 \alias{labelNames}
@@ -32,6 +32,7 @@
 \alias{table<-}
 \alias{tables<-}
 \alias{tableNames}
+\alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
 \alias{[,SpatialData,ANY,ANY,ANY-method}

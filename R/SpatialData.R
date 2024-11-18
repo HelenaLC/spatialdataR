@@ -1,12 +1,9 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @aliases
-#' SpatialData-class
-#' $,SpatialData-method
-#' [[,SpatialData-method
+#' @aliases data meta
 #' image images image<- images<- imageNames 
-#' label labell label<- labels<- labelNames 
+#' label labels label<- labels<- labelNames 
 #' point points point<- points<- pointNames 
 #' image images image<- images<- imageNames 
 #' shape shapes shape<- shapes<- shapeNames 
