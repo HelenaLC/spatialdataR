@@ -164,15 +164,15 @@ setMethod("label", "SpatialData", \(x, i=1) {
 
 #' @rdname SpatialData
 #' @export
-setMethod("shape", "SpatialData", \(x, i=1) {
-    if (length(y <- shapes(x)))
-        y[[.check_i(x, i, "shapes")]] else y })
-
-#' @rdname SpatialData
-#' @export
 setMethod("point", "SpatialData", \(x, i=1) {
     if (length(y <- points(x)))
         y[[.check_i(x, i, "points")]] else y })
+
+#' @rdname SpatialData
+#' @export
+setMethod("shape", "SpatialData", \(x, i=1) {
+    if (length(y <- shapes(x)))
+        y[[.check_i(x, i, "shapes")]] else y })
 
 #' @rdname SpatialData
 #' @export
