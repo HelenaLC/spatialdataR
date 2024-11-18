@@ -25,7 +25,8 @@ NULL
 setGeneric("query", \(x, ...) standardGeneric("query"))
 
 .check_bb <- \(args) {
-    if (!identical(names(args), c("xmin", "xmax", "ymin", "ymax")))
+    m <- match(names(args), c("xmin", "xmax", "ymin", "ymax"))
+    if (any(is.na(m)) || !identical(sort(m), seq_len(4)))
         stop("currently only supporting bounding box query;", 
             " please provide 'xmin/xmax/ymin/ymax' as ...")
 }
@@ -69,9 +70,12 @@ setMethod("query", "ImageArray", \(x, j, ...) {
     .check_bb(qu)
     if (missing(j)) j <- 1
     if (is.numeric(j)) j <- coordTransName(x)[j]
+    stopifnot(length(j) == 1)
+    . <- grep(j, coordTransName(i))
+    if (!length(.) || is.na(.)) stop("invalid 'j'")
     # transform query into target space
     ts <- .get_path(.coord2graph(x), "self", j)
-    xy <- split(unlist(qu), grepl("^y", names(qu)))
+    xy <- list(c(qu$xmin, qu$xmax), c(qu$ymin, qu$ymax))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
     xy <- .transform(xy, ts, TRUE)
     x <- x[, # crop (i.e., subset) array dimensions 2-3
