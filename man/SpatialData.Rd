@@ -50,8 +50,8 @@
 \alias{tableNames,SpatialData-method}
 \alias{image,SpatialData-method}
 \alias{label,SpatialData-method}
-\alias{shape,SpatialData-method}
 \alias{point,SpatialData-method}
+\alias{shape,SpatialData-method}
 \alias{table,SpatialData-method}
 \alias{[[<-,SpatialData,numeric,ANY,ANY-method}
 \alias{[[<-,SpatialData,character,ANY,ANY-method}
@@ -125,9 +125,9 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{label}{SpatialData}(x, i = 1)
 
-\S4method{shape}{SpatialData}(x, i = 1)
-
 \S4method{point}{SpatialData}(x, i = 1)
+
+\S4method{shape}{SpatialData}(x, i = 1)
 
 \S4method{table}{SpatialData}(x, i = 1)
 

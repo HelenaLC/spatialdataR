@@ -166,7 +166,9 @@ Any of the above can be retrieved (once) into some location, and read into R:
 
 ```{r ons-read}
 dir.create(td <- tempfile())
-pa <- unzip_merfish_demo(td)
+pa <- unzip_spd_demo(
+    zipname="merfish.zarr.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
@@ -177,9 +179,9 @@ pa <- unzip_merfish_demo(td)
 In this example data, we do not have a `label` for the `shape` polygons. 
 Such labels could be morphological regions annotated by pathologists.
 
-There are only `r length(shape(x, "cells"))` cells, but 
-`r format(length(point(x, "single_molecule")), big.mark=",")`` molecules, 
-so that we downsample a random subset of 2,000 molecules for visualization:
+There are only `r length(SpatialData::shape(x, "cells"))` cells, but 
+`r format(length(SpatialData::point(x, "single_molecule")), big.mark=",")` 
+molecules, so that we downsample a random subset of 2,000 for visualization:
 
 ```{r merfish-plot}
 i <- sample(length(p <- point(x, i=1)), 2e3)
@@ -205,7 +207,9 @@ Colorectal carcinoma, 25 MB; no shapes, no points.
 
 ```{r mibitof-read}
 dir.create(td <- tempfile())
-pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
+pa <- unzip_spd_demo(
+    zipname="mibitof.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
@@ -220,8 +224,9 @@ Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
 
 ```{r visiumhd-read}
 dir.create(td <- tempfile())
-nm <- "visium_hd_3.0.0_io.zip"
-pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+pa <- unzip_spd_demo(
+    zipname="visium_hd_3.0.0_io.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa, images=4, shapes=3, tables=NULL))
 ```
 
@@ -238,8 +243,9 @@ Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
 
 ```{r mcmicro-read}
 dir.create(td <- tempfile())
-nm <- "mcmicro_io.zip"
-pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+pa <- unzip_spd_demo(
+    zipname="mcmicro_io.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
@@ -249,8 +255,9 @@ pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
 
 ```{r steinbock-read}
 dir.create(td <- tempfile())
-nm <- "steinbock_io.zip"
-pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+pa <- unzip_spd_demo(
+    zipname="steinbock_io.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
