@@ -138,7 +138,8 @@ setMethod("tableNames", "SpatialData", \(x) names(x$tables))
     l <- match.arg(l, .LAYERS)
     stopifnot(length(e) == 1)
     es <- x[[l]]
-    if (!length(es)) return(.)
+    if (!length(es)) 
+        return(es)
     if (is.character(e)) {
         e <- match.arg(e, names(es))
     } else stopifnot(
