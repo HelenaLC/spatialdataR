@@ -1,5 +1,5 @@
 #' @name table-utils
-#' @title Add/get \code{SpatialData} table
+#' @title \code{SpatialData} annotations
 #' @aliases hasTable getTable setTable valTable
 #' 
 #' @param x \code{\link{SpatialData}} object.
@@ -76,12 +76,15 @@ NULL
 setMethod("meta", c("SingleCellExperiment"), 
     \(x) int_metadata(x)$spatialdata_attrs)
 
+.invalid_i <- \() stop(
+    "invalid 'i'; should be a character ",
+    "string specifying an element in 'x'")
+
 # has ----
 
 #' @rdname table-utils
 #' @export
-setMethod("hasTable", c("SpatialData", "ANY"), \(x, i) 
-    stop("'i' should be a character string specifying an element in 'x'"))
+setMethod("hasTable", c("SpatialData", "ANY"), \(x, i) .invalid_i())
 
 setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     stopifnot(length(i) == 1, is.character(i))
@@ -92,10 +95,10 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     # count occurrences
     t <- lapply(tables(x), \(t) meta(t)$region)
     n <- vapply(seq_along(t), \(.) i %in% t[[.]], numeric(1))
-    # failure when no/many matches
     nan <- all(n == 0)
-    dup <- length(unique(n)) != length(n)
+    # failure when no/many matches
     if (name) {
+        dup <- length(unique(n)) != length(n)
         if (nan) stop("no 'table' found for 'i'")
         if (dup) stop("multiple 'table's found for 'i'")
         return(names(t)[n == 1])
@@ -106,8 +109,7 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
 
 #' @rdname table-utils
 #' @export
-setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) 
-    stop("'i' should be a character string specifying an element in 'x'"))
+setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
 
 #' @rdname table-utils
 #' @export
@@ -123,9 +125,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
 
 #' @rdname table-utils
 #' @export
-setMethod("setTable", c("SpatialData", "ANY"), 
-    \(x, i, ..., name=NULL, rk="rk", ik="ik")
-    stop("'i' should be a character string specifying an element in 'x'"))
+setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
 #' @rdname table-utils
 #' @importFrom dplyr pull

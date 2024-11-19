@@ -13,7 +13,7 @@
 \alias{setTable,SpatialData,ANY-method}
 \alias{setTable,SpatialData,character-method}
 \alias{valTable,SpatialData-method}
-\title{Add/get \code{SpatialData} table}
+\title{\code{SpatialData} annotations}
 \usage{
 \S4method{meta}{SingleCellExperiment}(x)
 
@@ -54,7 +54,7 @@ or row name to retrieve \code{assay} data.}
 specifies which \code{assay} to use when \code{j} is a row name.}
 }
 \description{
-Add/get \code{SpatialData} table
+\code{SpatialData} annotations
 }
 \examples{
 library(SingleCellExperiment)
