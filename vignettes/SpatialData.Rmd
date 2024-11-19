@@ -26,6 +26,7 @@ library(ggplot2)
 library(patchwork)
 library(ggnewscale)
 library(SpatialData)
+library(SingleCellExperiment)
 ```
 
 # Introduction
@@ -51,7 +52,7 @@ For demonstration, we read in a toy dataset that is available through the packag
 ```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x))
+(x <- readSpatialData(x, anndataR=FALSE))
 ```
 
 `SpatialData` object behave like a list, thereby supporting flexible accession, 
@@ -79,6 +80,37 @@ Each element is made up of two key components:
 ```{r data/meta}
 data(shape(x))
 meta(shape(x)) 
+```
+
+## Annotations
+
+Currently supported methods for the `tables` layers include:
+
+- `getTable()` to retrieve the `table` annotating a given element
+- `setTable()` to construct a new annotation for a given element
+- `valTable()` to retrieve specific values from a `table`
+
+```{r tbl}
+# retrieve 'table' for an element
+(t <- getTable(x, i <- "blobs_labels"))
+head(colData(t))
+meta(t)
+# get values from an element's 'table'
+valTable(x, i, "channel_0_sum")
+# add an artificial 'table' to an element
+i <- "blobs_points"
+# ...passing a preconstructed 'data.frame'
+n <- length(point(x, i))
+df <- data.frame(n=runif(n))
+y <- setTable(x, i, df)
+head(colData(getTable(y, i)))
+# ...using a list of data generating functions
+f <- list(
+    numbers=\(n) runif(n),
+    letters=\(n) sample(letters, n, TRUE))
+args <- c(list(x, i), f)
+y <- do.call(setTable, args)
+head(colData(getTable(y, i)))
 ```
 
 ## Transformations
