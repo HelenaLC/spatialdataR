@@ -60,14 +60,6 @@ setMethod("CTdata", "Zattrs", \(x, ...) {
 
 #' @rdname Zattrs
 #' @export
-setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
-
-#' @rdname Zattrs
-#' @export
 setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 #' @rdname Zattrs
@@ -76,8 +68,26 @@ setMethod("CTdata", "SpatialDataElement", \(x, ...) CTdata(meta(x)))
 
 #' @rdname Zattrs
 #' @export
-setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
+setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
 
 #' @rdname Zattrs
 #' @export
 setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
+
+# CTname() ----
+
+#' @rdname Zattrs
+#' @export
+setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
+
+#' @rdname Zattrs
+#' @export
+setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
+
+#' @rdname Zattrs
+#' @export
+setMethod("CTname", "SpatialData", \(x, ...) {
+    g <- .coord2graph(x)
+    t <- nodeData(g, nodes(g), "type")
+    names(t)[unlist(t) == "space"]
+})

@@ -52,10 +52,10 @@ setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 
 # trs ----
 
-setGeneric("scale", \(x, ...) standardGeneric("scale"))
-setGeneric("rotate", \(x, ...) standardGeneric("rotate"))
+setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
+setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("transform", \(x, ...) standardGeneric("transform"))
-setGeneric("translation", \(x, ...) standardGeneric("translation"))
+setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 # uts ----
 
