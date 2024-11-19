@@ -83,22 +83,15 @@ readShape <- function(x, ...) {
 
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
-#' @importFrom S4Vectors metadata metadata<-
-#' @importFrom SingleCellExperiment int_metadata int_metadata<-
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    sce <- basiliskRun(proc, zarr=x, \(zarr) {
+    basiliskRun(proc, zarr=x, \(zarr) {
         ad <- import("anndata")
         ad <- ad$read_zarr(zarr)
         AnnData2SCE(ad)
     })
-    nm <- "spatialdata_attrs"
-    md <- metadata(sce)[[nm]]
-    int_metadata(sce)[[nm]] <- md[[nm]]
-    metadata(sce)[[nm]] <- NULL
-    return(sce)
 }
 
 .readTable_anndataR <- function(x) {
@@ -117,13 +110,21 @@ readShape <- function(x, ...) {
 }
 
 #' @rdname readSpatialData
+#' @importFrom jsonlite fromJSON
+#' @importFrom S4Vectors metadata metadata<-
+#' @importFrom SingleCellExperiment int_metadata int_metadata<-
 #' @export
 readTable <- function(x, anndataR=FALSE) {
-    if (anndataR) {
+    sce <- if (anndataR) {
         .readTable_anndataR(x)
     } else {
         .readTable_basilisk(x)
     }
+    nm <- "spatialdata_attrs"
+    md <- metadata(sce)[[nm]]
+    int_metadata(sce)[[nm]] <- md
+    metadata(sce)[[nm]] <- NULL
+    return(sce)
 }
 
 #' @rdname readSpatialData

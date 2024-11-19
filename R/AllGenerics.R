@@ -67,8 +67,10 @@ setGeneric("query", \(x, y, ...) standardGeneric("query"))
 
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
+# tbl ----
+
 setGeneric("getRegionData", \(x, re, ...) standardGeneric("getRegionData"))
-setGeneric("getTable", \(x, region = NULL, table_name = NULL, ...) standardGeneric("getTable"))
+#setGeneric("getTable", \(x, region = NULL, table_name = NULL, ...) standardGeneric("getTable"))
 setGeneric("getElementAnnotators", \(x, element, ...) standardGeneric("getElementAnnotators"))
 setGeneric("getTableAttrs", \(x, table_name, ...) standardGeneric("getTableAttrs"))
 

@@ -14,26 +14,52 @@ setMethod("getRegionData", c("SpatialData", "character"), \(x, re) {
     list("sce" = se, "md" = md)
 })
 
-setMethod("getTable", c("SpatialData", "ANY", "ANY"), \(x, region = NULL, table_name = NULL) {
-    if (is.null(region) && is.null(table_name)) {
-        stop("Either region or table_name must be specified")
-    }
-    
-    if (!is.null(table_name)) {
-        return(tables(x)[[table_name]])
-    }
+#' @rdname SDtable
+#' @title \code{SpatialData} tables
+#' 
+#' @param x \code{\link{SpatialData}} object.
+#' @param i scalar character or integer; name of the 
+#'   element for which a \code{table} should be retrieved.
+#' @param drop logical; should observations (columns) 
+#'   that don't belong to \code{i} be filtered out?
+#'   
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, anndataR=FALSE)
+#' 
+#' 
+#' 
+#' getTable(x, "cells")
+#' 
+NULL
 
-    if (!is.null(region)) {
-        annotators <- getElementAnnotators(x, region)
-        if (length(annotators) == 0) {
-            stop("No table found for region ", region)
-        }
-        if (length(annotators) > 1) {
-            stop("Multiple tables found for region ", region)
-        }
-        annotators[[1]] # in all other cases, only 1 table was found
-    }
+mockTable <- \(x, i, region_key="key", instance_key="id") {
+    y <- matrix(nrow=10, ncol=1)
+    SingleCellExperiment()
+}
+
+setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
+
+setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
+    stopifnot(length(i) == 1)
+    # count occurrences
+    t <- lapply(tables(x), \(t) meta(t)$region)
+    n <- vapply(seq_along(t), \(.) sum(i %in% t[[.]]), numeric(1))
+    # failure when no/many matches
+    if (any(n > 1)) stop("multiple 'table's found for 'i'")
+    if (all(n == 0)) stop("no 'table' found for 'i'")
+    t <- table(x, which(n == 1))
+    # only keep observations belonging to 'i' (optional)
+    if (drop) t <- t[, t[[meta(t)$region_key]] == i]
+    return(t)
 })
+setMethod("getTable", c("SpatialData", "NULL"), \(x, i, drop=TRUE) {
+    
+})
+
+setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE)
+    stop("'i' should be either a character string or 'NULL'."))
 
 setMethod("getElementAnnotators", c("SpatialData", "character"), \(x, element) {
     annotators <- lapply(tables(x), \(table) {
@@ -46,9 +72,7 @@ setMethod("getElementAnnotators", c("SpatialData", "character"), \(x, element) {
     annotators[lengths(annotators) != 0] # filter out when no table was found
 })
 
-setMethod("getTableAttrs", c("SingleCellExperiment"), \(x) {
-    int_metadata(x)$spatialdata_attrs
-})
+setMethod("meta", c("SingleCellExperiment"), \(x) int_metadata(x)$spatialdata_attrs)
 
 # very very basic
 # tested with PointArray
