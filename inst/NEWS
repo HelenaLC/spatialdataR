@@ -1,3 +1,10 @@
+changes in version 0.99.16
+
+- added draft for transformations (tbc)
+- added methods for table handling following draft from PR #74
+  - 'get/setTable' for adding/getting tables
+  - 'valTable' to retrieve data from an existing table
+
 changes in version 0.99.15
 
 - added methods for coordinate transormation handling, namely:
