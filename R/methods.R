@@ -104,47 +104,19 @@ setMethod("colnames", "SpatialData", \(x) {
     lapply(., \(.) names(x[[.]]))
 })
 
-#' @rdname SpatialData
-#' @export
-setMethod("images", "SpatialData", \(x) x$images)
+all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
 
-#' @rdname SpatialData
-#' @export
-setMethod("labels", "SpatialData", \(x) x$labels)
-
-#' @rdname SpatialData
-#' @export
-setMethod("shapes", "SpatialData", \(x) x$shapes)
-
-#' @rdname SpatialData
-#' @export
-setMethod("points", "SpatialData", \(x) x$points)
-
-#' @rdname SpatialData
-#' @export
-setMethod("tables", "SpatialData", \(x) x$tables)
+#' @name SpatialData
+#' @exportMethod images labels points shapes tables
+f <- \(.) setMethod(., "SpatialData", \(x) x[[.]])
+for (. in all) eval(f(.), parent.env(environment()))
 
 # nms ----
 
-#' @rdname SpatialData
-#' @export
-setMethod("imageNames", "SpatialData", \(x) names(x$images))
-
-#' @rdname SpatialData
-#' @export
-setMethod("labelNames", "SpatialData", \(x) names(x$labels))
-
-#' @rdname SpatialData
-#' @export
-setMethod("shapeNames", "SpatialData", \(x) names(x$shapes))
-
-#' @rdname SpatialData
-#' @export
-setMethod("pointNames", "SpatialData", \(x) names(x$points))
-
-#' @rdname SpatialData
-#' @export
-setMethod("tableNames", "SpatialData", \(x) names(x$tables))
+#' @name SpatialData
+#' @exportMethod imageNames labelNames pointNames shapeNames tableNames
+f <- \(.) setMethod(paste0(., "Names"), "SpatialData", \(x) names(x[[.]]))
+for (. in one) eval(f(.), parent.env(environment()))
 
 # get one ----
 
@@ -163,27 +135,14 @@ setMethod("tableNames", "SpatialData", \(x) names(x$tables))
     return(x[[l]][[e]])
 }
 
-#' @rdname SpatialData
-#' @export
-setMethod("image", "SpatialData", \(x, i=1) .get_ele(x, i, "images"))
-
-#' @rdname SpatialData
-#' @export
-setMethod("label", "SpatialData", \(x, i=1) .get_ele(x, i, "labels"))
-
-#' @rdname SpatialData
-#' @export
-setMethod("point", "SpatialData", \(x, i=1) .get_ele(x, i, "points"))
-
-#' @rdname SpatialData
-#' @export
-setMethod("shape", "SpatialData", \(x, i=1) .get_ele(x, i, "shapes"))
-
-#' @rdname SpatialData
-#' @export
-setMethod("table", "SpatialData", \(x, i=1) .get_ele(x, i, "tables"))
+#' @name SpatialData
+#' @exportMethod image label point shape table
+f <- \(.) setMethod(., "SpatialData", \(x, i=1) .get_ele(x, i, paste0(., "s")))
+for (. in one) eval(f(.), parent.env(environment()))
 
 # set all ----
+
+# |_[[<- ----
 
 #' @rdname SpatialData
 #' @export
@@ -197,67 +156,31 @@ setReplaceMethod("[[", c("SpatialData", "character"),
 
 # |_value=list ----
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("images",
-    c("SpatialData", "list"),
-    \(x, value) {x@images <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("labels",
-    c("SpatialData", "list"),
-    \(x, value) {x@labels <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shapes",
-    c("SpatialData", "list"),
-    \(x, value) {x@shapes <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("points",
-    c("SpatialData", "list"),
-    \(x, value) {x@points <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("tables", 
-    c("SpatialData", "list"),
-    \(x, value) {x@tables <- value; x})
+#' @name SpatialData
+#' @exportMethod images<- labels<- points<- shapes<- tables<-
+f <- \(.) setReplaceMethod(., 
+    c("SpatialData", "list"), 
+    \(x, value) { attr(x, .) <- value; x })
+for (. in all) eval(f(.), parent.env(environment()))
 
 # set one ----
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("image",
-    c("SpatialData", "character", "ImageArray"),
-    \(x, i, value) { x@images[[i]] <- value; x })
+typ <- c(
+    image="ImageArray", label="LabelArray", 
+    point="PointFrame", shape="ShapeFrame", 
+    table="SingleCellExperiment")
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("label",
-    c("SpatialData", "character", "LabelArray"),
-    \(x, i, value) { x@labels[[i]] <- value; x })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("point",
-    c("SpatialData", "character", "PointFrame"),
-    \(x, i, value) { x@points[[i]] <- value; x })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shape",
-    c("SpatialData", "character", "ShapeFrame"),
-    \(x, i, value) { x@shapes[[i]] <- value; x })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("table",
-    c("SpatialData", "character", "SingleCellExperiment"),
-    \(x, i, value) { x@tables[[i]] <- value; x })
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+f <- \(.) setReplaceMethod(., 
+    c("SpatialData", "character", typ[[.]]), 
+    \(x, i, value) { 
+        y <- attr(x, paste0(., "s"))
+        y[[i]] <- value
+        attr(x, paste0(., "s")) <- y
+        return(x)
+    })
+for (. in one) eval(f(.), parent.env(environment()))
 
 # TODO: something like table(x)$cluster_id <- doesn't work atm... 
 # not sure how to get around without defining all the possible 
@@ -265,160 +188,53 @@ setReplaceMethod("table",
 
 # _i=numeric ----
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("image",
-    c("SpatialData", "numeric", "ImageArray"), 
-    \(x, i=1, value) { 
-        i <- ifelse(
-            i > (n <- length(images(x))), 
-            paste0("image", n+1), 
-            imageNames(x)[i])
-        `image<-`(x=x, i=i, value=value)
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+f <- \(.) setReplaceMethod(., 
+    c("SpatialData", "numeric", typ[[.]]), 
+    \(x, i, value) { 
+        nms <- get(paste0(., "Names"))(x)
+        n <- length(get(paste0(., "s"))(x))
+        i <- ifelse(i > n, paste0(., n+1), nms[i])
+        get(paste0(., "<-"))(x=x, i=i, value=value)
     })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("label",
-    c("SpatialData", "numeric", "LabelArray"), 
-    \(x, i=1, value) { 
-        i <- ifelse(
-            i > (n <- length(labels(x))), 
-            paste0("label", n+1), 
-            labelNames(x)[i])
-        `label<-`(x=x, i=i, value=value)
-    })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("point",
-    c("SpatialData", "numeric", "PointFrame"), 
-    \(x, i=1, value) { 
-        i <- ifelse(
-            i > (n <- length(points(x))), 
-            paste0("point", n+1), 
-            pointNames(x)[i])
-        `point<-`(x=x, i=i, value=value)
-    })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shape",
-    c("SpatialData", "numeric", "ShapeFrame"), 
-    \(x, i=1, value) { 
-        i <- ifelse(
-            i > (n <- length(shapes(x))), 
-            paste0("shape", n+1), 
-            shapeNames(x)[i])
-        `shape<-`(x=x, i=i, value=value)
-    })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("table",
-    c("SpatialData", "numeric", "SingleCellExperiment"), 
-    \(x, i=1, value) { 
-        i <- ifelse(
-            i > (n <- length(points(x))), 
-            paste0("table", n+1), 
-            pointNames(x)[i])
-        `table<-`(x=x, i=i, value=value)
-    })
+for (. in one) eval(f(.), parent.env(environment()))
 
 # _i=missing ----
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("image",
-    c("SpatialData", "missing", "ImageArray"),
-    \(x, i, value) `image<-`(x=x, i=1, value=value))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("label",
-    c("SpatialData", "missing", "LabelArray"),
-    \(x, i, value) `label<-`(x=x, i=1, value=value))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("point",
-    c("SpatialData", "missing", "PointFrame"),
-    \(x, i, value) `point<-`(x=x, i=1, value=value))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shape",
-    c("SpatialData", "missing", "ShapeFrame"),
-    \(x, i, value) `shape<-`(x=x, i=1, value=value))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("table",
-    c("SpatialData", "missing", "SingleCellExperiment"),
-    \(x, i, value) `table<-`(x=x, i=1, value=value))
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+f <- \(.) setReplaceMethod(., 
+    c("SpatialData", "missing", typ[[.]]), 
+    \(x, i, value) {
+        f <- get(paste0(., "<-"))
+        f(x=x, i=1, value=value)
+})
+for (. in one) eval(f(.), parent.env(environment()))
 
 # _v=NULL ----
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("image",
-    c("SpatialData", "ANY", "NULL"), \(x, i, value) 
-    {if (missing(i)) i <- 1; images(x)[[i]] <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("label",
-    c("SpatialData", "ANY", "NULL"), \(x, i, value) 
-    {if (missing(i)) i <- 1; labels(x)[[i]] <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shape",
-    c("SpatialData", "ANY", "NULL"), \(x, i, value) 
-    {if (missing(i)) i <- 1; shapes(x)[[i]] <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("point",
-    c("SpatialData", "ANY", "NULL"), \(x, i, value) 
-    {if (missing(i)) i <- 1; points(x)[[i]] <- value; x})
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("table",
-    c("SpatialData", "ANY", "NULL"), \(x, i, value) 
-    {if (missing(i)) i <- 1; tables(x)[[i]] <- value; x})
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+f <- \(.) setReplaceMethod(., 
+    c("SpatialData", "ANY", "NULL"), 
+    \(x, i, value) {
+        if (missing(i)) i <- 1
+        y <- attr(x, .)
+        if (is.numeric(i))
+            i <- names(y)[i]
+        y <- y[setdiff(names(y), i)]
+        x[[.]] <- y
+        x
+    })
+for (. in one) eval(f(.), parent.env(environment()))
 
 # _v=ANY ----
 
-.msg <- \(.) sprintf("replacement value should be a '%s'", .)
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("image", 
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+g <- \(.) sprintf("replacement value should be a '%s'", .)
+f <- \(.) setReplaceMethod(., 
     c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(.msg("ImageArray")))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("label",
-    c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(.msg("LabelArray")))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("shape", 
-    c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(.msg("ShapeFrame")))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("point", 
-    c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(.msg("PointFrame")))
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("table",
-    c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(.msg("SingleCellExperiment")))
+    \(x, i, value) stop(g(typ[[.]])))
+for (. in one) eval(f(.), parent.env(environment()))

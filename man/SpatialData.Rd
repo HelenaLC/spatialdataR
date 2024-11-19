@@ -40,53 +40,10 @@
 \alias{meta,SpatialDataElement-method}
 \alias{rownames,SpatialData-method}
 \alias{colnames,SpatialData-method}
-\alias{images,SpatialData-method}
-\alias{labels,SpatialData-method}
-\alias{shapes,SpatialData-method}
-\alias{points,SpatialData-method}
-\alias{tables,SpatialData-method}
-\alias{imageNames,SpatialData-method}
-\alias{labelNames,SpatialData-method}
-\alias{shapeNames,SpatialData-method}
-\alias{pointNames,SpatialData-method}
-\alias{tableNames,SpatialData-method}
-\alias{image,SpatialData-method}
-\alias{label,SpatialData-method}
-\alias{point,SpatialData-method}
-\alias{shape,SpatialData-method}
-\alias{table,SpatialData-method}
+\alias{f}
 \alias{[[<-,SpatialData,numeric,ANY,ANY-method}
 \alias{[[<-,SpatialData,character,ANY,ANY-method}
-\alias{images<-,SpatialData,list-method}
-\alias{labels<-,SpatialData,list-method}
-\alias{shapes<-,SpatialData,list-method}
-\alias{points<-,SpatialData,list-method}
-\alias{tables<-,SpatialData,list-method}
-\alias{image<-,SpatialData,character,ImageArray-method}
-\alias{label<-,SpatialData,character,LabelArray-method}
-\alias{point<-,SpatialData,character,PointFrame-method}
-\alias{shape<-,SpatialData,character,ShapeFrame-method}
-\alias{table<-,SpatialData,character,SingleCellExperiment-method}
-\alias{image<-,SpatialData,numeric,ImageArray-method}
-\alias{label<-,SpatialData,numeric,LabelArray-method}
-\alias{point<-,SpatialData,numeric,PointFrame-method}
-\alias{shape<-,SpatialData,numeric,ShapeFrame-method}
-\alias{table<-,SpatialData,numeric,SingleCellExperiment-method}
-\alias{image<-,SpatialData,missing,ImageArray-method}
-\alias{label<-,SpatialData,missing,LabelArray-method}
-\alias{point<-,SpatialData,missing,PointFrame-method}
-\alias{shape<-,SpatialData,missing,ShapeFrame-method}
-\alias{table<-,SpatialData,missing,SingleCellExperiment-method}
-\alias{image<-,SpatialData,ANY,NULL-method}
-\alias{label<-,SpatialData,ANY,NULL-method}
-\alias{shape<-,SpatialData,ANY,NULL-method}
-\alias{point<-,SpatialData,ANY,NULL-method}
-\alias{table<-,SpatialData,ANY,NULL-method}
-\alias{image<-,SpatialData,ANY,ANY-method}
-\alias{label<-,SpatialData,ANY,ANY-method}
-\alias{shape<-,SpatialData,ANY,ANY-method}
-\alias{point<-,SpatialData,ANY,ANY-method}
-\alias{table<-,SpatialData,ANY,ANY-method}
+\alias{g}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
@@ -107,99 +64,27 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{colnames}{SpatialData}(x)
 
-\S4method{images}{SpatialData}(x)
+f(.)
 
-\S4method{labels}{SpatialData}(x)
+f(.)
 
-\S4method{shapes}{SpatialData}(x)
-
-\S4method{points}{SpatialData}(x)
-
-\S4method{tables}{SpatialData}(x)
-
-\S4method{imageNames}{SpatialData}(x)
-
-\S4method{labelNames}{SpatialData}(x)
-
-\S4method{shapeNames}{SpatialData}(x)
-
-\S4method{pointNames}{SpatialData}(x)
-
-\S4method{tableNames}{SpatialData}(x)
-
-\S4method{image}{SpatialData}(x, i = 1)
-
-\S4method{label}{SpatialData}(x, i = 1)
-
-\S4method{point}{SpatialData}(x, i = 1)
-
-\S4method{shape}{SpatialData}(x, i = 1)
-
-\S4method{table}{SpatialData}(x, i = 1)
+f(.)
 
 \S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
 \S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
 
-\S4method{images}{SpatialData,list}(x) <- value
+f(.)
 
-\S4method{labels}{SpatialData,list}(x) <- value
+f(.)
 
-\S4method{shapes}{SpatialData,list}(x) <- value
+f(.)
 
-\S4method{points}{SpatialData,list}(x) <- value
+f(.)
 
-\S4method{tables}{SpatialData,list}(x) <- value
+f(.)
 
-\S4method{image}{SpatialData,character,ImageArray}(x, i) <- value
-
-\S4method{label}{SpatialData,character,LabelArray}(x, i) <- value
-
-\S4method{point}{SpatialData,character,PointFrame}(x, i) <- value
-
-\S4method{shape}{SpatialData,character,ShapeFrame}(x, i) <- value
-
-\S4method{table}{SpatialData,character,SingleCellExperiment}(x, i) <- value
-
-\S4method{image}{SpatialData,numeric,ImageArray}(x, i = 1) <- value
-
-\S4method{label}{SpatialData,numeric,LabelArray}(x, i = 1) <- value
-
-\S4method{point}{SpatialData,numeric,PointFrame}(x, i = 1) <- value
-
-\S4method{shape}{SpatialData,numeric,ShapeFrame}(x, i = 1) <- value
-
-\S4method{table}{SpatialData,numeric,SingleCellExperiment}(x, i = 1) <- value
-
-\S4method{image}{SpatialData,missing,ImageArray}(x, i) <- value
-
-\S4method{label}{SpatialData,missing,LabelArray}(x, i) <- value
-
-\S4method{point}{SpatialData,missing,PointFrame}(x, i) <- value
-
-\S4method{shape}{SpatialData,missing,ShapeFrame}(x, i) <- value
-
-\S4method{table}{SpatialData,missing,SingleCellExperiment}(x, i) <- value
-
-\S4method{image}{SpatialData,ANY,NULL}(x, i) <- value
-
-\S4method{label}{SpatialData,ANY,NULL}(x, i) <- value
-
-\S4method{shape}{SpatialData,ANY,NULL}(x, i) <- value
-
-\S4method{point}{SpatialData,ANY,NULL}(x, i) <- value
-
-\S4method{table}{SpatialData,ANY,NULL}(x, i) <- value
-
-\S4method{image}{SpatialData,ANY,ANY}(x, i) <- value
-
-\S4method{label}{SpatialData,ANY,ANY}(x, i) <- value
-
-\S4method{shape}{SpatialData,ANY,ANY}(x, i) <- value
-
-\S4method{point}{SpatialData,ANY,ANY}(x, i) <- value
-
-\S4method{table}{SpatialData,ANY,ANY}(x, i) <- value
+g(.)
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}
