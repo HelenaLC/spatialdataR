@@ -9,12 +9,13 @@
 \alias{$,Zattrs-method}
 \alias{axes,Zattrs-method}
 \alias{CTdata,Zattrs-method}
-\alias{CTname,Zattrs-method}
-\alias{CTtype,Zattrs-method}
 \alias{axes,SpatialDataElement-method}
 \alias{CTdata,SpatialDataElement-method}
-\alias{CTname,SpatialDataElement-method}
+\alias{CTtype,Zattrs-method}
 \alias{CTtype,SpatialDataElement-method}
+\alias{CTname,Zattrs-method}
+\alias{CTname,SpatialDataElement-method}
+\alias{CTname,SpatialData-method}
 \title{The `Zattrs` class}
 \usage{
 Zattrs(x = list())
@@ -25,17 +26,19 @@ Zattrs(x = list())
 
 \S4method{CTdata}{Zattrs}(x, ...)
 
-\S4method{CTname}{Zattrs}(x, ...)
-
-\S4method{CTtype}{Zattrs}(x, ...)
-
 \S4method{axes}{SpatialDataElement}(x, ...)
 
 \S4method{CTdata}{SpatialDataElement}(x, ...)
 
-\S4method{CTname}{SpatialDataElement}(x, ...)
+\S4method{CTtype}{Zattrs}(x, ...)
 
 \S4method{CTtype}{SpatialDataElement}(x, ...)
+
+\S4method{CTname}{Zattrs}(x, ...)
+
+\S4method{CTname}{SpatialDataElement}(x, ...)
+
+\S4method{CTname}{SpatialData}(x, ...)
 }
 \arguments{
 \item{x}{list extracted from a OME-NGFF compliant .zattrs file.}

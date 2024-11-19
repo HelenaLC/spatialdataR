@@ -74,7 +74,7 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     ds <- dim(data(image(x, i), 1))
     ts <- .get_path(.coord2graph(x), i, j)
     wh <- data.frame(x=c(0, ds[3]), y=c(0, ds[2]))
-    wh <- .transform(wh, ts)
+    wh <- .trans_xy(wh, ts)
     list(w=wh[, 1], h=wh[, 2])
 }
 

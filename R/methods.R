@@ -91,6 +91,19 @@ setMethod("meta", "SpatialDataElement", \(x) x@meta)
 
 #' @rdname SpatialData
 #' @export
+setMethod("rownames", "SpatialData", \(x) {
+    intersect(names(attributes(x)), .LAYERS)
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("colnames", "SpatialData", \(x) {
+    names(.) <- . <- rownames(x)
+    lapply(., \(.) names(x[[.]]))
+})
+
+#' @rdname SpatialData
+#' @export
 setMethod("images", "SpatialData", \(x) x$images)
 
 #' @rdname SpatialData

@@ -9,7 +9,7 @@
 \alias{query,PointFrame-method}
 \title{spatial queries}
 \usage{
-\S4method{query}{SpatialData}(x, ...)
+\S4method{query}{SpatialData}(x, j = NULL, ...)
 
 \S4method{query}{ImageArray}(x, j, ...)
 
@@ -17,14 +17,14 @@
 
 \S4method{query}{ShapeFrame}(x, ...)
 
-\S4method{query}{PointFrame}(x, ...)
+\S4method{query}{PointFrame}(x, j, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
 
-\item{...}{option arguments passed to and from other methods.}
-
 \item{j}{scalar character or integer; index or name of coordinate space.}
+
+\item{...}{option arguments passed to and from other methods.}
 }
 \value{
 same as input
