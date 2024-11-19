@@ -27,37 +27,28 @@ setGeneric("query", \(x, ...) standardGeneric("query"))
 
 #' @rdname query
 #' @export
-setMethod("query", "SpatialData", \(x, ...) {
+setMethod("query", "SpatialData", \(x, j=NULL, ...) {
+    # check validity of dots
     args <- list(...)
     .check_bb(args)
-    for (l in setdiff(.LAYERS, "tables"))
-        for (e in names(x[[l]]))
-            x[[l]][[e]] <- query(x[[l]][[e]], ...)
+    # guess coordinate space
+    stopifnot(length(j) == 1)
+    j <- if (is.null(j)) {
+        .guess_space(x)
+    } else {
+        if (is.character(j)) {
+            match.arg(j, CTname(x))
+        } else if (is.numeric(j)) {
+            stopifnot(j > 0, j == round(j))
+            CTname(x)[j]
+        }
+    }
+    # execute query
+    for (l in rownames(x))
+        for (e in colnames(x)[[l]])
+            x[[l]][[e]] <- query(x[[l]][[e]], j, ...)
     return(x)  
 })
-
-.transform <- \(xy, ts, rev=FALSE) {
-    if (rev) ts <- rev(ts)
-    for (. in seq_along(ts)) {
-        t <- ts[[.]]$type
-        d <- ts[[.]]$data
-        if (length(d) == 3)
-            d <- d[-1]
-        switch(t, 
-            identity={},
-            scale={
-                op <- ifelse(rev, `/`, `*`)
-                xy$x <- op(xy$x, d[2])
-                xy$y <- op(xy$y, d[1])
-            },
-            translation={
-                op <- ifelse(rev, `-`, `+`)
-                xy$x <- op(xy$x, d[2])
-                xy$y <- op(xy$y, d[1])
-            })
-    }
-    return(xy)
-}
 
 #' @rdname query
 #' @export
@@ -73,13 +64,13 @@ setMethod("query", "ImageArray", \(x, j, ...) {
     ts <- .get_path(.coord2graph(x), "self", j)
     xy <- list(c(qu$xmin, qu$xmax), c(qu$ymin, qu$ymax))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
-    xy <- .transform(xy, ts, TRUE)
+    xy <- .trans_xy(xy, ts, TRUE)
     x <- x[, # crop (i.e., subset) array dimensions 2-3
         do.call(seq, as.list(xy[[2]])),
         do.call(seq, as.list(xy[[1]]))]
     # transform array dimensions into target space
     os <- data.frame(x=c(0, dim(x)[3]), y=c(0, dim(x)[2]))
-    os <- vapply(.transform(os, ts), min, numeric(1))
+    os <- vapply(.trans_xy(os, ts), min, numeric(1))
     # add transformation of type translation as to
     # offset origin by difference between new & old
     os <- unlist(qu[c("xmin", "ymin")]) - os
@@ -122,7 +113,7 @@ setMethod("query", "ShapeFrame", \(x, ...) {
 
 #' @rdname query
 #' @export
-setMethod("query", "PointFrame", \(x, ...) {
+setMethod("query", "PointFrame", \(x, j, ...) {
     args <- list(...)
     .check_bb(args)
     y <- filter(x, 
