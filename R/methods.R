@@ -90,12 +90,14 @@ setMethod("meta", "SpatialDataElement", \(x) x@meta)
 # get all ----
 
 #' @rdname SpatialData
+#' @importFrom BiocGenerics rownames
 #' @export
 setMethod("rownames", "SpatialData", \(x) {
     intersect(names(attributes(x)), .LAYERS)
 })
 
 #' @rdname SpatialData
+#' @importFrom BiocGenerics colnames
 #' @export
 setMethod("colnames", "SpatialData", \(x) {
     names(.) <- . <- rownames(x)
