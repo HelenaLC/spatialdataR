@@ -1,0 +1,41 @@
+We consider an example dataset, blobs.
+
+```{r}
+path <- file.path("extdata", "blobs.zarr")
+file <- system.file(path, package="SpatialData")
+sdata <- readSpatialData(file)
+sdata
+```
+
+We look at storing annotations with SingleCellExperiment tables.
+Each table contains metadata specifying the annotation target of the table.
+This consists of:
+- in `int_metadata`: `region`, `region_key` and `instance_key`
+- a column in columnData, named as the string where `region_key` refers to. 
+- a column in columnData, named as the string where `instance_key` refers to
+
+`region` is a (list of) strings specifying the elements that the table annotates.
+
+## Retrieving annotations
+
+```{r}
+points(sdata)$blobs_points
+```
+
+```{r}
+getValues(value_key = "genes", element = points(sdata)$blobs_points)
+```
+
+```{r}
+rownames(table(sdata))
+```
+
+```{r}
+getValues(value_key = "channel_0_sum", sdata = sdata, element_name="blobs_labels", table_name="table")
+```
+
+## Which element is a table annotating
+
+```{r}
+
+```

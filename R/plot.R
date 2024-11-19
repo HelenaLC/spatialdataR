@@ -106,13 +106,17 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
     pal=hcl.colors(11, "Spectral")) {
     .data <- NULL # R CMD check
+    if (is.numeric(i))
+        i <- labelNames(x)[i]
+    i <- match.arg(i, labelNames(x))
     y <- as.matrix(as(data(label(x, i)), "DelayedArray"))
     df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
     if (!is.null(c)) {
-        se <- table(x)
-        md <- metadata(se)[[1]]
-        re <- labelNames(x)[i]
-        se <- se[, se[[md$region_key]] == re]
+
+        se_md <- getRegionData(x, i)
+        se <- se_md$sce
+        md <- se_md$md
+        
         cs <- match(df$z, se[[md$instance_key]])
         df$z <- se[[c]][cs]
         thm <- list(
