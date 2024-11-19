@@ -6,23 +6,26 @@
 \alias{rotate}
 \alias{scale,ImageArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
+\alias{rotate,PointFrame,numeric-method}
+\alias{translation,PointFrame,numeric-method}
 \alias{scale,ShapeFrame,numeric-method}
 \alias{rotate,ShapeFrame,numeric-method}
 \alias{translation,ShapeFrame,numeric-method}
-\alias{rotate,PointFrame,numeric-method}
 \title{Transformations}
 \usage{
 \S4method{scale}{ImageArray,numeric}(x, j, t, ...)
 
 \S4method{scale}{PointFrame,numeric}(x, t, ...)
 
+\S4method{rotate}{PointFrame,numeric}(x, t, ...)
+
+\S4method{translation}{PointFrame,numeric}(x, t, ...)
+
 \S4method{scale}{ShapeFrame,numeric}(x, t, ...)
 
 \S4method{rotate}{ShapeFrame,numeric}(x, t, ...)
 
 \S4method{translation}{ShapeFrame,numeric}(x, t, ...)
-
-\S4method{rotate}{PointFrame,numeric}(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element}
@@ -57,8 +60,10 @@ plotSpatialData() +
 # shape
 shape(x, "rotate") <- rotate(shape(x), 5)
 shape(x, "scale") <- scale(shape(x), c(1.2, 1))
+shape(x, "translation") <- translation(shape(x), c(-5, 0))
 plotSpatialData() +
   plotShape(x) +
   plotShape(x, "rotate", c="red") +
-  plotShape(x, "scale", c="blue")
+  plotShape(x, "scale", c="blue") +
+  plotShape(x, "translation", c="gold") 
 }
