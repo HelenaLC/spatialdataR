@@ -81,8 +81,11 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @export
 setMethod("data", "ImageArray", \(x, k=1) {
-    if (k <= (n <- length(x@data))) return(x@data[[k]])
-    stop("'scale", i, "' but only ", n, " resolution(s) available")
+    stopifnot(length(k) == 1, is.numeric(k), k > 0)
+    n <- length(x@data) # get number of available scales
+    if (is.infinite(k)) k <- n # input of Inf uses lowest
+    if (k <= n) return(x@data[[k]]) # return specified scale
+    stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
 #' @rdname ImageArray
@@ -122,13 +125,3 @@ setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     }
     return(x)
 })
-
-.guess_scale <- \(x, w, h) {
-    lys <- vapply(x@data, \(a) dim(a)[2] > h & dim(a)[3] > w, logical(1))
-    if (any(idx <- which(lys))) max(idx) else 1
-}
-
-.get_plot_data <- \(x, k=NULL, width=800, height=800) {
-    if (!is.null(k)) return(data(x, k))
-    data(x, .guess_scale(x, width, height))
-}
