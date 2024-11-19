@@ -16,12 +16,29 @@ test_that("readElement()", {
 })
 
 test_that("readSpatialData()", {
-    expect_is(readSpatialData(x), "SpatialData")
-    a <- list(x=x, images=NULL, labels=NULL, shapes=NULL, points=NULL, tables=NULL)
-    # setting any layer to FALSE should skip it
-    for (. in names(args)) {
-        b <- a; b[[.]] <- FALSE
+    expect_is(y <- readSpatialData(x), "SpatialData")
+    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE, tables=TRUE)
+    for (. in names(a)) {
+        # setting any layer to FALSE skips it
+        b <- c(list(x=x), a); b[[.]] <- FALSE
         obj <- do.call(readSpatialData, b)
         expect_length(get(.)(obj), 0)
+        # specifying non-existent element fails
+        b <- c(list(x=x), a); b[[.]] <- 100
+        expect_error(do.call(readSpatialData, b))
+        b <- c(list(x=x), a); b[[.]] <- "."
+        expect_error(do.call(readSpatialData, b))
+        # specifying element name works
+        f <- paste0(substr(., 1, 1), substr(., 2, nchar(.)-1), "Names")
+        b <- c(list(x=x), a); b[[.]] <- get(f)(y)[1]
+        expect_silent(do.call(readSpatialData, b))
     }
+})
+
+test_that(".readTable_anndataR/basilisk()", {
+    a <- readSpatialData(x, anndataR=TRUE)
+    b <- readSpatialData(x, anndataR=FALSE)
+    expect_equivalent(
+        SpatialData::table(a), 
+        SpatialData::table(b))
 })

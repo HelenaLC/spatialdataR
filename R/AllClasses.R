@@ -2,6 +2,7 @@
     Class="Zattrs",
     contains="list")
 
+#' @importFrom methods setClassUnion
 #' @importClassesFrom S4Arrays Array 
 setClassUnion(
     "array_OR_df",
@@ -26,6 +27,7 @@ setClass("Table", "VIRTUAL")
 # TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
 # read_parquet gives a Table, dplyr calls give a query, but also wanna 
 # be able to store a normal data.frame, maybe?
+#' @importFrom methods setClassUnion
 setClassUnion(
     "arrow_OR_df",
     c("FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))

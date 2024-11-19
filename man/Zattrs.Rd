@@ -2,9 +2,47 @@
 % Please edit documentation in R/Zattrs.R
 \name{Zattrs}
 \alias{Zattrs}
+\alias{axes}
+\alias{CTdata}
+\alias{CTname}
+\alias{CTtype}
+\alias{$,Zattrs-method}
+\alias{axes,Zattrs-method}
+\alias{CTdata,Zattrs-method}
+\alias{CTname,Zattrs-method}
+\alias{CTtype,Zattrs-method}
+\alias{axes,SpatialDataElement-method}
+\alias{CTdata,SpatialDataElement-method}
+\alias{CTname,SpatialDataElement-method}
+\alias{CTtype,SpatialDataElement-method}
 \title{The `Zattrs` class}
 \usage{
 Zattrs(x = list())
+
+\S4method{$}{Zattrs}(x, name)
+
+\S4method{axes}{Zattrs}(x, ...)
+
+\S4method{CTdata}{Zattrs}(x, ...)
+
+\S4method{CTname}{Zattrs}(x, ...)
+
+\S4method{CTtype}{Zattrs}(x, ...)
+
+\S4method{axes}{SpatialDataElement}(x, ...)
+
+\S4method{CTdata}{SpatialDataElement}(x, ...)
+
+\S4method{CTname}{SpatialDataElement}(x, ...)
+
+\S4method{CTtype}{SpatialDataElement}(x, ...)
+}
+\arguments{
+\item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
+
+\item{name}{character string for extraction (see ?base::`$`).}
+
+\item{...}{option arguments passed to and from other methods.}
 }
 \value{
 \code{Zattrs}
@@ -13,6 +51,14 @@ Zattrs(x = list())
 The `Zattrs` class
 }
 \examples{
-Zattrs()
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+x <- readSpatialData(x, tables=FALSE)
+
+z <- meta(label(x))
+axes(z) 
+CTdata(z)
+CTname(z)
+CTtype(z)
 
 }

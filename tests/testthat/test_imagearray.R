@@ -1,17 +1,44 @@
-library(SpatialData)
+rgb <- seq_len(255)
 
-test_that("create ImageArray", {
-  
-  # single scale image
-  mat <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  img <- .ImageArray(data = list(mat))
-  
-  # multi scale image
-  mat1 <- array(sample(1:255, size = 3*20*20, replace = TRUE), dim = c(3, 20, 20))
-  mat2 <- array(sample(1:255, size = 3*10*10, replace = TRUE), dim = c(3, 10, 10))
-  mat3 <- array(sample(1:255, size = 3*5*5, replace = TRUE), dim = c(3, 5, 5))
-  mat <- list(mat1, mat2, mat3)
-  img <- .ImageArray(data = mat)
-  
-  expect_equal(1L,1L)
+test_that("ImageArray()", {
+    val <- sample(rgb, 3*20*20, replace=TRUE)
+    mat <- array(val, dim=c(3, 20, 20))
+    # invalid
+    expect_error(ImageArray(mat))
+    expect_error(ImageArray(mat, 1))
+    expect_error(ImageArray(mat, list()))
+    # single scale
+    expect_silent(ImageArray(list()))
+    expect_silent(ImageArray(list(mat)))
+    expect_silent(ImageArray(list(mat), Zattrs()))
+    # multiscale
+    dim <- lapply(c(20, 10, 5), \(.) c(3, rep(., 2)))
+    lys <- lapply(dim, \(.) array(sample(rgb, prod(.), replace=TRUE), dim=.))
+    expect_silent(ImageArray(lys))
+})
+
+test_that("data,ImageArray", {
+    dim <- lapply(c(8, 4, 2), \(.) c(3, rep(., 2)))
+    lys <- lapply(dim, \(.) array(0, dim=.))
+    img <- ImageArray(lys)
+    for (. in seq_along(lys))
+        expect_identical(data(img, .), lys[[.]])
+    expect_identical(data(img, Inf), lys[[3]])
+    expect_error(data(img, 0))
+    expect_error(data(img, -1))
+    expect_error(data(img, 99))
+    expect_error(data(img, ""))
+    expect_error(data(img, c(1,2)))
+})
+
+test_that(".guess_scale", {
+    img <- ImageArray(
+        lys <- lapply(dim <- lapply(c(6, 3), \(.) c(3, rep(., 2))), 
+        \(.) array(sample(rgb, prod(.), replace=TRUE), dim=.)))
+    # manual scale
+    expect_identical(.get_plot_data(img, k=1), lys[[1]]) 
+    expect_identical(.get_plot_data(img, k=2), lys[[2]])
+    # automatic scale
+    expect_identical(.get_plot_data(img, k=NULL, w=5, h=7), lys[[1]]) 
+    expect_identical(.get_plot_data(img, k=NULL, w=2, h=2), lys[[2]])
 })

@@ -12,7 +12,6 @@ available_sdio <- function() {
     })
 }
 
-#' @description 
 #' Use Python's 'spatialdata-io' to transform manufacturer 
 #' output to .zarr with specific folder structure.
 #' 
