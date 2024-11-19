@@ -1,12 +1,18 @@
 #' @name table-utils
 #' @title Add/get \code{SpatialData} table
-#' @aliases getTable setTable valTable
+#' @aliases hasTable getTable setTable valTable
 #' 
 #' @param x \code{\link{SpatialData}} object.
-#' @param i scalar character; name of the
+#' @param i character string; name of the
 #'   element for which to get/set a \code{table}.
+#' @param j character string; \code{colData} column, 
+#'   or row name to retrieve \code{assay} data.
 #' @param drop logical; should observations (columns) 
 #'   that don't belong to \code{i} be filtered out?
+#' @param name logical; should the \code{table} 
+#'   name be returned instead of TRUE/FALSE?
+#' @param assay character string or scalar integer; 
+#'   specifies which \code{assay} to use when \code{j} is a row name.
 #' @param rk,ik character string; region and instance key (the latter will be 
 #'   ignored if an instance key is already specified within element \code{i}).
 #' @param ... \code{data.frame} or list of data generation function(s) 
@@ -17,6 +23,10 @@
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, anndataR=FALSE)
+#' 
+#' # check if element has a 'table'
+#' hasTable(x, "blobs_points")
+#' hasTable(x, "blobs_labels")
 #' 
 #' # retrieve 'table' for element 'i'
 #' sce <- getTable(x, i="blobs_labels")
@@ -66,6 +76,32 @@ NULL
 setMethod("meta", c("SingleCellExperiment"), 
     \(x) int_metadata(x)$spatialdata_attrs)
 
+# has ----
+
+#' @rdname table-utils
+#' @export
+setMethod("hasTable", c("SpatialData", "ANY"), \(x, i) 
+    stop("'i' should be a character string specifying an element in 'x'"))
+
+setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
+    stopifnot(length(i) == 1, is.character(i))
+    # check that 'i' is a non-'table' element name
+    nms <- colnames(x)
+    idx <- setdiff(names(nms), "tables")
+    match.arg(i, unlist(nms[idx]))
+    # count occurrences
+    t <- lapply(tables(x), \(t) meta(t)$region)
+    n <- vapply(seq_along(t), \(.) i %in% t[[.]], numeric(1))
+    # failure when no/many matches
+    nan <- all(n == 0)
+    dup <- length(unique(n)) != length(n)
+    if (name) {
+        if (nan) stop("no 'table' found for 'i'")
+        if (dup) stop("multiple 'table's found for 'i'")
+        return(names(t)[n == 1])
+    } else return(!nan)
+})
+
 # get ----
 
 #' @rdname table-utils
@@ -76,19 +112,8 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE)
 #' @rdname table-utils
 #' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
-    stopifnot(length(i) == 1, is.character(i))
-    # check that 'i' is a non-'table' element name
-    nms <- colnames(x)
-    idx <- setdiff(names(nms), "tables")
-    match.arg(i, unlist(nms[idx]))
-    # count occurrences
-    t <- lapply(tables(x), \(t) meta(t)$region)
-    n <- vapply(seq_along(t), \(.) i %in% t[[.]], numeric(1))
-    # failure when no/many matches
-    dup <- length(unique(n)) != length(n)
-    if (dup) stop("multiple 'table's found for 'i'")
-    if (all(n == 0)) stop("no 'table' found for 'i'")
-    t <- table(x, names(t)[n == 1])
+    # get 'table' annotating 'i', if any
+    t <- table(x, hasTable(x, i, name=TRUE))
     # only keep observations belonging to 'i' (optional)
     if (drop) t <- t[, t[[meta(t)$region_key]] == i]
     return(t)

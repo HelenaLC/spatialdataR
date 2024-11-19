@@ -2,10 +2,12 @@
 % Please edit documentation in R/table_utils.R
 \name{table-utils}
 \alias{table-utils}
+\alias{hasTable}
 \alias{getTable}
 \alias{setTable}
 \alias{valTable}
 \alias{meta,SingleCellExperiment-method}
+\alias{hasTable,SpatialData,ANY-method}
 \alias{getTable,SpatialData,ANY-method}
 \alias{getTable,SpatialData,character-method}
 \alias{setTable,SpatialData,ANY-method}
@@ -14,6 +16,8 @@
 \title{Add/get \code{SpatialData} table}
 \usage{
 \S4method{meta}{SingleCellExperiment}(x)
+
+\S4method{hasTable}{SpatialData,ANY}(x, i)
 
 \S4method{getTable}{SpatialData,ANY}(x, i, drop = TRUE)
 
@@ -28,7 +32,7 @@
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
 
-\item{i}{scalar character; name of the
+\item{i}{character string; name of the
 element for which to get/set a \code{table}.}
 
 \item{drop}{logical; should observations (columns) 
@@ -37,8 +41,17 @@ that don't belong to \code{i} be filtered out?}
 \item{...}{\code{data.frame} or list of data generation function(s) 
 that accept an argument for the number of observations; see examples.}
 
+\item{name}{logical; should the \code{table} 
+name be returned instead of TRUE/FALSE?}
+
 \item{rk, ik}{character string; region and instance key (the latter will be 
 ignored if an instance key is already specified within element \code{i}).}
+
+\item{j}{character string; \code{colData} column, 
+or row name to retrieve \code{assay} data.}
+
+\item{assay}{character string or scalar integer; 
+specifies which \code{assay} to use when \code{j} is a row name.}
 }
 \description{
 Add/get \code{SpatialData} table
@@ -48,6 +61,10 @@ library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=FALSE)
+
+# check if element has a 'table'
+hasTable(x, "blobs_points")
+hasTable(x, "blobs_labels")
 
 # retrieve 'table' for element 'i'
 sce <- getTable(x, i="blobs_labels")
