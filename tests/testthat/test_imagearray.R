@@ -18,11 +18,17 @@ test_that("ImageArray()", {
 })
 
 test_that("data,ImageArray", {
-    mtx <- array(sample(rgb, dim <- 3*20*20, replace=TRUE), dim=dim)
-    img <- ImageArray(list(mtx))
-    expect_silent(mty <- data(img, 1))
-    expect_identical(mtx, mty)
-    expect_error(data(img, 2))
+    dim <- lapply(c(8, 4, 2), \(.) c(3, rep(., 2)))
+    lys <- lapply(dim, \(.) array(0, dim=.))
+    img <- ImageArray(lys)
+    for (. in seq_along(lys))
+        expect_identical(data(img, .), lys[[.]])
+    expect_identical(data(img, Inf), lys[[3]])
+    expect_error(data(img, 0))
+    expect_error(data(img, -1))
+    expect_error(data(img, 99))
+    expect_error(data(img, ""))
+    expect_error(data(img, c(1,2)))
 })
 
 test_that(".guess_scale", {
@@ -33,6 +39,6 @@ test_that(".guess_scale", {
     expect_identical(.get_plot_data(img, k=1), lys[[1]]) 
     expect_identical(.get_plot_data(img, k=2), lys[[2]])
     # automatic scale
-    expect_identical(.get_plot_data(img, k=NULL, width=5, height=5), lys[[1]]) 
-    expect_identical(.get_plot_data(img, k=NULL, width=2, height=2), lys[[2]])
+    expect_identical(.get_plot_data(img, k=NULL, w=5, h=7), lys[[1]]) 
+    expect_identical(.get_plot_data(img, k=NULL, w=2, h=2), lys[[2]])
 })

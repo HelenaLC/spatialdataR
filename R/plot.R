@@ -45,6 +45,19 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 
 # image ----
 
+.guess_scale <- \(x, w, h) {
+    n <- length(dim(x))
+    i <- ifelse(n == 3, -1, TRUE)
+    d <- vapply(x@data, dim, numeric(n))
+    d <- apply(d, 2, \(.) sum(abs(.[i]-c(h, w))))
+    which.min(d)
+}
+
+.get_plot_data <- \(x, k=NULL, w=800, h=800) {
+    if (!is.null(k)) return(data(x, k))
+    data(x, .guess_scale(x, w, h))
+}
+
 #' @importFrom methods as
 #' @importFrom abind abind
 #' @importFrom grDevices rgb
