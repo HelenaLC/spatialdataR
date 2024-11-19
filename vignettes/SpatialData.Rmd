@@ -2,19 +2,23 @@
 title: "`SpatialData`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
-author: Helena Lucia Crowell
+author: 
+  - name: Helena Lucia Crowell
+  - name: Louise Deconinck
+  - name: Artür Manukyan
+  - name: Dario Righelli
+  - name: Estella Dong
+  - name: Vince Carey
 output:
   BiocStyle::html_document
 vignette: |
-  %\VignetteIndexEntry{merfish}
+  %\VignetteIndexEntry{SpatialData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# Preamble
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r load-libs}
@@ -24,57 +28,163 @@ library(ggnewscale)
 library(SpatialData)
 ```
 
-# toy data
+# Introduction
 
-```{r}
+The `SpatialData` package contains a set of reader and plotting functions for 
+spatial omics data stored as [SpatialData](https://spatialdata.scverse.org/en/latest/index.html) 
+`.zarr` files that follow [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout).
+
+Each `SpatialData` object is composed of five layers: images, labels, shapes, 
+points, and tables. Each layer may contain an arbitrary number of elements.
+
+Images and labels are represented as `ZarrArray`s (`r BiocStyle::Biocpkg("Rarr")`). 
+Points and shapes are represented as `r BiocStyle::CRANpkg("arrow")` objects linked 
+to an on-disk *.parquet* file. As such, all data are represented out of memory.
+
+Element annotation as well as cross-layer summarizations (e.g., count matrices)
+are represented as `r BiocStyle::Biocpkg("SingleCellExperiment")` as tables.
+
+## Handling
+
+For demonstration, we read in a toy dataset that is available through the package:
+
+```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 (x <- readSpatialData(x))
 ```
 
-```{r}
-plotSpatialData() +
-    plotLabel(x) +
-    plotPoint(x, c="genes")
+`SpatialData` object behave like a list, thereby supporting flexible accession, 
+e.g., via `$` and `[[`, using character or integer indices etc. Specifically,
+
+- `image/label/shape/point/table()` retrieve one element
+- `images/labels/shapes/points/tables()` retrieve one layer
+- `image/label/shape/point/tableNames()` retrieve element names
+
+Let's demonstrate these capabilities using the image layer:
+
+```{r get, results="hide"}
+shapeNames(x) # there are two images
+shapes(x) # this is a list of them
+shape(x, i=1) # this is the 1st one
+shape(x, "blobs_polygons") # this is the 3nd one
+x$shapes$blobs_circles # list-like handling also works
 ```
 
-# MERFISH
+Each element is made up of two key components: 
 
-```{r merfish-load-data}
-dir.create(td <- tempfile())
-pa <- unzip_merfish_demo(dest=td)
-x <- readSpatialData(pa)
-```
+- `data`: the actual array or table (for images/labels and shapes/points, respectively)
+- `meta`: list of metadata retrieved from an OME-NGFF compliant *.zattrs* (stored as `Zattrs`)
 
-### handling
-
-```{r}
-table(x)
-```
-
-all these should work (where `shape` could be `image/label/point/table`)...
-
-```{r eval=FALSE}
-# object should behave like a names list
-x$shapes$anatomical
-# character vector
-shapeNames(x) 
-# list of elements in layer
-shapes(x) 
-# single element
-shape(x, i=1) # default
-shape(x, i="cells")
-# get (meta)data from an element
-# (arrow for point/shape, ZarrArray for label/image)
-data(shape(x)) 
-# .zattrs, currently just rendered as 'fromJSON' would
+```{r data/meta}
+data(shape(x))
 meta(shape(x)) 
 ```
 
-### plotting
+## Transformations
+
+To facilitate .zattrs handling, we provide a set of functions to access and modify its contents. Specifically,
+
+- `axes` to access a given element's dimension names and types
+- `CTdata/name/type` to access coordinate transformation components
+- `rmv/addCT` to remove, add, or append coordinate transformations
+
+```{r cs-methods}
+z <- meta(label(x))
+axes(z)
+CTdata(z)
+CTname(rmvCT(z, "scale"))
+CTname(addCT(z, 
+    name="D'Artagnan", 
+    type="scale", 
+    data=c(19, 94)))
+```
+
+`Zattrs` specify an explicit relationship between elements and coordinate systems.
+We can represent these are a graph as follows:
+
+```{r cs-graph}
+(g <- SpatialData:::.coord2graph(x))
+graph::plot(g)
+```
+
+The above representation greatly facilitates queries of the transformation(s) 
+required to spatially align elements. `blobs_labels`, for example, requires a
+sequential transformation (scaling and translation) for the `sequence` space:
+
+```{r cs-path}
+SpatialData:::.get_path(g, "blobs_labels", "sequence")
+```
+
+## Multiscales
+
+`Image/LabelArray`s are linked to potentially multiscale .zarr stores.
+Their show method includes the scales available for a given element:
+
+```{r ms-show}
+image(x, "blobs_image")
+image(x, "blobs_multiscale_image")
+```
+
+Internally, multiscale `ZarrArray`s are stored as a list, e.g.:
+
+```{r ms-dims}
+i <- image(x, "blobs_multiscale_image")
+vapply(i@data, dim, numeric(3))
+```
+
+## Visualization
+
+```{r blobs-plot}
+# layered
+plotSpatialData() +
+    plotImage(x) +
+    plotLabel(x) +
+    plotShape(x, 1) +
+    plotShape(x, 3) +
+    new_scale_color() +
+    plotPoint(x, c="genes")
+# multiscales
+wrap_plots(nrow=1, lapply(seq(3), \(.) 
+    plotSpatialData() + plotImage(x, i=2, k=.)))
+```
+
+# Datasets
+
+Data from a variety of technologies has been made available as `SpatialData` .zarr stores here 
+[here](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html).
+These, in turn, have been deposited in Bioconductor's NSF Open Storage Network bucket,
+and can be retrieved from there with support for caching using `r BiocStyle::Biocpkg("BiocFileCache")`.
+
+We can interrogate the bucket for available (zipped) .zarr archives:
+
+```{r ons-list}
+available_spd_zarr_zips()
+```
+
+Any of the above can be retrieved (once) into some location, and read into R:
+
+```{r ons-read}
+dir.create(td <- tempfile())
+pa <- unzip_spd_demo(
+    zipname="merfish.zarr.zip", 
+    dest=td, source="biocOSN")
+(x <- readSpatialData(pa))
+```
+
+# Technologies
+
+## MERFISH
+
+In this example data, we do not have a `label` for the `shape` polygons. 
+Such labels could be morphological regions annotated by pathologists.
+
+There are only `r length(SpatialData::shape(x, "cells"))` cells, but 
+`r format(length(SpatialData::point(x, "single_molecule")), big.mark=",")` 
+molecules, so that we downsample a random subset of 2,000 for visualization:
 
 ```{r merfish-plot}
-i <- sample(length(p <- point(x)), 2e3)
+i <- sample(length(p <- point(x, i=1)), 2e3)
 point(x, "2k") <- p[i]
 plotSpatialData() +
     plotImage(x) +
@@ -85,53 +195,70 @@ plotSpatialData() +
 ```
 
 ```{r}
-plotSpatialData() +
-    plotShape(x, i=2, c="black", f=NA) +
-    scale_size_continuous(range=c(0, 3))
+qu <- list(xmin=1800, xmax=2400, ymin=5000, ymax=5400)
+bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="yellow", fill=NA)
+y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
+plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
 ```
 
-# MibiTOF
+## MibiTOF
 
-```{r mibitof-load-data}
+Colorectal carcinoma, 25 MB; no shapes, no points.
+
+```{r mibitof-read}
 dir.create(td <- tempfile())
-pa <- unzip_spd_demo(zipname="mibitof.zip", dest=td, source="biocOSN")
-x <- readSpatialData(pa)
-```
-
-```{r mibitof-plot}
-lapply(seq(3), \(i) {
-    plotSpatialData() + 
-        plotImage(x, i) + 
-        new_scale_fill() +
-        plotLabel(x, i, c="Cluster", a=0.2)
-}) |> wrap_plots(nrow=1) + plot_layout(guides="collect")
-```
-
-# VisiumHD
-
-```{r visiumhd-load-data}
-dir.create(td <- tempfile())
-nm <- "visium_hd_3.0.0_io.zip"
-pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
-(x <- readSpatialData(pa, tables=3))
-```
-
-```{r visiumhd-plot}
-plotSpatialData() + plotImage(x, 4)
-```
-
-# Aligned breast cancer example
-
-```{r lkali}
-dir.create(td <- tempfile())
-nm <- "visium_associated_xenium_io_aligned.zip"
-pa <- unzip_spd_demo(zipname=nm, dest=td, source="biocOSN")
+pa <- unzip_spd_demo(
+    zipname="mibitof.zip", 
+    dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
 
-```{r}
-plotSpatialData() +
-    plotImage(x, 3)
+```{r mibitof-plot}
+wrap_plots(nrow=1, lapply(seq(3), \(.) 
+    plotSpatialData() + plotImage(x, .) + plotLabel(x, .)))
+```
+
+## VisiumHD
+
+Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
+
+```{r visiumhd-read}
+dir.create(td <- tempfile())
+pa <- unzip_spd_demo(
+    zipname="visium_hd_3.0.0_io.zip", 
+    dest=td, source="biocOSN")
+(x <- readSpatialData(pa, images=4, shapes=3, tables=NULL))
+```
+
+```{r visiumhd-plot}
+qu <- list(xmin=100, xmax=300, ymin=200, ymax=400)
+bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="black", fill=NA)
+y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
+plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
+```
+
+## CyCIF (MCMICRO)
+
+Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
+
+```{r mcmicro-read}
+dir.create(td <- tempfile())
+pa <- unzip_spd_demo(
+    zipname="mcmicro_io.zip", 
+    dest=td, source="biocOSN")
+(x <- readSpatialData(pa))
+```
+
+## IMC (Steinbock)
+
+4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB; 14 images, 14 labels, 1 table.
+
+```{r steinbock-read}
+dir.create(td <- tempfile())
+pa <- unzip_spd_demo(
+    zipname="steinbock_io.zip", 
+    dest=td, source="biocOSN")
+(x <- readSpatialData(pa))
 ```
 
 # Session info
