@@ -1,110 +1,196 @@
-#' @title Get Region Data
-#' @description This method retrieves data for a specified region from a SpatialData object.
-#' @param x A SpatialData object from which the region data is to be retrieved.
-#' @param re A character string specifying the region for which data is to be retrieved.
-#' @return A SingleCellExperiment object containing the data for the specified region.
-#' @examples
-#' # Assuming `spatial_data` is a SpatialData object and "region_name" is the name of the region
-#' region_data <- getRegionData(spatial_data, "region_name")
-#' @export
-setMethod("getRegionData", c("SpatialData", "character"), \(x, re) {
-    se <- getTable(x, region = re)
-    md <- metadata(se)[[1]]
-    se <- se[, se[[md$region_key]] == re]
-    list("sce" = se, "md" = md)
-})
-
-#' @rdname SDtable
-#' @title \code{SpatialData} tables
+#' @name table-utils
+#' @title Add/get \code{SpatialData} table
+#' @aliases getTable setTable valTable
 #' 
 #' @param x \code{\link{SpatialData}} object.
-#' @param i scalar character or integer; name of the 
-#'   element for which a \code{table} should be retrieved.
+#' @param i scalar character; name of the
+#'   element for which to get/set a \code{table}.
 #' @param drop logical; should observations (columns) 
 #'   that don't belong to \code{i} be filtered out?
+#' @param rk,ik character string; region and instance key (the latter will be 
+#'   ignored if an instance key is already specified within element \code{i}).
+#' @param ... \code{data.frame} or list of data generation function(s) 
+#'   that accept an argument for the number of observations; see examples.
 #'   
 #' @examples
+#' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, anndataR=FALSE)
 #' 
+#' # retrieve 'table' for element 'i'
+#' sce <- getTable(x, i="blobs_labels")
+#' head(colData(sce))
+#' meta(sce)
 #' 
+#' # get values from 'table' 
+#' valTable(x, 
+#'   i="blobs_labels", 
+#'   j="channel_0_sum")
 #' 
-#' getTable(x, "cells")
+#' # add 'table' annotating an element 'i'
+#' # (w/ or w/o supplying additional data)
 #' 
+#' # labels
+#' y <- x; tables(y) <- list()
+#' y <- setTable(y, i <- "blobs_labels")
+#' head(colData(sce <- getTable(y, i)))
+#' 
+#' # points
+#' y <- setTable(x, i <- "blobs_points")
+#' head(colData(sce <- getTable(y, i)))
+#' 
+#' # labels
+#' y <- setTable(x, i <- "blobs_circles")
+#' head(colData(sce <- getTable(y, i)))
+#' 
+#' # list of data generating functions
+#' f <- list(
+#'   numbers=\(n) runif(n),
+#'   letters=\(n) sample(letters, n, TRUE))
+#' 
+#' args <- c(list(x, i <- "blobs_points"), f)
+#' y <- do.call(setTable, args)
+#' head(colData(getTable(y, i)))
+#' 
+#' # passing a preconstructed 'data.frame'
+#' n <- length(point(x, "blobs_points"))
+#' df <- data.frame(n=runif(n))
+#' 
+#' y <- setTable(x, i, df, name=".")
+#' head(colData(table(y, ".")))
 NULL
 
-mockTable <- \(x, i, region_key="key", instance_key="id") {
-    y <- matrix(nrow=10, ncol=1)
-    SingleCellExperiment()
-}
+#' @rdname table-utils
+#' @export
+setMethod("meta", c("SingleCellExperiment"), 
+    \(x) int_metadata(x)$spatialdata_attrs)
 
-setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
+# get ----
 
+#' @rdname table-utils
+#' @export
+setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) 
+    stop("'i' should be a character string specifying an element in 'x'"))
+
+#' @rdname table-utils
+#' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
-    stopifnot(length(i) == 1)
+    stopifnot(length(i) == 1, is.character(i))
+    # check that 'i' is a non-'table' element name
+    nms <- colnames(x)
+    idx <- setdiff(names(nms), "tables")
+    match.arg(i, unlist(nms[idx]))
     # count occurrences
     t <- lapply(tables(x), \(t) meta(t)$region)
-    n <- vapply(seq_along(t), \(.) sum(i %in% t[[.]]), numeric(1))
+    n <- vapply(seq_along(t), \(.) i %in% t[[.]], numeric(1))
     # failure when no/many matches
-    if (any(n > 1)) stop("multiple 'table's found for 'i'")
+    dup <- length(unique(n)) != length(n)
+    if (dup) stop("multiple 'table's found for 'i'")
     if (all(n == 0)) stop("no 'table' found for 'i'")
-    t <- table(x, which(n == 1))
+    t <- table(x, names(t)[n == 1])
     # only keep observations belonging to 'i' (optional)
     if (drop) t <- t[, t[[meta(t)$region_key]] == i]
     return(t)
 })
-setMethod("getTable", c("SpatialData", "NULL"), \(x, i, drop=TRUE) {
-    
-})
 
-setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE)
-    stop("'i' should be either a character string or 'NULL'."))
+# set ----
 
-setMethod("getElementAnnotators", c("SpatialData", "character"), \(x, element) {
-    annotators <- lapply(tables(x), \(table) {
-        md <- getTableAttrs(table)
-        regions <- md$region
-        if (element %in% regions) {
-            table
-        }
-    })
-    annotators[lengths(annotators) != 0] # filter out when no table was found
-})
+#' @rdname table-utils
+#' @export
+setMethod("setTable", c("SpatialData", "ANY"), 
+    \(x, i, ..., name=NULL, rk="rk", ik="ik")
+    stop("'i' should be a character string specifying an element in 'x'"))
 
-setMethod("meta", c("SingleCellExperiment"), \(x) int_metadata(x)$spatialdata_attrs)
-
-# very very basic
-# tested with PointArray
-# get the values from an element:
-# value_key: name of the column/channel
-# element: the spatial element to get the values from
-# sdata: the spatial data object
-# element_name: the name of the element to get the values from
-# table_name: the name of the table to get the values from
-
-# if you provide a table name, subset using element_name if porvided, and get the value_key column or channel
-getValues <- function(value_key, element=NULL, sdata=NULL, element_name=NULL, table_name=NULL) {
-
-    # if table name is provided, get the table and subset using element_name if provided
-    # then return the value_key column or channel
-    if(!is.null(table_name)){
-        table <- getTable(sdata, table_name=table_name)
-
-        if(!is.null(element_name)){
-            md <- getTableAttrs(table)
-            table <- table[, table[[md$region_key]] == element_name]
-        }
-
-        if(value_key %in% colnames(table)){
-            return(table[,value_key])
-        }
-        if(value_key %in% rownames(table)){
-            return(table[value_key])
-        }
-
+#' @rdname table-utils
+#' @importFrom dplyr pull
+#' @importFrom sf st_as_sf
+#' @importFrom S4Vectors make_zero_col_DFrame 
+#' @importFrom SingleCellExperiment SingleCellExperiment int_metadata<-
+#' @export
+setMethod("setTable", 
+    c("SpatialData", "character"), 
+    \(x, i, ..., name=NULL, rk="rk", ik="ik") {
+    dots <- list(...)
+    stopifnot(
+        length(i) == 1, is.character(i),
+        length(rk) == 1, is.character(rk),
+        length(ik) == 1, is.character(ik))
+    if (!i %in% unlist(colnames(x))) 
+        stop(dQuote(i), " is not an element of 'x'")
+    if (length(dots)) stopifnot(
+        is.data.frame(dots[[1]]) || 
+            all(vapply(dots, is.function, logical(1))))
+    # make up 'name' if not provided
+    if (is.null(name)) {
+        nt <- length(tables(x))
+        name <- paste0("table", nt+1)
+    } else if (name %in% tableNames(x)) 
+        stop("'table' with name ", dquote(name),
+            " exists; use 'table<-' to replace it.")
+    # get element type
+    for (l in rownames(x)) 
+        for (e in colnames(x)[[l]])
+            if (i == e) typ <- l
+    sda <- "spatialdata_attrs"
+    sce <- switch(typ, 
+        labels={
+            y <- label(x, i)
+            md <- meta(y)[[sda]]
+            ki <- md$instance_key
+            z <- as(data(y), "DelayedMatrix")
+            is <- setdiff(unique(c(z)), 0)
+            n <- length(is <- sort(is))
+            if (!is.null(ki)) ik <- ki
+        },
+        points={
+            n <- length(y <- point(x, i))
+            md <- meta(y)[[sda]]
+            ik <- md$instance_key
+            is <- pull(data(y), ik)
+        },
+        shapes={
+            n <- nrow(y <- shape(x, i))
+            ex <- c("geometry", "radius")
+            ki <- setdiff(names(y), ex)
+            if (length(ki)) {
+                is <- pull(data(y), ik <- ki)
+            } else {
+                # in case of missing 'instance_key', make one
+                df <- st_as_sf(data(y))
+                is <- seq_len(nrow(df))
+                df[[ik]] <- is
+                y@data <- df
+                shape(x, i) <- y
+            }
+        }, stop("can't add 'table' for elements in '", typ, "' layer"))
+    cd <- make_zero_col_DFrame(n)
+    cd[[rk]] <- i; cd[[ik]] <- is
+    # additional data generation (optional)
+    if (length(dots) && is.data.frame(dots[[1]])) {
+        cd <- cbind(cd, dots)
+    } else for (. in names(dots)) {
+        cd[[.]] <- dots[[.]](n)
     }
+    sce <- SingleCellExperiment(colData=cd)
+    # stash 'spatialdata_attrs'
+    md <- list(region=i, region_key=rk, instance_key=ik)
+    int_metadata(sce)[[sda]] <- md
+    table(x, name) <- sce
+    return(x)
+})
 
-}
+# val ----
 
-#get_values(value_key="channel_0_sum", sdata=sdata, element_name="blobs_labels", table_name="table")
+#' @rdname table-utils
+#' @importFrom SummarizedExperiment assay colData
+#' @export
+setMethod("valTable", "SpatialData", \(x, i, j, assay=1, drop=TRUE) {
+    stopifnot(length(j) == 1, is.character(j))
+    t <- getTable(x, i, drop)
+    rs <- j %in% rownames(t)
+    cd <- j %in% names(colData(t))
+    if (!(rs || cd)) stop("invalid 'j'")
+    if (cd) return(t[[j]])
+    assay(t, assay)[j, ]
+})
