@@ -69,6 +69,7 @@ setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
 # tbl ----
 
+setGeneric("hasTable", \(x, i, ...) standardGeneric("hasTable"))
 setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
 setGeneric("setTable", \(x, i, ...) standardGeneric("setTable"))
 setGeneric("valTable", \(x, i, ...) standardGeneric("valTable"))
