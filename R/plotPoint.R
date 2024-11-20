@@ -44,7 +44,8 @@ NULL
         } else if (.str_is_col(c)) {
             dot$colour <- c
         } else {
-            stopifnot(!is.null(ik), length(c) == 1, is.character(c))
+            if (is.null(ik)) stop("missing 'instance_key' in 'table' annotating 'i'")
+            stopifnot(length(c) == 1, is.character(c))
             t <- table(x, hasTable(x, i, name=TRUE))
             md <- int_metadata(t)$spatialdata_attrs
             idx <- match(df[[ik]], t[[md$instance_key]])
