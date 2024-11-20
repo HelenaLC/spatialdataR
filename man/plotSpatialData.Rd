@@ -3,25 +3,14 @@
 \name{plotSpatialData}
 \alias{plotSpatialData}
 \alias{plotImage}
-\alias{plotLabel}
-\alias{plotPoint}
 \alias{plotShape}
 \alias{plotImage,SpatialData-method}
-\alias{plotLabel,SpatialData-method}
-\alias{plotPoint,SpatialData-method}
-\alias{plotPoint,PointFrame-method}
 \alias{plotShape,SpatialData-method}
 \title{`SpatialData` visualization}
 \usage{
 plotSpatialData()
 
 \S4method{plotImage}{SpatialData}(x, i = 1, j = 1, k = NULL)
-
-\S4method{plotLabel}{SpatialData}(x, i = 1, c = NULL, a = 0.5, pal = hcl.colors(11, "Spectral"))
-
-\S4method{plotPoint}{SpatialData}(x, i = 1, c = NULL, s = 1, a = 1)
-
-\S4method{plotPoint}{PointFrame}(x, c = NULL, s = 1, a = 1)
 
 \S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2)
 }
