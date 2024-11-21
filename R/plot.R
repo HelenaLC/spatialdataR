@@ -64,9 +64,12 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 #' @importFrom DelayedArray realize
 .df_i <- \(x, k=NULL) {
     a <- .get_plot_data(x, k)
-    if (max(a) > 1) a <- a/255
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
     a <- realize(as(a, "DelayedArray"))
+    if (max(a) > 1) {
+        max <- apply(a, 1, max)
+        a <- sweep(a, 1, max, `/`)
+    }
     apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
 }
 
