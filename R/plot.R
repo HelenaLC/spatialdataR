@@ -1,6 +1,6 @@
 #' @name plotSpatialData
 #' @title `SpatialData` visualization
-#' @aliases plotImage plotLabel plotPoint plotShape
+#' @aliases plotImage plotShape
 #' 
 #' @description ...
 #'
@@ -95,110 +95,11 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
     .gg_i(df, wh$w, wh$h)
 })
 
-# label ----
-
-#' @rdname plotSpatialData
-#' @importFrom grDevices hcl.colors colorRampPalette
-#' @importFrom S4Vectors metadata
-#' @importFrom abind abind
-#' @importFrom methods as
-#' @export
-setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5,
-    pal=hcl.colors(11, "Spectral")) {
-    .data <- NULL # R CMD check
-    if (is.numeric(i))
-        i <- labelNames(x)[i]
-    i <- match.arg(i, labelNames(x))
-    y <- as.matrix(as(data(label(x, i)), "DelayedArray"))
-    df <- data.frame(x=c(col(y)), y=c(row(y)), z=c(y))
-    if (!is.null(c)) {
-
-        se_md <- getRegionData(x, i)
-        se <- se_md$sce
-        md <- se_md$md
-        
-        cs <- match(df$z, se[[md$instance_key]])
-        df$z <- se[[c]][cs]
-        thm <- list(
-            theme(legend.key.size=unit(0.5, "lines")),
-            guides(fill=guide_legend(override.aes=list(alpha=1))))
-    } else {
-        thm <- guides(fill="none")
-    }
-    val <- sort(setdiff(unique(df$z), NA))
-    pal <- colorRampPalette(pal)(length(val))
-    list(thm, 
-        geom_tile(aes(x, y, fill=factor(.data$z)), df, alpha=a),
-        scale_fill_manual(c, values=pal, breaks=val, na.value=NA))
-})
-
-# point ----
-
-.gg_p <- \(df, c, s, a) {
-    aes <- aes(.data[["x"]], .data[["y"]])
-    dot <- list()
-    if (!is.null(c)) {
-        if (c %in% names(df)) {
-            aes$colour <- aes(.data[[c]])[[1]]
-            lgd <- scale_type(df[[c]])
-        } else if (.str_is_col(c)) {
-            lgd <- "none"
-            dot$colour <- c
-        } else stop("invalid 'c'")
-    } else lgd <- "none"
-    if (is.character(s)) {
-        if (s %in% names(df)) {
-            aes$size <- aes(.data[[s]])[[1]]
-        }
-    } else if (is.numeric(s)) {
-        dot$size <- s
-    }
-    dot$alpha <- a
-    list(
-        do.call(geom_point, c(list(data=df, mapping=aes), dot)), 
-        if (lgd == "discrete") list(
-            theme(legend.key.size=unit(0, "lines")),
-            guides(col=guide_legend(override.aes=list(alpha=1, size=2)))
-        ) else list(
-            theme(
-                legend.key.width=unit(0.5, "lines"),
-                legend.key.height=unit(1, "lines")),
-            scale_color_gradientn(colors=rev(hcl.colors(11, "Rocket")))
-        )
-    )
-}
-
-#' #' @name plotSpatialData
-#' #' @rdname plotSpatialData
-#' #' @title Visualization
-#' #' 
-#' #' @param x SpatialData 
-#' #' @param i Index of which slot of the Shape layer. Default value is 1.
-#' #' @param c Color border of the shape to plot. Default value is NULL.
-#' #' @param s Column name of interest in the shape coordinate file. If the geometry
-#' #' is "POINT" (i.e. a circle), the default column name is "radius". Otherwise it 
-#' #' is not needed for other geometry shapes such as "POLYGON".
-#' #' @param a Transparency of the shape to plot. A value ranges from 0 to 1, 
-#' #' with decreasing visibility. Default value is 0.2.
-#' NULL
-
-#' @rdname plotSpatialData
-#' @export
-setMethod("plotPoint", "SpatialData", \(x, i=1, c=NULL, s=1, a=1) {
-    .gg_p(as.data.frame(data(point(x, i))), c, s, a)
-})
-
-#' @rdname plotSpatialData
-#' @export
-setMethod("plotPoint", "PointFrame", \(x, c=NULL, s=1, a=1) {
-    plotSpatialData() + .gg_p(as.data.frame(data(x)), c, s, a)
-})
-
 # shape ----
 
 #' @rdname plotSpatialData
-#' @importFrom sf st_as_sf st_coordinates st_geometry_type
 #' @importFrom ggforce geom_circle
+#' @importFrom sf st_as_sf st_coordinates st_geometry_type
 #' @export
 setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
     if (is.numeric(i)) 
@@ -248,14 +149,3 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
         theme(legend.key.size=unit(0.5, "lines")),
         do.call(geo, c(list(data=df, mapping=aes), dot)))
 })
-
-
-#' @importFrom SummarizedExperiment colData
-#' @importFrom S4Vectors metadata
-.get_tbl <- \(df, x, i) {
-  md <- metadata(se <- table(x))[[1]]
-  se <- se[, se[[md$region_key]] == i]
-  j <- setdiff(names(colData(se)), names(df))
-  i <- match(df[[md$instance_key]], se[[md$instance_key]])
-  cbind(df, colData(se)[i, j])
-}

@@ -87,7 +87,9 @@ setMethod("meta", c("SingleCellExperiment"),
 setMethod("hasTable", c("SpatialData", "ANY"), \(x, i) .invalid_i())
 
 setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
-    stopifnot(length(i) == 1, is.character(i))
+    stopifnot(
+        isTRUE(name) || isFALSE(name),
+        length(i) == 1, is.character(i))
     # check that 'i' is a non-'table' element name
     nms <- colnames(x)
     idx <- setdiff(names(nms), "tables")
@@ -114,6 +116,7 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
 #' @rdname table-utils
 #' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
+    stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
     t <- table(x, hasTable(x, i, name=TRUE))
     # only keep observations belonging to 'i' (optional)
@@ -136,22 +139,21 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 setMethod("setTable", 
     c("SpatialData", "character"), 
     \(x, i, ..., name=NULL, rk="rk", ik="ik") {
-    dots <- list(...)
+    dots <- list(...); if (length(dots)) dots <- dots[[1]]
     stopifnot(
         length(i) == 1, is.character(i),
         length(rk) == 1, is.character(rk),
         length(ik) == 1, is.character(ik))
     if (!i %in% unlist(colnames(x))) 
         stop(dQuote(i), " is not an element of 'x'")
-    if (length(dots)) stopifnot(
-        is.data.frame(dots[[1]]) || 
-            all(vapply(dots, is.function, logical(1))))
+    if (length(dots)) stopifnot(is.data.frame(dots) || 
+        all(vapply(dots, is.function, logical(1))))
     # make up 'name' if not provided
     if (is.null(name)) {
         nt <- length(tables(x))
         name <- paste0("table", nt+1)
     } else if (name %in% tableNames(x)) 
-        stop("'table' with name ", dquote(name),
+        stop("'table' with name ", dQuote(name),
             " exists; use 'table<-' to replace it.")
     # get element type
     for (l in rownames(x)) 
@@ -192,7 +194,8 @@ setMethod("setTable",
     cd <- make_zero_col_DFrame(n)
     cd[[rk]] <- i; cd[[ik]] <- is
     # additional data generation (optional)
-    if (length(dots) && is.data.frame(dots[[1]])) {
+    if (length(dots) && is.data.frame(dots)) {
+        stopifnot(nrow(dots) == nrow(cd))
         cd <- cbind(cd, dots)
     } else for (. in names(dots)) {
         cd[[.]] <- dots[[.]](n)
