@@ -159,6 +159,7 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
 
 # transform 'ShapeFrame' by realizing,
 # and updating 'sf' geometry coordinates
+#' @importFrom sf st_as_sf st_geometry st_geometry<-
 .trans_s <- \(x, f) {
     y <- st_as_sf(data(x))
     xy <- st_coordinates(y)
