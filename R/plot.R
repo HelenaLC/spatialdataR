@@ -59,18 +59,16 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
 }
 
 #' @importFrom methods as
-#' @importFrom abind abind
 #' @importFrom grDevices rgb
 #' @importFrom DelayedArray realize
 .df_i <- \(x, k=NULL) {
     a <- .get_plot_data(x, k)
     a <- if (dim(a)[1] == 1) a[rep(1,3),,] else a
     a <- realize(as(a, "DelayedArray"))
-    if (max(a) > 1) {
-        max <- apply(a, 1, max)
-        a <- sweep(a, 1, max, `/`)
-    }
-    apply(a, c(2, 3), \(.) do.call(rgb, as.list(.)))
+    img <- rgb(
+        maxColorValue=max(a),
+        c(a[1,,]), c(a[2,,]), c(a[3,,]))
+    array(img, dim(a)[-1])
 }
 
 .get_wh <- \(x, i, j) {
