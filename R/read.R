@@ -80,8 +80,8 @@ readShape <- function(x, ...) {
 
 .env <- BasiliskEnvironment(
     pkgname="SpatialData", envname="anndata_env",
-    pip = c("spatialdata==0.2.5", "spatialdata-io==0.1.5"),
-    packages=c("anndata==0.9.1", "zarr==2.14.2"))
+    packages=c("anndata==0.9.1", "zarr==2.14.2"),
+    pip=c("spatialdata==0.2.5", "spatialdata-io==0.1.5"))
 
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
