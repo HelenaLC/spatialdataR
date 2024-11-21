@@ -40,10 +40,8 @@
 \alias{meta,SpatialDataElement-method}
 \alias{rownames,SpatialData-method}
 \alias{colnames,SpatialData-method}
-\alias{f}
 \alias{[[<-,SpatialData,numeric,ANY,ANY-method}
 \alias{[[<-,SpatialData,character,ANY,ANY-method}
-\alias{g}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
@@ -64,27 +62,9 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{colnames}{SpatialData}(x)
 
-f(.)
-
-f(.)
-
-f(.)
-
 \S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
 \S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
-
-f(.)
-
-f(.)
-
-f(.)
-
-f(.)
-
-f(.)
-
-g(.)
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}

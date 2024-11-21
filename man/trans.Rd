@@ -4,6 +4,7 @@
 \alias{trans}
 \alias{scale}
 \alias{rotate}
+\alias{translation}
 \alias{scale,ImageArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
 \alias{rotate,PointFrame,numeric-method}
@@ -34,6 +35,8 @@
 name or index of coordinate space.}
 
 \item{t}{transformation data.}
+
+\item{...}{option arguments passed to and from other methods.}
 }
 \description{
 Transformations

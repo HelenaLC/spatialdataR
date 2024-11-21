@@ -2,6 +2,7 @@
 % Please edit documentation in R/plotShape.R
 \name{plotShape}
 \alias{plotShape}
+\alias{plotShape,SpatialData-method}
 \title{\code{SpatialData} shape viz.}
 \usage{
 \S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2)
@@ -15,15 +16,8 @@
 a given pixel is non-zero; alternatively, a character string specifying
 a \code{colData} column or row name in a \code{table} annotating \code{i}.}
 
-\item{a}{scalar numeric in [0, 1]; alpha value passed to \code{geom_tile}.}
-
-\item{assay}{character string; in case of \code{c} denoting a row name,
-specifies which \code{assay} data to use (see \code{\link{valTable}}).}
-
-\item{pal}{character vector; color for discrete/continuous values
-(interpolated automatically when insufficient values are provided).}
-
-\item{nan}{character string; color for missing values (hidden by default).}
+\item{f, s, a}{used to control plotting aesthetics;
+fill, size, alpha value passed to \code{geom_polygon}.}
 }
 \description{
 \code{SpatialData} shape viz.
