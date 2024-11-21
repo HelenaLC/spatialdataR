@@ -19,13 +19,17 @@ Use Python's 'spatialdata-io' to transform manufacturer
 output to .zarr with specific folder structure.
 }
 \examples{
+# unzip flat files
 pa <- path_to_10x_xen_demo()
-td <- tempfile()
-dir.create(td)
+dir.create(td <- tempfile())
 unzip(pa, exdir=td)
+
+# read & write to .zarr w/ 'spatialdata-io'
 target <- tempfile()
 use_sdio("xenium", srcdir=td, dest=target)
-br2fov <- readSpatialData(target)
-br2fov
+
+# read into R
+(br2fov <- readSpatialData(target))
+plotSpatialData() + plotImage(br2fov)
 
 }
