@@ -8,10 +8,10 @@
 \usage{
 \S4method{plotPoint}{SpatialData}(x, i = 1, c = NULL, s = 1, a = 1, assay = 1)
 
-\S4method{plotPoint}{PointFrame}(x, c = NULL, s = 1, a = 1, assay = 1)
+\S4method{plotPoint}{PointFrame}(x, c = NULL, s = 1, a = 1)
 }
 \arguments{
-\item{x}{\code{SpatialData} object.}
+\item{x}{\code{SpatialData} object or \code{PointFrame}.}
 
 \item{i}{character string or index; the label element to plot.}
 
@@ -23,7 +23,8 @@
 \item{a}{scalar numeric in [0, 1]; alpha value passed to \code{geom_point}.}
 
 \item{assay}{character string; in case of \code{c} denoting a row name,
-specifies which \code{assay} data to use (see \code{\link{valTable}}).}
+specifies which \code{assay} data to use (see \code{\link{valTable}})
+(ignored when \code{x} is a \code{PointFrame}).}
 }
 \description{
 \code{SpatialData} point viz.
