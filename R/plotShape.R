@@ -6,12 +6,8 @@
 #' @param c the default, NULL, gives a binary image of whether or not 
 #'   a given pixel is non-zero; alternatively, a character string specifying
 #'   a \code{colData} column or row name in a \code{table} annotating \code{i}.
-#' @param assay character string; in case of \code{c} denoting a row name,
-#'   specifies which \code{assay} data to use (see \code{\link{valTable}}).
-#' @param a scalar numeric in [0, 1]; alpha value passed to \code{geom_tile}.
-#' @param pal character vector; color for discrete/continuous values
-#'   (interpolated automatically when insufficient values are provided).
-#' @param nan character string; color for missing values (hidden by default).
+#' @param f,s,a used to control plotting aesthetics;
+#'   fill, size, alpha value passed to \code{geom_polygon}.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -30,8 +26,12 @@
 #'   plotShape(x, "blobs_polygons", c="red")
 #' 
 #' patchwork::wrap_plots(a, b)
+NULL
+
+#' @rdname plotShape
 #' @importFrom sf st_as_sf st_coordinates st_geometry_type
 #' @importFrom ggforce geom_circle
+#' @importFrom utils tail
 #' @export
 setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
     df <- data(shape(x, i))

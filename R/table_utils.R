@@ -67,8 +67,8 @@
 #' n <- length(point(x, "blobs_points"))
 #' df <- data.frame(n=runif(n))
 #' 
-#' y <- setTable(x, i, df, name=".")
-#' head(colData(table(y, ".")))
+#' y <- setTable(x, i, df)
+#' head(colData(getTable(y, i)))
 NULL
 
 #' @rdname table-utils
@@ -86,6 +86,8 @@ setMethod("meta", c("SingleCellExperiment"),
 #' @export
 setMethod("hasTable", c("SpatialData", "ANY"), \(x, i) .invalid_i())
 
+#' @rdname table-utils
+#' @export
 setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     stopifnot(
         isTRUE(name) || isFALSE(name),

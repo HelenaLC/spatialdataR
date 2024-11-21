@@ -1,12 +1,13 @@
 #' @name trans
 #' @rdname trans
 #' @title Transformations
-#' @aliases scale rotate
+#' @aliases scale rotate translation
 #' 
 #' @param x \code{SpatialData} element
 #' @param j scalar character or numeric; 
 #'   name or index of coordinate space.
 #' @param t transformation data.
+#' @param ... option arguments passed to and from other methods.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -83,6 +84,7 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
+    y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x+t[1]) |>
         mutate(y=y+t[2])
@@ -146,7 +148,7 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
                 xy$y <- op(xy$y, d[1])
             },
             rotate={
-                xy <- xy %*% R(d*pi/180)
+                xy <- xy %*% .R(d*pi/180)
             },
             translation={
                 op <- ifelse(rev, `-`, `+`)

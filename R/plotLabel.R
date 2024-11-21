@@ -29,15 +29,17 @@
 #' 
 #' # coloring by 'assay' data
 #' p + plotLabel(x, i, "channel_1_sum")
-#' 
+NULL
+
+#' @rdname plotLabel
 #' @importFrom grDevices hcl.colors colorRampPalette
 #' @importFrom S4Vectors metadata
 #' @importFrom abind abind
+#' @importFrom rlang .data
 #' @importFrom methods as
 #' @export
 setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, 
     a=0.5, pal=c("red", "green"), nan=NA, assay=1) {
-    .data <- NULL # R CMD check
     if (is.numeric(i)) i <- labelNames(x)[i]
     i <- match.arg(i, labelNames(x))
     y <- as.matrix(as(data(label(x, i)), "DelayedArray"))
@@ -65,7 +67,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL,
                 scale_fill_gradientn(c, colors=pal, na.value=nan)))
     } else {
         thm <- guides(fill="none")
-        aes$fill <- aes(z != 0)[[1]]
+        aes$fill <- aes(.data$z != 0)[[1]]
         thm <- list(
             theme(legend.position="none"),
             scale_fill_manual(NULL, values=pal))

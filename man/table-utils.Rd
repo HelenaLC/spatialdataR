@@ -8,6 +8,7 @@
 \alias{valTable}
 \alias{meta,SingleCellExperiment-method}
 \alias{hasTable,SpatialData,ANY-method}
+\alias{hasTable,SpatialData,character-method}
 \alias{getTable,SpatialData,ANY-method}
 \alias{getTable,SpatialData,character-method}
 \alias{setTable,SpatialData,ANY-method}
@@ -18,6 +19,8 @@
 \S4method{meta}{SingleCellExperiment}(x)
 
 \S4method{hasTable}{SpatialData,ANY}(x, i)
+
+\S4method{hasTable}{SpatialData,character}(x, i, name = FALSE)
 
 \S4method{getTable}{SpatialData,ANY}(x, i, drop = TRUE)
 
@@ -35,14 +38,14 @@
 \item{i}{character string; name of the
 element for which to get/set a \code{table}.}
 
+\item{name}{logical; should the \code{table} 
+name be returned instead of TRUE/FALSE?}
+
 \item{drop}{logical; should observations (columns) 
 that don't belong to \code{i} be filtered out?}
 
 \item{...}{\code{data.frame} or list of data generation function(s) 
 that accept an argument for the number of observations; see examples.}
-
-\item{name}{logical; should the \code{table} 
-name be returned instead of TRUE/FALSE?}
 
 \item{rk, ik}{character string; region and instance key (the latter will be 
 ignored if an instance key is already specified within element \code{i}).}
@@ -105,6 +108,6 @@ head(colData(getTable(y, i)))
 n <- length(point(x, "blobs_points"))
 df <- data.frame(n=runif(n))
 
-y <- setTable(x, i, df, name=".")
-head(colData(table(y, ".")))
+y <- setTable(x, i, df)
+head(colData(getTable(y, i)))
 }
