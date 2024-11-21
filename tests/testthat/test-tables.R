@@ -1,3 +1,4 @@
+require(SingleCellExperiment, quietly=TRUE)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, table=1, anndataR=TRUE)
