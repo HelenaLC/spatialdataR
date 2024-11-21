@@ -35,7 +35,8 @@
 #' @importFrom abind abind
 #' @importFrom methods as
 #' @export
-setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5, pal=c("red", "green"), nan=NA, assay=1) {
+setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, 
+    a=0.5, pal=c("red", "green"), nan=NA, assay=1) {
     .data <- NULL # R CMD check
     if (is.numeric(i)) i <- labelNames(x)[i]
     i <- match.arg(i, labelNames(x))
@@ -48,6 +49,7 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5, pal=c("red", "gre
         md <- int_metadata(t)$spatialdata_attrs
         idx <- match(df$z, t[[md$instance_key]])
         df$z <- valTable(x, i, c, assay=assay)[idx]
+        if (c == md$instance_key) df$z <- factor(df$z)
         aes$fill <- aes(.data[["z"]])[[1]]
         switch(scale_type(df$z), 
             discrete={
@@ -65,8 +67,8 @@ setMethod("plotLabel", "SpatialData", \(x, i=1, c=NULL, a=0.5, pal=c("red", "gre
         thm <- guides(fill="none")
         aes$fill <- aes(z != 0)[[1]]
         thm <- list(
-            scale_fill_manual(values=pal),
-            theme(legend.position="none"))
+            theme(legend.position="none"),
+            scale_fill_manual(NULL, values=pal))
     }
     list(thm, do.call(geom_tile, list(data=df, mapping=aes, alpha=a)))
 })
