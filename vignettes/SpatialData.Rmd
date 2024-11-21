@@ -148,7 +148,7 @@ sequential transformation (scaling and translation) for the `sequence` space:
 SpatialData:::.get_path(g, "blobs_labels", "sequence")
 ```
 
-## Visualization
+# Visualization
 
 ### Images
 
@@ -253,8 +253,6 @@ pa <- unzip_spd_demo(
     dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```
-
-# Technologies
 
 ## MERFISH
 
