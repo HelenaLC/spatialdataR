@@ -1,3 +1,10 @@
+changes in version 0.99.17
+
+- rewrite of points and labels plotting, including 
+  documented examples and support for tables
+- setup 'basilisk' environment to use 'pip'
+  for 'spatialdata' and 'spatialdata-io'
+
 changes in version 0.99.16
 
 - added draft for transformations (tbc)
