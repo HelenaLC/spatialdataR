@@ -203,9 +203,25 @@ f <- list(
 y <- setTable(x, i, f)
 # demo. viz. capabilities
 a <- p + plotPoint(y, i) # simple dots
-b <- p + plotPoint(y, i, "numbers") # discrete coloring
-c <- p + plotPoint(y, i, "letters") # continuous coloring
+b <- p + plotPoint(y, i, "letters") # discrete coloring
+c <- p + plotPoint(y, i, "numbers") # continuous coloring
 a | b | c
+```
+
+### Shapes
+
+```{r plotShape, fig.width=6, fig.height=2.5}
+p <- plotSpatialData()
+a <- p +
+  ggtitle("polygons") +
+  plotShape(x, "blobs_polygons")
+b <- p +
+  ggtitle("multipolygons") +
+  plotShape(x, "blobs_multipolygons")
+c <- p +
+  ggtitle("circles") +
+  plotShape(x, "blobs_circles")
+wrap_plots(a, b, c)
 ```
 
 ### Layering

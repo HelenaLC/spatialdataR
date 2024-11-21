@@ -1,29 +1,27 @@
-#' @name plotSpatialData
-#' @title `SpatialData` visualization
-#' @aliases plotImage plotShape
+#' @name plotImage
+#' @title \code{SpatialData} image viz.
+#' @aliases plotImage
 #' 
 #' @description ...
 #'
 #' @param x \code{\link{SpatialData}} object.
 #' @param i element to use from a given layer.
 #' @param j name of target coordinate system. 
-#' @param k index of the scale of an image (default: NULL)
-#' @param c,f,s,a plotting aesthetics; color, fill, size, alpha.
-#' @param pal character vector of colors; will interpolate 
-#'   automatically when insufficient values are provided.
+#' @param k index of the scale of an image; by default (NULL), will auto-select 
+#'   scale in order to minimize memory-usage and blurring for a target size of 
+#'   800 x 800px; use Inf to plot the lowest resolution available.
 #'
 #' @return ggplot
 #'
 #' @examples
-#' tf <- tempfile()
-#' dir.create(tf)
-#' base <- unzip_merfish_demo(tf)
-#' (x <- readSpatialData(base, tables=FALSE))
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
 #' 
-#' plotImage(x)
-#'
-#' @importFrom rlang .data
-#' @import ggplot2
+#' ms <- lapply(seq(3), \(.) 
+#'   plotSpatialData() +
+#'   plotImage(x, i=2, k=.))
+#' patchwork::wrap_plots(ms)
 NULL
 
 #' @importFrom grDevices col2rgb
@@ -39,11 +37,9 @@ NULL
         axis.ticks=element_line(color="grey"))
 )
 
-#' @rdname plotSpatialData
+#' @rdname plotImage
 #' @export
 plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme 
-
-# image ----
 
 .guess_scale <- \(x, w, h) {
     n <- length(dim(x))
@@ -79,11 +75,12 @@ plotSpatialData <- \() ggplot() + scale_y_reverse() + .theme
     list(w=wh[, 1], h=wh[, 2])
 }
 
+#' @import ggplot2
 .gg_i <- \(x, w, h, dpi) list(
     scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
-    ggplot2::annotation_raster(x, w[2],w[1], -h[1],-h[2], interpolate=FALSE))
+    annotation_raster(x, w[2],w[1], -h[1],-h[2], interpolate=FALSE))
 
-#' @rdname plotSpatialData
+#' @rdname plotImage
 #' @export
 setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
     if (is.numeric(i)) 
@@ -94,59 +91,4 @@ setMethod("plotImage", "SpatialData", \(x, i=1, j=1, k=NULL) {
     df <- .df_i(y, k)
     wh <- .get_wh(x, i, j)
     .gg_i(df, wh$w, wh$h)
-})
-
-# shape ----
-
-#' @rdname plotSpatialData
-#' @importFrom ggforce geom_circle
-#' @importFrom sf st_as_sf st_coordinates st_geometry_type
-#' @export
-setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
-    if (is.numeric(i)) 
-        i <- shapeNames(x)[i]
-    df <- data(shape(x, i))
-    df <- st_as_sf(df)
-    xy <- st_coordinates(df)
-    typ <- st_geometry_type(df)
-    typ <- as.character(typ[1])
-    aes <- aes(.data[["x"]], .data[["y"]])
-    dot <- list(fill=f, alpha=a)
-    # TODO: need separate plotting for different types of shapes
-    switch(typ,
-        # POINT means circle
-        POINT={
-            names(xs) <- xs <- setdiff(names(df), "geometry")
-            df <- data.frame(xy, lapply(xs, \(.) df[[.]]))
-            names(df) <- c("x", "y", xs)
-            if (.str_is_col(c)) {
-                dot$col <- c
-            } else if (is.character(c)) {
-                if (!c %in% names(df)) stop("invalid 'c'")
-                aes$colour <- aes(.data[[c]])[[1]]
-            }
-            if (is.numeric(s)) {
-                geo <- geom_point
-                dot$size <- s
-            } else if (!is.null(s)) {
-                geo <- geom_circle
-              aes$x0 <- df$x
-              aes$y0 <- df$y
-              aes$r <- aes(.data[[s]])[[1]]
-            } else stop("invalid 's'")
-        },
-        POLYGON={
-            geo <- geom_polygon
-            df <- data.frame(xy)
-            names(df) <- c("x", "y", "z", "i")
-            if (is.null(c)) {
-                aes$colour <- aes(factor(.data$i))[[1]]
-                dot$show.legend <- FALSE
-            } else if (.str_is_col(c)) {
-                dot$col <- c
-            } else stop("invalid 'c'")
-        })
-    list(
-        theme(legend.key.size=unit(0.5, "lines")),
-        do.call(geo, c(list(data=df, mapping=aes), dot)))
 })
