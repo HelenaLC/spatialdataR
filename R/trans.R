@@ -53,12 +53,15 @@ setMethod("scale", c("ImageArray", "numeric"), \(x, j, t, ...) {
 
 # label ----
 
+#TODO
+
 # point ----
 
 #' @rdname trans
 #' @importFrom dplyr mutate
 #' @export
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
+    y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x*t[1]) |>
         mutate(y=y*t[2])
