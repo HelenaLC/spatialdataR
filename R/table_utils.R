@@ -138,8 +138,10 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @export
 setMethod("setTable", 
     c("SpatialData", "character"), 
+    # TODO: 'assay' data argument
     \(x, i, ..., name=NULL, rk="rk", ik="ik") {
-    dots <- list(...); if (length(dots)) dots <- dots[[1]]
+    dots <- list(...)
+    if (length(dots) && !is.function(dots[[1]])) dots <- dots[[1]]
     stopifnot(
         length(i) == 1, is.character(i),
         length(rk) == 1, is.character(rk),
