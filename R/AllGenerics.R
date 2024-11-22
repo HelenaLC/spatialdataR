@@ -59,6 +59,9 @@ setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 # uts ----
 
+setGeneric("layer", \(x, i, ...) standardGeneric("layer"))
+setGeneric("element", \(x, i, j, ...) standardGeneric("element"))
+
 setGeneric("data", \(x, ...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
