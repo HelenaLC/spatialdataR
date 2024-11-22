@@ -55,6 +55,9 @@ setClassUnion(
     representation(
         images="list",  # 'ImageArray's
         labels="list",  # 'LabelArray's
-        shapes="list",  # 'ShapeFrame's
         points="list",  # 'PointFrame's
+        shapes="list",  # 'ShapeFrame's
         tables="list")) # 'SingleCellExperiment's
+
+. <- c("images", "labels", "points", "shapes", "tables")
+names(.LAYERS) <- .LAYERS <- .
