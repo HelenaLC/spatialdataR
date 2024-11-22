@@ -8,6 +8,8 @@
 #'   a \code{colData} column or row name in a \code{table} annotating \code{i}.
 #' @param f,s,a used to control plotting aesthetics;
 #'   fill, size, alpha value passed to \code{geom_polygon}.
+#' @param assay character string; in case of \code{c} denoting a row name,
+#'   specifies which \code{assay} data to use (see \code{\link{valTable}}).
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -33,7 +35,7 @@ NULL
 #' @importFrom ggforce geom_circle
 #' @importFrom utils tail
 #' @export
-setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2) {
+setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a=0.2, assay=1) {
     df <- data(shape(x, i))
     df <- st_as_sf(df)
     xy <- st_coordinates(df)
@@ -76,14 +78,18 @@ setMethod("plotShape", "SpatialData", \(x, i=1, c=NULL, f="white", s="radius", a
                 ij <- c("i", "j")
             }
             names(df) <- c("x", "y", "z", ij)
+            g <- tail(names(df), 1) # grouping
+            aes$group <- aes(.data[[g]])[[1]]
             if (is.null(c)) {
-                c <- tail(names(df), 1)
-                aes$group <- aes(.data[[c]])[[1]]
                 aes$colour <- aes(factor(.data$i))[[1]]
                 dot$show.legend <- FALSE
             } else if (.str_is_col(c)) {
-                aes$group <- aes(.data$i)[[1]]
                 dot$colour <- c
+            } else if (is.character(c)) {
+                df[[c]] <- valTable(x, i, c, assay=assay)
+                if (scale_type(df[[c]]) == "discrete")
+                    df[[c]] <- factor(df[[c]])
+                aes$colour <- aes(.data[[c]])[[1]]
             } else stop("invalid 'c'")
         })
     list(
