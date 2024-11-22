@@ -1,7 +1,7 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @aliases data meta
+#' @aliases data meta layer element
 #' image images image<- images<- imageNames 
 #' label labels label<- labels<- labelNames 
 #' point points point<- points<- pointNames 
@@ -51,6 +51,3 @@ SpatialData <- \(images, labels, points, shapes, tables) {
         images=images, labels=labels, 
         points=points, shapes=shapes, tables=tables)
 }
-    
-. <- c("images", "labels", "points", "shapes", "tables")
-names(.LAYERS) <- .LAYERS <- .
