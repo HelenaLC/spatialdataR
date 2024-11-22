@@ -56,7 +56,7 @@ test_that("plotLabel()", {
     # TODO: multiscale plotting
 })
 
-test_that("plotPoint()", {
+test_that("plotPoint(),SpatialData", {
     p <- plotSpatialData()
     y <- point(x, i <- "blobs_points")
     df <- collect(data(y))
@@ -85,6 +85,39 @@ test_that("plotPoint()", {
     expect_is(q$guides$guides, "list")
     expect_identical(q$layers[[1]]$data, df)
     expect_is(q$layers[[1]]$mapping$colour, "quosure")
+    # coloring by 'table'
+    f <- list(
+        numbers=\(n) runif(n),
+        letters=\(n) sample(letters, n, TRUE))
+    t <- getTable(z <- setTable(x, i, f), i)
+    .test <- \(p, t) {
+        expect_s3_class(p, "ggplot")
+        df <- p$layers[[1]]$data
+        ik <- meta(t)$instance_key
+        cs <- match(df[[ik]], t[[ik]])
+        expect_identical(df[[.]], t[[.]][cs])
+        expect_is(p$layers[[1]]$mapping$colour, "quosure")
+    }
+    # continuous
+    q <- p + plotPoint(z, i, c=. <- "numbers")
+    expect_null(q$guides$guides)
+    .test(q, t)
+    # discrete
+    q <- p + plotPoint(z, i, c=. <- "letters")
+    expect_is(q$guides$guides, "list")
+    .test(q, t)
+})
+
+test_that("plotPoint(),PointFrame", {
+    # simple
+    y <- point(x, 1)
+    p <- plotPoint(y)
+    expect_s3_class(p, "ggplot")
+    # coloring by color
+    p <- plotPoint(y, c=. <- "red")
+    expect_identical(p$layers[[1]]$aes_params$colour, .)
+    # invalid
+    expect_error(plotPoint(y, c="."))
 })
 
 test_that("plotShape(),circles", {
@@ -135,4 +168,30 @@ test_that("plotShape(),polygons", {
     expect_identical(q$layers[[1]]$aes_params$col, c)
     q <- p + plotShape(x, i, c=c <- "red") # string
     expect_identical(q$layers[[1]]$aes_params$col, c)
+    # coloring by 'table'
+    f <- list(
+        numbers=\(n) runif(n),
+        letters=\(n) sample(letters, n, TRUE))
+    t <- getTable(y <- setTable(x, i, f), i)
+    q <- p + plotShape(y, i, c=. <- "numbers")
+    expect_s3_class(q, "ggplot")
+    expect_null(q$guides$guides)
+    q <- p + plotShape(y, i, c=. <- "letters")
+    expect_s3_class(q, "ggplot")
+    df <- q$layers[[1]]$data
+    expect_equal(base::table(t[[.]]), base::table(df[[.]])/4)
+})
+
+test_that("plotShape(),multipolygons", {
+    p <- plotSpatialData()
+    y <- shape(x, i <- "blobs_multipolygons")
+    # simple
+    q <- p + plotShape(x, i)
+    expect_s3_class(q, "ggplot")
+    df <- q$layers[[1]]$data
+    # coloring by string
+    q <- p + plotShape(x, i, c=. <- "red")
+    expect_identical(q$layers[[1]]$aes_params$col, .)
+    fd <- q$layers[[1]]$data
+    expect_identical(df, fd)
 })
