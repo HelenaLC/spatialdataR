@@ -5,7 +5,7 @@
 \alias{plotShape,SpatialData-method}
 \title{\code{SpatialData} shape viz.}
 \usage{
-\S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2)
+\S4method{plotShape}{SpatialData}(x, i = 1, c = NULL, f = "white", s = "radius", a = 0.2, assay = 1)
 }
 \arguments{
 \item{x}{\code{SpatialData} object.}
@@ -18,6 +18,9 @@ a \code{colData} column or row name in a \code{table} annotating \code{i}.}
 
 \item{f, s, a}{used to control plotting aesthetics;
 fill, size, alpha value passed to \code{geom_polygon}.}
+
+\item{assay}{character string; in case of \code{c} denoting a row name,
+specifies which \code{assay} data to use (see \code{\link{valTable}}).}
 }
 \description{
 \code{SpatialData} shape viz.
