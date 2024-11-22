@@ -22,62 +22,46 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
 
 # sub ----
 
+.sub_i <- \(x, i) {
+    if (isTRUE(i)) return(x)
+    if (is.numeric(i) || is.logical(i)) i <- rownames(x)[i]
+    if (any(is.na(i))) stop("invalid 'i'")
+    for (. in setdiff(rownames(x), i)) attr(x, .) <- list()
+    x
+}
+.sub_j <- \(x, j) {
+    if (isTRUE(j)) return(x)
+    # count number of elements in each layer,
+    # and number of layers with any elements
+    nl <- sum((ne <- vapply(colnames(x), length, numeric(1))) > 0)
+    if (!is.list(j)) {
+        if (nl == 1) j <- list(j)
+        if (length(j) == 1) j <- as.list(rep(j, nl))
+    }
+    if (!isFALSE(j)) stopifnot(length(j) == nl)
+    names(j) <- rownames(x)[ne > 0]
+    for (. in names(j)) {
+        .j <- j[[.]]
+        n <- length(attr(x, .))
+        if (length(.j) == 1 && is.infinite(.j)) {
+            .j <- n
+        } else if (any(.j > n)) {
+            stop("invalid 'j'")
+        }
+        attr(x, .) <- attr(x, .)[.j]
+    }
+    x
+}
+
 #' @rdname SpatialData
 #' @export
 setMethod("[", "SpatialData", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
-    i <- if (isFALSE(i)) {
-        numeric()
-    } else if (isTRUE(i)) {
-        seq_along(.LAYERS)
-    } else if (is.numeric(i) | is.logical(i)) {
-        seq_along(.LAYERS)[i]
-    } else if (is.character(i)) {
-        i <- match.arg(i, .LAYERS, TRUE)
-        which(.LAYERS %in% i)
-    }
-    if (any(is.na(i))) stop("out of bounds 'i'")
-    # TODO: validity
-    if (isTRUE(j)) {
-        j <- replicate(length(i), TRUE, FALSE)
-    } else {
-        n <- length(i)
-        m <- length(j)
-        if (n == 1) {
-            if (!is.list(j)) j <- list(j)
-        } else {
-            if (m > 1 && n == 1) {
-                i <- rep(i, m) # recycle 'i'
-            } else if (n > 1 && m == 1) {
-                j <- rep(j, n) # recycle 'j'
-            } else if (n != m) stop("invalid combination of 'i' and 'j'")
-        }
-    }
-    for (. in setdiff(seq_along(.LAYERS), i)) x[[.]] <- list()
-    .e <- \(.) stop("out of bounds 'j' for layer ", ., " (", .LAYERS[.], ")")
-    for (. in seq_along(i)) {
-        j[[.]] <- if (isFALSE(j[[.]])) {
-            numeric()
-        } else if (isTRUE(j[[.]])) {
-            seq_along(x[[i[.]]])
-        } else if (is.numeric(j[[.]]) | is.logical(j[[.]])) {
-            seq_along(x[[i[.]]])[j[[.]]]
-        } else if (is.character(j[[.]])) {
-            js <- names(x[[i[.]]])
-            if (any(!j[[.]] %in% js)) .e(i[.])
-            j[[.]] <- which(js %in% j[[.]])
-        }
-        js <- seq_along(x[[i[.]]])
-        if (!isTRUE(j[[.]])) {
-            if (any(!j[[.]] %in% js)) .e(i[.])
-            x[[i[.]]] <- x[[i[.]]][j[[.]]]
-        }
-    }
-    return(x)
+    .sub_j(.sub_i(x, i), j)
 })
 
-# any ----
+# data/meta ----
 
 #' @rdname SpatialData
 #' @export
@@ -87,7 +71,7 @@ setMethod("data", "SpatialDataElement", \(x) x@data)
 #' @export
 setMethod("meta", "SpatialDataElement", \(x) x@meta)
 
-# get all ----
+# row/colnms ----
 
 #' @rdname SpatialData
 #' @importFrom BiocGenerics rownames
@@ -103,6 +87,69 @@ setMethod("colnames", "SpatialData", \(x) {
     names(.) <- . <- rownames(x)
     lapply(., \(.) names(x[[.]]))
 })
+
+# layer ----
+
+.err_i <- c(
+    "invalid 'i'; should be an integer in [1, 5], or a ",
+    "string in ", dQuote(paste(.LAYERS, collapse="/"))) 
+
+#' @rdname SpatialData
+#' @export
+setMethod("layer", c("SpatialData", "character"), 
+    \(x, i) attr(x, match.arg(i, .LAYERS, TRUE)))
+
+#' @rdname SpatialData
+#' @export
+setMethod("layer", c("SpatialData", "numeric"), \(x, i) {
+    ok <- length(i) == 1 && (i > 0 & i < 6 & i == round(i))
+    if (!ok) stop(.err_i)
+    attr(x, .LAYERS[i])
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("layer", c("SpatialData", "missing"), \(x, i) layer(x, 1))
+
+#' @rdname SpatialData
+#' @export
+setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.err_i))
+
+# element ----
+
+.err_j <- c(
+    "invalid 'j'; should be a scalar integer or ",
+    "a string specifying an element in layer 'i'") 
+
+#' @rdname SpatialData
+#' @export
+setMethod("element", c("SpatialData", "ANY", "character"), \(x, i, j) {
+    y <- layer(x, i)
+    j <- match.arg(j, names(y))
+    y[[j]]
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("element", c("SpatialData", "ANY", "numeric"), \(x, i, j) {
+    n <- length(y <- layer(x, i))
+    if (n == 0) stop("there aren't any ", dQuote(i))
+    if (is.infinite(j)) j <- n
+    ok <- length(j) == 1 && (j > 0 & j <= n & j == round(j))
+    if (!ok) stop(.err_j)
+    j <- names(y)[j]
+    element(x, i, j)
+})
+
+#' @rdname SpatialData
+#' @export
+setMethod("element", c("SpatialData", "ANY", "missing"), \(x, i, j) element(x, i, 1))
+
+#' @rdname SpatialData
+#' @export
+setMethod("element", c("SpatialData", "ANY", "ANY"), \(x, i, j) stop(.err_j))
+
+# get all ----
 
 all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
 
@@ -124,26 +171,11 @@ for (. in one) eval(f(.), parent.env(environment()))
 
 # get one ----
 
-#' @importFrom utils getFromNamespace
-.get_ele <- \(x, e, l) {
-    l <- match.arg(l, .LAYERS)
-    stopifnot(length(e) == 1)
-    es <- x[[l]]
-    if (!length(es)) 
-        return(es)
-    if (is.character(e)) {
-        e <- match.arg(e, names(es))
-    } else stopifnot(
-        round(e) == e, 
-        e %in% seq_along(es))
-    return(x[[l]][[e]])
-}
-
 #' @name SpatialData
 #' @exportMethod image label point shape table
 NULL
 
-f <- \(.) setMethod(., "SpatialData", \(x, i=1) .get_ele(x, i, paste0(., "s")))
+f <- \(.) setMethod(., "SpatialData", \(x, i=1) element(x, paste0(., "s"), i))
 for (. in one) eval(f(.), parent.env(environment()))
 
 # set all ----
