@@ -64,8 +64,8 @@
 #' head(colData(getTable(y, i)))
 #' 
 #' # passing a preconstructed 'data.frame'
-#' n <- length(point(x, "blobs_points"))
-#' df <- data.frame(n=runif(n))
+#' id <- unique(point(x, i)$instance_id)
+#' df <- data.frame(n=runif(length(id)))
 #' 
 #' y <- setTable(x, i, df)
 #' head(colData(getTable(y, i)))
@@ -175,10 +175,11 @@ setMethod("setTable",
             if (!is.null(ki)) ik <- ki
         },
         points={
-            n <- length(y <- point(x, i))
+            y <- point(x, i)
             md <- meta(y)[[sda]]
             ik <- md$instance_key
             is <- pull(data(y), ik)
+            n <- length(is <- unique(is))
         },
         shapes={
             n <- nrow(y <- shape(x, i))
