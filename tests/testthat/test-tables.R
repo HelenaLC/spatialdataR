@@ -67,10 +67,17 @@ test_that("setTable(),labels", {
 
 test_that("setTable(),points/shapes", {
     for (. in c("point", "shape")) {
-        # dots = valid 'data.frame'
         nms <- paste0(., "Names")
         i <- get(nms)(x)[1]
-        n <- length(get(.)(x, i))
+        y <- get(.)(x)
+        # dots = valid 'data.frame'
+        n <- switch(.,
+            shape=length(y),
+            point={
+                md <- meta(y)$spatialdata_attrs
+                ik <- md$instance_key
+                n <- length(unique(pull(data(y), ik)))
+            })
         df <- data.frame(foo=runif(n))
         expect_silent(y <- setTable(x, i, df))
         expect_length(tables(y), 2)

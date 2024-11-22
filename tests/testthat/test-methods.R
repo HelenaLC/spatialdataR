@@ -9,6 +9,36 @@ typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExpe
 
 # get ----
 
+test_that("layer()", {
+    # invalid
+    expect_error(layer(x, 0))
+    expect_error(layer(x, 9))
+    expect_error(layer(x, "."))
+    expect_error(layer(x, TRUE))
+    expect_error(layer(x, .LAYERS))
+    expect_silent(layer(x)) # missing
+    # valid
+    i <- sample(.LAYERS, 1)
+    n <- length(attr(x, i))
+    y <- layer(x, i)
+    expect_is(y, "list")
+    expect_length(y, n)
+})
+
+test_that("element()", {
+    # invalid
+    expect_error(element(x, 1, 0))
+    expect_error(element(x, 1, 9))
+    expect_error(element(x, 1, "."))
+    expect_error(element(x, 1, TRUE))
+    expect_error(element(x, 1, colnames(x)[[2]]))
+    expect_silent(element(x, 1)) # missing
+    # valid
+    i <- sample(.LAYERS, 1)
+    j <- sample(names(attr(x, i)), 1)
+    expect_silent(element(x, i, j))
+})
+
 test_that("get all", {
     for (f in paste0(fun, "s"))
         expect_is(get(f)(x), "list")
@@ -26,10 +56,10 @@ test_that("get one", {
         expect_error(get(f)(x, 0))
         expect_error(get(f)(x, "."))
         expect_error(get(f)(x, c(1,1)))
+        expect_silent(y <- get(f)(x, Inf))
         set <- get(paste0(f, "s<-"))
         y <- set(x, list())
-        expect_length(get(f)(y), 0)
-        expect_silent(get(f, y, 9))
+        expect_error(get(f)(y, 1))
     }
 })
 
@@ -157,63 +187,38 @@ test_that("[,LabelArray", {
 # })
 
 test_that("[,SpatialData", {
-    # count number of elements in each layer
-    .n <- \(.) vapply(attributes(.)[.LAYERS], length, numeric(1)) 
-    # logical
-    expect_true(all(.n(x[TRUE]) == .n(x)))
-    expect_true(all(.n(x[FALSE]) == 0))
-    # i=missing
+    # valid
+    .n <- \(.) vapply(colnames(.), length, numeric(1))
+    n <- .n(y <- x[i <- 4, j <- c(1, 3)])
+    expect_true(n[i] == 2)
+    expect_true(all(n[-i] == 0))
+    expect_identical(
+        colnames(y)[[i]], 
+        colnames(x)[[i]][j])
+    n <- .n(y <- x[c(1, 2), list(1, j <- c(1, 2))])
+    expect_true(all(n[j] == c(1, 2)))
+    expect_true(all(n[-j] == 0))
+    # invalid
+    expect_error(x[9,1])
+    expect_error(x[1,9])
+    # missing both
+    expect_identical(x[,], x) 
+    # missing 'i'
     expect_true(all(.n(x[,1]) == 1))
-    idx <- seq_along(nms <- .LAYERS)
-    mapply(i=idx, n=nms, \(i, n) {
-        # i=positive
-        y <- x[i, ]
-        expect_length(get(n)(y), length(get(n)(y)))
-        lapply(setdiff(.LAYERS, n), \(.) expect_length(get(.)(y), 0))
-        # i=negative
-        y <- x[-i, ]
-        expect_length(get(n)(y), 0)
-        # i=character
-        y <- x[setdiff(nms, n), ]
-        expect_length(get(n)(y), 0)
-    })
-    # i=invalid
-    expect_error(x[100,])
-    expect_error(x[100,])
-    expect_error(x[".",])
-    # multiple
-    y <- x[i <- c(1,3), ]
-    n <- .n(x); n[-i] <- 0
-    expect_identical(.n(y), n)
-    y <- x[c(1, 2), c(1, 2)]
-    . <- imageNames(x)
-    expect_identical(imageNames(y), .[1])
-    expect_identical(labelNames(y), labelNames(x)[2])
-    expect_error(x[c(1, 2), list(1, 9)]) # any out of bounds
-    expect_error(x[c(1, 2), c(1, 2, 3)]) # mismatching length
-    y <- x[c(1, 2), list(TRUE, FALSE)]
-    expect_length(labels(y), 0)
-    expect_identical(images(y), images(x))
-    # vector or list handling for simple indexing
-    expect_identical(x[c(1, 2), c(1, 1)], x[c(1, 2), list(1, 1)])
-    expect_equivalent(.n(x[c(1, 2), list(1, c(1, 2))]), c(1, 2, 0, 0, 0))
-    # j=negative
-    expect_identical(imageNames(x[1,-100]), .)
-    expect_identical(imageNames(x[1,-1]), .[-1])
-    # j=missing
-    expect_identical(imageNames(x[1,]), .)
-    # j=character
-    expect_identical(imageNames(`[`(x, 1, .)), .)
-    expect_identical(imageNames(`[`(x, 1, .[2])), .[2])
-    expect_error(x[1,"."]); expect_error(x[1,c(".", .)])
-    # length 'j' > 'i'
-    y <- x[1, c(1,2)]
-    expect_length(labels(y), 0)
-    expect_length(images(y), length(.))
-    expect_identical(imageNames(y), .)
-    # length 'i' > 'j'
-    y <- x[c(1,2), 1]
-    expect_length(shapes(y), 0)
-    expect_identical(images(y), images(x)[1])
-    expect_identical(labels(y), labels(x)[1])
+    # negative 'i'
+    n <- .n(y <- x[-1,])
+    expect_true(n[1] == 0)
+    expect_true(all(n[-1] > 0))
+    # missing 'j'
+    n <- .n(y <- x[1,])
+    expect_length(layer(y, 1), n[1])
+    expect_true(all(n[-1] == 0))
+    # negative 'j'
+    n <- .n(y <- x[,-1])
+    expect_equal(n, .n(x)-1)
+    # infinite 'j'
+    expect_silent(y <- x[1, Inf])
+    expect_identical(
+        element(y, 1, 1), 
+        element(x, 1, .n(x)[1]))
 })
