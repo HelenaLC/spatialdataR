@@ -1,14 +1,16 @@
-# TODO: currently applying transformations only on 'data.frame's for plotting,
-# not the actual data (e.g., image)... but this might be necessary for queries?
-
-# TODO: for all layers, implement all transformations 
-# (translate, scale, rotate, affine, and sequential)
-
-#' @name .coord2graph
-#' @rdname coord2graph
-#' @title CS graph representation
+#' @name coord-utils
+#' @title Coordinate transformations
+#' @aliases axes CTname CTtype CTdata CTpath CTgraph addCT rmvCT
 #' 
-#' @param x \code{SpatialData} object
+#' @param x \code{SpatialData}, an element, or \code{Zattrs}.
+#' @param i for \code{CTpath}, source node label; else, string or 
+#'   scalar integer giving the name or index of a coordinate space.
+#' @param j character string; name of target coordinate space.
+#' @param name character(1); name of coordinate space
+#' @param type character(1); type of transformation
+#' @param data transformation data; size and shape depend on transformation and
+#'   element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)
+#' @param ... option arguments passed to and from other methods.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -16,36 +18,129 @@
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # element-wise
-#' g <- SpatialData:::.coord2graph(image(x))
-#' SpatialData:::.get_path(g, "self", "global")
+#' g <- CTgraph(y <- image(x))
+#' graph::nodes(g)
+#' CTpath(y, "global")
 #' 
 #' # object-wide
-#' g <- SpatialData:::.coord2graph(x)
+#' g <- CTgraph(x)
 #' graphics.off(); graph::plot(g)
-#' # retrieve transformation from element to target space
-#' graph::edgeData(g, "blobs_labels", "translation", "data")
 #' 
-#' @importFrom graph graphAM nodes
-#'   addNode nodeData<- nodeDataDefaults<-
-#'   addEdge edgeData<- edgeDataDefaults<-
-.coord2graph <- \(x) {
-    # initialize empty directed graph with node & edge attributes
+#' # retrieve transformation from element to target space
+#' CTpath(x, "blobs_labels", "sequence")
+#' 
+#' # view available coordinate transformations
+#' CTdata(z <- meta(label(x)))
+#'
+#' # add
+#' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
+#' CTdata(addCT(z, "new", "translation", c(12, 34)))
+#' 
+#' # rmv
+#' CTdata(rmvCT(z, 2)) # by index
+#' CTdata(rmvCT(z, "scale")) # by name
+#' CTdata(rmvCT(z, 1)) # identity is protected
+NULL
+
+# TODO: currently applying transformations only on 'data.frame's for plotting,
+# not the actual data (e.g., image)... but this might be necessary for queries?
+
+# TODO: for all layers, implement all transformations 
+# (translate, scale, rotate, affine, and sequential)
+
+# axes() ----
+
+#' @rdname coord-utils
+#' @export
+setMethod("axes", "Zattrs", \(x, ...) {
+    if (!is.null(ms <- x$multiscales)) x <- ms
+    if (is.null(x <- x$axes)) stop("couln't find 'axes'") 
+    if (is.character(x)) x else x[[1]]
+})
+
+#' @rdname coord-utils
+#' @export
+setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
+
+# CTdata/type/name() ----
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTdata", "Zattrs", \(x, ...) {
+    ms <- x$multiscales
+    if (!is.null(ms)) x <- ms
+    x <- x$coordinateTransformations
+    if (is.null(dim(x))) x[[1]] else x
+})
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTdata", "SpatialDataElement", \(x, ...) CTdata(meta(x)))
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTname", "SpatialData", \(x, ...) {
+    g <- CTgraph(x)
+    t <- nodeData(g, nodes(g), "type")
+    names(t)[unlist(t) == "space"]
+})
+
+# CTgraph() ----
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTgraph", "SpatialData", \(x) {
+    names(ls) <- ls <- setdiff(.LAYERS, "tables")
+    md <- lapply(ls, \(l) {
+        names(es) <- es <- names(x[[l]])
+        lapply(es, \(e) meta(x[[l]][[e]]))
+    })
+    .make_g(md)
+})
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTgraph", "SpatialDataElement", \(x) 
+    .make_g(list("mock"=list("self"=meta(x)))))
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTgraph", "ANY", \(x) stop("'x' should be a", 
+    " 'SpatialData' object, or a non-'table' element"))
+
+#' @importFrom graph graphAM nodeDataDefaults<- edgeDataDefaults<-
+.init_g <- \() {
     g <- graphAM(edgemode="directed")
     edgeDataDefaults(g, "data") <- list()
     edgeDataDefaults(g, "type") <- character()
     nodeDataDefaults(g, "type") <- character()
-    names(ls) <- ls <- setdiff(.LAYERS, "tables")
-    .md <- if (!is(x, "SpatialData")) {
-        list("mock"=list("self"=meta(x)))
-    } else lapply(ls, \(l) {
-        names(es) <- es <- names(x[[l]])
-        lapply(es, \(e) meta(x[[l]][[e]]))
-    })
-    for (l in names(.md)) for (e in names(.md[[l]])) {
-        md <- .md[[l]][[e]]
-        ms <- md$multiscales
-        if (!is.null(ms)) md <- ms
-        ct <- md$coordinateTransformations
+    return(g)
+}
+
+#' @importFrom graph nodes addNode addEdge nodeData<- edgeData<- 
+.make_g <- \(md) {
+    g <- .init_g()
+    for (l in names(md)) for (e in names(md[[l]])) {
+        .md <- md[[l]][[e]]
+        ms <- .md$multiscales
+        if (!is.null(ms)) .md <- ms
+        ct <- .md$coordinateTransformations
         ct <- if (length(ct) == 1) ct[[1]] else ct
         g <- addNode(e, g)
         nodeData(g, e, "type") <- "element"
@@ -85,23 +180,25 @@
     return(g)
 }
 
-#' @name .get_path
-#' @rdname get_path
-#' @title get transformations path
-#' 
-#' @param g \code{\link[graph]{graphAM}}
-#' @param i,j source and target node label
-#' 
-#' @examples
-#' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, tables=FALSE)
-#' g <- SpatialData:::.coord2graph(x)
-#' SpatialData:::.get_path(g, "blobs_labels", "sequence")
-#' 
+# CTpath() ----
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTpath", "SpatialData", \(x, i, j) {
+    g <- CTgraph(x)
+    .path_ij(g, i, j)
+})
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTpath", "SpatialDataElement", \(x, j) {
+    g <- CTgraph(x)
+    .path_ij(g, "self", j)
+})
+
 #' @importFrom graph edgeData
 #' @importFrom RBGL sp.between
-.get_path <- \(g, i, j) {
+.path_ij <- \(g, i, j) {
     p <- sp.between(g, i, j)
     p <- p[[1]]$path_detail
     n <- length(p)-1
@@ -109,47 +206,14 @@
         edgeData(g, p[.], p[.+1])[[1]])
 }
 
-#' @name coord
-#' @title Coordinate transformations
-#' @aliases addCT rmvCT 
-#' 
-#' @param x \code{\link{SpatialData}} element 
-#'   or \code{\link{Zattrs}} of an element
-#' @param i scalar charcter or integer; 
-#'   name or index of coordinate space
-#' @param name character(1); name of coordinate space
-#' @param type character(1); type of transformation
-#' @param data transformation data; size and shape depend on transformation and
-#'   element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)
-#' 
-#' @examples
-#' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, tables=FALSE)
-#'
-#' # view available coordinate transformations
-#' CTdata(z <- meta(label(x)))
-#'
-#' # add
-#' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
-#' CTdata(addCT(z, "new", "translation", c(12, 34)))
-#' 
-#' # rmv
-#' CTdata(rmvCT(z, 2)) # by index
-#' CTdata(rmvCT(z, "scale")) # by name
-#' CTdata(rmvCT(z, 1)) # identity is protected
-NULL
-
 # rmv ----
 
-setGeneric("rmvCT", \(x, ...) standardGeneric("rmvCT"))
-
-#' @rdname coord
+#' @rdname coord-utils
 #' @export
 setMethod("rmvCT", "SpatialDataElement", 
     \(x, i) { x@meta <- rmvCT(meta(x), i); x })
 
-#' @rdname coord
+#' @rdname coord-utils
 #' @export
 setMethod("rmvCT", "Zattrs", \(x, i) {
     nms <- CTname(x)
@@ -183,9 +247,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
 
 # add ----
 
-setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
-
-#' @rdname coord
+#' @rdname coord-utils
 #' @export
 setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     x@meta <- addCT(meta(x), name, type, data); x })
@@ -203,7 +265,7 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     if (!.) f(t)
 }
 
-#' @rdname coord
+#' @rdname coord-utils
 #' @export
 setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     stopifnot(

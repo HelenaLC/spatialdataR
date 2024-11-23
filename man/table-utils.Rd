@@ -105,8 +105,7 @@ y <- do.call(setTable, args)
 head(colData(getTable(y, i)))
 
 # passing a preconstructed 'data.frame'
-p <- point(x, i <- "blobs_points")
-id <- unique(p$instance_id)
+id <- unique(point(x, i)$instance_id)
 df <- data.frame(n=runif(length(id)))
 
 y <- setTable(x, i, df)
