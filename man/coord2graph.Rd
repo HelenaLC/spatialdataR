@@ -23,8 +23,7 @@ SpatialData:::.get_path(g, "self", "global")
 
 # object-wide
 g <- SpatialData:::.coord2graph(x)
-graphics.off(); graph::plot(g)
-# retrieve transformation from element to target space
+plotCoordGraph(g)
 graph::edgeData(g, "blobs_labels", "translation", "data")
 
 }

@@ -137,7 +137,7 @@ We can represent these are a graph as follows:
 
 ```{r cs-graph}
 (g <- SpatialData:::.coord2graph(x))
-graph::plot(g)
+plotCoordGraph(g)
 ```
 
 The above representation greatly facilitates queries of the transformation(s) 
