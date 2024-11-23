@@ -17,7 +17,7 @@ test_that("ImageArray()", {
     expect_silent(ImageArray(lys))
 })
 
-test_that("data,ImageArray", {
+test_that("data(),ImageArray", {
     dim <- lapply(c(8, 4, 2), \(.) c(3, rep(., 2)))
     lys <- lapply(dim, \(.) array(0, dim=.))
     img <- ImageArray(lys)
@@ -29,4 +29,18 @@ test_that("data,ImageArray", {
     expect_error(data(img, 99))
     expect_error(data(img, ""))
     expect_error(data(img, c(1,2)))
+})
+
+test_that("getZarrArrayPath(),ImageArray", {
+    x <- file.path("extdata", "blobs.zarr")
+    x <- system.file(x, package="SpatialData")
+    x <- file.path(x, "images", "blobs_image", "0")
+    za <- Rarr::ZarrArray(x)
+    da <- as(za, "DelayedArray")
+    expect_error(getZarrArrayPath("."))
+    expect_identical(getZarrArrayPath(da), x)
+    expect_identical(getZarrArrayPath(za), x)
+    expect_identical(getZarrArrayPath(za), x)
+    expect_identical(getZarrArrayPath(za*2), x)
+    expect_identical(getZarrArrayPath(za[1,,]), x)
 })
