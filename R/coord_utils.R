@@ -349,3 +349,48 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 #' #' @importFrom EBImage resize
 #' setMethod("translation", "ImageArray", \(x, t, ...) {})
 #' setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))
+
+# plotCoordGraph() ----
+
+#' @name plotCoordGraph
+#' @title CT graph viz.
+#' @description
+#' given a \code{graphNEL} instance, nodes with \code{nchar>max} are
+#' split and hyphenated at character position \code{floor(nchar/fac)}.
+#' 
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, tables=FALSE)
+#' 
+#' g <- CTgraph(x)
+#' plotCoordGraph(g, cex=0.6)
+#' 
+#' @importFrom graph nodes nodes<- graph.par
+#' @importFrom Rgraphviz layoutGraph renderGraph
+#' @export
+plotCoordGraph <- \(g, cex=0.6) {
+    g <- CTgraph(x)
+    g2view <- g # leave 'g' alone
+    nodes(g2view) <- .nodefix(nodes(g2view))
+    graph.par(list(nodes=list(shape="plaintext", cex=cex)))
+    g2view <- layoutGraph(g2view)
+    renderGraph(g2view)
+}
+
+.nodefix <- \(x, fac=2, max=10) {
+    if (any((nc <- nchar(x)) > max))
+        x[nc > max] <- .fixup(x[nc > max], fac)
+    x
+}
+
+.fixup <- \(x, fac) {
+    nc <- nchar(x)
+    hm <- floor(nc/fac)
+    xs <- strsplit(x, "")
+    xu <- lapply(seq_along(xs), \(i) c(
+        xs[[i]][seq_len(hm[i])], "-\n", 
+        xs[[i]][-seq_len(hm[i])]))
+    xu <- lapply(xu, \(z) paste(z, collapse=""))
+    unlist(xu)
+}
