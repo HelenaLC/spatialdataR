@@ -1,3 +1,11 @@
+changes in version 0.99.19
+
+- adding code to improve visualization of transformation network (PR #98) 
+
+changes in version 0.99.18
+
+- split off 'SpatialData.plot'
+
 changes in version 0.99.17
 
 - rewrite of points and labels plotting, including 

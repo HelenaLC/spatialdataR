@@ -57,7 +57,7 @@ NULL
     # spaces
     cat("coordinate systems:\n")
     e <- c(i, l, s, p)
-    g <- .coord2graph(object)
+    g <- CTgraph(object)
     t <- nodeData(g, nodes(g), "type")
     for (c in nodes(g)[t == "space"]) {
         pa <- suppressWarnings(sp.between(g, e, c))

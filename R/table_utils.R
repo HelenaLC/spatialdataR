@@ -133,6 +133,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
 setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
 #' @rdname table-utils
+#' @importFrom methods as
 #' @importFrom dplyr pull
 #' @importFrom sf st_as_sf
 #' @importFrom S4Vectors make_zero_col_DFrame 

@@ -1,10 +1,8 @@
 #' @name Zattrs
 #' @title The `Zattrs` class
-#' @aliases axes CTdata CTname CTtype
 #'
 #' @param x list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
-#' @param ... option arguments passed to and from other methods.
 #' 
 #' @return \code{Zattrs}
 #'
@@ -35,59 +33,3 @@ Zattrs <- \(x=list()) {
 #' @rdname Zattrs
 #' @exportMethod $
 setMethod("$", "Zattrs", \(x, name) x[[name]])
-
-setGeneric("axes", \(x, ...) standardGeneric("axes"))
-setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
-setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
-setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))
-
-#' @rdname Zattrs
-#' @export
-setMethod("axes", "Zattrs", \(x, ...) {
-    if (!is.null(ms <- x$multiscales)) x <- ms
-    if (is.null(x <- x$axes)) stop("couln't find 'axes'") 
-    if (is.character(x)) x else x[[1]]
-})
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTdata", "Zattrs", \(x, ...) {
-    ms <- x$multiscales
-    if (!is.null(ms)) x <- ms
-    x <- x$coordinateTransformations
-    if (is.null(dim(x))) x[[1]] else x
-})
-
-#' @rdname Zattrs
-#' @export
-setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTdata", "SpatialDataElement", \(x, ...) CTdata(meta(x)))
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
-
-# CTname() ----
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
-
-#' @rdname Zattrs
-#' @export
-setMethod("CTname", "SpatialData", \(x, ...) {
-    g <- .coord2graph(x)
-    t <- nodeData(g, nodes(g), "type")
-    names(t)[unlist(t) == "space"]
-})

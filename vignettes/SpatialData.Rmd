@@ -23,7 +23,6 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 
 ```{r load-libs}
 library(ggplot2)
-library(patchwork)
 library(ggnewscale)
 library(SpatialData)
 library(SingleCellExperiment)
@@ -136,7 +135,7 @@ CTname(addCT(z,
 We can represent these are a graph as follows:
 
 ```{r cs-graph}
-(g <- SpatialData:::.coord2graph(x))
+(g <- CTgraph(x))
 plotCoordGraph(g)
 ```
 
@@ -144,107 +143,13 @@ The above representation greatly facilitates queries of the transformation(s)
 required to spatially align elements. `blobs_labels`, for example, requires a
 sequential transformation (scaling and translation) for the `sequence` space:
 
-```{r cs-path}
-SpatialData:::.get_path(g, "blobs_labels", "sequence")
-```
-
-# Visualization
-
-### Images
-
-`Image/LabelArray`s are linked to potentially multiscale .zarr stores.
-Their show method includes the scales available for a given element:
-
-```{r ms-show}
-image(x, "blobs_image")
-image(x, "blobs_multiscale_image")
-```
-
-Internally, multiscale `ImageArray`s are stored as a list of `ZarrArray`, e.g.:
-
-```{r ms-dims}
-i <- image(x, "blobs_multiscale_image")
-vapply(i@data, dim, numeric(3))
-```
-
-To retrieve a specific scale's `ZarrArray`, we can use `data(., k)`,
-where `k` specifies the target scale. This also works for plotting:
-
-```{r ms-plot}
-wrap_plots(nrow=1, lapply(seq(3), \(.) 
-    plotSpatialData() + plotImage(x, i=2, k=.)))
-```
-
-### Labels
-
-```{r plotLabel, fig.width=8, fig.height=3.5}
+```{r cs-path, results="hold"}
+# the following are equivalent
 i <- "blobs_labels"
-p <- plotSpatialData()
-pal_d <- hcl.colors(10, "Spectral")
-pal_c <- hcl.colors(9, "Inferno")[-9]
-a <- p + plotLabel(x, i) # simple binary image
-b <- p + plotLabel(x, i, "instance_id", pal=pal_d) # 'colData'
-c <- p + plotLabel(x, i, "channel_1_sum", pal=pal_c) # 'assay'
-(a | b | c) + 
-    plot_layout(guides="collect") & 
-    theme(legend.position="bottom")
-```
-
-
-### Points
-
-```{r plotPoint, fig.width=8, fig.height=2.5}
-i <- "blobs_points"
-p <- plotSpatialData()
-# mock up a 'table'
-f <- list(
-  numbers=\(n) runif(n),
-  letters=\(n) sample(letters, n, TRUE))
-y <- setTable(x, i, f)
-# demo. viz. capabilities
-a <- p + plotPoint(y, i) # simple dots
-b <- p + plotPoint(y, i, "letters") # discrete coloring
-c <- p + plotPoint(y, i, "numbers") # continuous coloring
-a | b | c
-```
-
-### Shapes
-
-```{r plotShape, fig.width=6, fig.height=2.5}
-p <- plotSpatialData()
-a <- p +
-  ggtitle("polygons") +
-  plotShape(x, "blobs_polygons")
-b <- p +
-  ggtitle("multipolygons") +
-  plotShape(x, "blobs_multipolygons")
-c <- p +
-  ggtitle("circles") +
-  plotShape(x, "blobs_circles")
-wrap_plots(a, b, c)
-```
-
-### Layering
-
-```{r blobs-plot, fig.width=8, fig.height=5}
-p <- plotSpatialData()
-# joint
-all <- p +
-    plotImage(x) +
-    plotLabel(x, a=1/3) +
-    plotShape(x, 1) +
-    plotShape(x, 3) +
-    new_scale_color() +
-    plotPoint(x, c="genes") +
-    ggtitle("layered")
-# split
-one <- list(
-    p + plotImage(x) + ggtitle("image"),
-    p + plotLabel(x) + ggtitle("labels"),
-    p + plotShape(x, 1) + ggtitle("circles"),
-    p + plotShape(x, 3) + ggtitle("polygons"),
-    p + plotPoint(x, c="genes") + ggtitle("points"))
-wrap_plots(c(list(all), one), nrow=2)
+j <- "sequence"
+y <- label(x, i)
+CTpath(x, i, j)
+invisible(CTpath(y, j))
 ```
 
 # Datasets
@@ -260,101 +165,12 @@ We can interrogate the bucket for available (zipped) .zarr archives:
 available_spd_zarr_zips()
 ```
 
-Any of the above can be retrieved (once) into some location, and read into R:
+Any of the above can be retrieved (once) into some location, and read into R; for example:
 
 ```{r ons-read}
 dir.create(td <- tempfile())
 pa <- unzip_spd_demo(
     zipname="merfish.zarr.zip", 
-    dest=td, source="biocOSN")
-(x <- readSpatialData(pa))
-```
-
-## MERFISH
-
-In this example data, we do not have a `label` for the `shape` polygons. 
-Such labels could be morphological regions annotated by pathologists.
-
-There are only `r length(SpatialData::shape(x, "cells"))` cells, but 
-`r format(length(SpatialData::point(x, "single_molecule")), big.mark=",")` 
-molecules, so that we downsample a random subset of 2,000 for visualization:
-
-```{r merfish-plot}
-point(x, "2k") <- (p <- point(x))[sample(length(p), 2e3)]
-plotSpatialData() +
-    plotImage(x) +
-    plotPoint(x, i="2k", c="cell_type", s=0.2) +
-    new_scale_color() +
-    plotShape(x, i="anatomical") +
-    scale_color_manual(values=hcl.colors(6, "Spectral")) 
-```
-
-```{r}
-qu <- list(xmin=1800, xmax=2400, ymin=5000, ymax=5400)
-bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="yellow", fill=NA)
-y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
-plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
-```
-
-## MibiTOF
-
-Colorectal carcinoma, 25 MB; no shapes, no points.
-
-```{r mibitof-read}
-dir.create(td <- tempfile())
-pa <- unzip_spd_demo(
-    zipname="mibitof.zip", 
-    dest=td, source="biocOSN")
-(x <- readSpatialData(pa))
-```
-
-```{r mibitof-plot, fig.width=10, fig.height=3}
-pal <- hcl.colors(8, "Spectral")
-wrap_plots(nrow=1, lapply(seq(3), \(.)
-    plotSpatialData() + plotImage(x, .) + 
-    plotLabel(x, ., "Cluster", pal=pal))) +
-    plot_layout(guides="collect")
-```
-
-## VisiumHD
-
-Mouse intestine, 1GB; 4 image resolutions and 3 shapes at 2, 8, and 16 $\mu$m.
-
-```{r visiumhd-read}
-dir.create(td <- tempfile())
-pa <- unzip_spd_demo(
-    zipname="visium_hd_3.0.0_io.zip", 
-    dest=td, source="biocOSN")
-(x <- readSpatialData(pa, images=4, shapes=3, tables=NULL))
-```
-
-```{r visiumhd-plot}
-qu <- list(xmin=100, xmax=300, ymin=200, ymax=400)
-bb <- geom_rect(do.call(aes, qu), data.frame(qu), col="black", fill=NA)
-y <- SpatialData(images=list("."=do.call(query, c(list(x=image(x)), qu))))
-plotSpatialData() + plotImage(x) + bb | plotSpatialData() + plotImage(y)
-```
-
-## CyCIF (MCMICRO)
-
-Small lung adenocarcinoma, 250 MB; 1 image, 2 labels, 2 tables.
-
-```{r mcmicro-read}
-dir.create(td <- tempfile())
-pa <- unzip_spd_demo(
-    zipname="mcmicro_io.zip", 
-    dest=td, source="biocOSN")
-(x <- readSpatialData(pa))
-```
-
-## IMC (Steinbock)
-
-4 different cancers (SCCHN, BCC, NSCLC, CRC), 820 MB; 14 images, 14 labels, 1 table.
-
-```{r steinbock-read}
-dir.create(td <- tempfile())
-pa <- unzip_spd_demo(
-    zipname="steinbock_io.zip", 
     dest=td, source="biocOSN")
 (x <- readSpatialData(pa))
 ```

@@ -15,28 +15,31 @@
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # image
-#' q <- (p <- plotSpatialData()) + plotImage(x)
-#' y <- x; image(y) <- scale(image(y), 1, c(1, 1, 1/3))
-#' patchwork::wrap_plots(nrow=1, q, p + plotImage(y))
+#' y <- x
+#' image(y) <- scale(image(y), 1, c(1, 1, 1/3))
+#' CTpath(image(x), "global")
+#' CTpath(image(y), "global")
 #'   
 #' # point
-#' point(x, "rotate") <- rotate(point(x), 20)
-#' point(x, "scale") <- scale(point(x), c(1, 1.2))
+#' y <- x
+#' point(y, "rot") <- rotate(point(y), 20)
+#' point(y, "wide") <- scale(point(y), c(1, 1.2))
 #' 
-#' plotSpatialData() +
-#'   plotPoint(x) +
-#'   plotPoint(x, "rotate", c="red") +
-#'   plotPoint(x, "scale", c="blue")
+#' xy0 <- as.data.frame(point(y))
+#' xy1 <- as.data.frame(point(y, "rot"))
+#' xy2 <- as.data.frame(point(y, "wide"))
+#' 
+#' plot(xy0[, c(1, 2)], asp=1)
+#' points(xy1[, c(1, 2)], col=2)
+#' points(xy2[, c(1, 2)], col=4)
 #'   
 #' # shape
-#' shape(x, "rotate") <- rotate(shape(x), 5)
-#' shape(x, "scale") <- scale(shape(x), c(1.2, 1))
-#' shape(x, "translation") <- translation(shape(x), c(-5, 0))
-#' plotSpatialData() +
-#'   plotShape(x) +
-#'   plotShape(x, "rotate", c="red") +
-#'   plotShape(x, "scale", c="blue") +
-#'   plotShape(x, "translation", c="gold") 
+#' y <- x
+#' shape(y, "rot") <- rotate(shape(y), 5)
+#' shape(y, "high") <- scale(shape(y), c(1.2, 1))
+#' shape(y, "left") <- translation(shape(y), c(-5, 0))
+#' 
+#' graph::plot(CTgraph(y))
 NULL
 
 # image ----
