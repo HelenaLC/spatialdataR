@@ -38,34 +38,35 @@ Authors@R: c(
 Imports:
     arrow,
     basilisk,
+    BiocFileCache,
+    BiocGenerics,
     dplyr,
     DelayedArray,
     geoarrow,
     graph,
     jsonlite,
+    methods,
+    Rarr,
     RBGL,
+    reticulate,
+    Rgraphviz,
     rlang,
     sf,
+    S4Arrays,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,
-    zellkonverter,
-    BiocGenerics,
-    S4Arrays,
-    Rarr,
-    reticulate,
-    BiocFileCache,
-    methods
+    zellkonverter
 Suggests:
     anndataR,
     BiocStyle,
     ggnewscale,
     knitr,
+    magick,
+    paws,
     pizzarr,
     Rgraphviz,
-    testthat,
-    magick,
-    paws
+    testthat
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
