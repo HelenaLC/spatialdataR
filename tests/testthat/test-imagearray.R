@@ -30,15 +30,3 @@ test_that("data,ImageArray", {
     expect_error(data(img, ""))
     expect_error(data(img, c(1,2)))
 })
-
-test_that(".guess_scale", {
-    img <- ImageArray(
-        lys <- lapply(dim <- lapply(c(6, 3), \(.) c(3, rep(., 2))), 
-        \(.) array(sample(rgb, prod(.), replace=TRUE), dim=.)))
-    # manual scale
-    expect_identical(.get_plot_data(img, k=1), lys[[1]]) 
-    expect_identical(.get_plot_data(img, k=2), lys[[2]])
-    # automatic scale
-    expect_identical(.get_plot_data(img, k=NULL, w=5, h=7), lys[[1]]) 
-    expect_identical(.get_plot_data(img, k=NULL, w=2, h=2), lys[[2]])
-})

@@ -52,6 +52,17 @@ setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 
 # trs ----
 
+setGeneric("axes", \(x, ...) standardGeneric("axes"))
+setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
+setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
+setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))
+
+setGeneric("CTpath", \(x, ...) standardGeneric("CTpath"))
+setGeneric("CTgraph", \(x, ...) standardGeneric("CTgraph"))
+
+setGeneric("rmvCT", \(x, ...) standardGeneric("rmvCT"))
+setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
+
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("transform", \(x, ...) standardGeneric("transform"))
@@ -65,8 +76,8 @@ setGeneric("element", \(x, i, j, ...) standardGeneric("element"))
 setGeneric("data", \(x, ...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
+setGeneric("query", \(x, ...) standardGeneric("query"))
 setGeneric("mask", \(x, y, ...) standardGeneric("mask"))
-setGeneric("query", \(x, y, ...) standardGeneric("query"))
 
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
@@ -76,10 +87,3 @@ setGeneric("hasTable", \(x, i, ...) standardGeneric("hasTable"))
 setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
 setGeneric("setTable", \(x, i, ...) standardGeneric("setTable"))
 setGeneric("valTable", \(x, i, ...) standardGeneric("valTable"))
-
-# plt ----
-
-setGeneric("plotImage", \(x, ...) standardGeneric("plotImage"))
-setGeneric("plotLabel", \(x, ...) standardGeneric("plotLabel"))
-setGeneric("plotPoint", \(x, ...) standardGeneric("plotPoint"))
-setGeneric("plotShape", \(x, ...) standardGeneric("plotShape"))

@@ -36,14 +36,11 @@ Authors@R: c(
         email="louise.deconinck@gmail.com",
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
-    abind,
     arrow,
     basilisk,
     dplyr,
     DelayedArray,
     geoarrow,
-    ggplot2,
-    ggforce,
     graph,
     jsonlite,
     RBGL,
@@ -64,7 +61,6 @@ Suggests:
     BiocStyle,
     ggnewscale,
     knitr,
-    patchwork,
     pizzarr,
     Rgraphviz,
     testthat,

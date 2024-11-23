@@ -70,9 +70,9 @@ test_that("addCT", {
     }
 })
 
-test_that(".coord2graph", {
+test_that("CTgraph", {
     # object-wide
-    g <- .coord2graph(x)
+    g <- CTgraph(x)
     expect_is(g, "graph")
     # graph should contain node for
     # every element & transformation
@@ -85,7 +85,7 @@ test_that(".coord2graph", {
     for (l in setdiff(.LAYERS, "tables")) 
         for (e in names(x[[l]])) {
             y <- x[[l]][[e]]
-            g <- .coord2graph(y)
+            g <- CTgraph(y)
             expect_is(g, "graph")
             expect_true("self" %in% nodes(g))
         }

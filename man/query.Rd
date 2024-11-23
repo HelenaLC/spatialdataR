@@ -37,6 +37,8 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-image(x, "i") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
-plotSpatialData() + plotImage(x, "i")
+image(x, "box") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+
+image(x)
+image(x, "box")
 }
