@@ -385,13 +385,11 @@ plotCoordGraph <- \(g, cex=0.6) {
 }
 
 .fixup <- \(x, fac) {
-    nc <- nchar(x)
-    hm <- floor(nc/fac)
     xs <- strsplit(x, "")
-    xu <- lapply(seq_along(xs), \(i) {
-        j <- seq_len(hm[i])
-        c(xs[[i]][j], "-\n", xs[[i]][-j])
-    })
-    xu <- vapply(xu, \(z) paste(z, collapse=""), character(1))
-    unlist(xu)
+    nc <- floor(nchar(x)/fac)
+    vapply(seq_along(xs), \(i) {
+        j <- seq_len(nc[i])
+        y <- c(xs[[i]][j], "-\n", xs[[i]][-j])
+        paste(y, collapse="")
+    }, character(1))
 }
