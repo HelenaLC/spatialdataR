@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.4)
-Version: 0.99.18
+Version: 0.99.19
 Description: Interface to Python's 'SpatialData', currently including:
     reticulate-based use of 'spatialdata-io' for reading of manufracturer
     data and writing to .zarr, on-disk representation of images/labels as
@@ -38,34 +38,35 @@ Authors@R: c(
 Imports:
     arrow,
     basilisk,
+    BiocFileCache,
+    BiocGenerics,
     dplyr,
     DelayedArray,
     geoarrow,
     graph,
     jsonlite,
+    methods,
+    Rarr,
     RBGL,
+    reticulate,
+    Rgraphviz,
     rlang,
     sf,
+    S4Arrays,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,
-    zellkonverter,
-    BiocGenerics,
-    S4Arrays,
-    Rarr,
-    reticulate,
-    BiocFileCache,
-    methods
+    zellkonverter
 Suggests:
     anndataR,
     BiocStyle,
     ggnewscale,
     knitr,
+    magick,
+    paws,
     pizzarr,
     Rgraphviz,
-    testthat,
-    magick,
-    paws
+    testthat
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
