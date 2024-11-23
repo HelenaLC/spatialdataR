@@ -370,7 +370,6 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 #' @importFrom Rgraphviz layoutGraph renderGraph
 #' @export
 plotCoordGraph <- \(g, cex=0.6) {
-    g <- CTgraph(x)
     g2view <- g # leave 'g' alone
     nodes(g2view) <- .nodefix(nodes(g2view))
     graph.par(list(nodes=list(shape="plaintext", cex=cex)))
@@ -379,8 +378,9 @@ plotCoordGraph <- \(g, cex=0.6) {
 }
 
 .nodefix <- \(x, fac=2, max=10) {
-    if (any((nc <- nchar(x)) > max))
-        x[nc > max] <- .fixup(x[nc > max], fac)
+    fix <- nchar(x) > max
+    if (!any(fix)) return(x)
+    x[fix] <- .fixup(x[fix], fac)
     x
 }
 
@@ -388,9 +388,10 @@ plotCoordGraph <- \(g, cex=0.6) {
     nc <- nchar(x)
     hm <- floor(nc/fac)
     xs <- strsplit(x, "")
-    xu <- lapply(seq_along(xs), \(i) c(
-        xs[[i]][seq_len(hm[i])], "-\n", 
-        xs[[i]][-seq_len(hm[i])]))
-    xu <- lapply(xu, \(z) paste(z, collapse=""))
+    xu <- lapply(seq_along(xs), \(i) {
+        j <- seq_len(hm[i])
+        c(xs[[i]][j], "-\n", xs[[i]][-j])
+    })
+    xu <- vapply(xu, \(z) paste(z, collapse=""), character(1))
     unlist(xu)
 }
