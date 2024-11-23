@@ -30,6 +30,5 @@ use_sdio("xenium", srcdir=td, dest=target)
 
 # read into R
 (br2fov <- readSpatialData(target))
-plotSpatialData() + plotImage(br2fov)
 
 }

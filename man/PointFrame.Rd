@@ -70,6 +70,5 @@ x <- file.path(base, "points", "single_molecule")
 
 head(as.data.frame(data(p)))
 (q <- dplyr::filter(p, cell_type == "VISp_wm"))
-plotPoint(q, c="x", s=0.2)
 
 }

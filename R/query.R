@@ -12,11 +12,11 @@
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
-#' image(x, "i") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
-#' plotSpatialData() + plotImage(x, "i")
+#' image(x, "box") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+#' 
+#' image(x)
+#' image(x, "box")
 NULL
-
-setGeneric("query", \(x, ...) standardGeneric("query"))
 
 .check_bb <- \(args) {
     m <- match(names(args), c("xmin", "xmax", "ymin", "ymax"))
@@ -61,7 +61,7 @@ setMethod("query", "ImageArray", \(x, j, ...) {
     . <- grep(j, CTname(x))
     if (!length(.) || is.na(.)) stop("invalid 'j'")
     # transform query into target space
-    ts <- .get_path(.coord2graph(x), "self", j)
+    ts <- CTpath(x, j)
     xy <- list(c(qu$xmin, qu$xmax), c(qu$ymin, qu$ymax))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
     xy <- .trans_xy(xy, ts, TRUE)
