@@ -98,7 +98,7 @@ CTpath(y, "global")
 
 # object-wide
 g <- CTgraph(x)
-graphics.off(); graph::plot(g)
+plotCoordGraph(g)
 
 # retrieve transformation from element to target space
 CTpath(x, "blobs_labels", "sequence")
