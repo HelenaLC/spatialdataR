@@ -2,9 +2,19 @@
 % Please edit documentation in R/mask.R
 \name{mask}
 \alias{mask}
+\alias{mask,SpatialData-method}
 \title{Masking}
+\usage{
+\S4method{mask}{SpatialData}(x, i, j, ...)
+}
 \arguments{
-\item{x, y}{\code{\link{SpatialData}} element}
+\item{x}{\code{\link{SpatialData}} object.}
+
+\item{i, j}{character string; names of elements to mask,
+specifically, \code{i} will be masked by \code{j},
+adding a \code{table} for \code{j} in \code{x}.}
+
+\item{...}{optional arguments passed to and from other methods.}
 }
 \value{
 \code{\link{SingleCellExperiment}}
@@ -13,6 +23,14 @@
 ...
 }
 \examples{
-# TODO
+library(SingleCellExperiment)
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+x <- readSpatialData(x, tables=FALSE)
+
+# count points in circles
+x <- mask(x, "blobs_points", "blobs_circles")
+x <- mask(x, "blobs_image", "blobs_labels")
+tables(x)
 
 }
