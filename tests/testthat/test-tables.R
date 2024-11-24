@@ -2,8 +2,12 @@ require(SingleCellExperiment, quietly=TRUE)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, table=1, anndataR=TRUE)
-table(x)$region <- as.character(table(x)$region)
-i <- (md <- int_metadata(table(x))$spatialdata_attrs)$region
+
+md <- int_metadata(table(x))
+md <- md$spatialdata_attrs
+i <- md[[rk <- md$region_key]]
+int_colData(table(x))[[rk]] <- 
+    paste(int_colData(table(x))[[rk]])
 
 test_that("hasTable()", {
     # TRUE
@@ -37,8 +41,12 @@ test_that("getTable()", {
     expect_error(getTable(x, i, 123))
     expect_error(getTable(x, i, "."))
     expect_error(getTable(x, i, c(TRUE, FALSE)))
-    # later 'region' of a couple random observations
-    s <- t; s$region[. <- sample(ncol(s), 2)] <- "."; table(x) <- s
+    # alter 'region' of a couple random observations
+    s <- t
+    . <- sample(ncol(s), 2)
+    int_colData(s)[[rk]][.] <- "."
+    table(x) <- s
+    # these should be gone when 'drop=TRUE'
     t1 <- getTable(x, i, drop=FALSE)
     t2 <- getTable(x, i, drop=TRUE)
     expect_identical(t1, s)
@@ -101,16 +109,18 @@ test_that("setTable(),points/shapes", {
 })
 
 test_that("valTable()", {
-    t <- getTable(x, i)
+    n <- ncol(t <- getTable(x, i))
     # invalid
     expect_error(valTable(x, i, "."))
     expect_error(valTable(x, i, 123))
     expect_error(valTable(x, i, sample(rownames(t), 2)))
     expect_error(valTable(x, i, sample(names(colData(t)), 2)))
     # 'colData'
-    j <- sample(names(colData(t)), 1)
-    v <- valTable(x, i, j)
-    expect_identical(v, t[[j]])
+    df <- DataFrame(a=sample(letters, n), b=runif(n))
+    s <- t; colData(s) <- df; y <- x; table(y) <- s
+    expect_identical(valTable(y, i, j <- "a"), s[[j]])
+    expect_identical(valTable(y, i, j <- "b"), s[[j]])
+    expect_error(valTable(y, i, "c"))
     # 'assay' data
     j <- sample(rownames(t), 1)
     v <- valTable(x, i, j)
