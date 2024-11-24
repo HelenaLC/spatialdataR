@@ -116,13 +116,17 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
 setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
 
 #' @rdname table-utils
+#' @importFrom SingleCellExperiment int_colData
 #' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
     t <- table(x, hasTable(x, i, name=TRUE))
     # only keep observations belonging to 'i' (optional)
-    if (drop) t <- t[, t[[meta(t)$region_key]] == i]
+    if (drop) {
+        rk <- meta(t)$region_key
+        t <- t[, int_colData(t)[[rk]] == i]
+    }
     return(t)
 })
 
@@ -137,7 +141,8 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @importFrom dplyr pull
 #' @importFrom sf st_as_sf
 #' @importFrom S4Vectors make_zero_col_DFrame 
-#' @importFrom SingleCellExperiment SingleCellExperiment int_metadata<-
+#' @importFrom SingleCellExperiment SingleCellExperiment 
+#'   int_colData int_colData<- int_metadata<- 
 #' @export
 setMethod("setTable", 
     c("SpatialData", "character"), 
@@ -197,8 +202,8 @@ setMethod("setTable",
                 shape(x, i) <- y
             }
         }, stop("can't add 'table' for elements in '", typ, "' layer"))
-    cd <- make_zero_col_DFrame(n)
-    cd[[rk]] <- i; cd[[ik]] <- is
+    icd <- cd <- make_zero_col_DFrame(n)
+    icd[[rk]] <- i; icd[[ik]] <- is
     # additional data generation (optional)
     if (length(dots) && is.data.frame(dots)) {
         stopifnot(nrow(dots) == nrow(cd))
@@ -206,8 +211,9 @@ setMethod("setTable",
     } else for (. in names(dots)) {
         cd[[.]] <- dots[[.]](n)
     }
-    sce <- SingleCellExperiment(colData=cd)
     # stash 'spatialdata_attrs'
+    sce <- SingleCellExperiment(colData=cd)
+    int_colData(sce) <- cbind(int_colData(sce), icd)
     md <- list(region=i, region_key=rk, instance_key=ik)
     int_metadata(sce)[[sda]] <- md
     table(x, name) <- sce

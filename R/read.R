@@ -28,7 +28,7 @@
 #' dir.create(tf)
 #' base <- unzip_merfish_demo(tf)
 #' (x <- readSpatialData(base))
-
+NULL
 
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
@@ -114,7 +114,10 @@ readShape <- function(x, ...) {
 #' @rdname readSpatialData
 #' @importFrom jsonlite fromJSON
 #' @importFrom S4Vectors metadata metadata<-
-#' @importFrom SingleCellExperiment int_metadata int_metadata<-
+#' @importFrom SummarizedExperiment colData colData<- 
+#' @importFrom SingleCellExperiment 
+#'   int_metadata int_metadata<- 
+#'   int_colData int_colData<-
 #' @export
 readTable <- function(x, anndataR=FALSE) {
     sce <- if (anndataR) {
@@ -122,10 +125,18 @@ readTable <- function(x, anndataR=FALSE) {
     } else {
         .readTable_basilisk(x)
     }
+    # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
     int_metadata(sce)[[nm]] <- md
     metadata(sce)[[nm]] <- NULL
+    # move these to 'int_colData'
+    md <- unlist(md)
+    cd <- colData(sce)
+    icd <- int_colData(sce)
+    . <- match(md, names(cd), nomatch=0)
+    int_colData(sce) <- cbind(icd, cd[.])
+    colData(sce) <- cd[-.]
     return(sce)
 }
 
