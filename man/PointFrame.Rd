@@ -5,8 +5,8 @@
 \alias{names,PointFrame-method}
 \alias{dim,PointFrame-method}
 \alias{length,PointFrame-method}
-\alias{$,PointFrame-method}
 \alias{[[,PointFrame,ANY,ANY-method}
+\alias{$,PointFrame-method}
 \alias{[,PointFrame,missing,ANY,ANY-method}
 \alias{[,PointFrame,ANY,missing,ANY-method}
 \alias{[,PointFrame,missing,missing,ANY-method}
@@ -22,9 +22,9 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{length}{PointFrame}(x)
 
-\S4method{$}{PointFrame}(x, name)
-
 \S4method{[[}{PointFrame,ANY,ANY}(x, i, j, ...)
+
+\S4method{$}{PointFrame}(x, name)
 
 \S4method{[}{PointFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -49,9 +49,9 @@ content describing the overall object.}
 
 \item{x}{\code{PointFrame}}
 
-\item{name}{character string for extraction (see \code{?base::`$`}).}
-
 \item{i, j}{indices for subsetting (see \code{?base::Extract}).}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
 
 \item{drop}{ignored.}
 }
@@ -59,7 +59,20 @@ content describing the overall object.}
 \code{PointFrame}
 }
 \description{
-The `PointFrame` class
+The \code{PointFrame} class stores \code{SpatialData} elements from its 
+\code{"points"} layers. These are represented as \code{\link[arrow]Table}s
+(\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+(\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
+ 
+Currently defined methods (here, \code{x} is a \code{PointFrame}):
+\itemize{
+\item \code{data/meta(x)} to access underlying \code{Table/Zattrs}
+\item \code{names(x)} returns the underlying table's column names
+\item \code{dim(x)} returns the dimensions of \code{data(x)}
+\item \code{`$`,`[[`} directly access columns of \code{data(x)}
+\item \code{filter,select} to subset rows/columns à la \code{dplyr}
+\item \code{as.data.frame} to coerce \code{x} to a \code{data.frame}
+}
 }
 \examples{
 tf <- tempfile()
