@@ -24,6 +24,6 @@ x <- readSpatialData(x, tables=FALSE)
 
 # count points in circles
 x <- mask(x, "blobs_points", "blobs_circles")
-(t <- table(x))
+tables(x)
 
 }
