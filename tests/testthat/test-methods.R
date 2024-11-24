@@ -178,13 +178,43 @@ test_that("[,LabelArray", {
     # TODO: multiscales
 })
 
-# test_that("[,ImageArray", {
-#     d <- \(.) dim(data(., 1))
-#     i <- image(x, "blobs_image")
-#     expect_identical(d(i[TRUE,,])[1], d(i)[1])
-#     expect_identical(d(i[,TRUE,])[2], d(i)[2])
-#     expect_identical(d(i[,,TRUE])[3], d(i)[3])
-# })
+test_that("[,ImageArray", {
+    d <- \(x) {
+        y <- data(x, NULL)
+        vapply(y, dim, numeric(3))
+    }
+    i <- image(x, "blobs_image")
+    # missing
+    expect_identical(i[,,,], i)
+    # invalid
+    expect_error(i["",,])
+    expect_error(i[,"",])
+    expect_error(i[,,""])
+    expect_error(i[4,,])
+    expect_error(i[,c(1, 3),])
+    expect_error(i[,,c(1, 3)])
+    # one TRUE, two FALSE
+    ijk <- matrix(FALSE, 3, 3)
+    diag(ijk) <- TRUE
+    lapply(seq_len(3), \(.) {
+        ijk <- as.list(ijk[., ])
+        j <- do.call(`[`, c(list(i), ijk))
+        expect_identical(d(j)[.], d(i)[.])
+    })
+    # one FALSE, two TRUE
+    ijk <- matrix(TRUE, 3, 3)
+    diag(ijk) <- FALSE
+    lapply(seq_len(3), \(.) {
+        ijk <- as.list(ijk[., ])
+        j <- do.call(`[`, c(list(i), ijk))
+        expect_true(d(j)[.] == 0)
+    })
+    # multiscale
+    i <- image(x, "blobs_multiscale_image")
+    j <- seq_len(d(i)[2]/2)
+    k <- seq_len(d(i)[2]/4)
+    expect_equal(d(i[,j,k]), d(i)/c(1,2,4))
+})
 
 test_that("[,SpatialData", {
     # valid
