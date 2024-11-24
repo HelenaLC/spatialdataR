@@ -65,9 +65,10 @@ setMethod("query", "ImageArray", \(x, j, ...) {
     xy <- list(c(qu$xmin, qu$xmax), c(qu$ymin, qu$ymax))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
     xy <- .trans_xy(xy, ts, TRUE)
+    xy <- lapply(xy, \(.) as.list(round(.)))
     x <- x[, # crop (i.e., subset) array dimensions 2-3
-        do.call(seq, as.list(xy[[2]])),
-        do.call(seq, as.list(xy[[1]]))]
+        do.call(seq, xy[[2]]),
+        do.call(seq, xy[[1]])]
     # transform array dimensions into target space
     os <- data.frame(x=c(0, dim(x)[3]), y=c(0, dim(x)[2]))
     os <- vapply(.trans_xy(os, ts), min, numeric(1))
