@@ -8,7 +8,13 @@
 \S4method{mask}{SpatialData}(x, i, j, ...)
 }
 \arguments{
-\item{x, y}{\code{\link{SpatialData}} element}
+\item{x}{\code{\link{SpatialData}} object.}
+
+\item{i, j}{character string; names of elements to mask,
+specifically, \code{i} will be masked by \code{j},
+adding a \code{table} for \code{j} in \code{x}.}
+
+\item{...}{optional arguments passed to and from other methods.}
 }
 \value{
 \code{\link{SingleCellExperiment}}

@@ -3,7 +3,7 @@
 #'
 #' @param x \code{SpatialData} element.
 #' @param j scalar character or integer; index or name of coordinate space.
-#' @param ... option arguments passed to and from other methods.
+#' @param ... optional arguments passed to and from other methods.
 #'
 #' @return same as input
 #'
