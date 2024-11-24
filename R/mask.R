@@ -15,6 +15,7 @@
 #'
 #' # count points in circles
 #' x <- mask(x, "blobs_points", "blobs_circles")
+#' x <- mask(x, "blobs_image", "blobs_labels")
 #' tables(x)
 #'
 #' @export
@@ -28,27 +29,26 @@ NULL
 #' @importFrom sf st_as_sf st_geometry_type st_sfc st_point st_distance
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("mask", "SpatialData", \(x, i, j) {
+setMethod("mask", "SpatialData", \(x, i, j, ...) {
     stopifnot(length(i) == 1, is.character(i), i %in% unlist(colnames(x)))
     stopifnot(length(j) == 1, is.character(j), j %in% unlist(colnames(x)))
     # get element types
     ls <- vapply(list(i, j), \(e) rownames(x)[vapply(colnames(x), \(es) e %in% es, logical(1))], character(1))
     a <- element(x, ls[[1]], i)
     b <- element(x, ls[[2]], j)
-    if (!(is(a, "PointFrame") && is(b, "ShapeFrame")))
-        stop("for now, 'mask' only supports 'i=PointFrame' and 'j=ShapeFrame'")
-    t <- .mask_point_shape(a, b)
+    t <- .mask(a, b, ...)
     md <- list(region=j, 
         region_key="region", 
-        instance_key="shape_id")
+        instance_key="instance")
     int_metadata(t)$spatialdata_attrs <- md
-    cd <- data.frame(region=j, shape_id=seq(ncol(t)))
+    cd <- data.frame(region=j, instance=colnames(t))
     int_colData(t) <- cbind(int_colData(t), cd)
     nm <- paste0(i, "_masked_by_", j)
     `table<-`(x, nm, value=t)
 })
 
-.mask_point_shape <- \(a, b) {
+setGeneric(".mask", \(a, b, ...) standardGeneric(".mask"))
+setMethod(".mask", c("PointFrame", "ShapeFrame"), \(a, b) {
     n <- nrow(b <- st_as_sf(data(b)))
     fk <- meta(a)$spatialdata_attrs$feature_key
     switch(paste(st_geometry_type(b)[1]),
@@ -68,6 +68,22 @@ setMethod("mask", "SpatialData", \(x, i, j) {
             # collect intro matrix w/ dim. features x circles
             ns <- t(as(do.call(cbind, ns), "dgCMatrix"))
             rownames(ns) <- names(is)
+            colnames(ns) <- seq(ncol(ns))
         })
     SingleCellExperiment(list(counts=ns))
-}
+})
+setMethod(".mask", c("ImageArray", "LabelArray"), \(a, b, fun=mean) {
+    stopifnot(dim(a)[-1] == dim(b))
+    w <- c(data(b)); w[w == 0] <- NA
+    n <- length(i <- unique(w[!is.na(w)]))
+    ns <- vapply(seq_len(dim(a)[1]), \(.) {
+        v <- c(data(a, 1)[., , ])
+        tapply(v, w, fun, na.rm=TRUE)
+    }, numeric(n))
+    ns <- t(as(ns, "dgCMatrix"))
+    dimnames(ns) <- list(seq(dim(a)[1]), i)
+    SingleCellExperiment(list(counts=ns))
+})
+setMethod(".mask", c("ANY", "ANY"), \(a, b) 
+    stop("'mask'ing between these element types not yet supported."))
+    

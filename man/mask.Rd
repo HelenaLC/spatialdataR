@@ -5,7 +5,7 @@
 \alias{mask,SpatialData-method}
 \title{Masking}
 \usage{
-\S4method{mask}{SpatialData}(x, i, j)
+\S4method{mask}{SpatialData}(x, i, j, ...)
 }
 \arguments{
 \item{x, y}{\code{\link{SpatialData}} element}
@@ -24,6 +24,7 @@ x <- readSpatialData(x, tables=FALSE)
 
 # count points in circles
 x <- mask(x, "blobs_points", "blobs_circles")
+x <- mask(x, "blobs_image", "blobs_labels")
 tables(x)
 
 }
