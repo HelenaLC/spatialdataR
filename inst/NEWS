@@ -1,3 +1,8 @@
+changes in version 0.99.20
+
+- 'ImageArray' subsetting with multiscales support
+- for 'tables', moved 'instance/region_key' to 'int_colData'
+
 changes in version 0.99.19
 
 - adding code to improve visualization of transformation network (PR #98) 
