@@ -15,7 +15,7 @@
 #'
 #' # count points in circles
 #' x <- mask(x, "blobs_points", "blobs_circles")
-#' (t <- table(x))
+#' tables(x)
 #'
 #' @export
 NULL
@@ -26,8 +26,11 @@ NULL
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector t
 #' @importFrom sf st_as_sf st_geometry_type st_sfc st_point st_distance
+#' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
 setMethod("mask", "SpatialData", \(x, i, j) {
+    stopifnot(length(i) == 1, is.character(i), i %in% unlist(colnames(x)))
+    stopifnot(length(j) == 1, is.character(j), j %in% unlist(colnames(x)))
     # get element types
     ls <- vapply(list(i, j), \(e) rownames(x)[vapply(colnames(x), \(es) e %in% es, logical(1))], character(1))
     a <- element(x, ls[[1]], i)
