@@ -27,27 +27,44 @@ NULL
 #' @importFrom Matrix sparseVector t
 #' @importFrom sf st_as_sf st_geometry_type st_sfc st_point st_distance
 #' @export
-setMethod("mask", c("PointFrame", "ShapeFrame"), \(x, y) {
-    #x <- point(x0); y <- shape(x0)
-    n <- nrow(y <- st_as_sf(data(y)))
-    fk <- meta(x)$spatialdata_attrs$feature_key
-    switch(paste(st_geometry_type(y)[1]),
+setMethod("mask", "SpatialData", \(x, i, j) {
+    # get element types
+    ls <- vapply(list(i, j), \(e) rownames(x)[vapply(colnames(x), \(es) e %in% es, logical(1))], character(1))
+    a <- element(x, ls[[1]], i)
+    b <- element(x, ls[[2]], j)
+    if (!(is(a, "PointFrame") && is(b, "ShapeFrame")))
+        stop("for now, 'mask' only supports 'i=PointFrame' and 'j=ShapeFrame'")
+    t <- .mask_point_shape(a, b)
+    md <- list(region=j, 
+        region_key="region", 
+        instance_key="shape_id")
+    int_metadata(t)$spatialdata_attrs <- md
+    cd <- data.frame(region=j, shape_id=seq(ncol(t)))
+    int_colData(t) <- cbind(int_colData(t), cd)
+    nm <- paste0(i, "_masked_by_", j)
+    `table<-`(x, nm, value=t)
+})
+
+.mask_point_shape <- \(a, b) {
+    n <- nrow(b <- st_as_sf(data(b)))
+    fk <- meta(a)$spatialdata_attrs$feature_key
+    switch(paste(st_geometry_type(b)[1]),
         POINT={
             # realize one feature at a time
-            is <- split(seq_len(length(x)), x[[fk]])
-            a <- lapply(is, \(.) {
+            is <- split(seq_len(length(a)), a[[fk]])
+            ns <- lapply(is, \(.) {
                 # make points 'sf'-compliant
-                xy <- as.data.frame(x[., c("x", "y")])
+                xy <- as.data.frame(a[., c("x", "y")])
                 ps <- st_sfc(lapply(asplit(xy, 1), st_point))
                 # for each circle, count points within radius
-                z <- rowSums(st_distance(y, ps) < y$radius)
+                z <- rowSums(st_distance(b, ps) < b$radius)
                 # sparsify counts
                 sv <- sparseVector(z[i <- z > 0], which(i), n)
                 sm <- as(sv, "sparseMatrix")
             })
             # collect intro matrix w/ dim. features x circles
-            a <- t(as(do.call(cbind, a), "dgCMatrix"))
-            rownames(a) <- names(is)
+            ns <- t(as(do.call(cbind, ns), "dgCMatrix"))
+            rownames(ns) <- names(is)
         })
-    SingleCellExperiment(list(counts=a))
-})
+    SingleCellExperiment(list(counts=ns))
+}

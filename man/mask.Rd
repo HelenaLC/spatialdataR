@@ -2,10 +2,10 @@
 % Please edit documentation in R/mask.R
 \name{mask}
 \alias{mask}
-\alias{mask,PointFrame,ShapeFrame-method}
+\alias{mask,SpatialData-method}
 \title{Masking}
 \usage{
-\S4method{mask}{PointFrame,ShapeFrame}(x, y)
+\S4method{mask}{SpatialData}(x, i, j)
 }
 \arguments{
 \item{x, y}{\code{\link{SpatialData}} element}
