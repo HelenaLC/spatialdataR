@@ -154,10 +154,10 @@ invisible(CTpath(y, j))
 
 # Datasets
 
-Data from a variety of technologies has been made available as `SpatialData` .zarr stores here 
+Data from a variety of technologies has been made available as `SpatialData` .zarr stores 
 [here](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html).
 These, in turn, have been deposited in Bioconductor's NSF Open Storage Network bucket,
-and can be retrieved from there with support for caching using `r BiocStyle::Biocpkg("BiocFileCache")`.
+and can be retrieved with caching support using `r BiocStyle::Biocpkg("BiocFileCache")`.
 
 We can interrogate the bucket for available (zipped) .zarr archives:
 
