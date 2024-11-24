@@ -76,14 +76,15 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(a, b) {
 })
 
 #' @importFrom methods as
+#' @importFrom DelayedArray realize
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ImageArray", "LabelArray"), \(a, b, fun=mean) {
     # TODO: rewrite w/o realizing everything at once
     stopifnot(dim(a)[-1] == dim(b))
-    w <- c(data(b)); w[w == 0] <- NA 
+    w <- c(realize(data(b))); w[w == 0] <- NA 
     n <- length(i <- unique(w[!is.na(w)]))
     ns <- vapply(seq_len(dim(a)[1]), \(.) {
-        v <- c(data(a, 1)[., , ]) 
+        v <- c(realize(data(a, 1)[., , ])) 
         tapply(v, w, sum, na.rm=TRUE)
     }, numeric(n))
     ns <- t(as(ns, "dgCMatrix"))
