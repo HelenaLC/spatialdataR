@@ -77,7 +77,7 @@ setGeneric("data", \(x, ...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
-setGeneric("mask", \(x, y, ...) standardGeneric("mask"))
+setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 

@@ -99,6 +99,13 @@ setMethod("[", c("PointFrame", "missing", "missing"),
     \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
 
 #' @rdname PointFrame
+#' @export
+setMethod("[", c("PointFrame", "ANY", "character"), \(x, i, j, ...) {
+    stopifnot(all(j %in% names(x)))
+    x[i, match(j, names(x))]
+})
+
+#' @rdname PointFrame
 #' @importFrom dplyr mutate filter select
 #' @export
 setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
@@ -108,7 +115,10 @@ setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
         mutate(.i=1+`__null_dask_index__`) |>
         filter(.i %in% i) |>
         select(-.i)
-    x@data <- x@data[, j]
+    # make sure this is kept in any case
+    ndi <- "__null_dask_index__"
+    ndi <- match(ndi, names(x@data), nomatch=0)
+    x@data <- x@data[, c(j, ndi)]
     return(x)
 })
 

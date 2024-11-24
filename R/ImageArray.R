@@ -110,6 +110,7 @@ setMethod("length", "ImageArray", \(x) length(data(x, NULL)))
 }
 
 #' @rdname ImageArray
+#' @importFrom utils head tail
 #' @exportMethod [
 setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE

@@ -354,9 +354,13 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 
 #' @name plotCoordGraph
 #' @title CT graph viz.
+#' 
 #' @description
 #' given a \code{graphNEL} instance, nodes with \code{nchar>max} are
 #' split and hyphenated at character position \code{floor(nchar/fac)}.
+#' 
+#' @param g base R graph; extracted with \code{\link{CTgraph}}.
+#' @param cex scalar numeric; controls fontsize of node labels.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -367,14 +371,15 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 #' plotCoordGraph(g, cex=0.6)
 #' 
 #' @importFrom graph nodes nodes<- graph.par
-#' @importFrom Rgraphviz layoutGraph renderGraph
 #' @export
 plotCoordGraph <- \(g, cex=0.6) {
+    if (!requireNamespace("Rgraphviz", quietly=TRUE))
+        stop("To use this function, install the 'Rgraphviz'.")
     g2view <- g # leave 'g' alone
     nodes(g2view) <- .nodefix(nodes(g2view))
     graph.par(list(nodes=list(shape="plaintext", cex=cex)))
-    g2view <- layoutGraph(g2view)
-    renderGraph(g2view)
+    g2view <- Rgraphviz::layoutGraph(g2view)
+    Rgraphviz::renderGraph(g2view)
 }
 
 .nodefix <- \(x, fac=2, max=10) {

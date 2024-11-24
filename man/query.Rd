@@ -24,7 +24,7 @@
 
 \item{j}{scalar character or integer; index or name of coordinate space.}
 
-\item{...}{option arguments passed to and from other methods.}
+\item{...}{optional arguments passed to and from other methods.}
 }
 \value{
 same as input
