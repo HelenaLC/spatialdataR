@@ -60,7 +60,7 @@ content describing the overall object.}
 }
 \description{
 The \code{PointFrame} class stores \code{SpatialData} elements from its 
-\code{"points"} layers. These are represented as \code{\link[arrow]Table}s
+\code{"points"} layers. These are represented as \code{\link[arrow]{Table}}
 (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
 (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
  

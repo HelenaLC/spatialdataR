@@ -81,6 +81,7 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @export
 setMethod("data", "ImageArray", \(x, k=1) {
+    if (is.null(k)) return(x@data)
     stopifnot(length(k) == 1, is.numeric(k), k > 0)
     n <- length(x@data) # get number of available scales
     if (is.infinite(k)) k <- n # input of Inf uses lowest
@@ -93,37 +94,41 @@ setMethod("data", "ImageArray", \(x, k=1) {
 setMethod("dim", "ImageArray", \(x) dim(data(x)))
 
 #' @rdname ImageArray
+#' @export
+setMethod("length", "ImageArray", \(x) length(data(x, NULL)))
+
+.check_jk <- \(x, .) {
+    if (isTRUE(x)) return()
+    tryCatch(
+        stopifnot(
+            is.numeric(x), x == round(x),
+            diff(range(x)) == length(x)-1,
+            (y <- abs(x)) == seq(min(y), max(y))
+        ),
+        error=\(e) stop(sprintf("invalid '%s'", .))
+    )
+}
+
+#' @rdname ImageArray
 #' @exportMethod [
 setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
-    if (missing(j)) j <- TRUE
-    if (missing(k)) k <- TRUE
-    if (length(data(x)) == 1) {
-        x@data <- data(x)[, i, j, drop=FALSE]
-        return(x)
-    }
-    # TODO: subsetting for multiscales
-    # get scale factor between pyramid layers
-    is <- seq_along(x@data)
-    as <- lapply(is, \(.) data(x, .))
-    ds <- vapply(as, dim, numeric(3))
-    sf <- if (length(is) == 1) 1 else {
-        cumprod(vapply(
-        is[-1], \(.) ds[,.]/ds[,.-1], numeric(3))[, 1])
-    }
-    # validity
-    if (isTRUE(j)) j <- seq(ds[2,1])
-    if (isTRUE(k)) k <- seq(ds[3,1])
-    # for (. in seq_along(ij <- list(j=j, k=k)))
-    #     if ((ds[.+1,1] %% length(ij[[.]])) != 0 |
-    #         max(ij[[.]]) %% (min(ds[.+1,])*min(sf)) != 0)
-    #         stop("invalid '", names(ij)[.], "'")
-    for (. in seq_along(sf)) {
-        .j <- if (!isTRUE(j)) unique(ceiling(j*sf[.])) else j
-        .k <- if (!isTRUE(k)) unique(ceiling(k*sf[.])) else k
-        x@data[[.]] <- data(x, .)[i, .j, .k, drop=FALSE]
-    }
-    return(x)
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
+    ijk <- list(i, j, k)
+    n <- length(data(x, NULL))
+    x@data <- lapply(seq_len(n), \(.) {
+        d <- dim(data(x, .))
+        j <- if (isTRUE(j)) seq_len(d[2]) else j
+        k <- if (isTRUE(k)) seq_len(d[3]) else k
+        jk <- lapply(list(j, k), \(jk) {
+            fac <- 2^(.-1)
+            seq(floor(head(jk, 1)/fac), 
+                ceiling(tail(jk, 1)/fac))
+        })
+        data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
+    })
+    x
 })
 
 #' @rdname ImageArray
