@@ -40,6 +40,7 @@ Imports:
     basilisk,
     BiocFileCache,
     BiocGenerics,
+    DelayedArray,
     dplyr,
     geoarrow,
     graph,
