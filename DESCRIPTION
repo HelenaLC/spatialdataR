@@ -45,6 +45,7 @@ Imports:
     geoarrow,
     graph,
     jsonlite,
+    Matrix,
     methods,
     Rarr,
     RBGL,

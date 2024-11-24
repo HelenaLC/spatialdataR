@@ -125,7 +125,6 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- meta(t)$region_key
-        print(rk); print(i); print(int_colData(t))
         t <- t[, int_colData(t)[[rk]] == i]
     }
     return(t)
