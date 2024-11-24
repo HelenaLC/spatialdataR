@@ -2,7 +2,11 @@
 % Please edit documentation in R/mask.R
 \name{mask}
 \alias{mask}
+\alias{mask,PointFrame,ShapeFrame-method}
 \title{Masking}
+\usage{
+\S4method{mask}{PointFrame,ShapeFrame}(x, y)
+}
 \arguments{
 \item{x, y}{\code{\link{SpatialData}} element}
 }
@@ -13,6 +17,13 @@
 ...
 }
 \examples{
-# TODO
+library(SingleCellExperiment)
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+(x <- readSpatialData(x, tables=FALSE))
+
+# count points in circles
+(t <- mask(point(x), shape(x)))
+assay(t)
 
 }
