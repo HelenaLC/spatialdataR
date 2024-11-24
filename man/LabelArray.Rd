@@ -4,7 +4,7 @@
 \alias{LabelArray}
 \alias{dim,LabelArray-method}
 \alias{[,LabelArray,ANY,ANY,ANY-method}
-\title{The `LabelArray` class}
+\title{The \code{LabelArray} class}
 \usage{
 LabelArray(data = array(), meta = Zattrs(), metadata = list(), ...)
 
@@ -32,7 +32,16 @@ content describing the overall object.}
 \code{LabelArray}
 }
 \description{
-The `LabelArray` class
+The \code{LabelArray} class stores \code{SpatialData} elements from its 
+\code{"labels"} layers. These are represented as a \code{ZarrMatrix} 
+(\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+(\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
+
+Currently defined methods (here, \code{x} is a \code{LabelArray}):
+\itemize{
+\item \code{data/meta(x)} to access underlying \code{ZarrMatrix/Zattrs}
+\item \code{dim(x)} returns the dimensions of \code{data(x)}
+}
 }
 \examples{
 # TODO

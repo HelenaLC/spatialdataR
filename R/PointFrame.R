@@ -1,6 +1,22 @@
 #' @name PointFrame
 #' @title The `PointFrame` class
 #'
+#' @description
+#' The \code{PointFrame} class stores \code{SpatialData} elements from its 
+#' \code{"points"} layers. These are represented as \code{\link[arrow]Table}s
+#' (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+#' (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
+#'  
+#' Currently defined methods (here, \code{x} is a \code{PointFrame}):
+#' \itemize{
+#' \item \code{data/meta(x)} to access underlying \code{Table/Zattrs}
+#' \item \code{names(x)} returns the underlying table's column names
+#' \item \code{dim(x)} returns the dimensions of \code{data(x)}
+#' \item \code{`$`,`[[`} directly access columns of \code{data(x)}
+#' \item \code{filter,select} to subset rows/columns à la \code{dplyr}
+#' \item \code{as.data.frame} to coerce \code{x} to a \code{data.frame}
+#' }
+#'
 #' @param x \code{PointFrame}
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
