@@ -1,6 +1,6 @@
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, tables=FALSE)
+x <- readSpatialData(x, anndataR=FALSE)
 
 test_that("axes", {
     # image
@@ -70,7 +70,21 @@ test_that("addCT", {
     }
 })
 
+test_that("CTname", {
+    y <- CTname(x)
+    expect_is(y, "character")
+    expect_true(!any(duplicated(y)))
+    y <- CTname(image(x))
+    z <- CTname(meta(image(x)))
+    expect_is(y, "character")
+    expect_length(y, 1)
+    expect_identical(y, z)
+})
+
 test_that("CTgraph", {
+    # invalid
+    expect_error(CTgraph(list()))
+    expect_error(CTgraph(table(x)))
     # object-wide
     g <- CTgraph(x)
     expect_is(g, "graph")
@@ -89,4 +103,32 @@ test_that("CTgraph", {
             expect_is(g, "graph")
             expect_true("self" %in% nodes(g))
         }
+})
+
+test_that("CTpath", {
+    i <- "blobs_image"
+    y <- element(x, "images", i)
+    z <- CTpath(y, j <- CTname(y))
+    expect_identical(CTpath(x, i, j), z)
+    expect_is(z, "list")
+    expect_length(z <- z[[1]], 2)
+    expect_setequal(names(z), c("type", "data"))
+    expect_is(z$type, "character")
+    expect_length(z$type, 1)
+})
+
+test_that("plotCoordGraph", {
+    f <- function(.) {
+        tf <- tempfile(fileext=".pdf")
+        on.exit(unlink(tf))
+        pdf(tf); .; dev.off()
+        file.size(tf)
+    }
+    g <- CTgraph(x)
+    p <- f(plotCoordGraph(g))
+    expect_is(p, "numeric")
+    expect_true(p > f(plot(1)))
+    p <- f(plotCoordGraph(g, 0.1))
+    q <- f(plotCoordGraph(g, 0.9))
+    expect_true(p < q)
 })
