@@ -354,9 +354,13 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 
 #' @name plotCoordGraph
 #' @title CT graph viz.
+#' 
 #' @description
 #' given a \code{graphNEL} instance, nodes with \code{nchar>max} are
 #' split and hyphenated at character position \code{floor(nchar/fac)}.
+#' 
+#' @param g base R graph; extracted with \code{\link{CTgraph}}.
+#' @param cex scalar numeric; controls fontsize of node labels.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")

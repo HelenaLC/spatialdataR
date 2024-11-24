@@ -6,6 +6,11 @@
 \usage{
 plotCoordGraph(g, cex = 0.6)
 }
+\arguments{
+\item{g}{base R graph; extracted with \code{\link{CTgraph}}.}
+
+\item{cex}{scalar numeric; controls fontsize of node labels.}
+}
 \description{
 given a \code{graphNEL} instance, nodes with \code{nchar>max} are
 split and hyphenated at character position \code{floor(nchar/fac)}.

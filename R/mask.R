@@ -3,7 +3,11 @@
 #'
 #' @description ...
 #' 
-#' @param x,y \code{\link{SpatialData}} element
+#' @param x \code{\link{SpatialData}} object.
+#' @param i,j character string; names of elements to mask,
+#'   specifically, \code{i} will be masked by \code{j},
+#'   adding a \code{table} for \code{j} in \code{x}.
+#' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{\link{SingleCellExperiment}}
 #'
@@ -30,7 +34,9 @@ setMethod("mask", "SpatialData", \(x, i, j, ...) {
     stopifnot(length(i) == 1, is.character(i), i %in% unlist(colnames(x)))
     stopifnot(length(j) == 1, is.character(j), j %in% unlist(colnames(x)))
     # get element types
-    ls <- vapply(list(i, j), \(e) rownames(x)[vapply(colnames(x), \(es) e %in% es, logical(1))], character(1))
+    ls <- vapply(
+        list(i, j), \(e) rownames(x)[vapply(colnames(x), 
+            \(es) e %in% es, logical(1))], character(1))
     a <- element(x, ls[[1]], i)
     b <- element(x, ls[[2]], j)
     t <- .mask(a, b, ...)
@@ -77,14 +83,17 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(a, b) {
 
 #' @importFrom methods as
 #' @importFrom DelayedArray realize
+#' @importFrom S4Arrays as.array.Array
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ImageArray", "LabelArray"), \(a, b, fun=mean) {
-    # TODO: rewrite w/o realizing everything at once
+    # TODO: somehow rewrite w/o realizing everything 
+    # at once (maybe w/ 'DelayedArray::blockApply'?)
+    .a2v <- \(.) as.vector(as.array.Array(.))
     stopifnot(dim(a)[-1] == dim(b))
-    w <- c(realize(data(b))); w[w == 0] <- NA 
+    w <- .a2v(data(b)); w[w == 0] <- NA 
     n <- length(i <- unique(w[!is.na(w)]))
     ns <- vapply(seq_len(dim(a)[1]), \(.) {
-        v <- c(realize(data(a, 1)[., , ])) 
+        v <- .a2v(data(a, 1)[., , ])
         tapply(v, w, sum, na.rm=TRUE)
     }, numeric(n))
     ns <- t(as(ns, "dgCMatrix"))
@@ -92,5 +101,4 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(a, b, fun=mean) {
     SingleCellExperiment(list(counts=ns))
 })
 setMethod(".mask", c("ANY", "ANY"), \(a, b) 
-    stop("'mask'ing between these element types not yet supported."))
-    
+    stop("'mask'ing between these element types not supported."))
