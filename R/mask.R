@@ -24,9 +24,6 @@ NULL
 # TODO: table from point + shape, image + label etc. etc. etc.
 
 #' @rdname mask
-#' @importFrom methods as
-#' @importFrom Matrix sparseVector t
-#' @importFrom sf st_as_sf st_geometry_type st_sfc st_point st_distance
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
 setMethod("mask", "SpatialData", \(x, i, j, ...) {
@@ -48,6 +45,11 @@ setMethod("mask", "SpatialData", \(x, i, j, ...) {
 })
 
 setGeneric(".mask", \(a, b, ...) standardGeneric(".mask"))
+
+#' @importFrom methods as
+#' @importFrom Matrix rowSums sparseVector t
+#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom sf st_as_sf st_geometry_type st_sfc st_point st_distance
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(a, b) {
     n <- nrow(b <- st_as_sf(data(b)))
     fk <- meta(a)$spatialdata_attrs$feature_key
@@ -72,13 +74,17 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(a, b) {
         })
     SingleCellExperiment(list(counts=ns))
 })
+
+#' @importFrom methods as
+#' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ImageArray", "LabelArray"), \(a, b, fun=mean) {
+    # TODO: rewrite w/o realizing everything at once
     stopifnot(dim(a)[-1] == dim(b))
-    w <- c(data(b)); w[w == 0] <- NA
+    w <- c(data(b)); w[w == 0] <- NA 
     n <- length(i <- unique(w[!is.na(w)]))
     ns <- vapply(seq_len(dim(a)[1]), \(.) {
-        v <- c(data(a, 1)[., , ])
-        tapply(v, w, fun, na.rm=TRUE)
+        v <- c(data(a, 1)[., , ]) 
+        tapply(v, w, sum, na.rm=TRUE)
     }, numeric(n))
     ns <- t(as(ns, "dgCMatrix"))
     dimnames(ns) <- list(seq(dim(a)[1]), i)
