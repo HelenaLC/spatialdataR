@@ -367,14 +367,15 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
 #' plotCoordGraph(g, cex=0.6)
 #' 
 #' @importFrom graph nodes nodes<- graph.par
-#' @importFrom Rgraphviz layoutGraph renderGraph
 #' @export
 plotCoordGraph <- \(g, cex=0.6) {
+    if (!requireNamespace("Rgraphviz", quietly=TRUE))
+        stop("To use this function, install the 'Rgraphviz'.")
     g2view <- g # leave 'g' alone
     nodes(g2view) <- .nodefix(nodes(g2view))
     graph.par(list(nodes=list(shape="plaintext", cex=cex)))
-    g2view <- layoutGraph(g2view)
-    renderGraph(g2view)
+    g2view <- Rgraphviz::layoutGraph(g2view)
+    Rgraphviz::renderGraph(g2view)
 }
 
 .nodefix <- \(x, fac=2, max=10) {
