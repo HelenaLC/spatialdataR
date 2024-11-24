@@ -40,28 +40,30 @@ setMethod("names", "PointFrame", \(x) {
 
 #' @rdname PointFrame
 #' @export
-setMethod("dim", "PointFrame", \(x) dim(data(x)))
+setMethod("dim", "PointFrame", \(x) c(nrow(data(x)), length(names(x))))
 
 #' @rdname PointFrame
 #' @export
 setMethod("length", "PointFrame", \(x) nrow(data(x)))
 
-#' @importFrom utils .DollarNames
-#' @export
-.DollarNames.PointFrame <- \(x, pattern="") {
-    setdiff(names(x@data), "__null_dask_index__") }
-
-#' @rdname PointFrame
-#' @importFrom dplyr select all_of collect
-#' @exportMethod $
-setMethod("$", "PointFrame", \(x, name) {
-    collect(select(x@data, all_of(name)))[[1]] })
-
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
 #' @exportMethod [[
 setMethod("[[", "PointFrame", \(x, i, ...) {
-    collect(select(x@data, all_of(i)))[[1]] })
+    x <- select(data(x), !"__null_dask_index__")
+    collect(select(x, all_of(i)))[[1]] })
+
+#' @importFrom utils .DollarNames
+#' @export
+.DollarNames.PointFrame <- \(x, pattern="") {
+    setdiff(names(data(x)), "__null_dask_index__") }
+
+#' @rdname PointFrame
+#' @importFrom dplyr select all_of collect
+#' @exportMethod $
+setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
+    # x <- select(data(x), !"__null_dask_index__")
+    # collect(select(x, all_of(name)))[[1]] })
 
 # sub ----
 

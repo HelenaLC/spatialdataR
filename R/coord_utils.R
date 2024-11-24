@@ -54,7 +54,7 @@ NULL
 #' @export
 setMethod("axes", "Zattrs", \(x, ...) {
     if (!is.null(ms <- x$multiscales)) x <- ms
-    if (is.null(x <- x$axes)) stop("couln't find 'axes'") 
+    if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
     if (is.character(x)) x else x[[1]]
 })
 
