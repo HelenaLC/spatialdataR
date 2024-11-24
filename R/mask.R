@@ -11,11 +11,11 @@
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
-#' (x <- readSpatialData(x, tables=FALSE))
+#' x <- readSpatialData(x, tables=FALSE)
 #'
 #' # count points in circles
-#' (t <- mask(point(x), shape(x)))
-#' assay(t)
+#' x <- mask(x, "blobs_points", "blobs_circles")
+#' (t <- table(x))
 #'
 #' @export
 NULL
