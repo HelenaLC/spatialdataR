@@ -28,6 +28,14 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
     return(x)
 }
 
+#' @rdname ImageArray
+#' @export
+setMethod("channelNames", "ImageArray", \(x, ...) meta(x)$omero$channels$label)
+
+#' @rdname ImageArray
+#' @export
+setMethod("channelNames", "ANY", \(x, ...) stop("only 'images' have channels"))
+
 #' @importFrom S4Vectors isSequence
 .get_multiscales_dataset_paths <- function(md) {
   
