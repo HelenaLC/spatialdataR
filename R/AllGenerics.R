@@ -79,6 +79,7 @@ setGeneric("meta", \(x, ...) standardGeneric("meta"))
 setGeneric("query", \(x, ...) standardGeneric("query"))
 setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
+setGeneric("channelNames", \(x, ...) standardGeneric("channelNames"))
 setGeneric("filterElements", \(x, y, ...) standardGeneric("filterElements"))
 
 # tbl ----
