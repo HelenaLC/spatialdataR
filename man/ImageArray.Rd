@@ -2,6 +2,8 @@
 % Please edit documentation in R/ImageArray.R
 \name{ImageArray}
 \alias{ImageArray}
+\alias{channelNames,ImageArray-method}
+\alias{channelNames,ANY-method}
 \alias{data,ImageArray-method}
 \alias{dim,ImageArray-method}
 \alias{length,ImageArray-method}
@@ -10,6 +12,10 @@
 \title{The `ImageArray` class}
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
+
+\S4method{channelNames}{ImageArray}(x, ...)
+
+\S4method{channelNames}{ANY}(x, ...)
 
 \S4method{data}{ImageArray}(x, k = 1)
 
