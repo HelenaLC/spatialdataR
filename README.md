@@ -1,14 +1,25 @@
-# "SpatialData" R package
+# `SpatialData`
 
-> [DEMO](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.html)
+> for a demo of the class, see the [vignette](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.html)
 
-This package explores strategies for Bioconductor-oriented solutions to
-importing and analyzing data from Spatial Transcriptomics platforms.
+> for visualization capabilites, see [`SpatialData.plot`](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData.plot)
+
+# Introduction
+
+`SpatialData` provides an interface to Python's `SpatialData`, and currently includes:
+
+- reticulate-based use of `spatialdata-io` for reading of manufacturer data and writing to .zarr
+- on-disk representation of images/labels as `ZarrArray`s (`Rarr`) and shapes/points as `arrow` objects
+- method drafts for visualization and coordinate system handling
+
+In addition, *scverse* data examples have been made available through 
+Bioconductor's NSF OSN bucket, are accessible from within R, and `BiocFileCache`d; 
+there's also an interface to aligning data into a common (identity) space.
 
 # Installation
 
 ```
-BiocManager::install("HelenaLC/SpatialData") # or use vjcitn repo
+BiocManager::install("HelenaLC/SpatialData")
 ```
 
 To *interrogate* our S3 bucket you will need [paws](https://cran.r-project.org/web/packages/paws/index.html) 
@@ -16,7 +27,7 @@ installed; it is not necessary for retrievals.
 
 # Ingestion workflow
 
-## Query Bioconductor Open Storage Network Bucket
+**Query Bioconductor's OSN bucket:**
 
 ```
 > available_spd_zarr_zips()  # as of Nov 10 2024
@@ -29,21 +40,23 @@ checking Bioconductor OSN bucket...
 [6] "visium_hd_3.0.0_io.zip"                 
 ```
 
-## Bring a zip archive into your local cache
+**Bring a *.zip* archive into your local cache:**
 
 ```
-tf = tempfile()
-dir.create(tf)
-pa = unzip_spd_demo(zipname="mibitof.zip", destination=tf, source="biocOSN")
-dir(pa, full.names=TRUE)  # see the files
+dir.create(tf <- tempfile())
+pa = unzip_spd_demo(
+  zipname="mibitof.zip", 
+  destination=tf, 
+  source="biocOSN")
+dir(pa, full.names=TRUE) # see the files
 ```
 
-## Import the SpatialData instance, and work with it
+**Import the `SpatialData` instance, and work with it:**
 
 ```
-mibi = readSpatialData(pa)
+(mibi <- readSpatialData(pa))
 ```
-Outputs:
+
 ```
 > mibi
 class: SpatialData
@@ -69,7 +82,7 @@ mainExpName: NULL
 altExpNames(0):
 ```
 
-# TODO: build provenance for each example
+**TODO: build provenance for each example**
 
 ```
 make_spd_prov = function( outfile=tempfile(), zarr_url,
