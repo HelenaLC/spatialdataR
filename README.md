@@ -2,7 +2,7 @@
 
 > for a demo of the class, see the [vignette](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.html)
 
-> for visualization capabilites, see [`SpatialData.plot`](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData.plot)
+> for visualization capabilites, see [`SpatialData.plot`](https://github.com/HelenaLC/SpatialData.plot)
 
 # Introduction
 
