@@ -96,6 +96,23 @@ readShape <- function(x, ...) {
     })
 }
 
+.readTables_basilisk <- function(x) {  # it will be faster to 'read' all tables
+    proc <- basiliskStart(.env)       # and process individually
+    on.exit(basiliskStop(proc))
+    basiliskRun(proc, zarr=x, \(zarr) {
+        sd <- import("spatialdata")
+        full <- sd$read_zarr(x)  # even a reread is fast, memoise might help?
+        # now I have all tables in full$tables, but I can't get them
+        # out without their names
+        tnames = dir(file.path(x, "tables"))
+        ans = lapply(tnames, function(z) 
+         zellkonverter::AnnData2SCE(full$tables[z])
+         )  # need to get key as basename(x)
+        names(ans) = tnames
+        ans
+        })   # handing back list of SCE
+}
+
 .readTable_anndataR <- function(x) {
     if (!requireNamespace('anndataR', quietly=TRUE)) {
         stop("To use this function, install the 'anndataR' package via\n",
@@ -146,9 +163,10 @@ readSpatialData <- function(x,
     images=TRUE, labels=TRUE, points=TRUE, 
     shapes=TRUE, tables=TRUE, anndataR=FALSE) {
     .TOPSRC <<- x   # BAD VINCE
+    tables = FALSE  # omitting standard table processing
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
-    lapply(.LAYERS[!skip], \(i) {
+    ans = lapply(.LAYERS[!skip], \(i) {
         y <- file.path(x, i)
         j <- list.files(y, full.names=TRUE)
         names(j) <- basename(j)
@@ -162,5 +180,8 @@ readSpatialData <- function(x,
         args <- if (i == "tables") list(anndataR=anndataR)
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
         lapply(j, \(.) do.call(f, c(list(.), args)))
-    }) |> do.call(what=SpatialData)
+    }) 
+    tabs = .readTables_basilisk(x)
+    ans$tables = tabs
+    ans |> do.call(what=SpatialData)
 }
