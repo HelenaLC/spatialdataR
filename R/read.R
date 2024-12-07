@@ -1,3 +1,13 @@
+#
+# notes from VJC -- readSpatialData was modified below so
+# that if anndataR = FALSE, spatialdata.read_zarr is used
+# to get the whole zarr store, and then the tables are
+# transformed via zellkonverter.  this gives a 10x speedup
+# for ingesting the visium_hd_3.0.0 example but fails on
+# the blobs dataset in example("table-utils") because
+# of matters related to metadata/hasTable behavior
+#
+
 #' @name readSpatialData
 #' @title Reading `SpatialData`
 #' 
@@ -105,9 +115,11 @@ readShape <- function(x, ...) {
         # now I have all tables in full$tables, but I can't get them
         # out without their names
         tnames = dir(file.path(x, "tables"))
-        ans = lapply(tnames, function(z) 
-         zellkonverter::AnnData2SCE(full$tables[z])
-         )  # need to get key as basename(x)
+        ans = lapply(tnames, function(z) {
+         cur = zellkonverter::AnnData2SCE(full$tables[z])
+         S4Vectors::metadata(cur) = c(metadata(cur), full$tables[z]$uns$spatialdata_attrs)
+         cur
+         })  # need to get key as basename(x)
         names(ans) = tnames
         ans
         })   # handing back list of SCE
@@ -161,9 +173,9 @@ readTable <- function(x, anndataR=FALSE) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
+    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
     .TOPSRC <<- x   # BAD VINCE
-    tables = FALSE  # omitting standard table processing
+    if (!anndataR) tables = FALSE  # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     ans = lapply(.LAYERS[!skip], \(i) {
@@ -181,7 +193,9 @@ readSpatialData <- function(x,
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
         lapply(j, \(.) do.call(f, c(list(.), args)))
     }) 
-    tabs = .readTables_basilisk(x)
-    ans$tables = tabs
+    if (!anndataR) {
+      tabs = .readTables_basilisk(x)
+      ans$tables = tabs
+      }
     ans |> do.call(what=SpatialData)
 }
