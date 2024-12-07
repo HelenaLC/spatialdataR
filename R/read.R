@@ -86,13 +86,13 @@ readShape <- function(x, ...) {
 #' @importFrom reticulate import
 #' @importFrom zellkonverter AnnData2SCE
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
-.readTable_basilisk <- function(x) {
-    proc <- basiliskStart(.env)
+.readTable_basilisk <- function(x) {  # it will be faster to 'read' all tables
+    proc <- basiliskStart(.env)       # and process individually
     on.exit(basiliskStop(proc))
     basiliskRun(proc, zarr=x, \(zarr) {
-        ad <- import("anndata")
-        ad <- ad$read_zarr(zarr)
-        AnnData2SCE(ad)
+        sd <- import("spatialdata")
+        li <- sd$read_zarr(.TOPSRC)  # even a reread is fast, memoise might help?
+        zellkonverter::AnnData2SCE(li$tables[basename(x)])  # need to get key as basename(x)
     })
 }
 
@@ -144,7 +144,8 @@ readTable <- function(x, anndataR=FALSE) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
+    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
+    .TOPSRC <<- x   # BAD VINCE
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     lapply(.LAYERS[!skip], \(i) {
