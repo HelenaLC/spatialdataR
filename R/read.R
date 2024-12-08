@@ -23,8 +23,9 @@
 #'   The default, NULL, reads all elements; alternatively, may be FALSE 
 #'   to skip a layer, or a integer vector specifying which elements to read.
 #' @param anndataR logical specifying whether 
-#'   to use \code{anndataR} to read tables; by default (FALSE), 
-#'   \code{basilisk}, \code{anndata} and \code{zellkonverter} are used.
+#'   to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
+#'   and `readTable`,
+#'   so that pythonic \core{spatialdata} and \code{zellkonverter} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
@@ -176,7 +177,7 @@ readTable <- function(x, anndataR=FALSE) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
+    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
     .TOPSRC <<- x   # BAD VINCE
     if (!anndataR) tables = FALSE  # will do manually below
     args <- as.list(environment())[.LAYERS]
