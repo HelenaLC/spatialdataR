@@ -57,15 +57,16 @@ Imports:
     SummarizedExperiment,
     zellkonverter
 Suggests:
-    anndataR,
     BiocStyle,
     ggnewscale,
     knitr,
     magick,
     paws,
-    pizzarr,
     Rgraphviz,
     testthat
+Enhances:
+    anndataR,
+    pizzarr
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata
