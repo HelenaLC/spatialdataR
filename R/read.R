@@ -117,7 +117,10 @@ readShape <- function(x, ...) {
         tnames = dir(file.path(x, "tables"))
         ans = lapply(tnames, function(z) {
          cur = zellkonverter::AnnData2SCE(full$tables[z])
-         S4Vectors::metadata(cur) = c(metadata(cur), full$tables[z]$uns$spatialdata_attrs)
+         nm <- "spatialdata_attrs"   # thanks HLC
+         md <- metadata(cur)[[nm]]
+         int_metadata(cur)[[nm]] <- md   # what's going on?
+         metadata(cur)[[nm]] <- NULL
          cur
          })  # need to get key as basename(x)
         names(ans) = tnames
