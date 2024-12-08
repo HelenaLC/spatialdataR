@@ -3,6 +3,7 @@
 \name{ImageArray}
 \alias{ImageArray}
 \alias{channels,ImageArray-method}
+\alias{channels}
 \alias{channels,ANY-method}
 \alias{data,ImageArray-method}
 \alias{dim,ImageArray-method}

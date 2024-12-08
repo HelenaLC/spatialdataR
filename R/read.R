@@ -25,7 +25,7 @@
 #' @param anndataR logical specifying whether 
 #'   to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
 #'   and `readTable`,
-#'   so that pythonic \core{spatialdata} and \code{zellkonverter} are used.
+#'   so that pythonic \code{spatialdata} and \code{zellkonverter} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
@@ -77,6 +77,7 @@ readPoint <- function(x, ...) {
 #' @rdname readSpatialData
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
+#' @import geoarrow   
 #' @export
 readShape <- function(x, ...) {
     requireNamespace("geoarrow", quietly=TRUE)
@@ -98,12 +99,12 @@ readShape <- function(x, ...) {
 #' @importFrom zellkonverter AnnData2SCE
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTable_basilisk <- function(x) {  # it will be faster to 'read' all tables
+    stop("not supported")
     proc <- basiliskStart(.env)       # and process individually
     on.exit(basiliskStop(proc))
     basiliskRun(proc, zarr=x, \(zarr) {
         sd <- import("spatialdata")
-        li <- sd$read_zarr(.TOPSRC)  # even a reread is fast, memoise might help?
-        zellkonverter::AnnData2SCE(li$tables[basename(x)])  # need to get key as basename(x)
+#        zellkonverter::AnnData2SCE(li$tables[basename(x)])  # need to get key as basename(x)
     })
 }
 
@@ -178,7 +179,6 @@ readTable <- function(x, anndataR=FALSE) {
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
     shapes=TRUE, tables=TRUE, anndataR=FALSE) {
-    .TOPSRC <<- x   # BAD VINCE
     if (!anndataR) tables = FALSE  # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))

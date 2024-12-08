@@ -331,24 +331,25 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     return(x)
 })
 
-#' #' @importFrom EBImage resize
-#' setMethod("scale", "ImageArray", \(x, t, ...) {
-#'     a <- as.array(data(x)) 
-#'     # TODO: this should be done w/o realizing 
-#'     # into memory, but EBImage needs an array?
-#'     d <- length(dim(a))
-#'     if (missing(t)) 
-#'         t <- rep(1, d)
-#'     b <- resize(aperm(a),
-#'         w=dim(a)[d]*t[d],
-#'         h=dim(a)[d-1]*t[d-1])
-#'     x@data <- aperm(b)
-#'     x
-#' })
-#' 
-#' #' @importFrom EBImage resize
-#' setMethod("translation", "ImageArray", \(x, t, ...) {})
-#' setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))
+# Dec 8 VJC -- why is this in doc comment mode?  changing to plain comment
+# # @importFrom EBImage resize
+# setMethod("scale", "ImageArray", \(x, t, ...) {
+#     a <- as.array(data(x)) 
+#     # TODO: this should be done w/o realizing 
+#     # into memory, but EBImage needs an array?
+#     d <- length(dim(a))
+#     if (missing(t)) 
+#         t <- rep(1, d)
+#     b <- resize(aperm(a),
+#         w=dim(a)[d]*t[d],
+#         h=dim(a)[d-1]*t[d-1])
+#     x@data <- aperm(b)
+#     x
+# })
+# 
+# # @importFrom EBImage resize
+# setMethod("translation", "ImageArray", \(x, t, ...) {})
+# setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))
 
 # plotCoordGraph() ----
 
