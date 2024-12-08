@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.4)
-Version: 0.99.20
+Version: 0.99.21
 Description: Interface to Python's 'SpatialData', currently including:
     reticulate-based use of 'spatialdata-io' for reading of manufracturer
     data and writing to .zarr, on-disk representation of images/labels as
@@ -59,6 +59,7 @@ Imports:
 Suggests:
     BiocStyle,
     ggnewscale,
+    ggplot2,
     knitr,
     magick,
     paws,

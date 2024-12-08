@@ -6,16 +6,16 @@ x <- readSpatialData(x, anndataR=FALSE)
 test_that("mask(),ImageArray,LabelArray", {
     i <- "blobs_image"
     j <- "blobs_labels"
-    x <- mask(x, i, j, fun=sum)
+    x <- SpatialData::mask(x, i, j, fun=sum)
     expect_equivalent(
-        assay(table(x, 1)),
-        assay(table(x, 2)))
+        assay(SpatialData::table(x, 1)),
+        assay(SpatialData::table(x, 2)))
 })
 
 test_that("mask(),PointFrame,ShapeFrame", {
     i <- "blobs_points"
     j <- "blobs_circles"
-    x <- mask(x, i, j)
+    x <- SpatialData::mask(x, i, j)
     t <- getTable(x, j)
     md <- meta(point(x, i))
     md <- md$spatialdata_attrs
