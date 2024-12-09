@@ -70,7 +70,7 @@ Enhances:
 Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.plot,
     HelenaLC/SpatialData.data
 biocViews: 
     DataImport, 
