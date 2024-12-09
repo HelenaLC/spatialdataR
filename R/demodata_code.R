@@ -69,23 +69,24 @@ get_demo_SD = function(patt, cache=BiocFileCache::BiocFileCache(),
      td = target
      dir.create(td)
      unzip(loc, exdir=td)
-     return(SpatialData::readSpatialData(td))
+     return(SpatialData::readSpatialData(dir(td, full.names=TRUE)))
      }   # end zipped zarr, now retrieve Xenium, run use_sdio, then read
     zipname = xdzips[chkxen]
     message(sprintf("caching %s", zipname))
     fpath = xdurls[chkxen]
     preloc = BiocFileCache::bfcadd(cache, rname=zipname, 
          fpath=fpath, rtype="web")
-    td = target
+    td = tempfile() # can't use target
     dir.create(td)
     unzip(preloc, exdir=td)  # manufacturer output
+    if (dir.exists(target)) print("target exists")
     SpatialData::use_sdio("xenium", srcdir=td, dest=target) # zarr in target
     return(SpatialData::readSpatialData(target))
    }
 # so a single pattern has hit, and it is in cache
    if (chkdf[ind,]$rname %in% xdzips) {  # it is a Xenium 10x output resource
      preloc = chkdf[ind,]$rpath
-   td = target
+   td = tempfile()  # can't use target
    dir.create(td)
    unzip(preloc, exdir=td)  # manufacturer output
    SpatialData::use_sdio("xenium", srcdir=td, dest=target) # zarr in target
@@ -99,6 +100,8 @@ get_demo_SD = function(patt, cache=BiocFileCache::BiocFileCache(),
 }
 
 #' Retrieve 10x-published mouse intestine sample, Visium HD 3.0.0       
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
 #' @note From 
 #' `https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-intestine`
 #' It takes at least a minute for this function to return, as there is
@@ -112,8 +115,49 @@ MouseIntestineVisHD = function() {
 #' Retrieve small cell lung adenocarcinoma sample assayed with mcmicro
 #' @param target character(1) defaults to tempfile().  Set to
 #' a different folder for persistent Zarr store.
-#' @note From spatialdata archive citing `https://www.nature.com/articles/s41592-021-01308-y`.
+#' @note From scverse spatialdata archive citing `https://www.nature.com/articles/s41592-021-01308-y`.
+#' @examples
+#' LungAdenocarcinomaMCMICRO()
 #' @export
 LungAdenocarcinomaMCMICRO = function(target = tempfile()) {
  get_demo_SD("mcmicro_io", target=target)
+}
+
+#' Retrieve small cell lung adenocarcinoma sample assayed with mcmicro
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From scverse spatialdata archive citing `Moffitt, J. R. et al. Molecular, spatial, and functional single-cell profiling of the hypothalamic preoptic region. Science 362, (2018).`
+#' @examples
+#' if (requireNamespace("SpatialData.plot")) {
+#'   library(SpatialData.plot)
+#'   mb  = MouseBrainMERFISH()
+#'   plotSpatialData() + plotImage(mb) + plotShape(mb)
+#' }
+#' @export
+MouseBrainMERFISH = function(target = tempfile()) {
+ get_demo_SD("merfish", target=target)
+}
+
+#' Retrieve spatial mass cytometry experiments for four cancers
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From spatialdata archive 
+#' citing `https://www.nature.com/articles/s41596-023-00881-0`.
+#' See also `https://bodenmillergroup.github.io/steinbock/latest/`.
+#' @examples
+#' MulticancerSteinbock()
+#' @export
+MulticancerSteinbock = function(target = tempfile()) {
+ get_demo_SD("steinbock_io", target=target)
+}
+
+#' Retrieve colorectal carcinoma MIBI-TOF experiment.
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From spatialdata archive citing `Hartmann, F. J. et al. Single-cell metabolic profiling of human cytotoxic T cells. Nat. Biotechnol. (2020) doi:10.1038/s41587-020-0651-8.`
+#' @examples
+#' ColorectalCarcinomaMIBITOF()
+#' @export
+ColorectalCarcinomaMIBITOF = function(target = tempfile()) {
+ get_demo_SD("mibitof", target=target)
 }
