@@ -142,12 +142,8 @@ readShape <- function(x, ...) {
 #'   int_metadata int_metadata<- 
 #'   int_colData int_colData<-
 #' @export
-readTable <- function(x, anndataR=FALSE) {
-    sce <- if (anndataR) {
-        .readTable_anndataR(x)
-    } else {
-        .readTable_basilisk(x)
-    }
+readTable <- function(x) {
+    sce <- .readTable_anndataR(x)
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
@@ -181,10 +177,9 @@ readSpatialData <- function(x,
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
                 stop("couln't find ", i, " of name", .)
             j <- j[opt]
-        } 
-        args <- if (i == "tables") list(anndataR=anndataR)
+        }
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
-        lapply(j, \(.) do.call(f, c(list(.), args)))
+        lapply(j, \(.) do.call(f, list(.)))
     }) 
     if (!anndataR) sd$tables <- .readTables_basilisk(x)
     do.call(SpatialData, sd)
