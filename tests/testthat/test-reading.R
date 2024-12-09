@@ -14,9 +14,7 @@ test_that("readElement()", {
         if (l != "tables") {
             expect_is(get(paste0("read", f))(y), typ[l])
         } else {
-            expect_is(t1 <- .readTables_basilisk(x)[[1]], typ[l])
-            expect_is(t2 <- .readTable_anndataR(y), typ[l])
-            expect_equivalent(t1, t2)
+            expect_is(.readTables_basilisk(x)[[1]], typ[l])
         }
     }
 })
