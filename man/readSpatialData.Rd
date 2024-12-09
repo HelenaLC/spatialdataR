@@ -17,7 +17,7 @@ readPoint(x, ...)
 
 readShape(x, ...)
 
-readTable(x, anndataR = FALSE)
+readTable(x)
 
 readSpatialData(
   x,
@@ -37,14 +37,14 @@ path to a \code{SpatialData}-.zarr store.}
 
 \item{...}{option arguments passed to and from other methods.}
 
+\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
+The default, NULL, reads all elements; alternatively, may be FALSE 
+to skip a layer, or a integer vector specifying which elements to read.}
+
 \item{anndataR}{logical specifying whether 
 to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
 and `readTable`,
 so that pythonic \code{spatialdata} and \code{zellkonverter} are used.}
-
-\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
-The default, NULL, reads all elements; alternatively, may be FALSE 
-to skip a layer, or a integer vector specifying which elements to read.}
 }
 \value{
 \itemize{
@@ -56,8 +56,8 @@ to skip a layer, or a integer vector specifying which elements to read.}
 Reading `SpatialData`
 }
 \examples{
-tf <- tempfile()
-dir.create(tf)
+library(SpatialData.data)
+dir.create(tf <- tempfile())
 base <- unzip_merfish_demo(tf)
 (x <- readSpatialData(base))
 }

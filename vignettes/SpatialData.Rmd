@@ -151,29 +151,6 @@ CTpath(x, i, j)
 invisible(CTpath(y, j))
 ```
 
-# Datasets
-
-Data from a variety of technologies has been made available as `SpatialData` .zarr stores 
-[here](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html).
-These, in turn, have been deposited in Bioconductor's NSF Open Storage Network bucket,
-and can be retrieved with caching support using `r BiocStyle::Biocpkg("BiocFileCache")`.
-
-We can interrogate the bucket for available (zipped) .zarr archives:
-
-```{r ons-list}
-available_spd_zarr_zips()
-```
-
-Any of the above can be retrieved (once) into some location, and read into R; for example:
-
-```{r ons-read}
-dir.create(td <- tempfile())
-pa <- unzip_spd_demo(
-    zipname="merfish.zarr.zip", 
-    dest=td, source="biocOSN")
-(x <- readSpatialData(pa))
-```
-
 # Session info
 
 ```{r sessionInfo, echo=FALSE}

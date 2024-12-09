@@ -35,8 +35,8 @@
 #' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 #'
 #' @examples
-#' tf <- tempfile()
-#' dir.create(tf)
+#' library(SpatialData.data)
+#' dir.create(tf <- tempfile())
 #' base <- unzip_merfish_demo(tf)
 #' (x <- readSpatialData(base))
 NULL
@@ -47,11 +47,9 @@ NULL
 #' @export
 readImage <- function(x, ...) {
     md <- fromJSON(file.path(x, ".zattrs"))
-    paths <- .get_multiscales_dataset_paths(md)
-    za_list <- lapply(paths, function(ps)
-        ZarrArray(file.path(x, as.character(ps))))
-    meta <- Zattrs(md)
-    ImageArray(data=za_list, meta=meta, ...)
+    ps <- .get_multiscales_dataset_paths(md)
+    za_lys <- lapply(ps, \(.) ZarrArray(file.path(x, as.character(.))))
+    ImageArray(data=za_lys, meta=Zattrs(md), ...)
 }
 
 #' @rdname readSpatialData
