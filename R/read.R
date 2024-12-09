@@ -95,19 +95,6 @@ readShape <- function(x, ...) {
     pip=c("spatialdata==0.2.5", "spatialdata-io==0.1.5"))
 
 #' @importFrom reticulate import
-#' @importFrom zellkonverter AnnData2SCE
-#' @importFrom basilisk basiliskStart basiliskStop basiliskRun
-.readTable_basilisk <- function(x) {  # it will be faster to 'read' all tables
-    stop("not supported")
-    proc <- basiliskStart(.env)       # and process individually
-    on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
-        sd <- import("spatialdata")
-#        zellkonverter::AnnData2SCE(li$tables[basename(x)])  # need to get key as basename(x)
-    })
-}
-
-#' @importFrom reticulate import
 #' @importFrom S4Vectors metadata
 #' @importFrom zellkonverter AnnData2SCE
 #' @importFrom SingleCellExperiment int_metadata
