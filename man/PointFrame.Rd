@@ -78,8 +78,8 @@ Currently defined methods (here, \code{x} is a \code{PointFrame}):
 }
 }
 \examples{
-tf <- tempfile()
-dir.create(tf)
+library(SpatialData.data)
+dir.create(tf <- tempfile())
 base <- unzip_merfish_demo(tf)
 x <- file.path(base, "points", "single_molecule")
 (p <- readPoint(x))
