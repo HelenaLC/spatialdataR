@@ -89,45 +89,34 @@ readShape <- function(x, ...) {
 }
 
 #' @importFrom basilisk BasiliskEnvironment
-
 .env <- BasiliskEnvironment(
     pkgname="SpatialData", envname="anndata_env",
     packages=c("anndata==0.9.1", "zarr==2.14.2"),
     pip=c("spatialdata==0.2.5", "spatialdata-io==0.1.5"))
 
 #' @importFrom reticulate import
+#' @importFrom S4Vectors metadata
 #' @importFrom zellkonverter AnnData2SCE
+#' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
-.readTable_basilisk <- function(x) {  # it will be faster to 'read' all tables
-    stop("not supported")
-    proc <- basiliskStart(.env)       # and process individually
+.readTables_basilisk <- function(x) {
+    proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
+    basiliskRun(proc, x=x, \(x) {
+        # read in 'SpatialData' from .zarr store
         sd <- import("spatialdata")
-#        zellkonverter::AnnData2SCE(li$tables[basename(x)])  # need to get key as basename(x)
+        zs <- sd$read_zarr(x)
+        # return (named) list of SCEs
+        names(ts) <- ts <- names(zs$tables$data)
+        lapply(ts, \(z) {
+            se <- AnnData2SCE(zs$tables[z])
+            nm <- "spatialdata_attrs"
+            md <- metadata(se)[[nm]]
+            int_metadata(se)[[nm]] <- md
+            metadata(se)[[nm]] <- NULL
+            se
+        }) 
     })
-}
-
-.readTables_basilisk <- function(x) {  # it will be faster to 'read' all tables
-    proc <- basiliskStart(.env)       # and process individually
-    on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
-        sd <- import("spatialdata")
-        full <- sd$read_zarr(x)  # even a reread is fast, memoise might help?
-        # now I have all tables in full$tables, but I can't get them
-        # out without their names
-        tnames = dir(file.path(x, "tables"))
-        ans = lapply(tnames, function(z) {
-         cur = zellkonverter::AnnData2SCE(full$tables[z])
-         nm <- "spatialdata_attrs"   # thanks HLC
-         md <- metadata(cur)[[nm]]
-         int_metadata(cur)[[nm]] <- md   # what's going on?
-         metadata(cur)[[nm]] <- NULL
-         cur
-         })  # need to get key as basename(x)
-        names(ans) = tnames
-        ans
-        })   # handing back list of SCE
 }
 
 .readTable_anndataR <- function(x) {
@@ -153,12 +142,8 @@ readShape <- function(x, ...) {
 #'   int_metadata int_metadata<- 
 #'   int_colData int_colData<-
 #' @export
-readTable <- function(x, anndataR=FALSE) {
-    sce <- if (anndataR) {
-        .readTable_anndataR(x)
-    } else {
-        .readTable_basilisk(x)
-    }
+readTable <- function(x) {
+    sce <- .readTable_anndataR(x)
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
@@ -179,10 +164,10 @@ readTable <- function(x, anndataR=FALSE) {
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
     shapes=TRUE, tables=TRUE, anndataR=FALSE) {
-    if (!anndataR) tables = FALSE  # will do manually below
+    if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
-    ans = lapply(.LAYERS[!skip], \(i) {
+    sd <- lapply(.LAYERS[!skip], \(i) {
         y <- file.path(x, i)
         j <- list.files(y, full.names=TRUE)
         names(j) <- basename(j)
@@ -192,14 +177,10 @@ readSpatialData <- function(x,
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
                 stop("couln't find ", i, " of name", .)
             j <- j[opt]
-        } 
-        args <- if (i == "tables") list(anndataR=anndataR)
+        }
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
-        lapply(j, \(.) do.call(f, c(list(.), args)))
+        lapply(j, \(.) do.call(f, list(.)))
     }) 
-    if (!anndataR) {
-      tabs = .readTables_basilisk(x)
-      ans$tables = tabs
-      }
-    ans |> do.call(what=SpatialData)
+    if (!anndataR) sd$tables <- .readTables_basilisk(x)
+    do.call(SpatialData, sd)
 }

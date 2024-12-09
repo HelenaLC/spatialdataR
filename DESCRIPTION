@@ -60,7 +60,6 @@ Suggests:
     SpatialData.plot,
     BiocStyle,
     ggnewscale,
-    ggplot2,
     knitr,
     magick,
     paws,
