@@ -136,9 +136,10 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
 #' @export
 setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
+# it seems pull below dispatches to arrow, and a warning on as_vector was being produced
 #' @rdname table-utils
 #' @importFrom methods as
-#' @importFrom dplyr pull
+#' @importFrom dplyr pull     
 #' @importFrom sf st_as_sf
 #' @importFrom S4Vectors make_zero_col_DFrame 
 #' @importFrom SingleCellExperiment SingleCellExperiment 
@@ -184,7 +185,7 @@ setMethod("setTable",
             y <- point(x, i)
             md <- meta(y)[[sda]]
             ik <- md$instance_key
-            is <- pull(data(y), ik)
+            is <- pull(data(y), ik, as_vector=TRUE)  # needed to scotch new warning
             n <- length(is <- unique(is))
         },
         shapes={
@@ -192,7 +193,7 @@ setMethod("setTable",
             ex <- c("geometry", "radius")
             ki <- setdiff(names(y), ex)
             if (length(ki)) {
-                is <- pull(data(y), ik <- ki)
+                is <- pull(data(y), ik <- ki, as_vector=TRUE)
             } else {
                 # in case of missing 'instance_key', make one
                 df <- st_as_sf(data(y))

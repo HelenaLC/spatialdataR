@@ -1,3 +1,13 @@
+#
+# notes from VJC -- readSpatialData was modified below so
+# that if anndataR = FALSE, spatialdata.read_zarr is used
+# to get the whole zarr store, and then the tables are
+# transformed via zellkonverter.  this gives a 10x speedup
+# for ingesting the visium_hd_3.0.0 example but fails on
+# the blobs dataset in example("table-utils") because
+# of matters related to metadata/hasTable behavior
+#
+
 #' @name readSpatialData
 #' @title Reading `SpatialData`
 #' 
@@ -13,8 +23,9 @@
 #'   The default, NULL, reads all elements; alternatively, may be FALSE 
 #'   to skip a layer, or a integer vector specifying which elements to read.
 #' @param anndataR logical specifying whether 
-#'   to use \code{anndataR} to read tables; by default (FALSE), 
-#'   \code{basilisk}, \code{anndata} and \code{zellkonverter} are used.
+#'   to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
+#'   and `readTable`,
+#'   so that pythonic \code{spatialdata} and \code{zellkonverter} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
@@ -66,6 +77,7 @@ readPoint <- function(x, ...) {
 #' @rdname readSpatialData
 #' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
+#' @import geoarrow   
 #' @export
 readShape <- function(x, ...) {
     requireNamespace("geoarrow", quietly=TRUE)
@@ -77,22 +89,33 @@ readShape <- function(x, ...) {
 }
 
 #' @importFrom basilisk BasiliskEnvironment
-
 .env <- BasiliskEnvironment(
     pkgname="SpatialData", envname="anndata_env",
     packages=c("anndata==0.9.1", "zarr==2.14.2"),
     pip=c("spatialdata==0.2.5", "spatialdata-io==0.1.5"))
 
 #' @importFrom reticulate import
+#' @importFrom S4Vectors metadata
 #' @importFrom zellkonverter AnnData2SCE
+#' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
-.readTable_basilisk <- function(x) {
+.readTables_basilisk <- function(x) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
-    basiliskRun(proc, zarr=x, \(zarr) {
-        ad <- import("anndata")
-        ad <- ad$read_zarr(zarr)
-        AnnData2SCE(ad)
+    basiliskRun(proc, x=x, \(x) {
+        # read in 'SpatialData' from .zarr store
+        sd <- import("spatialdata")
+        zs <- sd$read_zarr(x)
+        # return (named) list of SCEs
+        names(ts) <- ts <- names(zs$tables$data)
+        lapply(ts, \(z) {
+            se <- AnnData2SCE(zs$tables[z])
+            nm <- "spatialdata_attrs"
+            md <- metadata(se)[[nm]]
+            int_metadata(se)[[nm]] <- md
+            metadata(se)[[nm]] <- NULL
+            se
+        }) 
     })
 }
 
@@ -119,12 +142,8 @@ readShape <- function(x, ...) {
 #'   int_metadata int_metadata<- 
 #'   int_colData int_colData<-
 #' @export
-readTable <- function(x, anndataR=FALSE) {
-    sce <- if (anndataR) {
-        .readTable_anndataR(x)
-    } else {
-        .readTable_basilisk(x)
-    }
+readTable <- function(x) {
+    sce <- .readTable_anndataR(x)
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
@@ -144,10 +163,11 @@ readTable <- function(x, anndataR=FALSE) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
+    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
+    if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
-    lapply(.LAYERS[!skip], \(i) {
+    sd <- lapply(.LAYERS[!skip], \(i) {
         y <- file.path(x, i)
         j <- list.files(y, full.names=TRUE)
         names(j) <- basename(j)
@@ -157,9 +177,10 @@ readSpatialData <- function(x,
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
                 stop("couln't find ", i, " of name", .)
             j <- j[opt]
-        } 
-        args <- if (i == "tables") list(anndataR=anndataR)
+        }
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
-        lapply(j, \(.) do.call(f, c(list(.), args)))
-    }) |> do.call(what=SpatialData)
+        lapply(j, \(.) do.call(f, list(.)))
+    }) 
+    if (!anndataR) sd$tables <- .readTables_basilisk(x)
+    do.call(SpatialData, sd)
 }
