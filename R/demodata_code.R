@@ -60,7 +60,8 @@ get_demo_SD = function(patt, cache=BiocFileCache::BiocFileCache(),
     chkxen = grep(patt, xdzips)
     if (length(chkxen)>1) stop(nupatt)
     if (length(chkxen)==0) {   # add a zipped zarr
-     zipind = grep(patt, sdzips)
+     zipind = grep(patt, sdzips)  # already ruled out xenium group, must be from spatialdata archive
+     if (length(zipind) == 0) stop("patt not matched in available resources")
      zipname = sdzips[zipind]
      message(sprintf("caching %s", zipname))
      fpath = sdurls[zipind]
@@ -160,4 +161,44 @@ MulticancerSteinbock = function(target = tempfile()) {
 #' @export
 ColorectalCarcinomaMIBITOF = function(target = tempfile()) {
  get_demo_SD("mibitof", target=target)
+}
+
+
+#' Retrieve a version of Janesick FFPE breast cancer experiment, Visium platform
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From spatialdata archive citing the biorxiv antecedent to `https://www.nature.com/articles/s41467-023-43458-x`
+#' This is annotated as Visium associated xenium, and has been enhanced
+#' with cell type annotation
+#' @examples
+#' JanesickBreastVisiumEnh()
+#' @export
+JanesickBreastVisiumEnh = function(target = tempfile()) {
+ get_demo_SD("visium_associated_xenium_io", target=target)
+}
+
+#' Retrieve replicate 1 of Janesick FFPE breast cancer experiment, Xenium platform
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From spatialdata archive citing the biorxiv antecedent to `https://www.nature.com/articles/s41467-023-43458-x`
+#' This has been enhanced
+#' with cell type annotation.
+#' @examples
+#' JanesickBreastXeniumRep1()
+#' @export
+JanesickBreastXeniumRep1 = function(target = tempfile()) {
+ get_demo_SD("xenium_rep1_io", target=target)
+}
+
+#' Retrieve replicate 2 of Janesick FFPE breast cancer experiment, Xenium platform
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From spatialdata archive citing the biorxiv antecedent to `https://www.nature.com/articles/s41467-023-43458-x`
+#' This has been enhanced
+#' with cell type annotation.
+#' @examples
+#' JanesickBreastXeniumRep2()
+#' @export
+JanesickBreastXeniumRep2 = function(target = tempfile()) {
+ get_demo_SD("xenium_rep2_io", target=target)
 }
