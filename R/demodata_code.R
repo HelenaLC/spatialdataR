@@ -1,6 +1,14 @@
 #' a data.frame with information about available resources
 #' @docType data
-#' @note This information was scraped from [scverse spatialdata](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html) download site on 5 Dec 2024.
+#' @examples
+#' utils::data(demo_spatialdata)
+#' if (requireNamespace("DT")) {
+#'  DT::datatable(demo_spatialdata)
+#' }
+#' @note This information was scraped from 
+#' [scverse spatialdata](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html) download site on 5 Dec 2024.
+#' The bracketed numbers under "Sample" refer to footnotes provided at that site.
+#' The individual functions in this package give similarly detailed references.
 "demo_spatialdata"
 
 
@@ -28,7 +36,8 @@ get_demo_SD = function(patt, cache=BiocFileCache::BiocFileCache(),
   
   sdzips = c("mcmicro_io.zip", "merfish.zarr.zip", 
   "mibitof.zip", "steinbock_io.zip", 
-  "visium_associated_xenium_io_aligned.zip", "visium_hd_3.0.0_io.zip")
+  "visium_associated_xenium_io_aligned.zip", "visium_hd_3.0.0_io.zip",
+  "xenium_rep1_io_aligned.zip", "xenium_rep2_io_aligned.zip")
   
   sdurls = paste(buckprefix, sdfold, sdzips, sep="/")
 #
@@ -197,8 +206,42 @@ JanesickBreastXeniumRep1 = function(target = tempfile()) {
 #' This has been enhanced
 #' with cell type annotation.
 #' @examples
-#' JanesickBreastXeniumRep2()
+#' jj = JanesickBreastXeniumRep2()
+#' jj
+#' if (requireNamespace("SpatialData.plot")) {
+#'   SpatialData.plot::plotSpatialData() + SpatialData.plot::plotShape(jj)
+#' }
 #' @export
 JanesickBreastXeniumRep2 = function(target = tempfile()) {
  get_demo_SD("xenium_rep2_io", target=target)
 }
+
+
+
+#' Retrieve 10x-trimmed breast cancer demonstration data, "two fields of view"
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From `https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/resources/xenium-example-data`.
+#' @examples
+#' br = Breast2fov_10x()
+#' if (requireNamespace("SpatialData.plot")) {
+#'  SpatialData.plot::plotSpatialData() + SpatialData.plot::plotShape(br)
+#' }
+#' @export
+Breast2fov_10x = function(target = tempfile()) {
+ get_demo_SD("human_Breast_2fov", target=target)
+}
+
+#' Retrieve 10x-trimmed lung cancer demonstration data, "two fields of view"
+#' @param target character(1) defaults to tempfile().  Set to
+#' a different folder for persistent Zarr store.
+#' @note From `https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/resources/xenium-example-data`.
+#' @examples
+#' lu = Lung2fov_10x()
+#' lu
+#' @export
+Lung2fov_10x = function(target = tempfile()) {
+ get_demo_SD("human_Lung_2fov", target=target)
+}
+
+

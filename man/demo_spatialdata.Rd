@@ -5,7 +5,7 @@
 \alias{demo_spatialdata}
 \title{a data.frame with information about available resources}
 \format{
-An object of class \code{data.frame} with 10 rows and 5 columns.
+An object of class \code{data.frame} with 10 rows and 6 columns.
 }
 \usage{
 demo_spatialdata
@@ -14,6 +14,15 @@ demo_spatialdata
 a data.frame with information about available resources
 }
 \note{
-This information was scraped from [scverse spatialdata](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html) download site on 5 Dec 2024.
+This information was scraped from 
+[scverse spatialdata](https://spatialdata.scverse.org/en/latest/tutorials/notebooks/datasets/README.html) download site on 5 Dec 2024.
+The bracketed numbers under "Sample" refer to footnotes provided at that site.
+The individual functions in this package give similarly detailed references.
+}
+\examples{
+utils::data(demo_spatialdata)
+if (requireNamespace("DT")) {
+ DT::datatable(demo_spatialdata)
+}
 }
 \keyword{datasets}
