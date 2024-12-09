@@ -1,3 +1,11 @@
+changes in version 0.99.22
+
+- split off 'SpatialData.data'
+
+changes in version 0.99.21
+
+- use Python's 'spatialdata::read_zarr' for reading tables
+
 changes in version 0.99.20
 
 - 'ImageArray' subsetting with multiscales support
