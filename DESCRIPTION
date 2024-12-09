@@ -58,7 +58,6 @@ Imports:
     zellkonverter
 Suggests:
     SpatialData.plot,
-    patchwork,
     BiocStyle,
     ggnewscale,
     knitr,
@@ -68,6 +67,7 @@ Suggests:
     testthat,
     DT
 Enhances:
+    patchwork,
     anndataR,
     pizzarr
 Remotes:
