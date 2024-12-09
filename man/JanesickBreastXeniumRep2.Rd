@@ -19,5 +19,9 @@ This has been enhanced
 with cell type annotation.
 }
 \examples{
-JanesickBreastXeniumRep2()
+jj = JanesickBreastXeniumRep2()
+jj
+if (requireNamespace("SpatialData.plot")) {
+  SpatialData.plot::plotSpatialData() + SpatialData.plot::plotShape(jj)
+}
 }
