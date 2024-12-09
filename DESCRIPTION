@@ -57,6 +57,7 @@ Imports:
     SummarizedExperiment,
     zellkonverter
 Suggests:
+    SpatialData.plot,
     BiocStyle,
     ggnewscale,
     ggplot2,
@@ -70,7 +71,8 @@ Enhances:
     pizzarr
 Remotes:
     keller-mark/pizzarr,
-    keller-mark/anndataR@spatialdata
+    keller-mark/anndataR@spatialdata,
+    HelenaLC/SpatialData.plot
 biocViews: 
     DataImport, 
     DataRepresentation, 
