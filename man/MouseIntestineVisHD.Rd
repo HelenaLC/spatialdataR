@@ -4,7 +4,7 @@
 \alias{MouseIntestineVisHD}
 \title{Retrieve 10x-published mouse intestine sample, Visium HD 3.0.0}
 \usage{
-MouseIntestineVisHD()
+MouseIntestineVisHD(target = tempfile())
 }
 \arguments{
 \item{target}{character(1) defaults to tempfile().  Set to

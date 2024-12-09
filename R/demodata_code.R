@@ -108,8 +108,8 @@ get_demo_SD = function(patt, cache=BiocFileCache::BiocFileCache(),
 #' considerable decompression and reassembly once the basic resource has
 #' been retrieved from cache.
 #' @export
-MouseIntestineVisHD = function() {
- get_demo_SD("visium_hd_3.0.0")
+MouseIntestineVisHD = function(target=tempfile()) {
+ get_demo_SD("visium_hd_3.0.0", target=target)
 }
 
 #' Retrieve small cell lung adenocarcinoma sample assayed with mcmicro
