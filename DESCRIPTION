@@ -65,7 +65,8 @@ Suggests:
     magick,
     paws,
     Rgraphviz,
-    testthat
+    testthat,
+    DT
 Enhances:
     anndataR,
     pizzarr
