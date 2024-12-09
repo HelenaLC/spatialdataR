@@ -59,7 +59,6 @@ Imports:
 Suggests:
     BiocStyle,
     ggnewscale,
-    ggplot2,
     knitr,
     magick,
     paws,
