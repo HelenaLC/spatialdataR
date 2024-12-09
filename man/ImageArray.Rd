@@ -53,6 +53,7 @@ content describing the overall object.}
 The `ImageArray` class
 }
 \examples{
+library(SpatialData.data)
 dir.create(td <- tempfile())
 pa <- unzip_merfish_demo(td)
 pa <- file.path(pa, "images", "rasterized")

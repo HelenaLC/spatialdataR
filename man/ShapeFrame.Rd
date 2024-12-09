@@ -56,8 +56,8 @@ content describing the overall object.}
 The `ShapeFrame` class
 }
 \examples{
-tf <- tempfile()
-dir.create(tf)
+library(SpatialData.data)
+dir.create(tf <- tempfile())
 base <- unzip_merfish_demo(tf)
 y <- file.path(base, "shapes", "cells")
 (s <- readShape(y))
