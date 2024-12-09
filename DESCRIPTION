@@ -58,6 +58,7 @@ Imports:
     zellkonverter
 Suggests:
     SpatialData.plot,
+    patchwork,
     BiocStyle,
     ggnewscale,
     knitr,
