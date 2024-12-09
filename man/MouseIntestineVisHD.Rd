@@ -6,6 +6,10 @@
 \usage{
 MouseIntestineVisHD()
 }
+\arguments{
+\item{target}{character(1) defaults to tempfile().  Set to
+a different folder for persistent Zarr store.}
+}
 \description{
 Retrieve 10x-published mouse intestine sample, Visium HD 3.0.0
 }
