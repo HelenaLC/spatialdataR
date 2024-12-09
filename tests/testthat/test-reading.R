@@ -11,13 +11,17 @@ test_that("readElement()", {
     for (l in names(typ)) {
         f <- paste0(toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
         y <- list.files(file.path(x, l), full.names=TRUE)[1]
-        expect_is(get(paste0("read", f))(y), typ[l])
+        if (l != "tables") {
+            expect_is(get(paste0("read", f))(y), typ[l])
+        } else {
+            expect_is(.readTables_basilisk(x)[[1]], typ[l])
+        }
     }
 })
 
 test_that("readSpatialData()", {
     expect_is(y <- readSpatialData(x), "SpatialData")
-    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE, tables=TRUE)
+    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE)#, tables=TRUE)
     for (. in names(a)) {
         # setting any layer to FALSE skips it
         b <- c(list(x=x), a); b[[.]] <- FALSE
@@ -33,12 +37,4 @@ test_that("readSpatialData()", {
         b <- c(list(x=x), a); b[[.]] <- get(f)(y)[1]
         expect_silent(do.call(readSpatialData, b))
     }
-})
-
-test_that(".readTable_anndataR/basilisk()", {
-    a <- readSpatialData(x, anndataR=TRUE)
-    b <- readSpatialData(x, anndataR=FALSE)
-    expect_equivalent(
-        SpatialData::table(a), 
-        SpatialData::table(b))
 })

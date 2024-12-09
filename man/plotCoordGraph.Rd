@@ -15,26 +15,6 @@ plotCoordGraph(g, cex = 0.6)
 given a \code{graphNEL} instance, nodes with \code{nchar>max} are
 split and hyphenated at character position \code{floor(nchar/fac)}.
 }
-\details{
-#' @importFrom EBImage resize
-setMethod("scale", "ImageArray", \(x, t, ...) {
-    a <- as.array(data(x)) 
-    # TODO: this should be done w/o realizing 
-    # into memory, but EBImage needs an array?
-    d <- length(dim(a))
-    if (missing(t)) 
-        t <- rep(1, d)
-    b <- resize(aperm(a),
-        w=dim(a)[d]*t[d],
-        h=dim(a)[d-1]*t[d-1])
-    x@data <- aperm(b)
-    x
-})
-
-#' @importFrom EBImage resize
-setMethod("translation", "ImageArray", \(x, t, ...) {})
-setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))
-}
 \examples{
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")

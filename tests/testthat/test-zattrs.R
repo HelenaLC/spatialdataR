@@ -37,7 +37,7 @@ test_that("rmvCT", {
 
 test_that("addCT", {
     # get 1st element from each layer
-    ls <- setdiff(.LAYERS, "tables")
+    ls <- setdiff(SpatialData:::.LAYERS, "tables")
     es <- lapply(ls, \(.) x[.,1][[.]][[1]])
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
@@ -84,24 +84,24 @@ test_that("CTname", {
 test_that("CTgraph", {
     # invalid
     expect_error(CTgraph(list()))
-    expect_error(CTgraph(table(x)))
+    expect_error(CTgraph(SpatialData::table(x)))
     # object-wide
     g <- CTgraph(x)
     expect_is(g, "graph")
     # graph should contain node for
     # every element & transformation
-    ns <- lapply(setdiff(.LAYERS, "tables"), 
+    ns <- lapply(setdiff(SpatialData:::.LAYERS, "tables"), 
         \(l) lapply(names(x[[l]]), 
         \(e) c(e, CTname(x[[l]][[e]]))))
     ns <- sort(unique(unlist(ns)))
-    expect_true(all(ns %in% sort(nodes(g))))
+    expect_true(all(ns %in% sort(graph::nodes(g))))
     # element-wise
-    for (l in setdiff(.LAYERS, "tables")) 
+    for (l in setdiff(SpatialData:::.LAYERS, "tables")) 
         for (e in names(x[[l]])) {
             y <- x[[l]][[e]]
             g <- CTgraph(y)
             expect_is(g, "graph")
-            expect_true("self" %in% nodes(g))
+            expect_true("self" %in% graph::nodes(g))
         }
 })
 

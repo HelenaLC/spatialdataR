@@ -26,7 +26,7 @@ readSpatialData(
   points = TRUE,
   shapes = TRUE,
   tables = TRUE,
-  anndataR = TRUE
+  anndataR = FALSE
 )
 }
 \arguments{
@@ -38,8 +38,9 @@ path to a \code{SpatialData}-.zarr store.}
 \item{...}{option arguments passed to and from other methods.}
 
 \item{anndataR}{logical specifying whether 
-to use \code{anndataR} to read tables; by default (FALSE), 
-\code{basilisk}, \code{anndata} and \code{zellkonverter} are used.}
+to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
+and `readTable`,
+so that pythonic \code{spatialdata} and \code{zellkonverter} are used.}
 
 \item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
 The default, NULL, reads all elements; alternatively, may be FALSE 
