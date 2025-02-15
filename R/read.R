@@ -115,7 +115,7 @@ readShape <- function(x, ...) {
 #' @importFrom basilisk BasiliskEnvironment
 .env <- BasiliskEnvironment(
     pkgname="SpatialData", envname="anndata_env",
-    packages=c( "zarr==2.18.4" ),
+    packages=c( "python==3.12.0", "zarr==2.18.4" ),
     pip=allp)
 
 #' @importFrom reticulate import
