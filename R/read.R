@@ -24,7 +24,6 @@ allp = c("session_info==1.0.0", "spatialdata==0.3.0", "spatialdata_io==0.1.7",
 "toolz==1.0.0", "tornado==6.4.2", "tqdm==4.67.1", 
 "typing_extensions==4.12.2", "urllib3==2.3.0", "wrapt==1.17.2", 
 "xarray==2024.11.0", "xarray_dataclasses==1.9.1", "xarray_schema==0.0.3", 
-#"xsdata==24.3.1", "xsdata_pydantic==24.5",
 "zarr==2.18.4", "zict==3.0.0")
 # notes from VJC -- readSpatialData was modified below so
 # that if anndataR = FALSE, spatialdata.read_zarr is used
