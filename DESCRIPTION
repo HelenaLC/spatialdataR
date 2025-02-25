@@ -57,6 +57,7 @@ Suggests:
     ggnewscale,
     knitr,
     magick,
+    patchwork,
     paws,
     Rgraphviz,
     SpatialData.data,
