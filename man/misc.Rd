@@ -3,17 +3,14 @@
 \name{misc}
 \alias{misc}
 \alias{show,SpatialData-method}
-\alias{show,ImageArray-method}
-\alias{show,LabelArray-method}
+\alias{show,sdArray-method}
 \alias{show,PointFrame-method}
 \alias{show,ShapeFrame-method}
 \title{Miscellaneous `Miro` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
-\S4method{show}{ImageArray}(object)
-
-\S4method{show}{LabelArray}(object)
+\S4method{show}{sdArray}(object)
 
 \S4method{show}{PointFrame}(object)
 

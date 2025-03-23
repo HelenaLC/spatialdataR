@@ -5,10 +5,6 @@
 \alias{channels,ImageArray-method}
 \alias{channels}
 \alias{channels,ANY-method}
-\alias{data,ImageArray-method}
-\alias{dim,ImageArray-method}
-\alias{length,ImageArray-method}
-\alias{[,ImageArray,ANY,ANY,ANY-method}
 \alias{getZarrArrayPath}
 \title{The `ImageArray` class}
 \usage{
@@ -17,14 +13,6 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{channels}{ImageArray}(x, ...)
 
 \S4method{channels}{ANY}(x, ...)
-
-\S4method{data}{ImageArray}(x, k = 1)
-
-\S4method{dim}{ImageArray}(x)
-
-\S4method{length}{ImageArray}(x)
-
-\S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 
 getZarrArrayPath(x)
 }
@@ -40,9 +28,9 @@ content describing the overall object.}
 
 \item{x}{\code{ImageArray}}
 
-\item{k}{scalar index specifying which scale to extract.}
-
 \item{i, j}{indices specifying elements to extract.}
+
+\item{k}{scalar index specifying which scale to extract.}
 
 \item{drop}{ignored.}
 }
