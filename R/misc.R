@@ -75,7 +75,6 @@ setMethod("show", "SpatialData", .showSpatialData)
 #' @importFrom S4Vectors coolcat
 .showsdArray <- function(object) {
     n.object <- length(object@data)
-    print(n.object)
     cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
     scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
     coolcat("Scales (%d): %s", scales)
