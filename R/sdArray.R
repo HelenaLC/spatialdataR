@@ -50,14 +50,18 @@ setMethod("[", "sdArray", \(x, i, j, k, ..., drop=FALSE) {
   n <- length(data(x, NULL))
   x@data <- lapply(seq_len(n), \(.) {
     d <- dim(data(x, .))
-    j <- if (isTRUE(j)) seq_len(d[2]) else j
-    k <- if (isTRUE(k)) seq_len(d[3]) else k
+    j <- if (isTRUE(j)) seq_len(rev(d)[2]) else j
+    k <- if (isTRUE(k)) seq_len(rev(d)[1]) else k
     jk <- lapply(list(j, k), \(jk) {
       fac <- 2^(.-1)
       seq(floor(head(jk, 1)/fac), 
           ceiling(tail(jk, 1)/fac))
     })
-    data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
+    if(length(d) == 3){
+      data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
+    } else {
+      data(x, .)[jk[[1]], jk[[2]], drop=FALSE]
+    }
   })
   x
 })

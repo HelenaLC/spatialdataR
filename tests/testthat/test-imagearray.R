@@ -31,6 +31,15 @@ test_that("data(),ImageArray", {
     expect_error(data(img, c(1,2)))
 })
 
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+x <- readSpatialData(x, tables=FALSE)
+
+test_that("[,ImageArray", {
+  y <- image(x, i <- "blobs_image")
+  y <- y[,seq_len(32)] # subset to make things harder
+})
+
 test_that("getZarrArrayPath(),ImageArray", {
     x <- file.path("extdata", "blobs.zarr")
     x <- system.file(x, package="SpatialData")
