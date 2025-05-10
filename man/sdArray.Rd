@@ -5,7 +5,6 @@
 \alias{data,sdArray-method}
 \alias{dim,sdArray-method}
 \alias{length,sdArray-method}
-\alias{[,sdArray,ANY,ANY,ANY-method}
 \title{Methods for `ImageArray` and `LabelArray` class}
 \usage{
 \S4method{data}{sdArray}(x, k = 1)
@@ -13,19 +12,11 @@
 \S4method{dim}{sdArray}(x)
 
 \S4method{length}{sdArray}(x)
-
-\S4method{[}{sdArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 }
 \arguments{
 \item{x}{\code{ImageArray} or  \code{LabelArray}}
 
 \item{k}{scalar index specifying which scale to extract.}
-
-\item{i, j}{indices specifying elements to extract.}
-
-\item{...}{option arguments passed to and from other methods.}
-
-\item{drop}{ignored.}
 
 \item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
 
@@ -33,6 +24,12 @@
 
 \item{metadata}{optional list of arbitrary 
 content describing the overall object.}
+
+\item{i, j}{indices specifying elements to extract.}
+
+\item{drop}{ignored.}
+
+\item{...}{option arguments passed to and from other methods.}
 }
 \value{
 \code{ImageArray}

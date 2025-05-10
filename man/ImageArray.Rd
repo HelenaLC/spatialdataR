@@ -6,6 +6,7 @@
 \alias{channels}
 \alias{channels,ANY-method}
 \alias{getZarrArrayPath}
+\alias{[,ImageArray,ANY,ANY,ANY-method}
 \title{The `ImageArray` class}
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
@@ -15,6 +16,8 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{channels}{ANY}(x, ...)
 
 getZarrArrayPath(x)
+
+\S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 }
 \arguments{
 \item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
