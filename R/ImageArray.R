@@ -128,8 +128,8 @@ setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
     ijk <- list(i, j, k)
     n <- length(data(x, NULL))
+    d <- dim(data(x))
     x@data <- lapply(seq_len(n), \(.) {
-        d <- dim(data(x, .))
         j <- if (isTRUE(j)) seq_len(d[2]) else j
         k <- if (isTRUE(k)) seq_len(d[3]) else k
         jk <- lapply(list(j, k), \(jk) {
