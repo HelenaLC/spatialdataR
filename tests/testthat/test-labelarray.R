@@ -38,4 +38,6 @@ x <- readSpatialData(x, tables=FALSE)
 test_that("[,LabelArray", {
   y <- label(x, i <- "blobs_labels")
   y <- y[,seq_len(32)] # subset to make things harder
+  y <- label(x, i <- "blobs_multiscale_labels")
+  y <- y[,seq_len(32)] # subset to make things harder
 })
