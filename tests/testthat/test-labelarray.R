@@ -16,7 +16,7 @@ test_that("LabelArray()", {
   lys <- lapply(dim, \(.) array(sample(arr, prod(.), replace=TRUE), dim=.))
   expect_silent(LabelArray(lys))
 })
-
+de
 test_that("data(),LabelArray", {
   dim <- lapply(c(8, 4, 2), \(.) c(3, rep(., 2)))
   lys <- lapply(dim, \(.) array(0, dim=.))
