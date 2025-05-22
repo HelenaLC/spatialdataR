@@ -58,6 +58,6 @@ Reading `SpatialData`
 \examples{
 library(SpatialData.data)
 dir.create(tf <- tempfile())
-base <- unzip_merfish_demo(tf)
+base <- SpatialData.data:::.unzip_merfish_demo(tf)
 (x <- readSpatialData(base))
 }

@@ -5,7 +5,6 @@
 \alias{channels,ImageArray-method}
 \alias{channels}
 \alias{channels,ANY-method}
-\alias{getZarrArrayPath}
 \alias{[,ImageArray,ANY,ANY,ANY-method}
 \title{The `ImageArray` class}
 \usage{
@@ -14,8 +13,6 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{channels}{ImageArray}(x, ...)
 
 \S4method{channels}{ANY}(x, ...)
-
-getZarrArrayPath(x)
 
 \S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 }
@@ -46,7 +43,7 @@ The `ImageArray` class
 \examples{
 library(SpatialData.data)
 dir.create(td <- tempfile())
-pa <- unzip_merfish_demo(td)
+pa <- SpatialData.data:::.unzip_merfish_demo(td)
 pa <- file.path(pa, "images", "rasterized")
 (ia <- readImage(pa))
 
