@@ -16,7 +16,7 @@
 #' @examples
 #' library(SpatialData.data)
 #' dir.create(td <- tempfile())
-#' pa <- unzip_merfish_demo(td)
+#' pa <- SpatialData.data:::.unzip_merfish_demo(td)
 #' pa <- file.path(pa, "images", "rasterized")
 #' (ia <- readImage(pa))
 #'
@@ -101,39 +101,24 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 }
 
 #' @rdname ImageArray
-#' @importFrom methods slot
-#' @export
-getZarrArrayPath <- \(x) {
-    while (!inherits(tryCatch(
-        y <- slot(x, "seed"), 
-        error=\(e) e), "error"))
-        x <- y
-    if (is(x, "ZarrArraySeed")) {
-        x <- slot(x, "zarr_array_path")
-        return(normalizePath(x))
-    }
-    stop("invalid 'x'")
-}
-
-#' @rdname ImageArray
 #' @importFrom utils head tail
 #' @exportMethod [
 setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
-  if (missing(i)) i <- TRUE
-  if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-  if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
-  ijk <- list(i, j, k)
-  n <- length(data(x, NULL))
-  x@data <- lapply(seq_len(n), \(.) {
-    d <- dim(data(x, .))
-    j <- if (isTRUE(j)) seq_len(d[2]) else j
-    k <- if (isTRUE(k)) seq_len(d[3]) else k
-    jk <- lapply(list(j, k), \(jk) {
-      fac <- 2^(.-1)
-      seq(floor(head(jk, 1)/fac), 
-          ceiling(tail(jk, 1)/fac))
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
+    ijk <- list(i, j, k)
+    n <- length(data(x, NULL))
+    d <- dim(data(x))
+    x@data <- lapply(seq_len(n), \(.) {
+        j <- if (isTRUE(j)) seq_len(d[2]) else j
+        k <- if (isTRUE(k)) seq_len(d[3]) else k
+        jk <- lapply(list(j, k), \(jk) {
+            fac <- 2^(.-1)
+            seq(floor(head(jk, 1)/fac), 
+                ceiling(tail(jk, 1)/fac))
+        })
+        data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
     })
-    data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
-  })
-  x
+    x
 })

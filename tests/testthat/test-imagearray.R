@@ -40,16 +40,3 @@ test_that("[,ImageArray", {
   y <- y[,seq_len(32)] # subset to make things harder
 })
 
-test_that("getZarrArrayPath(),ImageArray", {
-    x <- file.path("extdata", "blobs.zarr")
-    x <- system.file(x, package="SpatialData")
-    x <- file.path(x, "images", "blobs_image", "0")
-    za <- Rarr::ZarrArray(x)
-    da <- as(za, "DelayedArray")
-    expect_error(getZarrArrayPath("."))
-    expect_identical(getZarrArrayPath(da), x)
-    expect_identical(getZarrArrayPath(za), x)
-    expect_identical(getZarrArrayPath(za), x)
-    expect_identical(getZarrArrayPath(za*2), x)
-    expect_identical(getZarrArrayPath(za[1,,]), x)
-})
