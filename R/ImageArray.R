@@ -141,18 +141,3 @@ setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     })
     x
 })
-
-#' @rdname ImageArray
-#' @importFrom methods slot
-#' @export
-getZarrArrayPath <- \(x) {
-    while (!inherits(tryCatch(
-        y <- slot(x, "seed"), 
-        error=\(e) e), "error"))
-        x <- y
-    if (is(x, "ZarrArraySeed")) {
-        x <- slot(x, "zarr_array_path")
-        return(normalizePath(x))
-    }
-    stop("invalid 'x'")
-}
