@@ -16,7 +16,7 @@
 #' @examples
 #' library(SpatialData.data)
 #' dir.create(td <- tempfile())
-#' pa <- unzip_merfish_demo(td)
+#' pa <- SpatialData.data:::.unzip_merfish_demo(td)
 #' pa <- file.path(pa, "images", "rasterized")
 #' (ia <- readImage(pa))
 #'
