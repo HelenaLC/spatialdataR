@@ -9,7 +9,6 @@
 \alias{dim,ImageArray-method}
 \alias{length,ImageArray-method}
 \alias{[,ImageArray,ANY,ANY,ANY-method}
-\alias{getZarrArrayPath}
 \title{The `ImageArray` class}
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
@@ -25,8 +24,6 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{length}{ImageArray}(x)
 
 \S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
-
-getZarrArrayPath(x)
 }
 \arguments{
 \item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
