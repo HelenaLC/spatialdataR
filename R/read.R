@@ -67,15 +67,20 @@ allp = c("session_info==1.0.0", "spatialdata==0.3.0", "spatialdata_io==0.1.7",
 #' (x <- readSpatialData(base))
 NULL
 
+readsdlayer <- function(x, ...) {
+  md <- fromJSON(file.path(x, ".zattrs"))
+  ps <- .get_multiscales_dataset_paths(md)
+  list(array = lapply(ps, \(.) ZarrArray(file.path(x, as.character(.)))), 
+       md = md)
+}
+
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @importFrom jsonlite fromJSON
 #' @export
 readImage <- function(x, ...) {
-    md <- fromJSON(file.path(x, ".zattrs"))
-    ps <- .get_multiscales_dataset_paths(md)
-    za_lys <- lapply(ps, \(.) ZarrArray(file.path(x, as.character(.))))
-    ImageArray(data=za_lys, meta=Zattrs(md), ...)
+    lyrs <- readsdlayer(x, ...)
+    ImageArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
 }
 
 #' @rdname readSpatialData
@@ -83,9 +88,8 @@ readImage <- function(x, ...) {
 #' @importFrom jsonlite fromJSON
 #' @export
 readLabel <- function(x, ...) {
-    md <- fromJSON(file.path(x, ".zattrs"))
-    za <- ZarrArray(file.path(x, "0"))
-    LabelArray(data=za, meta=Zattrs(md))
+  lyrs <- readsdlayer(x, ...)
+  LabelArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
 }
 
 #' @rdname readSpatialData

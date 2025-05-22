@@ -88,25 +88,6 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     }
 }
 
-#' @rdname ImageArray
-#' @export
-setMethod("data", "ImageArray", \(x, k=1) {
-    if (is.null(k)) return(x@data)
-    stopifnot(length(k) == 1, is.numeric(k), k > 0)
-    n <- length(x@data) # get number of available scales
-    if (is.infinite(k)) k <- n # input of Inf uses lowest
-    if (k <= n) return(x@data[[k]]) # return specified scale
-    stop("'k=", k, "' but only ", n, " resolution(s) available")
-})
-
-#' @rdname ImageArray
-#' @export
-setMethod("dim", "ImageArray", \(x) dim(data(x)))
-
-#' @rdname ImageArray
-#' @export
-setMethod("length", "ImageArray", \(x) length(data(x, NULL)))
-
 .check_jk <- \(x, .) {
     if (isTRUE(x)) return()
     tryCatch(

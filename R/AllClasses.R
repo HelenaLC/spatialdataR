@@ -16,7 +16,7 @@ setClassUnion(
 .LabelArray <- setClass(
     Class="LabelArray",
     contains=c("Annotated"),
-    slots=list(data="array_OR_df", meta="Zattrs"))
+    slots=list(data="list", meta="Zattrs"))
 
 # these are 'R6ClassGenerator's;
 # this somehow does the trick...
@@ -42,6 +42,10 @@ setClassUnion(
     Class="ShapeFrame",
     contains=c("Annotated"),
     slots=list(data="arrow_OR_df", meta="Zattrs"))
+
+setClassUnion(
+  "sdArray",
+  c("ImageArray", "LabelArray"))
 
 setClassUnion(
     "SpatialDataElement",
