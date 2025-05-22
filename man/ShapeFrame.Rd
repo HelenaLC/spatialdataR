@@ -58,7 +58,7 @@ The `ShapeFrame` class
 \examples{
 library(SpatialData.data)
 dir.create(tf <- tempfile())
-base <- unzip_merfish_demo(tf)
+base <- SpatialData.data:::.unzip_merfish_demo(tf)
 y <- file.path(base, "shapes", "cells")
 (s <- readShape(y))
 plot(sf::st_as_sf(data(s)), cex=0.2)
