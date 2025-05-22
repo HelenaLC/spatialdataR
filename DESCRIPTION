@@ -65,7 +65,6 @@ Suggests:
     testthat,
     DT
 Enhances:
-    patchwork,
     anndataR,
     pizzarr
 Remotes:

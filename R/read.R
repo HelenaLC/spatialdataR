@@ -63,7 +63,7 @@ allp = c("session_info==1.0.0", "spatialdata==0.3.0", "spatialdata_io==0.1.7",
 #' @examples
 #' library(SpatialData.data)
 #' dir.create(tf <- tempfile())
-#' base <- unzip_merfish_demo(tf)
+#' base <- SpatialData.data:::.unzip_merfish_demo(tf)
 #' (x <- readSpatialData(base))
 NULL
 
