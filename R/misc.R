@@ -73,24 +73,15 @@ NULL
 setMethod("show", "SpatialData", .showSpatialData)
 
 #' @importFrom S4Vectors coolcat
-.showImageArray <- function(object) {
+.showsdArray <- function(object) {
     n.object <- length(object@data)
-    cat("class: ImageArray", ifelse(n.object > 1, "(MultiScale)", ""),"\n")
+    cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
     scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
     coolcat("Scales (%d): %s", scales)
 }
 
 #' @rdname misc
-setMethod("show", "ImageArray", .showImageArray)
-
-#' @importFrom S4Vectors coolcat
-.showLabelArray <- function(object) {
-    cat("class: LabelArray\n")
-    cat("dim:", dim(object@data))
-}
-
-#' @rdname misc
-setMethod("show", "LabelArray", .showLabelArray)
+setMethod("show", "sdArray", .showsdArray)
 
 #' @importFrom S4Vectors coolcat
 .showPointFrame <- function(object) {

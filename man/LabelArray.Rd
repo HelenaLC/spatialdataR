@@ -2,13 +2,10 @@
 % Please edit documentation in R/LabelArray.R
 \name{LabelArray}
 \alias{LabelArray}
-\alias{dim,LabelArray-method}
 \alias{[,LabelArray,ANY,ANY,ANY-method}
 \title{The \code{LabelArray} class}
 \usage{
 LabelArray(data = array(), meta = Zattrs(), metadata = list(), ...)
-
-\S4method{dim}{LabelArray}(x)
 
 \S4method{[}{LabelArray,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
