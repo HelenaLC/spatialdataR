@@ -48,7 +48,11 @@ test_that("getTable()", {
     # alter 'region' of a couple random observations
     s <- t
     . <- sample(ncol(s), 2)
-    int_colData(s)[[rk]][.] <- "."
+    # TODO: check the replacement of this test below
+    # int_colData(s)[[rk]][.] <- "."
+    tmp <- as.character(colData(s)[[rk]])
+    tmp[.] <- "."
+    colData(s)[[rk]] <- tmp
     SpatialData::table(x) <- s
     # these should be gone when 'drop=TRUE'
     t1 <- getTable(x, i, drop=FALSE)
@@ -121,7 +125,8 @@ test_that("valTable()", {
     expect_error(valTable(x, i, sample(rownames(t), 2)))
     expect_error(valTable(x, i, sample(names(colData(t)), 2)))
     # 'colData'
-    df <- DataFrame(a=sample(letters, n), b=runif(n))
+    df <- DataFrame(a=sample(letters, n), b=runif(n),
+                    region = valTable(x, i, j <- "region"))
     s <- t; colData(s) <- df; y <- x; SpatialData::table(y) <- s
     expect_identical(valTable(y, i, j <- "a"), s[[j]])
     expect_identical(valTable(y, i, j <- "b"), s[[j]])
