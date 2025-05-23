@@ -48,6 +48,7 @@ test_that("getTable()", {
     # alter 'region' of a couple random observations
     s <- t
     . <- sample(ncol(s), 2)
+    # TODO: check the replacement of this test below
     # int_colData(s)[[rk]][.] <- "."
     tmp <- as.character(colData(s)[[rk]])
     tmp[.] <- "."

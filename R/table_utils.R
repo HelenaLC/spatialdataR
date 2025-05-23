@@ -125,6 +125,8 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- meta(t)$region_key
+        # TODO: check the replacement below, search colData as well?
+        # t <- t[, int_colData(t)[[rk]] == i]
         coldata <-
           if(rk %in% names(cd <- int_colData(t))) cd[[rk]] else colData(t)[[rk]]
         t <- t[, coldata == i]
