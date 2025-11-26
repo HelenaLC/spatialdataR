@@ -63,13 +63,10 @@ Suggests:
     SpatialData.data,
     SpatialData.plot,
     testthat,
-    DT
-Enhances:
-    anndataR,
-    pizzarr
+    DT,
+    anndataR
 Remotes:
-    keller-mark/pizzarr,
-    keller-mark/anndataR@spatialdata,
+    keller-mark/anndataR@keller-mark/zarr,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot
 biocViews: 
@@ -82,7 +79,7 @@ biocViews:
     SingleCell,
     Spatial
 License: Artistic-2.0
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/SpatialData
