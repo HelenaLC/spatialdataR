@@ -42,8 +42,8 @@ The default, NULL, reads all elements; alternatively, may be FALSE
 to skip a layer, or a integer vector specifying which elements to read.}
 
 \item{anndataR}{logical specifying whether 
-to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
-and `readTable`,
+to use \code{anndataR} to read tables; 
+defaults to FALSE in `readSpatialData`, and `readTable`,
 so that pythonic \code{spatialdata} and \code{zellkonverter} are used.}
 }
 \value{
@@ -59,5 +59,5 @@ Reading `SpatialData`
 library(SpatialData.data)
 dir.create(tf <- tempfile())
 base <- SpatialData.data:::.unzip_merfish_demo(tf)
-(x <- readSpatialData(base))
+(x <- readSpatialData(base, anndataR=TRUE))
 }
