@@ -11,6 +11,9 @@
 \alias{LabelArray}
 \alias{PointFrame}
 \alias{ShapeFrame}
+\alias{feature_key}
+\alias{instance_key}
+\alias{zattrs}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(
@@ -27,7 +30,13 @@ LabelArray(data = list(), zattrs = Zattrs(), metadata = list())
 
 PointFrame(data = NULL, zattrs = Zattrs(), metadata = list())
 
+feature_key(x, ...)
+
+instance_key(x, ...)
+
 ShapeFrame(data = NULL, zattrs = Zattrs(), metadata = list())
+
+zattrs(x, ...)
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}

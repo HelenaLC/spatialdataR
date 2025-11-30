@@ -109,6 +109,11 @@ method(region, SpatialData) <- \(x, i) {
 #' @importFrom S7 new_class
 Zattrs <- new_class("Zattrs", properties=list(data=class_list))
 
+#' @importFrom S7 method
+#' @importFrom utils .DollarNames
+method(.DollarNames, Zattrs) <- \(x, pattern="") names(x@data)
+method(`$`, Zattrs) <- \(x, name) x@data[[name]]
+
 # sdArray ----
 
 #' @importFrom S7 new_class class_list
@@ -125,7 +130,7 @@ sdArray <- new_class(
         if (length(x) && !all(vapply(x, \(.) is(., y), logical(1)))) 
             sprintf("'@data' should be a list of '%s's", y)
     }
-)
+); S7::S4_register(sdArray)
 
 #' @name SpatialData
 #' @export
@@ -163,30 +168,35 @@ sdFrame <- new_class(
         ok <- c(ok, is.data.frame(self@data))
         if (!any(ok)) "invalid 'data'"
     }
-)
+); S7::S4_register(sdFrame)
 
 #' @rdname SpatialData
 #' @export
 PointFrame <- new_class("PointFrame", parent=sdFrame,
     validator=\(self) {
-        if (is.null(feature_key(self)) ||
-            !feature_key(self) %in% names(self))
-            "invalid 'feature_key'"
+        # if (is.null(feature_key(self)) ||
+        #     !feature_key(self) %in% names(self))
+        #     "invalid 'feature_key'"
     })
 
+#' @rdname SpatialData
+#' @export
 feature_key <- new_generic("feature_key", "x")
-method(feature_key, PointFrame) <- \(x) zattrs(x)$spatialdata_attrs$feature_key
+method(feature_key, PointFrame) <- \(x)
+    x@zattrs@data$spatialdata_attrs$feature_key
 
+#' @rdname SpatialData
+#' @export
 instance_key <- new_generic("instance_key", "x")
-method(instance_key, PointFrame) <- \(x) zattrs(x)$spatialdata_attrs$instance_key
+method(instance_key, PointFrame) <- \(x)
+    x@zattrs@data$spatialdata_attrs$instance_key
 
 #' @rdname SpatialData
 #' @export
 ShapeFrame <- new_class("ShapeFrame", parent=sdFrame)
 
-S4_register(sdArray)
-S4_register(sdFrame)
-
+#' @rdname SpatialData
+#' @export
 zattrs <- new_generic("zattrs", "x")
 method(zattrs, sdArray) <- \(x) x@zattrs
 method(zattrs, sdFrame) <- \(x) x@zattrs

@@ -1,6 +1,7 @@
 #' @importFrom S7 S4_register method<-
-
 S4_register(SpatialData)
+
+#' @export
 method(print, SpatialData) <- \(object) { 
     cat("class: SpatialData\n")
     l <- list()
@@ -44,21 +45,23 @@ method(print, SpatialData) <- \(object) {
     coolcat("scale(%d): %s", scales)
 }
 
-S4_register(ImageArray)
-S4_register(LabelArray)
-S4_register(ShapeFrame)
-S4_register(PointFrame)
-S4_register(Zattrs)
-
+#' @export
 method(print, ImageArray) <- \(object) .show_ms_array(object)
+
+#' @export
 method(print, LabelArray) <- \(object) .show_ms_array(object)
+
+#' @export
 method(print, Zattrs) <- \(object) cat(class(object))
 
+#' @export
 method(print, ShapeFrame) <- \(object) {
     cat("class: ShapeFrame\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
+
+#' @export
 method(print, PointFrame) <- \(object) {
     cat("class: PointFrame\n")
     cat("count:", length(object), "\n")

@@ -25,11 +25,6 @@
 #' ct_args(za, "affine")
 NULL
 
-#' @importFrom S7 method
-#' @importFrom utils .DollarNames
-method(.DollarNames, Zattrs) <- \(x, pattern="") names(x@data)
-method(`$`, Zattrs) <- \(x, name) x@data[[name]]
-
 #' @rdname Zattrs
 ct_data <- new_generic("ct_data", "x")
 method(ct_data, Zattrs) <- \(x) {
