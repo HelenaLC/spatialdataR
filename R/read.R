@@ -107,13 +107,11 @@ readShape <- function(x, ...) {
 
 #' @rdname readSpatialData
 #' @importFrom anndataR read_zarr
+#' @importFrom Rarr read_zarr_attributes
 #' @importFrom S4Vectors metadata metadata<-
-#' @importFrom SummarizedExperiment colData colData<- 
-#' @importFrom SingleCellExperiment 
-#'   int_metadata int_metadata<- 
-#'   int_colData int_colData<-
+#' @importFrom SingleCellExperiment int_metadata int_metadata<-
 #' @export
-readTable <- function(x) {
+readTable <- \(x) {
     # suppress warnings related to hidden files
     za <- read_zarr_attributes(x)
     suppressWarnings(x <- read_zarr(x, as="SingleCellExperiment"))
@@ -147,8 +145,8 @@ readSpatialData <- \(x,
         j <- list.dirs(y, recursive=FALSE)
         names(j) <- basename(j)
         if (!isTRUE(opt <- args[[i]])) {
-            if (is.numeric(opt) && opt > (. <- length(j))) 
-                stop("'", i, "=", opt, "', but only ", ., " elements found")
+            if (is.numeric(opt) && any(opt > (. <- length(j)))) 
+                stop("'", i, "=", opt, "', but found only ", .)
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
                 stop("couln't find ", i, " of name", .)
             j <- j[opt]
