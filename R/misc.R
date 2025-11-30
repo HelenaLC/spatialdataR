@@ -1,104 +1,66 @@
-#' @name misc
-#' @title Miscellaneous `Miro` methods
-#' @description ...
-#'
-#' @param object \code{\link{SpatialData}} object or one of its 
-#'   elements, i.e., an Image/LabelArray or Point/ShapeFrame.
-#'
-#' @return \code{NULL}
-#'
-#' @author Helena L. Crowell
-#'
-#' @examples
-#' # TODO
-NULL
+#' @importFrom S7 S4_register method<-
 
-#' @importFrom RBGL sp.between
-#' @importFrom S4Vectors coolcat
-#' @importFrom graph nodeData nodes
-.showSpatialData <- function(object) {
+S4_register(SpatialData)
+method(print, SpatialData) <- \(object) { 
     cat("class: SpatialData\n")
-    i <- imageNames(object)
-    l <- labelNames(object)
-    p <- pointNames(object)
-    s <- shapeNames(object)
-    t <- tableNames(object)
+    l <- list()
     # images
-    d <- lapply(images(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- images(%s):\n", length(i)))
-    for (. in seq_along(i)) 
-        cat(sprintf("  - %s (%s)\n", i[.], d[.]))
+    i <- names(x <- object@images)
+    d <- lapply(x, \(.) paste(dim(.), collapse=","))
+    l <- c(l, list(images=list(i, d)))
     # labels
-    d <- lapply(labels(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- labels(%s):\n", length(l)))
-    for (. in seq_along(l)) 
-        cat(sprintf("  - %s (%s)\n", l[.], d[.]))
+    i <- names(x <- object@labels)
+    d <- lapply(x, \(.) paste(dim(.), collapse=","))
+    l <- c(l, list(labels=list(i, d)))
     # points
-    d <- lapply(points(object), length)
-    cat(sprintf("- points(%s):\n", length(p)))
-    for (. in seq_along(p)) 
-        cat(sprintf("  - %s (%s)\n", p[.], d[.]))
+    i <- names(x <- object@points)
+    d <- vapply(x, length, integer(1))
+    l <- c(l, list(points=list(i, d)))
     # shapes
-    nc <- vapply(shapes(object), ncol, numeric(1))
-    geom <- ifelse(nc == 1, "polygon", "circle")
-    d <- vapply(shapes(object), nrow, numeric(1))
-    d <- paste(d, unname(geom), sep=",")
-    cat(sprintf("- shapes(%s):\n", length(s)))
-    for (. in seq_along(s)) 
-        cat(sprintf("  - %s (%s)\n", s[.], d[.]))
+    i <- names(x <- object@shapes)
+    d <- vapply(x, length, integer(1))
+    n <- vapply(x, ncol, integer(1))
+    geom <- ifelse(n == 1, "polygon", "circle")
+    d <- paste(d, geom, sep=",")
+    l <- c(l, list(shapes=list(i, d)))
     # tables
-    d <- lapply(tables(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- tables(%s):\n", length(t)))
-    for (. in seq_along(t)) 
-        cat(sprintf("  - %s (%s)\n", t[.], d[.]))
-    # spaces
-    cat("coordinate systems:\n")
-    e <- c(i, l, s, p)
-    g <- CTgraph(object)
-    t <- nodeData(g, nodes(g), "type")
-    for (c in nodes(g)[t == "space"]) {
-        pa <- suppressWarnings(sp.between(g, e, c))
-        ss <- strsplit(names(pa), ":")
-        ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
-        coolcat(
-            paste0("- ", c, "(%d): %s"),
-            vapply(ss, \(.) .[1], character(1)))
+    i <- names(x <- object@tables)
+    d <- lapply(x, \(.) paste(dim(.), collapse=","))
+    l <- c(l, list(tables=list(i, d)))
+    # render
+    for (. in names(l)) {
+        i <- l[[.]][[1]]; d <- l[[.]][[2]]
+        cat(sprintf("- %s(%s):\n", ., n <- length(i)))
+        for (. in seq_len(n)) cat(sprintf("  - %s (%s)\n", i[.], d[.]))
     }
 }
 
-#' @rdname misc
-setMethod("show", "SpatialData", .showSpatialData)
-
+#' @importFrom S7 S7_class
 #' @importFrom S4Vectors coolcat
-.showsdArray <- function(object) {
-    n.object <- length(object@data)
-    cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
-    coolcat("Scales (%d): %s", scales)
+.show_ms_array <- \(object) {
+    n <- length(data(object))
+    cat("class:", S7_class(object)@name, ifelse(n > 1, "(MultiScale)", ""), "\n")
+    scales <- vapply(data(object), \(.) sprintf("(%s)", paste0(dim(.), collapse=",")), character(1))
+    coolcat("scale(%d): %s", scales)
 }
 
-#' @rdname misc
-setMethod("show", "sdArray", .showsdArray)
+S4_register(ImageArray)
+S4_register(LabelArray)
+S4_register(ShapeFrame)
+S4_register(PointFrame)
+S4_register(Zattrs)
 
-#' @importFrom S4Vectors coolcat
-.showPointFrame <- function(object) {
-    cat("class: PointFrame\n")
-    cat("count:", length(object), "\n")
-    coolcat("data(%d): %s\n", names(object))
-}
+method(print, ImageArray) <- \(object) .show_ms_array(object)
+method(print, LabelArray) <- \(object) .show_ms_array(object)
+method(print, Zattrs) <- \(object) cat(class(object))
 
-#' @rdname misc
-setMethod("show", "PointFrame", .showPointFrame)
-
-#' @importFrom S4Vectors coolcat
-.showShapeFrame <- function(object) {
+method(print, ShapeFrame) <- \(object) {
     cat("class: ShapeFrame\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
-
-#' @rdname misc
-setMethod("show", "ShapeFrame", .showShapeFrame)
+method(print, PointFrame) <- \(object) {
+    cat("class: PointFrame\n")
+    cat("count:", length(object), "\n")
+    coolcat("data(%d): %s\n", names(object))
+}
