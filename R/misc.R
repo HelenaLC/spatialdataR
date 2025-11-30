@@ -52,9 +52,6 @@ method(print, ImageArray) <- \(object) .show_ms_array(object)
 method(print, LabelArray) <- \(object) .show_ms_array(object)
 
 #' @export
-method(print, Zattrs) <- \(object) cat(class(object))
-
-#' @export
 method(print, ShapeFrame) <- \(object) {
     cat("class: ShapeFrame\n")
     cat("count:", length(object), "\n")
@@ -67,3 +64,6 @@ method(print, PointFrame) <- \(object) {
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
+
+#' @export
+method(print, Zattrs) <- \(object) cat(class(object))
