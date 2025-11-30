@@ -21,6 +21,8 @@
 #' region(sd, "table")
 #' 
 #' @importFrom S7 new_class new_generic method class_list check_is_S7 
+#' @importFrom SingleCellExperiment int_metadata
+#' @importFrom SummarizedExperiment colData
 #' @importFrom methods is
 #' @export
 SpatialData <- new_class("SpatialData",
