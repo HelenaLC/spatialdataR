@@ -19,9 +19,6 @@
 #'
 #' # retrieve dataset & ingest
 #' (sd <- sd_osn_load("merfish"))
-#' 
-#' @importFrom SpatialData readSpatialData
-#' @importClassesFrom SpatialData SpatialData
 NULL
 
 #' @rdname sd_data

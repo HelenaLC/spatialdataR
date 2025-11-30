@@ -25,39 +25,27 @@ readSpatialData(
   labels = TRUE,
   points = TRUE,
   shapes = TRUE,
-  tables = TRUE,
-  anndataR = FALSE
+  tables = TRUE
 )
 }
 \arguments{
-\item{x}{For \code{readImage/Label/Point/Shape/Table}, 
-path to a \code{SpatialData} element.
-For \code{readSpatialData},
-path to a \code{SpatialData}-.zarr store.}
-
-\item{...}{option arguments passed to and from other methods.}
-
-\item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
-The default, NULL, reads all elements; alternatively, may be FALSE 
-to skip a layer, or a integer vector specifying which elements to read.}
-
-\item{anndataR}{logical specifying whether 
-to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
-and `readTable`,
-so that pythonic \code{spatialdata} and \code{zellkonverter} are used.}
-}
-\value{
-\itemize{
-\item{For \code{readSpatialData}, a \code{SpatialData}.},
-\item{For element readers, a \code{ImageArray}, \code{LabelArray}, 
-\code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
+\item{x}{For \code{readSpatialData},
+path to a \code{SpatialData}.zarr store.
+For \code{readImage/Label/Point/Shape/Table}, 
+path to a \code{SpatialData} element.}
 }
 \description{
 Reading `SpatialData`
 }
 \examples{
-library(SpatialData.data)
-dir.create(tf <- tempfile())
-base <- SpatialData.data:::.unzip_merfish_demo(tf)
-(x <- readSpatialData(base))
+# package demo data
+pa <- file.path("extdata", "blobs.zarr")
+pa <- system.file(pa, package="SpatialData")
+(sd <- readSpatialData(pa))
+
+# view data available on OSN, 
+# then retrieve & ingest one
+Sys.setenv(AWS_REGION="us-east-1")
+if (requireNamespace("paws")) sd_osn_list()
+(sd <- sd_osn_load("merfish"))
 }
