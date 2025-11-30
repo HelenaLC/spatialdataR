@@ -32,6 +32,7 @@ SpatialData <- new_class("SpatialData",
         tables=class_list
     ),
     validator=\(self) {
+        ok <- character()
         slot <- c("images", "labels", "points", "shapes", "tables")
         type <- list(ImageArray, LabelArray, PointFrame, ShapeFrame, "SingleCellExperiment")
         .all <- \(x, y) {
@@ -42,20 +43,25 @@ SpatialData <- new_class("SpatialData",
             }
             all(vapply(x, f, logical(1)))
         }
-        mapply(x=slot, y=type, \(x, y) {
+        ok <- c(ok, mapply(x=slot, y=type, \(x, y) {
             if (length(z <- attr(self, x)) && !.all(z, y))
                 sprintf("'@%s' should be a list of '%s's", x, y)
-        }, SIMPLIFY=FALSE) |> unlist()
+            nms <- names(slot(self, x))
+            len <- vapply(nms, nchar, integer(1))
+            if (is.null(nms) || any(len == 0))
+                sprintf("'@%s' should be a fully named list", x)
+        }, SIMPLIFY=FALSE) |> unlist())
         ts <- self@tables
         for (t in ts) {
             za <- int_metadata(t)$zattrs
             # 'table' annotates an existing region
             if (!za$region %in% unlist(names(self))) 
-                "'region' invalid"
+                ok <- c(ok, "'region' invalid")
             # specified 'instance_key' is present
             if (!za$instance_key %in% names(colData(t))) 
-                "'instance_key' invalid"
+                ok <- c(ok, "'instance_key' invalid")
         }
+        return(ok)
     }
 )
 names(.LAYERS) <- .LAYERS <- names(SpatialData@properties)
