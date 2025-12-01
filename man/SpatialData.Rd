@@ -11,6 +11,7 @@
 \alias{LabelArray}
 \alias{PointFrame}
 \alias{ShapeFrame}
+\alias{region}
 \alias{feature_key}
 \alias{instance_key}
 \alias{zattrs}
@@ -23,6 +24,8 @@ SpatialData(
   shapes = list(),
   tables = list()
 )
+
+region(x, ...)
 
 ImageArray(data = list(), zattrs = Zattrs(), metadata = list())
 

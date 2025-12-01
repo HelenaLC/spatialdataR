@@ -81,6 +81,8 @@ method(`[`, SpatialData) <- \(x, i, j) {
 
 method(names, SpatialData) <- \(x) lapply(.LAYERS, \(.) names(slot(x, .)))
 
+#' @name SpatialData
+#' @export
 region <- new_generic("region", "x")
 method(region, SpatialData) <- \(x, i) {
     ok <- vapply(names(x), \(.) i %in% ., logical(1))

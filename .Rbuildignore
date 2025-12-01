@@ -1,3 +1,5 @@
+R_
+tests
 ^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
