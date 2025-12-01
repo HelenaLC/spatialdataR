@@ -1,6 +1,18 @@
 #' @name sd_plot_image
 #' @title Plot `ImageArray`
 #' 
+#' @param x \code{\link{SpatialData}} object.
+#' @param i scalar integer or string; 
+#'   specifies which \code{images} to plot.
+#' @param k resolution; if NULL (default), picking 
+#'   best for given \code{w}idth and \code{h}eight.
+#' @param c character vector of colors to use;
+#'   if NULL (default), using \code{rainbow()}.
+#' @param ch integer or character vector
+#'   specifying which channels to render.
+#' @param cl list of channel-wise contrast limits.
+#' @param w,h render width and height in pixel.
+#' 
 #' @return \code{ggplot}
 #' 
 #' @examples

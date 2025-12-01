@@ -15,6 +15,25 @@ sd_plot_image(
   h = 800
 )
 }
+\arguments{
+\item{x}{\code{\link{SpatialData}} object.}
+
+\item{i}{scalar integer or string; 
+specifies which \code{images} to plot.}
+
+\item{k}{resolution; if NULL (default), picking 
+best for given \code{w}idth and \code{h}eight.}
+
+\item{c}{character vector of colors to use;
+if NULL (default), using \code{rainbow()}.}
+
+\item{ch}{integer or character vector
+specifying which channels to render.}
+
+\item{cl}{list of channel-wise contrast limits.}
+
+\item{w, h}{render width and height in pixel.}
+}
 \value{
 \code{ggplot}
 }

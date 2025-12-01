@@ -15,7 +15,7 @@
 \alias{dataset,}
 \alias{hidden}
 \alias{sdio_list}
-\title{Demo 'SpatialData'}
+\title{Demo 'SpatialData'sets}
 \usage{
 sd_osn_list()
 
@@ -24,23 +24,23 @@ sd_osn_load(patt, target = tempfile(), cache = BiocFileCache::BiocFileCache())
 sdio_list(env)
 }
 \arguments{
-\item{patt}{character(1) sufficient to identify an OSN resource}
+\item{patt}{string sufficient to identify an OSN resource}
 
-\item{target}{character(1), defaults to tempfile(); use a different 
+\item{target}{sting, defaults to \code{tempfile()}; use a different 
 value if you wish to retain the unzipped .zarr store persistently.}
 
-\item{cache}{like `BiocFileCache`}
+\item{cache}{like \code{BiocFileCache}}
 }
 \value{
 \code{sd_osn_list}: character vector of .zip archives,
 \code{sd_osn_load}: \code{\link{SpatialData}} object.
 }
 \description{
-Demo 'SpatialData'
+Demo 'SpatialData'sets
 }
 \note{
-This function checks for stale element in cache and uses bfcupdate to rectify
-before retrieving from cache.
+This function checks for stale element in cache and uses 
+  \code{bfcupdate()} to rectify before retrieving from cache.
 }
 \examples{
 # use 'paws::s3' to interrogate an NSF Open Storage Network 

@@ -6,6 +6,20 @@
 \usage{
 sd_plot_label(x, i = 1, k = NULL, c = NULL, w = 800, h = 800)
 }
+\arguments{
+\item{x}{\code{\link{SpatialData}} object.}
+
+\item{i}{scalar integer or string; 
+specifies which \code{labels} to plot.}
+
+\item{k}{resolution; if NULL (default), picking 
+best for given \code{w}idth and \code{h}eight.}
+
+\item{c}{character vector of colors to use;
+if NULL (default), using \code{rainbow()}.}
+
+\item{w, h}{render width and height in pixel.}
+}
 \value{
 \code{ggplot}
 }
@@ -17,7 +31,6 @@ pa <- file.path("extdata", "blobs.zarr")
 pa <- system.file(pa, package="SpatialData")
 sd <- readSpatialData(pa)
 
-devtools::load_all()
 sd_plot() + sd_plot_label(sd)
 
 }
