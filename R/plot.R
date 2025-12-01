@@ -1,7 +1,5 @@
 #' @name sd_plot
 #' @title Plotting `SpatialData`
-#' 
-#' @aliases sd_plot sd_plot_image
 #'
 #' @return \code{ggplot}
 #'

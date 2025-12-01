@@ -14,14 +14,11 @@
 \alias{OSN-based}
 \alias{dataset,}
 \alias{hidden}
-\alias{sdio_list}
 \title{Demo 'SpatialData'sets}
 \usage{
 sd_osn_list()
 
 sd_osn_load(patt, target = tempfile(), cache = BiocFileCache::BiocFileCache())
-
-sdio_list(env)
 }
 \arguments{
 \item{patt}{string sufficient to identify an OSN resource}
@@ -48,6 +45,8 @@ This function checks for stale element in cache and uses
 Sys.setenv(AWS_REGION="us-east-1")
 if (requireNamespace("paws")) sd_osn_list()
 
+\donttest{
 # retrieve dataset & ingest
 (sd <- sd_osn_load("merfish"))
+}
 }

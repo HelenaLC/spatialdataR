@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot.R
 \name{sd_plot}
 \alias{sd_plot}
-\alias{sd_plot_image}
 \title{Plotting `SpatialData`}
 \usage{
 sd_plot()

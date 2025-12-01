@@ -14,6 +14,7 @@
 #'   For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.
 #' @param zattrs \code{Zattrs} objects; used to represent .zattrs.
 #' @param metadata (option) list of free-form extra data.
+#' @param x \code{SpatialData} object.
 #' 
 #' @return \code{SpatialData}
 #' 
@@ -32,7 +33,7 @@
 #' @importFrom S7 new_class new_generic method class_list check_is_S7 
 #' @importFrom SingleCellExperiment int_metadata
 #' @importFrom SummarizedExperiment colData
-#' @importFrom methods is
+#' @importFrom methods is initialize
 #' @export
 SpatialData <- new_class("SpatialData",
     properties=list(

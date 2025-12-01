@@ -4,7 +4,7 @@
 \alias{sd_plot_label}
 \title{Plot `LabelArray`}
 \usage{
-sd_plot_label(x, i = 1, c = NULL, k = NULL, w = 800, h = 800)
+sd_plot_label(x, i = 1, c = NULL, alpha = 1, k = NULL, w = 800, h = 800)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
@@ -14,6 +14,8 @@ specifies which \code{labels} to plot.}
 
 \item{c}{character vector of colors to use;
 if NULL (default), using \code{rainbow()}.}
+
+\item{alpha}{scalar numeric; controls opacity.}
 
 \item{k}{resolution; if NULL (default), picking 
 best for given \code{w}idth and \code{h}eight.}

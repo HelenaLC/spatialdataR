@@ -20,9 +20,11 @@
 #' # bucket for zipped .zarr archives for various platforms
 #' Sys.setenv(AWS_REGION="us-east-1")
 #' if (requireNamespace("paws")) sd_osn_list()
-#'
+#' 
+#' \donttest{
 #' # retrieve dataset & ingest
 #' (sd <- sd_osn_load("merfish"))
+#' }
 NULL
 
 .require <- \(x) if (!requireNamespace(x, quietly=TRUE)) 
@@ -137,6 +139,10 @@ sd_osn_load <- \(patt,
     readSpatialData(dir(td, full.names=TRUE))
 }
 
+#' @name spatialdata-io
+#' @title Writing .zarr
+#' 
+#' @description
 #' Use Python's 'spatialdata-io' to transform manufacturer 
 #' output to .zarr with specific folder structure.
 #' 
@@ -186,7 +192,7 @@ sd_make <- \(platform, srcdir, dest, env) {
     }
 }
 
-#' @rdname sd_data
+#' @rdname spatialdata-io
 #' @export
 sdio_list <- \(env) {
     .require("basilisk")

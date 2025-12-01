@@ -52,6 +52,8 @@ zattrs(x, ...)
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
+\item{x}{\code{SpatialData} object.}
+
 \item{data}{For \code{Image/LabelArray}s, a list of \code{ZarrArray}s;
 For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.}
 

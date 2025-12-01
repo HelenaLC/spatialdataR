@@ -45,6 +45,7 @@ Imports:
     Rarr,
     rlang,
     reticulate,
+    scales,
     sfarrow,
     S4Vectors,
     SingleCellExperiment,

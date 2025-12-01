@@ -41,7 +41,6 @@ NULL
     return(ps)
 }
 
-#' @noRd
 .validate_multiscales_datasets_path <- \(md) {
     ms <- md$multiscales
     if (!is.null(ms)) {
