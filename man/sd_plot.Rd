@@ -6,17 +6,6 @@
 \title{Plotting `SpatialData`}
 \usage{
 sd_plot()
-
-sd_plot_image(
-  x,
-  i = 1,
-  k = NULL,
-  c = NULL,
-  ch = NULL,
-  cl = NULL,
-  w = 800,
-  h = 800
-)
 }
 \value{
 \code{ggplot}
@@ -36,4 +25,9 @@ sd_plot() +
 pal <- c("cyan", "magenta", "gold")
 sd_plot() + sd_plot_image(sd, c=pal)
 
+}
+\seealso{
+\code{\link{sd_plot_image}}
+\code{\link{sd_plot_point}}
+\code{\link{sd_plot_shape}}
 }

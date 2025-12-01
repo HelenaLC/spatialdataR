@@ -1,40 +1,53 @@
-#' @name sd_plot
-#' @title Plotting `SpatialData`
+#' @name sd_plot_image
+#' @title Plot `ImageArray`
 #' 
-#' @aliases sd_plot sd_plot_image
-#'
-#' @return \code{ggplot}
-#'
 #' @examples
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")
 #' sd <- readSpatialData(pa)
 #' 
-#' sd_plot() + 
-#'   sd_plot_image(sd) +
-#'   sd_plot_point(sd, c="x") 
+#' sd_plot() + sd_plot_image(sd)
 #' 
+#' # custom colors
 #' pal <- c("cyan", "magenta", "gold")
 #' sd_plot() + sd_plot_image(sd, c=pal)
-#'
-#' @seealso
-#' \code{\link{sd_plot_image}}
-#' \code{\link{sd_plot_point}}
-#' \code{\link{sd_plot_shape}}
-#'
-#' @import ggplot2 
+#' 
+#' @importFrom methods as
+#' @importFrom grDevices rgb
+#' @importFrom DelayedArray realize
 #' @export
-sd_plot <- \() ggplot() + 
-    #scale_y_reverse() +
-    coord_equal() + 
-    theme_bw() + theme(
-        panel.grid=element_blank(),
-        legend.key=element_blank(),
-        legend.key.size=unit(0, "lines"),
-        legend.background=element_blank(),
-        plot.title=element_text(hjust=0.5),
-        axis.text=element_text(color="grey"),
-        axis.ticks=element_line(color="grey"))
+sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
+    #x <- sd; i <- 1; w=h=800; ch <- cl <- c <- NULL; ch <- 2
+    ia <- x@images[[i]]
+    ch <- .ch_idx(ia, ch)
+    if (is.null(k)) 
+        k <- .guess_scale(ia, w, h)
+    a <- data(ia, k)
+    if (!.is_rgb(ia))
+        a <- a[ch, , , drop=FALSE]
+    dt <- .get_dt(a)
+    a <- as(a, "DelayedArray")
+    a <- .norm_ia(realize(a), dt)
+    # enter when image isn't RGB already, either
+    # custom colors or contrasts are specified
+    if (!.is_rgb(ia) || !is.null(c) || !is.null(cl))
+        a <- .chs2rgb(a, ch, c, cl)
+    a <- apply(a, c(2, 3), \(.) do.call(rgb, as.list(.))) 
+    w <- c(0, dim(ia)[3])
+    h <- c(0, dim(ia)[2])
+    pal <- if (!.is_rgb(ia) && dim(ia)[1] > 1) {
+        nms <- channels(ia)[ch]
+        pal <- if (is.null(c)) .DEFAULT_COLORS else c
+        setNames(pal[seq_along(ch)], nms)
+    }
+    lgd <- if (!is.null(pal)) list(
+        guides(col=guide_legend(override.aes=list(alpha=1, size=2))),
+        scale_color_identity(NULL, guide="legend", labels=names(pal)),
+        geom_point(aes(col=.data$foo), data.frame(foo=pal), x=0, y=0, alpha=0))
+    list(lgd,
+        scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
+        annotation_raster(a, w[2],w[1], h[1],h[2], interpolate=FALSE))
+}
 
 # default colors (from ImageJ/Fiji)
 .DEFAULT_COLORS <- c("red", "green", "blue", "gray", "cyan", "magenta", "yellow")
@@ -50,7 +63,9 @@ sd_plot <- \() ggplot() +
     if (is.null(ch))
         return(1)
     lbs <- channels(x)
-    if (all(ch %in% lbs)) {
+    if (is.integer(ch)) {
+        return(lbs[ch])
+    } else if (all(ch %in% lbs)) {
         return(match(ch, lbs))
     } else if (!any(ch %in% lbs)) {
         warning("Couldn't find some channels; picking first one(s)!")
