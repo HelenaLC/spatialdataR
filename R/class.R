@@ -15,6 +15,7 @@
 #' @param zattrs \code{Zattrs} objects; used to represent .zattrs.
 #' @param metadata (option) list of free-form extra data.
 #' @param x \code{SpatialData} object.
+#' @param ... ignored.
 #' 
 #' @return \code{SpatialData}
 #' 
@@ -264,6 +265,8 @@ method(zattrs, sdFrame) <- \(x) x@zattrs
 method(metadata, sdArray) <- \(x) x@metadata
 method(metadata, sdFrame) <- \(x) x@metadata
 
+#' @rdname SpatialData
+#' @export
 data <- new_generic("data", "x")
 method(data, sdFrame) <- \(x) x@data
 method(data, sdArray) <- \(x, k) {

@@ -22,6 +22,7 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r load-libs}
+library(patchwork)
 library(SpatialData)
 library(SingleCellExperiment)
 ```
@@ -49,7 +50,7 @@ For demonstration, we read in a toy dataset that is available through the packag
 ```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x, anndataR=FALSE))  # VJC Dec 8, test effect of absence of anndataR
+(x <- readSpatialData(x))
 ```
 
 `SpatialData` object behave like a list, thereby supporting flexible accession, 
@@ -62,11 +63,10 @@ e.g., via `$` and `[[`, using character or integer indices etc. Specifically,
 Let's demonstrate these capabilities using the image layer:
 
 ```{r get, results="hide"}
-shapeNames(x) # there are two images
-shapes(x) # this is a list of them
-shape(x, i=1) # this is the 1st one
-shape(x, "blobs_polygons") # this is the 3nd one
-x$shapes$blobs_circles # list-like handling also works
+names(x@shapes) # there are two shapes
+x@shapes # this is a list of them
+x@shapes[[1]] # this is the 1st one
+x@shapes$blobs_circles # list-like handling also works
 ```
 
 Each element is made up of two key components: 
@@ -75,8 +75,8 @@ Each element is made up of two key components:
 - `meta`: list of metadata retrieved from an OME-NGFF compliant *.zattrs* (stored as `Zattrs`)
 
 ```{r data/meta}
-data(shape(x))
-meta(shape(x)) 
+data(x@shapes[[1]])
+zattrs(x@shapes[[1]])
 ```
 
 ## Annotations
@@ -87,7 +87,9 @@ Currently supported methods for the `tables` layers include:
 - `setTable()` to construct a new annotation for a given element
 - `valTable()` to retrieve specific values from a `table`
 
-```{r tbl}
+TODO...
+
+```{r tbl, eval=FALSE}
 # retrieve 'table' for an element
 (t <- getTable(x, i <- "blobs_labels"))
 head(colData(t))
@@ -119,20 +121,16 @@ To facilitate .zattrs handling, we provide a set of functions to access and modi
 - `rmv/addCT` to remove, add, or append coordinate transformations
 
 ```{r cs-methods}
-z <- meta(label(x))
-axes(z)
-CTdata(z)
-CTname(rmvCT(z, "scale"))
-CTname(addCT(z, 
-    name="D'Artagnan", 
-    type="scale", 
-    data=c(19, 94)))
+z <- zattrs(x@labels$blobs_labels)
+ct_axes(z)
+ct_name(z)
+ct_args(z, "scale")
 ```
 
 `Zattrs` specify an explicit relationship between elements and coordinate systems.
 We can represent these are a graph as follows:
 
-```{r cs-graph}
+```{r cs-graph, eval=FALSE}
 (g <- CTgraph(x))
 plotCoordGraph(g)
 ```
@@ -141,13 +139,29 @@ The above representation greatly facilitates queries of the transformation(s)
 required to spatially align elements. `blobs_labels`, for example, requires a
 sequential transformation (scaling and translation) for the `sequence` space:
 
-```{r cs-path, results="hold"}
+```{r cs-path, results="hold", eval=FALSE}
 # the following are equivalent
 i <- "blobs_labels"
 j <- "sequence"
 y <- label(x, i)
 CTpath(x, i, j)
 invisible(CTpath(y, j))
+```
+
+## Plotting
+
+```{r fig.width=8, fig.height=8}
+sd_plot() + sd_plot_image(x) +
+sd_plot() + sd_plot_point(x, c="x") +
+sd_plot() + sd_plot_shape(x, 3) + # TODO: no y-rev?
+sd_plot() + sd_plot_label(x, c=c("lavender", "blue"))
+```
+
+```{r fig.width=4, fig.height=4}
+sd_plot() + 
+  sd_plot_image(x) +
+  sd_plot_label(x, c=rainbow(10), alpha=2/3) +
+  sd_plot_point(x, c="yellow") 
 ```
 
 # Session info

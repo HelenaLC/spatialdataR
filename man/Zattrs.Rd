@@ -17,10 +17,12 @@ ct_name(x, ...)
 
 ct_axes(x, ...)
 
-ct_args(x, ...)
+ct_args(x, i, ...)
 }
 \arguments{
 \item{x}{\code{Zattrs}}
+
+\item{...}{ignored.}
 
 \item{i}{scalar integer or string 
 specifying a coordinate transformation.}

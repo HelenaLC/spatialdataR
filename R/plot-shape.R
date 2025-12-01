@@ -34,7 +34,7 @@ sd_plot_shape <- \(x, i=1, c=TRUE, ...) {
     thm <- list()
     dot <- list(...)
     if (isTRUE(c)) {
-        df$.id <- factor(seq(nrow(df)))
+        df$.id <- factor(seq(length(s)))
         aes$colour <- aes(.data$.id)[[1]]
         thm <- c(thm, list(guides(col="none")))
     } else if (.str_is_col(c)) {
@@ -44,6 +44,7 @@ sd_plot_shape <- \(x, i=1, c=TRUE, ...) {
     }
     if (!is.null(df$radius)) 
         aes$size <- aes(.data$radius)[[1]]
+    dot$inherit.aes <- FALSE
     arg <- c(list(data=df, mapping=aes), dot)
     list(do.call(geom_sf, arg), thm)
 }

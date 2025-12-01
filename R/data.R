@@ -157,8 +157,9 @@ sd_osn_load <- \(patt,
 #'   in the specified \code{dest} location.
 #' 
 #' @examples
+#' \dontrun{
 #' # unzip flat files
-#' pa <- SpatialData.data:::.path_to_10x_xen_demo()
+#' pa <- .path_to_10x_xen_demo()
 #' dir.create(td <- tempfile())
 #' unzip(pa, exdir=td)
 #' 
@@ -168,6 +169,7 @@ sd_osn_load <- \(patt,
 #'   srcdir=td, dest=out,
 #'   env="spatialdata-io")
 #' (sd <- readSpatialData(out))
+#' }
 #' 
 #' @export
 sd_make <- \(platform, srcdir, dest, env) {

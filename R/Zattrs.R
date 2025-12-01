@@ -8,6 +8,7 @@
 #' @param x \code{Zattrs}
 #' @param i scalar integer or string 
 #'   specifying a coordinate transformation.
+#' @param ... ignored.
 #' 
 #' @return
 #' \item{ct_axes}{character vector of axes names and types.}
@@ -40,7 +41,7 @@ method(ct_data, Zattrs) <- \(x) {
 #' @export
 ct_type <- new_generic("ct_type", "x")
 method(ct_type, Zattrs) <- \(x) {
-    vapply(ct_data(za), \(.) .$type, character(1))
+    vapply(ct_data(x), \(.) .$type, character(1))
 }
 
 #' @rdname Zattrs
@@ -62,9 +63,10 @@ method(ct_axes, Zattrs) <- \(x) {
 }
 
 #' @rdname Zattrs
+#' @importFrom S7 class_any
 #' @export
-ct_args <- new_generic("ct_args", "x")
-method(ct_args, Zattrs) <- \(x, i) {
+ct_args <- new_generic("ct_args", c("x", "i"))
+method(ct_args, list(Zattrs, class_any)) <- \(x, i) {
     if (missing(i)) {
         i <- ct_name(x)[1]
     } else {

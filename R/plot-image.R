@@ -60,7 +60,7 @@ sd_plot_image <- \(x, i=1, c=NULL, ch=NULL, cl=NULL, k=NULL, w=800, h=800) {
         geom_point(aes(col=.data$foo), data.frame(foo=pal), x=0, y=0, alpha=0))
     list(lgd,
         scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
-        annotation_raster(a, w[2],w[1], h[1],h[2], interpolate=FALSE))
+        annotation_raster(a, w[2],w[1], h[2],h[1], interpolate=FALSE))
 }
 
 # default colors (from ImageJ/Fiji)
@@ -160,7 +160,8 @@ sd_plot_image <- \(x, i=1, c=NULL, ch=NULL, cl=NULL, k=NULL, w=800, h=800) {
 .get_dt <- \(x) {
     pa <- x@data[[1]]@seed@zarr_array_path
     df <- zarr_overview(pa, as_data_frame=TRUE)
-    if (!is.null(dt <- df$data_type)) return(dt)
+    dt <- df[["data_type"]]
+    return(dt)
 }
 
 .norm_ia <- \(a, dt) {

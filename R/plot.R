@@ -24,7 +24,7 @@
 #' @import ggplot2 
 #' @export
 sd_plot <- \() ggplot() + 
-    #scale_y_reverse() +
+    scale_y_reverse() +
     coord_equal() + 
     theme_bw() + theme(
         panel.grid=element_blank(),

@@ -15,6 +15,7 @@
 \alias{feature_key}
 \alias{instance_key}
 \alias{zattrs}
+\alias{data}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(
@@ -40,6 +41,8 @@ instance_key(x, ...)
 ShapeFrame(data = NULL, zattrs = Zattrs(), metadata = list())
 
 zattrs(x, ...)
+
+data(x, ...)
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}
@@ -53,6 +56,8 @@ zattrs(x, ...)
 \item{tables}{list of \code{SingleCellExperiment}s}
 
 \item{x}{\code{SpatialData} object.}
+
+\item{...}{ignored.}
 
 \item{data}{For \code{Image/LabelArray}s, a list of \code{ZarrArray}s;
 For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.}
