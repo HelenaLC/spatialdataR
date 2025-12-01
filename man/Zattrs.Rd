@@ -21,6 +21,9 @@ ct_args(x, ...)
 }
 \arguments{
 \item{x}{\code{Zattrs}}
+
+\item{i}{scalar integer or string 
+specifying a coordinate transformation.}
 }
 \value{
 \item{ct_axes}{character vector of axes names and types.}

@@ -6,6 +6,8 @@
 #' @description Handling of coordinate transformations. 
 #' 
 #' @param x \code{Zattrs}
+#' @param i scalar integer or string 
+#'   specifying a coordinate transformation.
 #' 
 #' @return
 #' \item{ct_axes}{character vector of axes names and types.}
@@ -26,6 +28,7 @@
 NULL
 
 #' @rdname Zattrs
+#' @export
 ct_data <- new_generic("ct_data", "x")
 method(ct_data, Zattrs) <- \(x) {
     ms <- x@data$multiscales[[1]]
@@ -34,18 +37,21 @@ method(ct_data, Zattrs) <- \(x) {
 }
 
 #' @rdname Zattrs
+#' @export
 ct_type <- new_generic("ct_type", "x")
 method(ct_type, Zattrs) <- \(x) {
     vapply(ct_data(za), \(.) .$type, character(1))
 }
 
 #' @rdname Zattrs
+#' @export
 ct_name <- new_generic("ct_name", "x")
 method(ct_name, Zattrs) <- \(x) {
     vapply(ct_data(x), \(.) .$output$name, character(1))
 }
 
 #' @rdname Zattrs
+#' @export
 ct_axes <- new_generic("ct_axes", "x")
 method(ct_axes, Zattrs) <- \(x) {
     ax <- ct_data(x)[[1]]$input$axes
@@ -56,6 +62,7 @@ method(ct_axes, Zattrs) <- \(x) {
 }
 
 #' @rdname Zattrs
+#' @export
 ct_args <- new_generic("ct_args", "x")
 method(ct_args, Zattrs) <- \(x, i) {
     if (missing(i)) {

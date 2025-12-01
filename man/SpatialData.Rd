@@ -51,6 +51,13 @@ zattrs(x, ...)
 \item{shapes}{list of \code{\link{ShapeFrame}}s}
 
 \item{tables}{list of \code{SingleCellExperiment}s}
+
+\item{data}{For \code{Image/LabelArray}s, a list of \code{ZarrArray}s;
+For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.}
+
+\item{zattrs}{\code{Zattrs} objects; used to represent .zattrs.}
+
+\item{metadata}{(option) list of free-form extra data.}
 }
 \value{
 \code{SpatialData}
@@ -65,7 +72,9 @@ pa <- system.file(pa, package="SpatialData")
 
 names(sd)
 sd@images[[1]]
-sd["shapes", 2]
+sd[-4, ][, 1]
+sd[1:2, c(1,1)]
+sd["shapes", c(1,3)]
 region(sd, "table")
 
 }

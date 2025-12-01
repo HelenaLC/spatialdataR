@@ -9,6 +9,11 @@
 #' @param points list of \code{\link{PointFrame}}s
 #' @param shapes list of \code{\link{ShapeFrame}}s
 #' @param tables list of \code{SingleCellExperiment}s
+#' @param data 
+#'   For \code{Image/LabelArray}s, a list of \code{ZarrArray}s;
+#'   For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.
+#' @param zattrs \code{Zattrs} objects; used to represent .zattrs.
+#' @param metadata (option) list of free-form extra data.
 #' 
 #' @return \code{SpatialData}
 #' 
@@ -19,7 +24,9 @@
 #' 
 #' names(sd)
 #' sd@images[[1]]
-#' sd["shapes", 2]
+#' sd[-4, ][, 1]
+#' sd[1:2, c(1,1)]
+#' sd["shapes", c(1,3)]
 #' region(sd, "table")
 #' 
 #' @importFrom S7 new_class new_generic method class_list check_is_S7 
@@ -50,10 +57,13 @@ SpatialData <- new_class("SpatialData",
         ok <- c(ok, mapply(x=slot, y=type, \(x, y) {
             if (length(z <- attr(self, x)) && !.all(z, y))
                 sprintf("'@%s' should be a list of '%s's", x, y)
-            nms <- names(slot(self, x))
-            len <- vapply(nms, nchar, integer(1))
-            if (is.null(nms) || any(len == 0))
-                sprintf("'@%s' should be a fully named list", x)
+            l <- slot(self, x)
+            if (length(l)) {
+                nms <- names(l)
+                len <- vapply(nms, nchar, integer(1))
+                if (is.null(nms) || any(len == 0))
+                    sprintf("'@%s' should be a fully named list", x)
+            }
         }, SIMPLIFY=FALSE) |> unlist())
         ts <- self@tables
         for (t in ts) {
@@ -72,11 +82,47 @@ names(.LAYERS) <- .LAYERS <- names(SpatialData@properties)
 
 method(`[[`, SpatialData) <- \(x, i) attr(x, .LAYERS[i])
 
+#' @importFrom S7 prop_names
+#' @importFrom methods slot
 method(`[`, SpatialData) <- \(x, i, j) {
-    n <- length(y <- x[[i]])
-    if (missing(j)) if (n) j <- TRUE else return(y)
-    if (is.numeric(j) && any(j > n)) stop("'j' out of bounds")
-    if (!isTRUE(j) && length(j) == 1) y[[j]] else y[j]
+    ps <- prop_names(x)
+    if (missing(i)) {
+        n <- vapply(ps, \(.) length(slot(x, .)), integer(1))
+        i <- ps[n > 0]
+    } else {
+        if (is.numeric(i)) {
+            stopifnot(abs(i) <= length(ps), i == round(i))
+            i <- ps[i]
+        } else if (is.character(i)) {
+            i <- match.arg(i, ps, TRUE)
+        }
+    }
+    if (missing(j)) {
+        j <- !logical(length(i))
+    } else {
+        if (length(i) == 1) {
+            j <- list(j)
+        } else {
+            if (length(j) == 1)
+                j <- replicate(length(i), j, FALSE)
+            j <- as.list(j)
+        }
+        stopifnot(length(j) == length(i))
+        for (. in seq_along(i)) {
+            .j <- j[[.]]
+            l <- slot(x, i[.])
+            if (is.character(.j)) {
+                match.arg(.j, names(l), TRUE)
+            } else {
+                n <- length(l)
+                stopifnot(abs(.j) <= n, .j == round(.j))
+            }
+        }
+    }
+    l <- mapply(i=i, j=j, \(i, j) {
+        slot(x, i)[j]
+    }, SIMPLIFY=FALSE)
+    do.call(SpatialData, l)
 }
 
 method(names, SpatialData) <- \(x) lapply(.LAYERS, \(.) names(slot(x, .)))
