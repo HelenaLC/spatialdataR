@@ -6,6 +6,9 @@
 \usage{
 sd_plot_label(x, i = 1, k = NULL, c = NULL, w = 800, h = 800)
 }
+\value{
+\code{ggplot}
+}
 \description{
 Plot `LabelArray`
 }

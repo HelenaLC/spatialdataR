@@ -1,6 +1,8 @@
 #' @name sd_plot_label
 #' @title Plot `LabelArray`
 #' 
+#' @return \code{ggplot}
+#' 
 #' @examples
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")

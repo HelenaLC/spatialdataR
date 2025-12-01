@@ -10,6 +10,8 @@
 #' @param shapes list of \code{\link{ShapeFrame}}s
 #' @param tables list of \code{SingleCellExperiment}s
 #' 
+#' @return \code{SpatialData}
+#' 
 #' @examples
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")

@@ -49,6 +49,9 @@ zattrs(x, ...)
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 }
+\value{
+\code{SpatialData}
+}
 \description{
 The `SpatialData` class
 }

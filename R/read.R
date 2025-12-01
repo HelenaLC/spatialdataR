@@ -9,6 +9,8 @@
 #'   For \code{readImage/Label/Point/Shape/Table}, 
 #'   path to a \code{SpatialData} element.
 #' 
+#' @return \code{\link{SpatialData}} object, or one of its elements.
+#' 
 #' @examples
 #' # package demo data
 #' pa <- file.path("extdata", "blobs.zarr")

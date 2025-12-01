@@ -1,6 +1,8 @@
 #' @name sd_plot_image
 #' @title Plot `ImageArray`
 #' 
+#' @return \code{ggplot}
+#' 
 #' @examples
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")

@@ -31,6 +31,10 @@ value if you wish to retain the unzipped .zarr store persistently.}
 
 \item{cache}{like `BiocFileCache`}
 }
+\value{
+\code{sd_osn_list}: character vector of .zip archives,
+\code{sd_osn_load}: \code{\link{SpatialData}} object.
+}
 \description{
 Demo 'SpatialData'
 }

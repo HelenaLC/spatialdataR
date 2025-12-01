@@ -11,6 +11,10 @@
 #' @note This function checks for stale element in cache and uses bfcupdate to rectify
 #' before retrieving from cache.
 #' 
+#' @return 
+#' \code{sd_osn_list}: character vector of .zip archives,
+#' \code{sd_osn_load}: \code{\link{SpatialData}} object.
+#' 
 #' @examples
 #' # use 'paws::s3' to interrogate an NSF Open Storage Network 
 #' # bucket for zipped .zarr archives for various platforms
@@ -139,6 +143,8 @@ sd_osn_load <- \(patt,
 #'   can be used to specify a conda environment with the 
 #'   `spatialdata_io` Python module already installed.
 #'   .
+#' @return none, but a .zarr store is created 
+#'   in the specified \code{dest} location.
 #' 
 #' @examples
 #' # unzip flat files

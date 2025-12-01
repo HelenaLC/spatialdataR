@@ -15,6 +15,9 @@ sd_plot_image(
   h = 800
 )
 }
+\value{
+\code{ggplot}
+}
 \description{
 Plot `ImageArray`
 }

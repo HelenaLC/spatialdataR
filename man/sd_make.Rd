@@ -19,6 +19,10 @@ can be used to specify a conda environment with the
 `spatialdata_io` Python module already installed.
 .}
 }
+\value{
+none, but a .zarr store is created 
+  in the specified \code{dest} location.
+}
 \description{
 Use Python's 'spatialdata-io' to transform manufacturer 
 output to .zarr with specific folder structure.

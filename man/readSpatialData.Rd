@@ -34,6 +34,9 @@ path to a \code{SpatialData}.zarr store.
 For \code{readImage/Label/Point/Shape/Table}, 
 path to a \code{SpatialData} element.}
 }
+\value{
+\code{\link{SpatialData}} object, or one of its elements.
+}
 \description{
 Reading `SpatialData`
 }
