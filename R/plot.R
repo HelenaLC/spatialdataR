@@ -22,10 +22,10 @@
 #' \code{\link{sd_plot_shape}}
 #'
 #' @import ggplot2 
+#' @import ggplot2 
 #' @export
 sd_plot <- \() ggplot() + 
-    #coord_sf(reverse="y") +
-    #coord_equal() + 
+    coord_sf(reverse="y") +
     theme_bw() + theme(
         panel.grid=element_blank(),
         legend.key=element_blank(),

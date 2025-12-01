@@ -158,8 +158,7 @@ sd_plot() + sd_plot_label(x, c=c("lavender", "blue"))
 ```
 
 ```{r fig.width=4, fig.height=4}
-sd_plot() + 
-  coord_sf(reverse="y") +
+sd_plot() +
   sd_plot_image(x) +
   sd_plot_label(x, c=rainbow(10), alpha=2/3) +
   sd_plot_shape(x, 3, fill="black", linewidth=1) +
