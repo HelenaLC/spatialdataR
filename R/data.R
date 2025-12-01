@@ -25,15 +25,16 @@
 #' (sd <- sd_osn_load("merfish"))
 NULL
 
+.require <- \(x) if (!requireNamespace(x, quietly=TRUE)) 
+    stop(sprintf("Install '%s' to use this function.", x))
+
 #' @rdname sd_data
 #' @export
 sd_osn_list <- \() {
-    if (!requireNamespace("paws")) 
-        stop("Install 'paws' to use this function; without it,",
-            " we can't check existence of data in OSN bucket.")
     #  x = curl::curl("https://mghp.osn.xsede.org/bir190004-bucket01")
     #  y = xml2::read_xml(x)
     #  z = xml2::as_list(y)
+    .require("paws")
     message("checking Bioconductor OSN bucket...")
     s3 <- paws::s3(
         credentials=list(anonymous=TRUE),
@@ -185,6 +186,8 @@ sd_make <- \(platform, srcdir, dest, env) {
 #' @rdname sd_data
 #' @export
 sdio_list <- \(env) {
+    .require("basilisk")
+    .require("reticulate")
     if (missing(env)) {
         proc <- basilisk::basiliskStart(.env, testload="spatialdata") 
         on.exit(basilisk::basiliskStop(proc))
