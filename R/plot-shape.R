@@ -28,8 +28,6 @@
 #' @import ggplot2
 #' @export
 sd_plot_shape <- \(x, i=1, c=TRUE, ...) {
-    if (is.numeric(i)) 
-        i <- names(x)$shapes[i]
     s <- x@shapes[[i]]
     df <- read_sf_dataset(s@data)
     aes <- aes()
