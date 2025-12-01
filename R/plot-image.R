@@ -17,7 +17,7 @@
 #' @importFrom DelayedArray realize
 #' @export
 sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
-    x <- sd; i <- 1; w=h=800; ch <- cl <- c <- k <- NULL; ch <- 2
+    #x <- sd; i <- 1; w=h=800; ch <- cl <- c <- k <- NULL; ch <- 2
     ia <- x@images[[i]]
     ch <- .ch_idx(ia, ch)
     if (is.null(k)) 

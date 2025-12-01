@@ -19,6 +19,7 @@
 #'
 #' @seealso
 #' \code{\link{sd_plot_image}}
+#' \code{\link{sd_plot_label}}
 #' \code{\link{sd_plot_point}}
 #' \code{\link{sd_plot_shape}}
 #'
