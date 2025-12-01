@@ -1,15 +1,15 @@
 #' @name sd_data
-#' @title Demo 'SpatialData'
+#' @title Demo 'SpatialData'sets
 #' 
 #' @aliases sd_osn_list sd_osn_load
 #' 
 #' all logic for finding, caching, loading an OSN-based dataset, hidden
-#' @param patt character(1) sufficient to identify an OSN resource
-#' @param cache like `BiocFileCache`
-#' @param target character(1), defaults to tempfile(); use a different 
+#' @param patt string sufficient to identify an OSN resource
+#' @param cache like \code{BiocFileCache}
+#' @param target sting, defaults to \code{tempfile()}; use a different 
 #'   value if you wish to retain the unzipped .zarr store persistently.
-#' @note This function checks for stale element in cache and uses bfcupdate to rectify
-#' before retrieving from cache.
+#' @note This function checks for stale element in cache and uses 
+#'   \code{bfcupdate()} to rectify before retrieving from cache.
 #' 
 #' @return 
 #' \code{sd_osn_list}: character vector of .zip archives,
