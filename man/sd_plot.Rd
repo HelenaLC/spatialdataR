@@ -5,6 +5,8 @@
 \alias{sd_plot_image}
 \title{Plotting `SpatialData`}
 \usage{
+sd_plot()
+
 sd_plot_image(
   x,
   i = 1,
@@ -15,8 +17,9 @@ sd_plot_image(
   w = 800,
   h = 800
 )
-
-sd_plot()
+}
+\value{
+\code{ggplot}
 }
 \description{
 Plotting `SpatialData`
@@ -26,8 +29,11 @@ pa <- file.path("extdata", "blobs.zarr")
 pa <- system.file(pa, package="SpatialData")
 sd <- readSpatialData(pa)
 
-sd_plot() + sd_plot_image(sd)
+sd_plot() + 
+  sd_plot_image(sd) +
+  sd_plot_point(sd, c="x") 
 
 pal <- c("cyan", "magenta", "gold")
 sd_plot() + sd_plot_image(sd, c=pal)
+
 }

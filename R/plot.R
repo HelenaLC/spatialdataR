@@ -2,18 +2,34 @@
 #' @title Plotting `SpatialData`
 #' 
 #' @aliases sd_plot sd_plot_image
-#' 
-#' @import ggplot2
+#'
+#' @return \code{ggplot}
+#'
 #' @examples
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")
 #' sd <- readSpatialData(pa)
 #' 
-#' sd_plot() + sd_plot_image(sd)
+#' sd_plot() + 
+#'   sd_plot_image(sd) +
+#'   sd_plot_point(sd, c="x") 
 #' 
 #' pal <- c("cyan", "magenta", "gold")
 #' sd_plot() + sd_plot_image(sd, c=pal)
-NULL
+#'
+#' @import ggplot2 
+#' @export
+sd_plot <- \() ggplot() + 
+    #scale_y_reverse() +
+    coord_equal() + 
+    theme_bw() + theme(
+        panel.grid=element_blank(),
+        legend.key=element_blank(),
+        legend.key.size=unit(0, "lines"),
+        legend.background=element_blank(),
+        plot.title=element_text(hjust=0.5),
+        axis.text=element_text(color="grey"),
+        axis.ticks=element_line(color="grey"))
 
 # default colors (from ImageJ/Fiji)
 .DEFAULT_COLORS <- c("red", "green", "blue", "gray", "cyan", "magenta", "yellow")
@@ -175,17 +191,3 @@ sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
         scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
         annotation_raster(a, w[2],w[1], h[1],h[2], interpolate=FALSE))
 }
-
-#' @rdname sd_plot
-#' @export
-sd_plot <- \() ggplot() + 
-    #scale_y_reverse() +
-    coord_equal() + 
-    theme_bw() + theme(
-        panel.grid=element_blank(),
-        legend.key=element_blank(),
-        legend.key.size=unit(0, "lines"),
-        legend.background=element_blank(),
-        plot.title=element_text(hjust=0.5),
-        axis.text=element_text(color="grey"),
-        axis.ticks=element_line(color="grey"))
