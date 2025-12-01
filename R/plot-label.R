@@ -14,7 +14,7 @@
 #' @importFrom DelayedArray realize
 #' @export
 sd_plot_label <- \(x, i=1, k=NULL, c=NULL, w=800, h=800) {
-    #x <- sd; i <- 1; w=h=800; c <- k <- NULL; ch <- 2
+    x <- sd; i <- 1; w=h=800; c <- k <- NULL; ch <- 2
     la <- x@labels[[i]]
     if (is.null(k)) 
         k <- .guess_scale(la, w, h)
@@ -25,7 +25,7 @@ sd_plot_label <- \(x, i=1, k=NULL, c=NULL, w=800, h=800) {
     n <- length(setdiff(unique(c(a)), 0))
     a <- do.call(arbind, replicate(n, a))
     a <- .norm_ia(realize(a), dt)
-    a <- .chs2rgb(a, 5, c)
+    a <- .chs2rgb(a, 1, c)
     a <- apply(a, c(2, 3), \(.) do.call(rgb, as.list(.))) 
     w <- c(0, dim(ia)[3])
     h <- c(0, dim(ia)[2])
