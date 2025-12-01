@@ -17,7 +17,7 @@
 #' @importFrom DelayedArray realize
 #' @export
 sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
-    #x <- sd; i <- 1; w=h=800; ch <- cl <- c <- NULL; ch <- 2
+    x <- sd; i <- 1; w=h=800; ch <- cl <- c <- k <- NULL; ch <- 2
     ia <- x@images[[i]]
     ch <- .ch_idx(ia, ch)
     if (is.null(k)) 
@@ -25,7 +25,7 @@ sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
     a <- data(ia, k)
     if (!.is_rgb(ia))
         a <- a[ch, , , drop=FALSE]
-    dt <- .get_dt(a)
+    dt <- .get_dt(ia)
     a <- as(a, "DelayedArray")
     a <- .norm_ia(realize(a), dt)
     # enter when image isn't RGB already, either
@@ -143,8 +143,8 @@ sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
 # check if an image is rgb or not
 #' @importFrom Rarr zarr_overview
 #' @noRd
-.get_dt <- \(a) {
-    pa <- a@seed@zarr_array_path
+.get_dt <- \(x) {
+    pa <- x@data[[1]]@seed@zarr_array_path
     df <- zarr_overview(pa, as_data_frame=TRUE)
     if (!is.null(dt <- df$data_type)) return(dt)
 }
