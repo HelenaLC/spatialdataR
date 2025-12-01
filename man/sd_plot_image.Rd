@@ -7,10 +7,10 @@
 sd_plot_image(
   x,
   i = 1,
-  k = NULL,
   c = NULL,
   ch = NULL,
   cl = NULL,
+  k = NULL,
   w = 800,
   h = 800
 )
@@ -21,16 +21,16 @@ sd_plot_image(
 \item{i}{scalar integer or string; 
 specifies which \code{images} to plot.}
 
-\item{k}{resolution; if NULL (default), picking 
-best for given \code{w}idth and \code{h}eight.}
-
 \item{c}{character vector of colors to use;
-if NULL (default), using \code{rainbow()}.}
+if NULL (default), using RGB.}
 
 \item{ch}{integer or character vector
 specifying which channels to render.}
 
 \item{cl}{list of channel-wise contrast limits.}
+
+\item{k}{resolution; if NULL (default), picking 
+best for given \code{w}idth and \code{h}eight.}
 
 \item{w, h}{render width and height in pixel.}
 }

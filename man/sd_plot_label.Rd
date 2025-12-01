@@ -4,7 +4,7 @@
 \alias{sd_plot_label}
 \title{Plot `LabelArray`}
 \usage{
-sd_plot_label(x, i = 1, k = NULL, c = NULL, w = 800, h = 800)
+sd_plot_label(x, i = 1, c = NULL, k = NULL, w = 800, h = 800)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
@@ -12,11 +12,11 @@ sd_plot_label(x, i = 1, k = NULL, c = NULL, w = 800, h = 800)
 \item{i}{scalar integer or string; 
 specifies which \code{labels} to plot.}
 
-\item{k}{resolution; if NULL (default), picking 
-best for given \code{w}idth and \code{h}eight.}
-
 \item{c}{character vector of colors to use;
 if NULL (default), using \code{rainbow()}.}
+
+\item{k}{resolution; if NULL (default), picking 
+best for given \code{w}idth and \code{h}eight.}
 
 \item{w, h}{render width and height in pixel.}
 }
@@ -32,5 +32,7 @@ pa <- system.file(pa, package="SpatialData")
 sd <- readSpatialData(pa)
 
 sd_plot() + sd_plot_label(sd)
+sd_plot() + sd_plot_label(sd, c="pink")
+sd_plot() + sd_plot_label(sd, c=c("lavender", "blue"))
 
 }

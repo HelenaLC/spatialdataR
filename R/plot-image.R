@@ -4,13 +4,13 @@
 #' @param x \code{\link{SpatialData}} object.
 #' @param i scalar integer or string; 
 #'   specifies which \code{images} to plot.
-#' @param k resolution; if NULL (default), picking 
-#'   best for given \code{w}idth and \code{h}eight.
 #' @param c character vector of colors to use;
-#'   if NULL (default), using \code{rainbow()}.
+#'   if NULL (default), using RGB.
 #' @param ch integer or character vector
 #'   specifying which channels to render.
 #' @param cl list of channel-wise contrast limits.
+#' @param k resolution; if NULL (default), picking 
+#'   best for given \code{w}idth and \code{h}eight.
 #' @param w,h render width and height in pixel.
 #' 
 #' @return \code{ggplot}
@@ -30,7 +30,7 @@
 #' @importFrom grDevices rgb
 #' @importFrom DelayedArray realize
 #' @export
-sd_plot_image <- \(x, i=1, k=NULL, c=NULL, ch=NULL, cl=NULL, w=800, h=800) {
+sd_plot_image <- \(x, i=1, c=NULL, ch=NULL, cl=NULL, k=NULL, w=800, h=800) {
     #x <- sd; i <- 1; w=h=800; ch <- cl <- c <- k <- NULL; ch <- 2
     ia <- x@images[[i]]
     ch <- .ch_idx(ia, ch)

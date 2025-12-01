@@ -4,10 +4,10 @@
 #' @param x \code{\link{SpatialData}} object.
 #' @param i scalar integer or string; 
 #'   specifies which \code{labels} to plot.
-#' @param k resolution; if NULL (default), picking 
-#'   best for given \code{w}idth and \code{h}eight.
 #' @param c character vector of colors to use;
 #'   if NULL (default), using \code{rainbow()}.
+#' @param k resolution; if NULL (default), picking 
+#'   best for given \code{w}idth and \code{h}eight.
 #' @param w,h render width and height in pixel.
 #' 
 #' @return \code{ggplot}
@@ -18,12 +18,14 @@
 #' sd <- readSpatialData(pa)
 #' 
 #' sd_plot() + sd_plot_label(sd)
+#' sd_plot() + sd_plot_label(sd, c="pink")
+#' sd_plot() + sd_plot_label(sd, c=c("lavender", "blue"))
 #' 
 #' @importFrom methods as
 #' @importFrom DelayedArray realize
 #' @importFrom grDevices rgb rainbow colorRampPalette
 #' @export
-sd_plot_label <- \(x, i=1, k=NULL, c=NULL, w=800, h=800) {
+sd_plot_label <- \(x, i=1, c=NULL, k=NULL, w=800, h=800) {
     la <- x@labels[[i]]
     if (is.null(k)) 
         k <- .guess_scale(la, w, h)
