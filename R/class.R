@@ -14,7 +14,6 @@
 #'   For \code{Shape/PointFrame}s, an \code{arrow} Table or derivative.
 #' @param zattrs \code{Zattrs} objects; used to represent .zattrs.
 #' @param metadata (option) list of free-form extra data.
-#' @param x \code{SpatialData} object.
 #' @param ... ignored.
 #' 
 #' @return \code{SpatialData}

@@ -24,8 +24,8 @@
 #' @import ggplot2 
 #' @export
 sd_plot <- \() ggplot() + 
-    scale_y_reverse() +
-    coord_equal() + 
+    #coord_sf(reverse="y") +
+    #coord_equal() + 
     theme_bw() + theme(
         panel.grid=element_blank(),
         legend.key=element_blank(),

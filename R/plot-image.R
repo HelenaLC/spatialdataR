@@ -59,7 +59,7 @@ sd_plot_image <- \(x, i=1, c=NULL, ch=NULL, cl=NULL, k=NULL, w=800, h=800) {
         scale_color_identity(NULL, guide="legend", labels=names(pal)),
         geom_point(aes(col=.data$foo), data.frame(foo=pal), x=0, y=0, alpha=0))
     list(lgd,
-        scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
+        scale_x_continuous(limits=w), scale_y_continuous(limits=h),
         annotation_raster(a, w[2],w[1], h[2],h[1], interpolate=FALSE))
 }
 

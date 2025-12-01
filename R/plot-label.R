@@ -45,6 +45,6 @@ sd_plot_label <- \(x, i=1, c=NULL, alpha=1, k=NULL, w=800, h=800) {
     w <- c(0, dim(la)[2])
     h <- c(0, dim(la)[1])
     list(
-        scale_x_continuous(limits=w), scale_y_reverse(limits=rev(h)),
-        annotation_raster(a, w[2],w[1], h[1],h[2], interpolate=FALSE))
+        scale_x_continuous(limits=w), scale_y_continuous(limits=h),
+        annotation_raster(a, w[2],w[1], h[2],h[1], interpolate=FALSE))
 }

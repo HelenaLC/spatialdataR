@@ -153,15 +153,17 @@ invisible(CTpath(y, j))
 ```{r fig.width=8, fig.height=8}
 sd_plot() + sd_plot_image(x) +
 sd_plot() + sd_plot_point(x, c="x") +
-sd_plot() + sd_plot_shape(x, 3) + # TODO: no y-rev?
+sd_plot() + sd_plot_shape(x, 3) +
 sd_plot() + sd_plot_label(x, c=c("lavender", "blue"))
 ```
 
 ```{r fig.width=4, fig.height=4}
 sd_plot() + 
+  coord_sf(reverse="y") +
   sd_plot_image(x) +
   sd_plot_label(x, c=rainbow(10), alpha=2/3) +
-  sd_plot_point(x, c="yellow") 
+  sd_plot_shape(x, 3, fill="black", linewidth=1) +
+  sd_plot_point(x, c="yellow", size=1/3)
 ```
 
 # Session info
