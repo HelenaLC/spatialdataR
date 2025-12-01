@@ -5,8 +5,8 @@ Version: 0.99.24
 Description: Interface to Python's 'SpatialData', currently including:
     reticulate-based use of 'spatialdata-io' for reading of manufracturer
     data and writing to .zarr, on-disk representation of images/labels as
-    'ZarrArray's ('Rarr') and shapes/points as 'arrow' objects, and method 
-    drafts for visualization and coordinate system handling.
+    'ZarrArray's ('Rarr') and shapes/points as 'arrow' objects, as well 
+    as method drafts for visualization and coordinate system handling.
 Authors@R: c(
 	person("Helena L.", "Crowell", 
 	    role=c("aut", "cre"),
@@ -33,22 +33,19 @@ Authors@R: c(
         email="louise.deconinck@gmail.com",
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
+    anndataR,
     arrow,
     basilisk,
-    BiocGenerics,
+    BiocFileCache,
     DelayedArray,
-    dplyr,
     geoarrow,
-    graph,
-    jsonlite,
+    ggplot2,
     Matrix,
     methods,
     Rarr,
-    RBGL,
+    rlang,
     reticulate,
-    sf,
     sfarrow,
-    S4Arrays,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment
@@ -62,8 +59,6 @@ Suggests:
     Rgraphviz,
     testthat,
     DT
-Enhances:
-    anndataR
 Remotes:
     keller-mark/anndataR@keller-mark/zarr
 biocViews: 

@@ -1,6 +1,6 @@
+^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.github$
 vignettes/*html
 vignettes/*cache
 vignettes/*files

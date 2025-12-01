@@ -8,6 +8,10 @@
 #'   path to a \code{SpatialData}.zarr store.
 #'   For \code{readImage/Label/Point/Shape/Table}, 
 #'   path to a \code{SpatialData} element.
+#' @param images,labels,points,shapes,tables
+#'   control which layers and elements to read;
+#'   FALSE to skip a layer, integer or character 
+#'   vector to read some element(s).
 #' 
 #' @return \code{\link{SpatialData}} object, or one of its elements.
 #' 
@@ -25,7 +29,7 @@
 NULL
 
 #' @importFrom S4Vectors isSequence
-.get_multiscales_datasets_path <- function(md) {
+.get_multiscales_datasets_path <- \(md) {
     .validate_multiscales_datasets_path(md)
     ps <- md$multiscales[[1]]$datasets[[1]]$path
     ps <- suppressWarnings(as.numeric(ps))
@@ -38,7 +42,7 @@ NULL
 }
 
 #' @noRd
-.validate_multiscales_datasets_path <- function(md) {
+.validate_multiscales_datasets_path <- \(md) {
     ms <- md$multiscales
     if (!is.null(ms)) {
         ds <- ms[[1]]$datasets
@@ -60,7 +64,7 @@ NULL
 }
 
 #' @importFrom Rarr read_zarr_attributes
-.read_za <- function(x, ...) {
+.read_za <- \(x) {
     md <- read_zarr_attributes(x)
     ps <- .get_multiscales_datasets_path(md)
     as <- lapply(ps, \(.) ZarrArray(file.path(x, .)))
@@ -70,24 +74,24 @@ NULL
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @export
-readImage <- function(x, ...) {
-    za <- .read_za(x, ...)
-    ImageArray(data=za$array, zattrs=Zattrs(za$md), ...)
+readImage <- \(x) {
+    za <- .read_za(x)
+    ImageArray(data=za$array, zattrs=Zattrs(za$md))
 }
 
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @export
-readLabel <- function(x, ...) {
-    za <- .read_za(x, ...)
-    LabelArray(data=za$array, zattrs=Zattrs(za$md), ...)
+readLabel <- \(x) {
+    za <- .read_za(x)
+    LabelArray(data=za$array, zattrs=Zattrs(za$md))
 }
 
 #' @rdname readSpatialData
 #' @importFrom arrow open_dataset
 #' @importFrom Rarr read_zarr_attributes
 #' @export
-readPoint <- function(x, ...) {
+readPoint <- \(x) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     PointFrame(data=open_dataset(pq), zattrs=Zattrs(md))
@@ -98,7 +102,7 @@ readPoint <- function(x, ...) {
 #' @importFrom Rarr read_zarr_attributes
 #' @import geoarrow   
 #' @export
-readShape <- function(x, ...) {
+readShape <- \(x) {
     requireNamespace("geoarrow", quietly=TRUE)
     md <- read_zarr_attributes(x)
     # TODO: previously had read_parquet(), 

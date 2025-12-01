@@ -52,7 +52,7 @@ sd_plot_image <- \(x, i=1, c=NULL, ch=NULL, cl=NULL, k=NULL, w=800, h=800) {
     pal <- if (!.is_rgb(ia) && dim(ia)[1] > 1) {
         nms <- channels(ia)[ch]
         pal <- if (is.null(c)) .DEFAULT_COLORS else c
-        setNames(pal[seq_along(ch)], nms)
+        `names<-`(pal[seq_along(ch)], nms)
     }
     lgd <- if (!is.null(pal)) list(
         guides(col=guide_legend(override.aes=list(alpha=1, size=2))),

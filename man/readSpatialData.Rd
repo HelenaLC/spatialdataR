@@ -9,13 +9,13 @@
 \alias{readTable}
 \title{Reading `SpatialData`}
 \usage{
-readImage(x, ...)
+readImage(x)
 
-readLabel(x, ...)
+readLabel(x)
 
-readPoint(x, ...)
+readPoint(x)
 
-readShape(x, ...)
+readShape(x)
 
 readTable(x)
 
@@ -33,6 +33,10 @@ readSpatialData(
 path to a \code{SpatialData}.zarr store.
 For \code{readImage/Label/Point/Shape/Table}, 
 path to a \code{SpatialData} element.}
+
+\item{images, labels, points, shapes, tables}{control which layers and elements to read;
+FALSE to skip a layer, integer or character 
+vector to read some element(s).}
 }
 \value{
 \code{\link{SpatialData}} object, or one of its elements.

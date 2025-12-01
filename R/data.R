@@ -47,6 +47,9 @@ sd_osn_list <- \() {
 }
 
 #' @rdname sd_data
+#' @importFrom utils unzip
+#' @importFrom BiocFileCache BiocFileCache 
+#'   bfcquery bfcadd bfcupdate bfcneedsupdate
 #' @export
 sd_osn_load <- \(patt, 
     target=tempfile(),
