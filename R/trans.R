@@ -1,9 +1,10 @@
 #' @name coord-trans
 #' @title Coordinate transformations
 #' 
-#' @aliases ct_translate ct_scale ct_rotate
+#' @aliases ct_transform ct_translate ct_scale ct_rotate
 #' 
 #' @param x \code{SpatialData} element.
+#' @param i target coordinate system.
 #' @param t transformation data.
 #' @param ... ignored.
 #' 
@@ -42,13 +43,36 @@
 #'   sd_plot_shape(sd, "c", col=4) 
 NULL
 
+# transform ----
+
+#' @rdname coord-trans
+#' @export
+ct_transform <- new_generic("ct_transform", c("x", "i"))
+
+method(ct_transform, list(sdArrayFrame, class_character)) <- \(x, i) {
+    i <- match.arg(i, ct_name(x))
+    i <- match(i, ct_name(x))
+    ct_transform(x, i)
+}
+
+method(ct_transform, list(sdArrayFrame, class_numeric)) <- \(x, i) {
+    t <- ct_args(x, i)
+    switch(ct_type(x)[i],
+        identity=return(x),
+        scale=ct_scale(x, t),
+        rotation=ct_rotate(x, t),
+        translation=ct_translate(x, t),
+        stop("not supported."))
+}
+
 # translate ----
 
 #' @rdname coord-trans
 #' @export
-ct_translate <- new_generic("ct_translate", "x")
+ct_translate <- new_generic("ct_translate", c("x", "t"))
 
-method(ct_translate, PointFrame) <- \(x, t) {
+method(ct_translate, list(PointFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 2, is.finite(t))
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x+t[1]) |>
@@ -57,7 +81,8 @@ method(ct_translate, PointFrame) <- \(x, t) {
 }
 
 #' @importFrom sfarrow read_sf_dataset
-method(ct_translate, ShapeFrame) <- \(x, t) {
+method(ct_translate, list(ShapeFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 2, is.finite(t))
     x@data <- read_sf_dataset(x@data)
     x@data$geometry <- x@data$geometry+t
     return(x)
@@ -67,10 +92,10 @@ method(ct_translate, ShapeFrame) <- \(x, t) {
 
 #' @rdname coord-trans
 #' @export
-ct_scale <- new_generic("ct_scale", "x")
+ct_scale <- new_generic("ct_scale", c("x", "t"))
 
 #' @importFrom dplyr mutate
-method(ct_scale, PointFrame) <- \(x, t) {
+method(ct_scale, list(PointFrame, class_numeric)) <- \(x, t) {
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x*t[1]) |>
@@ -81,7 +106,7 @@ method(ct_scale, PointFrame) <- \(x, t) {
 # NOTE: this shifts the origin if it's not (0,0); 
 #       could fix, but unclear what's expected.
 #' @importFrom sfarrow read_sf_dataset
-method(ct_scale, ShapeFrame) <- \(x, t) {
+method(ct_scale, list(ShapeFrame, class_numeric)) <- \(x, t) {
     x@data <- read_sf_dataset(x@data)
     x@data$geometry <- x@data$geometry*t(t)
     return(x)
@@ -91,14 +116,14 @@ method(ct_scale, ShapeFrame) <- \(x, t) {
 
 #' @rdname coord-trans
 #' @export
-ct_rotate <- new_generic("ct_rotate", "x")
+ct_rotate <- new_generic("ct_rotate", c("x", "t"))
 
 # rotation matrix to rotate points 
 # counter-clockwise through an angle 't'
 .R <- \(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
 
 #' @importFrom dplyr mutate select
-method(ct_rotate, PointFrame) <- \(x, t) {
+method(ct_rotate, list(PointFrame, class_numeric)) <- \(x, t) {
     y <- .y <- .x <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
@@ -111,7 +136,7 @@ method(ct_rotate, PointFrame) <- \(x, t) {
 }
 
 #' @importFrom sfarrow read_sf_dataset
-method(ct_rotate, ShapeFrame) <- \(x, t) {
+method(ct_rotate, list(ShapeFrame, class_numeric)) <- \(x, t) {
     R <- .R(t*pi/180)
     x@data <- read_sf_dataset(x@data)
     x@data$geometry <- x@data$geometry * R

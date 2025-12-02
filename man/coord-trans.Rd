@@ -2,19 +2,24 @@
 % Please edit documentation in R/trans.R
 \name{coord-trans}
 \alias{coord-trans}
+\alias{ct_transform}
 \alias{ct_translate}
 \alias{ct_scale}
 \alias{ct_rotate}
 \title{Coordinate transformations}
 \usage{
-ct_translate(x, ...)
+ct_transform(x, i, ...)
 
-ct_scale(x, ...)
+ct_translate(x, t, ...)
 
-ct_rotate(x, ...)
+ct_scale(x, t, ...)
+
+ct_rotate(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
+
+\item{i}{target coordinate system.}
 
 \item{...}{ignored.}
 

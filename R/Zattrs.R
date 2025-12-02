@@ -86,18 +86,13 @@ method(ct_args, list(Zattrs, class_any)) <- \(x, i) {
     i <- which(ct_name(x) == i)
     l <- ct_data(x)[[i]]
     t <- l[[ct_type(x)[[i]]]]
-    # TODO: not sure how to best return yet;
-    # all scalar or vector, but not for affine
-    t <- lapply(t, as.list)
-    lapply(t, unlist)
-    # if (is.list(t[[1]])) {
-    #     do.call(rbind, t)
-    # } else {
-    #     unlist(t)
-    # }
+    # # TODO: not sure how to best return yet;
+    # # all scalar or vector, but not for affine
+    # t <- lapply(t, as.list)
+    # lapply(t, unlist)
+    if (is.list(t[[1]])) {
+        do.call(rbind, t)
+    } else {
+        unlist(t)
+    }
 }
-
-#' @rdname Zattrs
-#' @importFrom S7 class_any
-#' @export
-ct_args <- new_generic("ct_args", c("x", "i"))
