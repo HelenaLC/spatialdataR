@@ -96,6 +96,7 @@ ct_scale <- new_generic("ct_scale", c("x", "t"))
 
 #' @importFrom dplyr mutate
 method(ct_scale, list(PointFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 2, is.finite(t))
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x*t[1]) |>
@@ -107,6 +108,7 @@ method(ct_scale, list(PointFrame, class_numeric)) <- \(x, t) {
 #       could fix, but unclear what's expected.
 #' @importFrom sfarrow read_sf_dataset
 method(ct_scale, list(ShapeFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 2, is.finite(t))
     x@data <- read_sf_dataset(x@data)
     x@data$geometry <- x@data$geometry*t(t)
     return(x)
@@ -124,6 +126,7 @@ ct_rotate <- new_generic("ct_rotate", c("x", "t"))
 
 #' @importFrom dplyr mutate select
 method(ct_rotate, list(PointFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 1, is.finite(t))
     y <- .y <- .x <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
@@ -137,6 +140,7 @@ method(ct_rotate, list(PointFrame, class_numeric)) <- \(x, t) {
 
 #' @importFrom sfarrow read_sf_dataset
 method(ct_rotate, list(ShapeFrame, class_numeric)) <- \(x, t) {
+    stopifnot(length(t) == 1, is.finite(t))
     R <- .R(t*pi/180)
     x@data <- read_sf_dataset(x@data)
     x@data$geometry <- x@data$geometry * R
