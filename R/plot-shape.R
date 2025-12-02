@@ -29,21 +29,21 @@
 #' @export
 sd_plot_shape <- \(x, i=1, c=TRUE, ...) {
     s <- x@shapes[[i]]
-    df <- read_sf_dataset(s@data)
+    df <- if (is(s@data, "sf")) s@data else read_sf_dataset(s@data)
     aes <- aes()
     thm <- list()
     dot <- list(...)
     if (isTRUE(c)) {
         df$.id <- factor(seq(length(s)))
-        aes$colour <- aes(.data$.id)[[1]]
+        aes$colour <- aes(.data[[".id"]])[[1]]
         thm <- c(thm, list(guides(col="none")))
     } else if (.str_is_col(c)) {
         ex <- grepv("col", names(dot))
         dot <- dot[setdiff(names(dot), ex)]
         dot$colour <- c
     }
-    if (!is.null(df$radius)) 
-        aes$size <- aes(.data$radius)[[1]]
+    if (!is.null(df[["radius"]])) 
+        aes$size <- aes(.data[["radius"]])[[1]]
     dot$inherit.aes <- FALSE
     arg <- c(list(data=df, mapping=aes), dot)
     list(do.call(geom_sf, arg), thm)

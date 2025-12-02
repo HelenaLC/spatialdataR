@@ -55,6 +55,8 @@ data(x, ...)
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
+\item{x}{\code{SpatialData} object.}
+
 \item{...}{ignored.}
 
 \item{data}{For \code{Image/LabelArray}s, a list of \code{ZarrArray}s;

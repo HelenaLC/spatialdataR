@@ -28,7 +28,7 @@ sd_plot_point <- \(x, i, c, a, ...) {
     dot <- list(...)
     if (missing(c)) c <- NULL
     if (missing(i)) i <- 1
-    if (is.numeric(i)) i <- names(x)$points[i]
+    if (is.numeric(i)) i <- names(x@points)[i]
     p <- x@points[[i]]
     df <- as.data.frame(p@data)
     aes <- aes(.data[["x"]], .data[["y"]])

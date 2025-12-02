@@ -31,6 +31,7 @@ NULL
 #' @rdname Zattrs
 #' @export
 ct_data <- new_generic("ct_data", "x")
+method(ct_data, sdArrayFrame) <- \(x) ct_data(zattrs(x))
 method(ct_data, Zattrs) <- \(x) {
     ms <- x@data$multiscales[[1]]
     if (!is.null(ms)) x <- ms
@@ -40,6 +41,7 @@ method(ct_data, Zattrs) <- \(x) {
 #' @rdname Zattrs
 #' @export
 ct_type <- new_generic("ct_type", "x")
+method(ct_type, sdArrayFrame) <- \(x) ct_type(zattrs(x))
 method(ct_type, Zattrs) <- \(x) {
     vapply(ct_data(x), \(.) .$type, character(1))
 }
@@ -47,6 +49,7 @@ method(ct_type, Zattrs) <- \(x) {
 #' @rdname Zattrs
 #' @export
 ct_name <- new_generic("ct_name", "x")
+method(ct_name, sdArrayFrame) <- \(x) ct_name(zattrs(x))
 method(ct_name, Zattrs) <- \(x) {
     vapply(ct_data(x), \(.) .$output$name, character(1))
 }
@@ -54,6 +57,7 @@ method(ct_name, Zattrs) <- \(x) {
 #' @rdname Zattrs
 #' @export
 ct_axes <- new_generic("ct_axes", "x")
+method(ct_axes, sdArrayFrame) <- \(x) ct_axes(zattrs(x))
 method(ct_axes, Zattrs) <- \(x) {
     ax <- ct_data(x)[[1]]$input$axes
     `names<-`(
@@ -66,6 +70,7 @@ method(ct_axes, Zattrs) <- \(x) {
 #' @importFrom S7 class_any
 #' @export
 ct_args <- new_generic("ct_args", c("x", "i"))
+method(ct_args, list(sdArrayFrame, class_any)) <- \(x, i) ct_args(zattrs(x), i)
 method(ct_args, list(Zattrs, class_any)) <- \(x, i) {
     if (missing(i)) {
         i <- ct_name(x)[1]
@@ -91,3 +96,8 @@ method(ct_args, list(Zattrs, class_any)) <- \(x, i) {
     #     unlist(t)
     # }
 }
+
+#' @rdname Zattrs
+#' @importFrom S7 class_any
+#' @export
+ct_args <- new_generic("ct_args", c("x", "i"))

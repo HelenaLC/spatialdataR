@@ -16,10 +16,14 @@
 #' @return \code{\link{SpatialData}} object, or one of its elements.
 #' 
 #' @examples
-#' # package demo data
 #' pa <- file.path("extdata", "blobs.zarr")
 #' pa <- system.file(pa, package="SpatialData")
+#' 
+#' # read complete store
 #' (sd <- readSpatialData(pa))
+#' 
+#' # read single element
+#' readImage(file.path(pa, "images", "blobs_image"))
 #' 
 #' # view data available on OSN, 
 #' # then retrieve & ingest one
@@ -67,24 +71,18 @@ NULL
     md <- read_zarr_attributes(x)
     ps <- .get_multiscales_datasets_path(md)
     as <- lapply(ps, \(.) ZarrArray(file.path(x, .)))
-    list(array=as, md=md)
+    list(data=as, zattrs=Zattrs(md))
 }
 
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @export
-readImage <- \(x) {
-    za <- .read_za(x)
-    ImageArray(data=za$array, zattrs=Zattrs(za$md))
-}
+readImage <- \(x) do.call(ImageArray, .read_za(x))
 
 #' @rdname readSpatialData
 #' @importFrom Rarr ZarrArray
 #' @export
-readLabel <- \(x) {
-    za <- .read_za(x)
-    LabelArray(data=za$array, zattrs=Zattrs(za$md))
-}
+readLabel <- \(x) do.call(LabelArray, .read_za(x))
 
 #' @rdname readSpatialData
 #' @importFrom arrow open_dataset
@@ -142,7 +140,6 @@ readTable <- \(x) {
 readSpatialData <- \(x, 
     images=TRUE, labels=TRUE, points=TRUE, shapes=TRUE, tables=TRUE)
 {
-    #if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     sd <- lapply(.LAYERS[!skip], \(i) {
@@ -158,7 +155,6 @@ readSpatialData <- \(x,
         }
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
         lapply(j, \(.) do.call(f, list(.)))
-    }) 
-    #if (!anndataR) sd$tables <- .readTables_basilisk(x)
+    })
     do.call(SpatialData, sd)
 }

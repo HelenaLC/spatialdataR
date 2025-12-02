@@ -45,10 +45,14 @@ vector to read some element(s).}
 Reading `SpatialData`
 }
 \examples{
-# package demo data
 pa <- file.path("extdata", "blobs.zarr")
 pa <- system.file(pa, package="SpatialData")
+
+# read complete store
 (sd <- readSpatialData(pa))
+
+# read single element
+readImage(file.path(pa, "images", "blobs_image"))
 
 # view data available on OSN, 
 # then retrieve & ingest one
