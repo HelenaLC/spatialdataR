@@ -128,25 +128,30 @@ readShape <- function(x, ...) {
 #' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTables_basilisk <- function(x) {
-    proc <- basiliskStart(.env)
-    on.exit(basiliskStop(proc))
-    basiliskRun(proc, x=x, \(x) {
-        # read in 'SpatialData' from .zarr store
-        sd <- import("spatialdata")
-        zs <- sd$read_zarr(x)
-        # return (named) list of SCEs
-        names(ts) <- ts <- names(zs$tables$data)
-        lapply(ts, \(z) {
-            se <- AnnData2SCE(zs$tables[z])
-            nm <- "spatialdata_attrs"
-            md <- metadata(se)[[nm]]
-            int_metadata(se)[[nm]] <- md
-            metadata(se)[[nm]] <- NULL
-            se
-        }) 
-    })
+  proc <- basiliskStart(.env)
+  on.exit(basiliskStop(proc))
+  basiliskRun(proc, x=x, \(x) {
+    # read in 'SpatialData' from .zarr store
+    # sd <- import("spatialdata")
+    sd <- import("anndata")
+    z <- import("zarr")
+    # zs <- sd$read_zarr(x)
+    # return (named) list of SCEs
+    # names(ts) <- ts <- names(zs$tables$data)
+    names(ts) <- ts <- list.dirs(file.path(x,"tables/"), 
+                                 recursive = FALSE, 
+                                 full.names = FALSE)
+    lapply(ts, \(z) {
+      zs <- sd$read_zarr(file.path(x, "tables", ts))
+      se <- AnnData2SCE(zs)
+      nm <- "spatialdata_attrs"
+      md <- metadata(se)[[nm]]
+      int_metadata(se)[[nm]] <- md
+      metadata(se)[[nm]] <- NULL
+      se
+    }) 
+  })
 }
-
 .readTable_anndataR <- function(x) {
     if (!requireNamespace('anndataR', quietly=TRUE)) {
         stop("To use this function, install the 'anndataR' package via\n",
