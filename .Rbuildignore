@@ -4,5 +4,3 @@
 vignettes/*html
 vignettes/*cache
 vignettes/*files
-^doc$
-^Meta$

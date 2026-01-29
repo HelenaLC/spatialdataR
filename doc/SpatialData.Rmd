@@ -1,0 +1,157 @@
+---
+title: "`SpatialData`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: "`r BiocStyle::pkg_ver('SpatialData')`"
+author: 
+  - name: Helena Lucia Crowell
+  - name: Louise Deconinck
+  - name: Artür Manukyan
+  - name: Dario Righelli
+  - name: Estella Dong
+  - name: Vince Carey
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{SpatialData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
+```
+
+```{r load-libs}
+library(SpatialData)
+library(SingleCellExperiment)
+```
+
+# Introduction
+
+The `SpatialData` package contains a set of reader and plotting functions for 
+spatial omics data stored as [SpatialData](https://spatialdata.scverse.org/en/latest/index.html) 
+`.zarr` files that follow [OME-NGFF specs](https://ngff.openmicroscopy.org/latest/#image-layout).
+
+Each `SpatialData` object is composed of five layers: images, labels, shapes, 
+points, and tables. Each layer may contain an arbitrary number of elements.
+
+Images and labels are represented as `ZarrArray`s (`r BiocStyle::Biocpkg("Rarr")`). 
+Points and shapes are represented as `r BiocStyle::CRANpkg("arrow")` objects linked 
+to an on-disk *.parquet* file. As such, all data are represented out of memory.
+
+Element annotation as well as cross-layer summarizations (e.g., count matrices)
+are represented as `r BiocStyle::Biocpkg("SingleCellExperiment")` as tables.
+
+## Handling
+
+For demonstration, we read in a toy dataset that is available through the package:
+
+```{r blobs-read}
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+(x <- readSpatialData(x, anndataR=FALSE))  # VJC Dec 8, test effect of absence of anndataR
+```
+
+`SpatialData` object behave like a list, thereby supporting flexible accession, 
+e.g., via `$` and `[[`, using character or integer indices etc. Specifically,
+
+- `image/label/shape/point/table()` retrieve one element
+- `images/labels/shapes/points/tables()` retrieve one layer
+- `image/label/shape/point/tableNames()` retrieve element names
+
+Let's demonstrate these capabilities using the image layer:
+
+```{r get, results="hide"}
+shapeNames(x) # there are two images
+shapes(x) # this is a list of them
+shape(x, i=1) # this is the 1st one
+shape(x, "blobs_polygons") # this is the 3nd one
+x$shapes$blobs_circles # list-like handling also works
+```
+
+Each element is made up of two key components: 
+
+- `data`: the actual array or table (for images/labels and shapes/points, respectively)
+- `meta`: list of metadata retrieved from an OME-NGFF compliant *.zattrs* (stored as `Zattrs`)
+
+```{r data/meta}
+data(shape(x))
+meta(shape(x)) 
+```
+
+## Annotations
+
+Currently supported methods for the `tables` layers include:
+
+- `getTable()` to retrieve the `table` annotating a given element
+- `setTable()` to construct a new annotation for a given element
+- `valTable()` to retrieve specific values from a `table`
+
+```{r tbl}
+# retrieve 'table' for an element
+(t <- getTable(x, i <- "blobs_labels"))
+head(colData(t))
+meta(t)
+# get values from an element's 'table'
+valTable(x, i, "channel_0_sum")
+# add an artificial 'table' to an element
+i <- "blobs_points"
+# ...passing a preconstructed 'data.frame'
+id <- unique(point(x)$instance_id)
+df <- data.frame(n=runif(length(id)))
+y <- setTable(x, i, df)
+head(colData(getTable(y, i)))
+# ...using a list of data generating functions
+f <- list(
+    numbers=\(n) runif(n),
+    letters=\(n) sample(letters, n, TRUE))
+args <- c(list(x, i), f)
+y <- do.call(setTable, args)
+head(colData(getTable(y, i)))
+```
+
+## Transformations
+
+To facilitate .zattrs handling, we provide a set of functions to access and modify its contents. Specifically,
+
+- `axes` to access a given element's dimension names and types
+- `CTdata/name/type` to access coordinate transformation components
+- `rmv/addCT` to remove, add, or append coordinate transformations
+
+```{r cs-methods}
+z <- meta(label(x))
+axes(z)
+CTdata(z)
+CTname(rmvCT(z, "scale"))
+CTname(addCT(z, 
+    name="D'Artagnan", 
+    type="scale", 
+    data=c(19, 94)))
+```
+
+`Zattrs` specify an explicit relationship between elements and coordinate systems.
+We can represent these are a graph as follows:
+
+```{r cs-graph}
+(g <- CTgraph(x))
+plotCoordGraph(g)
+```
+
+The above representation greatly facilitates queries of the transformation(s) 
+required to spatially align elements. `blobs_labels`, for example, requires a
+sequential transformation (scaling and translation) for the `sequence` space:
+
+```{r cs-path, results="hold"}
+# the following are equivalent
+i <- "blobs_labels"
+j <- "sequence"
+y <- label(x, i)
+CTpath(x, i, j)
+invisible(CTpath(y, j))
+```
+
+# Session info
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
