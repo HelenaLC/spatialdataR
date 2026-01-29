@@ -132,17 +132,13 @@ readShape <- function(x, ...) {
     on.exit(basiliskStop(proc))
     basiliskRun(proc, x=x, \(x) {
       # read in 'SpatialData' from .zarr store
-      # sd <- import("spatialdata")
       sd <- import("anndata")
-      z <- import("zarr")
-      # zs <- sd$read_zarr(x)
-      # return (named) list of SCEs
-      # names(ts) <- ts <- names(zs$tables$data)
+      za <- import("zarr")
       names(ts) <- ts <- list.dirs(file.path(x,"tables/"), 
                                    recursive = FALSE, 
                                    full.names = FALSE)
       lapply(ts, \(z) {
-        zs <- sd$read_zarr(file.path(x, "tables", ts))
+        zs <- sd$read_zarr(file.path(x, "tables", z))
         se <- AnnData2SCE(zs)
         nm <- "spatialdata_attrs"
         md <- metadata(se)[[nm]]
