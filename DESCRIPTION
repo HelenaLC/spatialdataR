@@ -56,7 +56,6 @@ Suggests:
     BiocStyle,
     ggnewscale,
     knitr,
-    magick,
     patchwork,
     paws,
     Rgraphviz,
