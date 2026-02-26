@@ -82,7 +82,7 @@ biocViews:
     SingleCell,
     Spatial
 License: Artistic-2.0
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 VignetteBuilder: knitr
 URL: https://github.com/HelenaLC/SpatialData
