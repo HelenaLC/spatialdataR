@@ -22,7 +22,7 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r load-libs}
-library(SpatialData)
+# library(SpatialData)
 library(SingleCellExperiment)
 ```
 
