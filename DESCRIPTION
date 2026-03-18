@@ -43,7 +43,7 @@ Imports:
     jsonlite,
     Matrix,
     methods,
-    Rarr,
+    ZarrArray,
     RBGL,
     reticulate,
     sf,
@@ -70,7 +70,8 @@ Remotes:
     keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.plot,
+    Bioconductor/ZarrArray
 biocViews: 
     DataImport, 
     DataRepresentation, 
