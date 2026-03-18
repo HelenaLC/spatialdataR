@@ -10,7 +10,7 @@ LabelArray(data = array(), meta = Zattrs(), metadata = list(), ...)
 \S4method{[}{LabelArray,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
 \arguments{
-\item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
+\item{data}{list of \code{\link[ZarrArray]{ZarrArray}}s}
 
 \item{meta}{\code{\link{Zattrs}}}
 
