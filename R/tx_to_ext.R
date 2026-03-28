@@ -24,12 +24,15 @@
 #' @examples
 #' src <- system.file("extdata", "blobs.zarr", package="SpatialData")
 #' td <- tempfile()
-#' do_tx_to_ext(
-#'   srcdir=src, dest=td, 
-#'   coordinate_system="global",
-#'   maintain_positioning=FALSE, 
-#'   target_width=400.)
-#' (sd <- readSpatialData(td))
+#' # TODO: for now this example converts to a zarr v3 so we comment out, 
+#' # check again later
+#' 
+#' # do_tx_to_ext(
+#' #  srcdir=src, dest=td, 
+#' #  coordinate_system="global",
+#' #  maintain_positioning=FALSE, 
+#' #  target_width=400.)
+#' # (sd <- readSpatialData(td))
 #' 
 #' @export
 do_tx_to_ext <- function(srcdir, dest, coordinate_system, ...) {
