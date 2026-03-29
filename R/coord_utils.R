@@ -29,8 +29,8 @@
 #' # retrieve transformation from element to target space
 #' CTpath(x, "blobs_labels", "sequence")
 #' 
-#' # view available coordinate transformations
-#' CTdata(z <- meta(label(x)))
+#' # view available target coordinate systems
+#' CTname(z <- meta(label(x)))
 #'
 #' # add
 #' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
@@ -53,9 +53,9 @@ NULL
 #' @rdname coord-utils
 #' @export
 setMethod("axes", "Zattrs", \(x, ...) {
-    if (!is.null(ms <- x$multiscales)) x <- ms
+    if (!is.null(ms <- x$multiscales)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
-    if (is.character(x)) x else x[[1]]
+    data.frame(do.call(rbind, x))
 })
 
 #' @rdname coord-utils
@@ -66,12 +66,15 @@ setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 #' @rdname coord-utils
 #' @export
-setMethod("CTdata", "Zattrs", \(x, ...) {
-    ms <- x$multiscales
-    if (!is.null(ms)) x <- ms
-    x <- x$coordinateTransformations
-    if (is.null(dim(x))) x[[1]] else x
-})
+setMethod("CTdata", "Zattrs", \(x, ...) x$multiscales[[1]]$coordinateTransformations)
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTtype", "Zattrs", \(x, ...) vapply(CTdata(x), \(.) .$type, character(1)))
+
+#' @rdname coord-utils
+#' @export
+setMethod("CTname", "Zattrs", \(x, ...) vapply(CTdata(x), \(.) .$output$name, character(1)))
 
 #' @rdname coord-utils
 #' @export
@@ -79,15 +82,7 @@ setMethod("CTdata", "SpatialDataElement", \(x, ...) CTdata(meta(x)))
 
 #' @rdname coord-utils
 #' @export
-setMethod("CTtype", "Zattrs", \(x, ...) CTdata(x)$type)
-
-#' @rdname coord-utils
-#' @export
 setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTname", "Zattrs", \(x, ...) CTdata(x)$output$name)
 
 #' @rdname coord-utils
 #' @export
@@ -139,41 +134,40 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
     for (l in names(md)) for (e in names(md[[l]])) {
         .md <- md[[l]][[e]]
         ms <- .md$multiscales
-        if (!is.null(ms)) .md <- ms
+        if (!is.null(ms)) .md <- ms[[1]]
         ct <- .md$coordinateTransformations
-        ct <- if (length(ct) == 1) ct[[1]] else ct
         g <- addNode(e, g)
         nodeData(g, e, "type") <- "element"
-        for (i in seq(nrow(ct))) {
-            n <- ct$output$name[i]
+        for (i in seq_along(ct)) {
+            n <- ct[[i]]$output$name
             if (!n %in% nodes(g)) {
                 g <- addNode(n, g)
                 nodeData(g, n, "type") <- "space"
             }
-            t <- ct$type[i]
+            t <- ct[[i]]$type
             if (t == "sequence") {
-                sq <- ct$transformations[i][[1]]
+                sq <- ct[[i]]$transformations
                 . <- e
-                for (j in seq(nrow(sq))) {
-                    if (j == nrow(sq)) {
+                for (j in seq_along(sq)) {
+                    if (j == length(sq)) {
                         m <- n
                     } else {
                         m <- paste(e, n, j, sep="_")
                         g <- addNode(m, g)
                         nodeData(g, m, "type") <- "none"
                     }
-                    t <- sq$type[j]
-                    d <- sq[[t]][j]
+                    t <- sq[[j]]$type
+                    d <- sq[[j]][[t]]
                     g <- addEdge(., m, g)
                     edgeData(g, ., m, "type") <- t
-                    edgeData(g, ., m, "data") <- d
+                    edgeData(g, ., m, "data") <- list(d)
                     . <- m
                 }
             } else {
                 g <- addEdge(e, n, g)
-                d <- ct[[ct$type[i]]][i]
+                d <- ct[[i]][[ct[[i]]$type]]
                 edgeData(g, e, n, "type") <- t
-                edgeData(g, e, n, "data") <- d
+                edgeData(g, e, n, "data") <- list(d)
             }
         }
     }
@@ -267,67 +261,38 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
 
 #' @rdname coord-utils
 #' @export
-setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
+setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL, force=FALSE) {
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
     .check_ct(x, type, data)
-    ms <- "multiscales"
-    ts <- "transformations"
-    ct <- "coordinateTransformations"
+    # don't overwrite
+    ow <- match(name, CTname(x))
+    if (!is.na(ow)) {
+        if (!isTRUE(force))
+            stop("CT of 'name' ", name, " already exists;",
+                " use 'force=TRUE' to force overwrite.")
+    }
     # use existing as skeleton
-    fd <- (df <- CTdata(x))[1, ]
-    fd <- fd[, c("input", "output", "type")]
-    fd$type <- type
-    fd$output$name <- name
-    fd[[fd$type]] <- list(data)
-    # append to existing if 'name' already present 
-    idx <- match(name, CTname(x))
-    typ <- CTtype(x)[idx]
-    if (!is.na(typ) && typ == "identity") {
-        df <- df[0, ]
-        app <- FALSE
-    } else if (app <- !is.na(idx)) {
-        if (seq <- (typ == "sequence")) {
-            df <- df[idx, ][[ts]][[1]]
-            fd$output$name <- df$output$name[1]
-        } else {
-            df <- df[idx, ]
-            if (is.null(df[[ts]])) {
-                
-            } else {
-                df[[ts]][[1]] <- df
-            }
-            # fd$type <- type
-            # fd[[fd$type]] <- list(data)
-        }
+    old <- CTdata(x)
+    new <- old[[1]][c("input", "output", "type")]
+    new$type <- type
+    new$output$name <- name
+    new[[new$type]] <- list(data)
+    # append/overwrite & stash
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (is.na(ow)) {
+        new <- c(old, list(new))
     } else {
-        # fd$type <- type
-        # fd[[fd$type]] <- list(data)
+        old[[ow]] <- new
+        new <- old
     }
-    na <- setdiff(names(df), names(fd))
-    for (. in na) fd[[.]] <- list(NULL)
-    na <- setdiff(names(fd), names(df))
-    for (. in na) df[[.]] <- if (nrow(df) > 0) list(NULL) else list()
-    fd <- fd[, names(col) <- col <- names(df)]
-    # combine
-    if (app && !seq) {
-        # append to other
-        rownames(df) <- rownames(df$input) <- rownames(df$output) <- 1
-        rownames(fd) <- rownames(fd$input) <- rownames(fd$output) <- 2
+    if (is.null(x[[ms]])) {
+        x[[ct]] <- new
     } else {
-        # append to table or sequence
-        rownames(fd$input) <- rownames(fd$output) <- nrow(df)+1
+        x[[ms]][[1]][[ct]] <- new
     }
-    new <- rbind(df, fd)
-    if (is_ms <- !is.null(x[[ms]])) {
-        .x <- x[[ms]][[ct]][[1]]
-    } else .x <- x[[ct]]
-    if (app) {
-        .x$type[idx] <- "sequence"
-        .x[idx, ]$transformations[[1]] <- new
-    } else .x <- new
-    if (is_ms) x[[ms]][[ct]][[1]] <- .x else x[[ct]] <- .x
     return(x)
 })
 

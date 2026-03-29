@@ -13,10 +13,10 @@
 \alias{axes,Zattrs-method}
 \alias{axes,SpatialDataElement-method}
 \alias{CTdata,Zattrs-method}
-\alias{CTdata,SpatialDataElement-method}
 \alias{CTtype,Zattrs-method}
-\alias{CTtype,SpatialDataElement-method}
 \alias{CTname,Zattrs-method}
+\alias{CTdata,SpatialDataElement-method}
+\alias{CTtype,SpatialDataElement-method}
 \alias{CTname,SpatialDataElement-method}
 \alias{CTname,SpatialData-method}
 \alias{CTgraph,SpatialData-method}
@@ -36,13 +36,13 @@
 
 \S4method{CTdata}{Zattrs}(x, ...)
 
-\S4method{CTdata}{SpatialDataElement}(x, ...)
-
 \S4method{CTtype}{Zattrs}(x, ...)
 
-\S4method{CTtype}{SpatialDataElement}(x, ...)
-
 \S4method{CTname}{Zattrs}(x, ...)
+
+\S4method{CTdata}{SpatialDataElement}(x, ...)
+
+\S4method{CTtype}{SpatialDataElement}(x, ...)
 
 \S4method{CTname}{SpatialDataElement}(x, ...)
 
@@ -64,7 +64,7 @@
 
 \S4method{addCT}{SpatialDataElement}(x, name, type, data)
 
-\S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL)
+\S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL, force = FALSE)
 }
 \arguments{
 \item{x}{\code{SpatialData}, an element, or \code{Zattrs}.}
@@ -103,8 +103,8 @@ plotCoordGraph(g)
 # retrieve transformation from element to target space
 CTpath(x, "blobs_labels", "sequence")
 
-# view available coordinate transformations
-CTdata(z <- meta(label(x)))
+# view available target coordinate systems
+CTname(z <- meta(label(x)))
 
 # add
 addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
