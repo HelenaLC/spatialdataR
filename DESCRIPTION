@@ -65,7 +65,7 @@ Suggests:
     DT,
     anndataR
 Remotes:
-    keller-mark/anndataR@keller-mark/zarr,
+    keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot,
     Bioconductor/ZarrArray

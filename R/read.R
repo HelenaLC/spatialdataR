@@ -66,6 +66,9 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 #' library(SpatialData.data)
 #' dir.create(tf <- tempfile())
 #' base <- SpatialData.data:::.unzip_merfish_demo(tf)
+#' (x <- readSpatialData(base))
+#' 
+#' # import tables using anndataR
 #' (x <- readSpatialData(base, anndataR=TRUE))
 NULL
 
@@ -153,7 +156,7 @@ readShape <- function(x, ...) {
 .readTable_anndataR <- function(x) {
     if (!requireNamespace('anndataR', quietly=TRUE)) {
         stop("To use this function, install the 'anndataR' package via\n",
-            "`BiocManager::install(\"keller-mark/anndataR\", ref=\"keller-mark/zarr\")`")
+            "`BiocManager::install(\"keller-mark/anndataR\", ref=\"spatialdata\")`")
     }
     suppressWarnings({ # suppress warnings related to hidden files
         anndataR::read_zarr(x, as="SingleCellExperiment")
