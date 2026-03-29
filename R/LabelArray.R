@@ -14,7 +14,7 @@
 #' }
 #'
 #' @param x \code{LabelArray}
-#' @param data list of \code{\link[Rarr]{ZarrArray}}s
+#' @param data list of \code{\link[ZarrArray]{ZarrArray}}s
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.

@@ -43,7 +43,7 @@ Imports:
     jsonlite,
     Matrix,
     methods,
-    Rarr,
+    ZarrArray,
     RBGL,
     reticulate,
     sf,
@@ -56,7 +56,6 @@ Suggests:
     BiocStyle,
     ggnewscale,
     knitr,
-    magick,
     patchwork,
     paws,
     Rgraphviz,
@@ -68,7 +67,8 @@ Suggests:
 Remotes:
     keller-mark/anndataR@keller-mark/zarr,
     HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.plot,
+    Bioconductor/ZarrArray
 biocViews: 
     DataImport, 
     DataRepresentation, 
