@@ -153,10 +153,6 @@ readShape <- function(x, ...) {
         stop("To use this function, install the 'anndataR' package via\n",
             "`BiocManager::install(\"keller-mark/anndataR\", ref=\"spatialdata\")`")
     }
-    if (!requireNamespace('pizzarr', quietly=TRUE)) {
-        stop("To use this function, install the 'pizzarr' package via\n",
-            "`BiocManager::install(\"keller-mark/pizzarr\")`")
-    }
     suppressWarnings({ # suppress warnings related to hidden files
         adata <- anndataR::read_zarr(x)
         anndataR::to_SingleCellExperiment(adata)
