@@ -144,7 +144,7 @@ readShape <- function(x, ...) {
                                    full.names = FALSE)
       lapply(ts, \(z) {
         zs <- sd$read_zarr(file.path(x, "tables", z))
-        se <- AnnData2SCE(zs)
+        se <- zs$as_SingleCellExperiment()
         nm <- "spatialdata_attrs"
         md <- metadata(se)[[nm]]
         int_metadata(se)[[nm]] <- md
