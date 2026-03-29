@@ -1,3 +1,11 @@
+changes in version 0.99.24
+
+- ZarrArray imported by Bioconductor/ZarrArray
+- Rarr replaces pizzarr for importing tables via anndataR
+- anndataR replaces zellkonverter
+- update basilisk env to spatialdata==0.7.0
+- replace spatialdata.read with anndata.read_zarr to read tables
+
 changes in version 0.99.22
 
 - split off 'SpatialData.data'
