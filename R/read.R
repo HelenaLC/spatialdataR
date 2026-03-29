@@ -126,9 +126,9 @@ readShape <- function(x, ...) {
     packages=c( "python==3.13.0"),
     pip=allp)
 
+#' @import anndataR
 #' @importFrom reticulate import
 #' @importFrom S4Vectors metadata
-#' @importFrom zellkonverter AnnData2SCE
 #' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTables_basilisk <- function(x) {
