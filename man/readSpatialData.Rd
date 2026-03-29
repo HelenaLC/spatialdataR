@@ -44,7 +44,7 @@ to skip a layer, or a integer vector specifying which elements to read.}
 \item{anndataR}{logical specifying whether 
 to use \code{anndataR} to read tables; 
 defaults to FALSE in `readSpatialData`, and `readTable`,
-so that pythonic \code{spatialdata} and \code{zellkonverter} are used.}
+so that pythonic \code{anndata} are used.}
 }
 \value{
 \itemize{

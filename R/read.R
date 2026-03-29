@@ -27,10 +27,10 @@
 # "zarr==2.18.4", "zict==3.0.0")
 allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0", 
          "spatialdata_plot==0.2.14", "setuptools==75.8.0")
-# notes from VJC -- readSpatialData was modified below so
-# that if anndataR = FALSE, spatialdata.read_zarr is used
+# notes from VJC/AM -- readSpatialData was modified below so
+# that if anndataR = FALSE, anndata.read_zarr is used
 # to get the whole zarr store, and then the tables are
-# transformed via zellkonverter.  this gives a 10x speedup
+# transformed via anndataR. This gives a 10x speedup
 # for ingesting the visium_hd_3.0.0 example but fails on
 # the blobs dataset in example("table-utils") because
 # of matters related to metadata/hasTable behavior
@@ -53,7 +53,7 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 #' @param anndataR logical specifying whether 
 #'   to use \code{anndataR} to read tables; 
 #'   defaults to FALSE in `readSpatialData`, and `readTable`,
-#'   so that pythonic \code{spatialdata} and \code{zellkonverter} are used.
+#'   so that pythonic \code{anndata} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
