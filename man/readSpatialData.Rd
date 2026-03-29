@@ -59,5 +59,8 @@ Reading `SpatialData`
 library(SpatialData.data)
 dir.create(tf <- tempfile())
 base <- SpatialData.data:::.unzip_merfish_demo(tf)
+(x <- readSpatialData(base))
+
+# import tables using anndataR
 (x <- readSpatialData(base, anndataR=TRUE))
 }
