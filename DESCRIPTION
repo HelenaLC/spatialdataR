@@ -64,10 +64,8 @@ Suggests:
     testthat,
     DT
 Enhances:
-    anndataR,
-    pizzarr
+    anndataR
 Remotes:
-    keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot,
