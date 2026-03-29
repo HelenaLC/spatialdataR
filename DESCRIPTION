@@ -40,10 +40,10 @@ Imports:
     dplyr,
     geoarrow,
     graph,
-    jsonlite,
     Matrix,
     methods,
     ZarrArray,
+    Rarr,
     RBGL,
     reticulate,
     sf,
@@ -64,8 +64,10 @@ Suggests:
     testthat,
     DT
 Enhances:
-    anndataR
+    anndataR,
+    pizzarr
 Remotes:
+    keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot,

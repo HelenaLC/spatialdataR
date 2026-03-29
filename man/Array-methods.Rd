@@ -31,6 +31,14 @@
 Methods for `ImageArray` and `LabelArray` class
 }
 \examples{
-# TODO
+library(SpatialData.data)
+dir.create(tf <- tempfile())
+zs <- SpatialData.data:::.unzip_merfish_demo(tf)
+
+# helper that gets path to first element in layer 'l' 
+fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
+  
+# read individual element  
+(ia <- readImage(fn("images")))
 
 }
