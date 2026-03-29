@@ -17,7 +17,7 @@ ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 \S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 }
 \arguments{
-\item{data}{list of \code{\link[Rarr]{ZarrArray}}s}
+\item{data}{list of \code{\link[ZarrArray]{ZarrArray}}s}
 
 \item{meta}{\code{\link{Zattrs}}}
 
