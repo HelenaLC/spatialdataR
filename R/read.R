@@ -27,10 +27,10 @@
 # "zarr==2.18.4", "zict==3.0.0")
 allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0", 
          "spatialdata_plot==0.2.14", "setuptools==75.8.0")
-# notes from VJC -- readSpatialData was modified below so
-# that if anndataR = FALSE, spatialdata.read_zarr is used
+# notes from VJC/AM -- readSpatialData was modified below so
+# that if anndataR = FALSE, anndata.read_zarr is used
 # to get the whole zarr store, and then the tables are
-# transformed via zellkonverter.  this gives a 10x speedup
+# transformed via anndataR. This gives a 10x speedup
 # for ingesting the visium_hd_3.0.0 example but fails on
 # the blobs dataset in example("table-utils") because
 # of matters related to metadata/hasTable behavior
@@ -51,9 +51,9 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 #'   The default, NULL, reads all elements; alternatively, may be FALSE 
 #'   to skip a layer, or a integer vector specifying which elements to read.
 #' @param anndataR logical specifying whether 
-#'   to use \code{anndataR} to read tables; defaults to FALSE in `readSpatialData`,
-#'   and `readTable`,
-#'   so that pythonic \code{spatialdata} and \code{zellkonverter} are used.
+#'   to use \code{anndataR} to read tables; 
+#'   defaults to FALSE in `readSpatialData`, and `readTable`,
+#'   so that pythonic \code{anndata} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return 
@@ -133,43 +133,41 @@ readShape <- function(x, ...) {
     packages=c( "python==3.13.0"),
     pip=allp)
 
+#' @import anndataR
 #' @importFrom reticulate import
 #' @importFrom S4Vectors metadata
-#' @importFrom zellkonverter AnnData2SCE
 #' @importFrom SingleCellExperiment int_metadata
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 .readTables_basilisk <- function(x) {
     proc <- basiliskStart(.env)
     on.exit(basiliskStop(proc))
     basiliskRun(proc, x=x, \(x) {
-        # read in 'SpatialData' from .zarr store
-        sd <- import("spatialdata")
-        zs <- sd$read_zarr(x)
-        # return (named) list of SCEs
-        names(ts) <- ts <- names(zs$tables$data)
-        lapply(ts, \(z) {
-            se <- AnnData2SCE(zs$tables[z])
-            nm <- "spatialdata_attrs"
-            md <- metadata(se)[[nm]]
-            int_metadata(se)[[nm]] <- md
-            metadata(se)[[nm]] <- NULL
-            se
-        }) 
+      # read in 'AnnData' tables from .zarr store
+      sd <- import("anndata")
+      za <- import("zarr")
+      # return (named) list of SCEs
+      names(ts) <- ts <- list.dirs(file.path(x,"tables/"), 
+                                   recursive = FALSE, 
+                                   full.names = FALSE)
+      lapply(ts, \(z) {
+        zs <- sd$read_zarr(file.path(x, "tables", z))
+        se <- zs$as_SingleCellExperiment()
+        nm <- "spatialdata_attrs"
+        md <- metadata(se)[[nm]]
+        int_metadata(se)[[nm]] <- md
+        metadata(se)[[nm]] <- NULL
+        se
+      }) 
     })
 }
-
 .readTable_anndataR <- function(x) {
     if (!requireNamespace('anndataR', quietly=TRUE)) {
-        stop("To use this function, install the 'anndataR' package via\n",
-            "`BiocManager::install(\"keller-mark/anndataR\", ref=\"spatialdata\")`")
-    }
-    if (!requireNamespace('pizzarr', quietly=TRUE)) {
-        stop("To use this function, install the 'pizzarr' package via\n",
-            "`BiocManager::install(\"keller-mark/pizzarr\")`")
+        message("To make sure 'anndataR' package works as intended, ", 
+                "install the development version via\n",
+                "`BiocManager::install(\"keller-mark/anndataR\", ref=\"spatialdata\")`")
     }
     suppressWarnings({ # suppress warnings related to hidden files
-        adata <- anndataR::read_zarr(x)
-        anndataR::to_SingleCellExperiment(adata)
+        anndataR::read_zarr(x, as="SingleCellExperiment")
     })
 }
 

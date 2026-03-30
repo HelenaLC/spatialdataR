@@ -46,12 +46,12 @@ Imports:
     Rarr,
     RBGL,
     reticulate,
+    anndataR,
     sf,
     S4Arrays,
     S4Vectors,
     SingleCellExperiment,
-    SummarizedExperiment,
-    zellkonverter
+    SummarizedExperiment
 Suggests:
     BiocStyle,
     ggnewscale,
@@ -63,11 +63,7 @@ Suggests:
     SpatialData.plot,
     testthat,
     DT
-Enhances:
-    anndataR,
-    pizzarr
 Remotes:
-    keller-mark/pizzarr,
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot,
