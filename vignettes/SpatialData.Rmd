@@ -119,9 +119,7 @@ To facilitate .zattrs handling, we provide a set of functions to access and modi
 - `rmv/addCT` to remove, add, or append coordinate transformations
 
 ```{r cs-methods}
-z <- meta(label(x))
-axes(z)
-CTdata(z)
+(z <- meta(label(x)))
 CTname(rmvCT(z, "scale"))
 CTname(addCT(z, 
     name="D'Artagnan", 
