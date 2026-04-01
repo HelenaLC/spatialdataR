@@ -28,10 +28,10 @@ test_that("rmvCT", {
     expect_error(rmvCT(y, "."))
     expect_error(rmvCT(y, c(".", CTname(y)[1])))
     # by name
-    i <- sample(CTname(y), 2) 
+    i <- sample(setdiff(CTname(y), "global"), 2) 
     expect_identical(CTname(rmvCT(y, i)), setdiff(CTname(y), i))
     # by index
-    i <- sample(seq_along(CTname(y)), 2) 
+    i <- sample(which(CTtype(y) != "identity"), 2) 
     expect_identical(CTname(rmvCT(y, i)), CTname(y)[-i])
 })
 
@@ -41,7 +41,7 @@ test_that("addCT", {
     es <- lapply(ls, \(.) x[.,1][[.]][[1]])
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
-        ct <- CTdata(z)[CTname(z) == ".", ]
+        ct <- CTdata(z)[[which(CTname(z) == ".")]]
         expect_identical(ct[[t]][[1]], x)
     }
     for (y in es) {

@@ -4,9 +4,9 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
 
-sdtable = SpatialData::table   # skirt ambiguity and limitations of get()
+sdtable <- SpatialData::table   # skirt ambiguity and limitations of get()
 "sdtable<-" = "SpatialData::table<-"   # skirt ambiguity and limitations of get()
-sdtables = SpatialData::tables
+sdtables <- SpatialData::tables
 
 fun <- c("image", "label", "shape", "point", "sdtable")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")

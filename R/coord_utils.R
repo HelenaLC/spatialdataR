@@ -33,7 +33,7 @@
 #' CTname(z <- meta(label(x)))
 #'
 #' # add
-#' addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
+#' addCT(z, "scale", "scale", c(12, 34)) # overwrite
 #' CTdata(addCT(z, "new", "translation", c(12, 34)))
 #' 
 #' # rmv
@@ -55,6 +55,7 @@ NULL
 setMethod("axes", "Zattrs", \(x, ...) {
     if (!is.null(ms <- x$multiscales)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
+    if (is.null(names(x[[1]]))) return(unlist(x))
     data.frame(do.call(rbind, x))
 })
 
@@ -66,7 +67,12 @@ setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 #' @rdname coord-utils
 #' @export
-setMethod("CTdata", "Zattrs", \(x, ...) x$multiscales[[1]]$coordinateTransformations)
+setMethod("CTdata", "Zattrs", \(x, ...) {
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (is.null(x[[ms]])) return(x[[ct]])
+    x[[ms]][[1]][[ct]]
+})
 
 #' @rdname coord-utils
 #' @export
@@ -221,19 +227,17 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
         "couln't find 'coordTrans' of name(s) ", 
         paste(dQuote(nan), collapse=","))
     i <- match(i, nms)
-    # # prevent against dropping identity
-    # i <- i[CTtype(x)[i] != "identity"]
+    # protect against dropping identity
+    i <- i[CTtype(x)[i] != "identity"]
+    if (!length(i)) stop("can't drop identity")
     ms <- "multiscales"
     ct <- "coordinateTransformations"
     if (length(i)) {
-        # utility to drop empty columns
-        j <- \(.) vapply(., \(.) !is.null(unlist(.)), logical(1))
-        if (!is.null(x[[ms]])) {
-            y <- x[[ms]][[ct]][[1]][-i, ]
-            x[[ms]][[ct]][[1]] <- y[, j(y)]
+        if (is.null(x[[ms]])) {
+            x[[ct]] <- x[[ct]][i]
         } else {
-            y <- x[[ct]][-i, ]
-            x[[ct]] <- y[, j(y)]
+            y <- x[[ms]][[1]][[ct]][-i]
+            x[[ms]][[1]][[ct]] <- y
         }
     }
     return(x)
@@ -261,18 +265,11 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
 
 #' @rdname coord-utils
 #' @export
-setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL, force=FALSE) {
+setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
     .check_ct(x, type, data)
-    # don't overwrite
-    ow <- match(name, CTname(x))
-    if (!is.na(ow)) {
-        if (!isTRUE(force))
-            stop("CT of 'name' ", name, " already exists;",
-                " use 'force=TRUE' to force overwrite.")
-    }
     # use existing as skeleton
     old <- CTdata(x)
     new <- old[[1]][c("input", "output", "type")]
@@ -282,10 +279,11 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL, force=FALSE)
     # append/overwrite & stash
     ms <- "multiscales"
     ct <- "coordinateTransformations"
-    if (is.na(ow)) {
+    i <- match(name, CTname(x))
+    if (is.na(i)) {
         new <- c(old, list(new))
     } else {
-        old[[ow]] <- new
+        old[[i]] <- new
         new <- old
     }
     if (is.null(x[[ms]])) {
