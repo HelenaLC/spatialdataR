@@ -121,15 +121,15 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
-    t <- table(x, hasTable(x, i, name=TRUE))
+    t <- SpatialData::table(x, hasTable(x, i, name=TRUE))
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- meta(t)$region_key
         # TODO: check the replacement below, search colData as well?
         # t <- t[, int_colData(t)[[rk]] == i]
-        coldata <-
-          if(rk %in% names(cd <- int_colData(t))) cd[[rk]] else colData(t)[[rk]]
-        t <- t[, coldata == i]
+        int <- rk %in% names(cd <- int_colData(t))
+        cd <- if (int) cd[[rk]] else t[[rk]]
+        t <- t[, cd == i]
     }
     return(t)
 })
@@ -221,8 +221,7 @@ setMethod("setTable",
     int_colData(sce) <- cbind(int_colData(sce), icd)
     md <- list(region=i, region_key=rk, instance_key=ik)
     int_metadata(sce)[[sda]] <- md
-    table(x, name) <- sce
-    return(x)
+    SpatialData::`table<-`(x, i=name, value=sce)
 })
 
 # val ----

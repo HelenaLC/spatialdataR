@@ -43,7 +43,7 @@ test_that("addCT", {
     es <- lapply(ls, \(.) x[.,1][[.]][[1]])
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
-        ct <- CTdata(z)[[which(CTname(z) == ".")]]
+        ct <- CTlist(z)[[which(CTname(z) == ".")]]
         expect_identical(ct[[t]][[1]], x)
     }
     for (y in es) {

@@ -32,7 +32,12 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @aliases channels
 #' @export
-setMethod("channels", "ImageArray", \(x, ...) meta(x)$omero$channels$label)
+setMethod("channels", "Zattrs", \(x, ...) x$omero$channels)
+
+#' @rdname ImageArray
+#' @aliases channels
+#' @export
+setMethod("channels", "ImageArray", \(x, ...) channels(meta(x)))
 
 #' @rdname ImageArray
 #' @export
