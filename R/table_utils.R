@@ -100,9 +100,12 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     t <- lapply(tables(x), \(t) meta(t)$region)
     ok <- rapply(t, \(.) i %in% ., "character")
     # failure when no/many matches
-    if (!name) return(any(ok))
-    if (!any(ok)) stop("no 'table' found for 'i'")
-    if (sum(ok) > 0) stop("multiple 'table's found for 'i'")
+    if (name) {
+        if (!any(ok)) stop("no 'table' found for 'i'")
+        if (sum(ok) > 1) stop("multiple 'table's found for 'i'")
+        return(names(t)[ok])
+    }
+    return(any(ok))
 })
 
 # get ----
