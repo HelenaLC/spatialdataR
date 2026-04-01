@@ -53,6 +53,7 @@ setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 # trs ----
 
 setGeneric("axes", \(x, ...) standardGeneric("axes"))
+setGeneric("CTlist", \(x, ...) standardGeneric("CTlist"))
 setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
 setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
 setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))

@@ -4,8 +4,9 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
 
-sdtable <- SpatialData::table   # skirt ambiguity and limitations of get()
-"sdtable<-" = "SpatialData::table<-"   # skirt ambiguity and limitations of get()
+# skirt base::table ambiguity
+sdtable <- SpatialData::table    
+`sdtable<-` <- `SpatialData::table<-`   
 sdtables <- SpatialData::tables
 
 fun <- c("image", "label", "shape", "point", "sdtable")
@@ -53,19 +54,19 @@ test_that("get one", {
     # i=numeric
     mapply(f=fun, t=typ, \(f, t) 
         expect_is(get(f)(x, i=1), t))
-    # i=character -- VJC Dec 8 2024 -- ambiguity of table()?
-#    mapply(f=fun, t=typ, n=nms, \(f, t, n) 
-#        expect_is(get(f)(x, i=n), t))
+    # i=character
+    mapply(f=fun, t=typ, n=nms, \(f, t, n)
+        expect_is(get(f)(x, i=n), t))
     # i=invalid
-#    for (f in fun) {
-#        expect_error(get(f)(x, 0))
-#        expect_error(get(f)(x, "."))
-#        expect_error(get(f)(x, c(1,1)))
-#        expect_silent(y <- get(f)(x, Inf))
-#        set <- get(paste0(f, "s<-"))
-#        y <- set(x, list())
-#        expect_error(get(f)(y, 1))
-#    }
+    for (f in fun) {
+        expect_error(get(f)(x, 0))
+        expect_error(get(f)(x, "."))
+        expect_error(get(f)(x, c(1,1)))
+        expect_silent(y <- get(f)(x, Inf))
+        set <- get(paste0(f, "s<-"))
+        y <- set(x, list())
+        expect_error(get(f)(y, 1))
+    }
 })
 
 # set ----

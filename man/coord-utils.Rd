@@ -12,9 +12,11 @@
 \alias{rmvCT}
 \alias{axes,Zattrs-method}
 \alias{axes,SpatialDataElement-method}
+\alias{CTlist,Zattrs-method}
 \alias{CTdata,Zattrs-method}
 \alias{CTtype,Zattrs-method}
 \alias{CTname,Zattrs-method}
+\alias{CTlist,SpatialDataElement-method}
 \alias{CTdata,SpatialDataElement-method}
 \alias{CTtype,SpatialDataElement-method}
 \alias{CTname,SpatialDataElement-method}
@@ -34,13 +36,17 @@
 
 \S4method{axes}{SpatialDataElement}(x, ...)
 
-\S4method{CTdata}{Zattrs}(x, ...)
+\S4method{CTlist}{Zattrs}(x, ...)
+
+\S4method{CTdata}{Zattrs}(x, i = 1, ...)
 
 \S4method{CTtype}{Zattrs}(x, ...)
 
 \S4method{CTname}{Zattrs}(x, ...)
 
-\S4method{CTdata}{SpatialDataElement}(x, ...)
+\S4method{CTlist}{SpatialDataElement}(x, ...)
+
+\S4method{CTdata}{SpatialDataElement}(x, i = 1, ...)
 
 \S4method{CTtype}{SpatialDataElement}(x, ...)
 

@@ -69,7 +69,7 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
                 ps[i], ct$type, g(ct[[ct$type]]))) 
         }
     }
-    cs <- unlist(object$omero$channels)
+    cs <- unlist(channels(object))
     if (!is.null(cs)) coolcat("channels(%d): %s\n", cs)
 }
 setMethod("show", "Zattrs", .showZattrs)
