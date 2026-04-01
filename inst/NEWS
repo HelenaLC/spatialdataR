@@ -1,5 +1,6 @@
 changes in version 0.99.25
 
+- improved Zattrs show method (cf., PR #117)
 - replace jsonlite::fromJSON() with Rarr::read_zarr_attributes()
   for reading .zattrs & rewrite code-/test-base accordingly
 

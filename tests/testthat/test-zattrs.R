@@ -5,20 +5,22 @@ x <- readSpatialData(x, anndataR=FALSE)
 test_that("axes", {
     # image
     y <- axes(image(x))
-    expect_is(y, "data.frame")
-    expect_equal(dim(y), c(3, 2))
+    expect_is(y, "list")
+    expect_length(y, 3)
     # label
     y <- axes(label(x))
-    expect_is(y, "data.frame")
-    expect_equal(dim(y), c(2, 2))
+    expect_is(y, "list")
+    expect_length(y, 2)
     # shape
     y <- axes(shape(x))
-    expect_is(y, "character")
+    expect_is(y, "list")
     expect_length(y, 2)
+    expect_equal(unlist(y), c("x", "y"))
     # point
     y <- axes(point(x))
-    expect_is(y, "character")
+    expect_is(y, "list")
     expect_length(y, 2)
+    expect_equal(unlist(y), c("x", "y"))
 })
 
 test_that("rmvCT", {

@@ -55,8 +55,7 @@ NULL
 setMethod("axes", "Zattrs", \(x, ...) {
     if (!is.null(ms <- x$multiscales)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
-    if (is.null(names(x[[1]]))) return(unlist(x))
-    data.frame(do.call(rbind, x))
+    return(x)
 })
 
 #' @rdname coord-utils
@@ -251,7 +250,7 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     x@meta <- addCT(meta(x), name, type, data); x })
 
 .check_ct <- \(x, type, data) {
-    d <- ifelse(is.character(a <- axes(x)), length(a), nrow(a))
+    d <- length(axes(x))
     f <- \(t) stop("invalid 'data' for transformation of 'type' ", dQuote(t))
     t <- match.arg(type, c("identity", "scale", "rotate", "translation", "affine"))
     . <- switch(t, 
