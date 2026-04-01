@@ -49,7 +49,7 @@ For demonstration, we read in a toy dataset that is available through the packag
 ```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x, anndataR=FALSE))  # VJC Dec 8, test effect of absence of anndataR
+(x <- readSpatialData(x, anndataR=TRUE))
 ```
 
 `SpatialData` object behave like a list, thereby supporting flexible accession, 
