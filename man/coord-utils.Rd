@@ -64,7 +64,7 @@
 
 \S4method{addCT}{SpatialDataElement}(x, name, type, data)
 
-\S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL, force = FALSE)
+\S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL)
 }
 \arguments{
 \item{x}{\code{SpatialData}, an element, or \code{Zattrs}.}
@@ -107,7 +107,7 @@ CTpath(x, "blobs_labels", "sequence")
 CTname(z <- meta(label(x)))
 
 # add
-addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
+addCT(z, "scale", "scale", c(12, 34)) # overwrite
 CTdata(addCT(z, "new", "translation", c(12, 34)))
 
 # rmv
