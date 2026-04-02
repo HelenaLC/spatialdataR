@@ -1,6 +1,6 @@
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=FALSE)
+x <- readSpatialData(x, anndataR=TRUE)
 
 test_that("axes", {
     # image

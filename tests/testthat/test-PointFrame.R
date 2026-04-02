@@ -45,7 +45,8 @@ test_that("select", {
     replicate(3, {
         n <- sample(ncol(p), 1)
         i <- sample(names(p), n)
-        y <- select(p, i); z <- data(p)[, i]
+        y <- select(p, all_of(i))
+        z <- data(p)[, i]
         expect_equal(collect(data(y)), collect(z))
     })
 })

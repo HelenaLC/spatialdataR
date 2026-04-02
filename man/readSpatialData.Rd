@@ -26,7 +26,7 @@ readSpatialData(
   points = TRUE,
   shapes = TRUE,
   tables = TRUE,
-  anndataR = FALSE
+  anndataR = TRUE
 )
 }
 \arguments{
