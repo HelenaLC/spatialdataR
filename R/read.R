@@ -81,7 +81,7 @@ NULL
 
 #' @importFrom Rarr read_zarr_attributes
 #' @importFrom ZarrArray ZarrArray
-readsdlayer <- function(x, ...) {
+.readArray <- function(x, ...) {
     md <- read_zarr_attributes(x)
     ps <- .get_multiscales_dataset_paths(md)
     ps <- file.path(x, as.character(ps))
@@ -92,15 +92,15 @@ readsdlayer <- function(x, ...) {
 #' @rdname readSpatialData
 #' @export
 readImage <- function(x, ...) {
-    lyrs <- readsdlayer(x, ...)
-    ImageArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
+    l <- .readArray(x, ...)
+    ImageArray(data=l$array, meta=Zattrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
 #' @export
 readLabel <- function(x, ...) {
-  lyrs <- readsdlayer(x, ...)
-  LabelArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
+    l <- .readArray(x, ...)
+    LabelArray(data=l$array, meta=Zattrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
@@ -119,10 +119,10 @@ readPoint <- function(x, ...) {
 #' @import geoarrow   
 #' @export
 readShape <- function(x, ...) {
-    requireNamespace("geoarrow", quietly=TRUE)
-    md <- read_zarr_attributes(x)
     # TODO: previously had read_parquet(), 
     # but that doesn't work with geoparquet?
+    #requireNamespace("geoarrow", quietly=TRUE)
+    md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     ShapeFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
@@ -199,7 +199,7 @@ readTable <- function(x) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
+    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
     if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
