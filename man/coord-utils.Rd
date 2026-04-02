@@ -114,10 +114,10 @@ CTname(z <- meta(label(x)))
 
 # add
 addCT(z, "scale", "scale", c(12, 34)) # overwrite
-CTdata(addCT(z, "new", "translation", c(12, 34)))
+CTname(addCT(z, "new", "translation", c(12, 34)))
 
 # rmv
-CTdata(rmvCT(z, 2)) # by index
-CTdata(rmvCT(z, "scale")) # by name
-CTdata(rmvCT(z, 1)) # identity is protected
+CTname(rmvCT(z, 2))        # by index
+CTname(rmvCT(z, "scale"))  # by name
+CTname(rmvCT(z, "global")) # identity is protected
 }
