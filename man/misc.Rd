@@ -6,7 +6,7 @@
 \alias{show,sdArray-method}
 \alias{show,PointFrame-method}
 \alias{show,ShapeFrame-method}
-\title{Miscellaneous `Miro` methods}
+\title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
@@ -27,7 +27,19 @@ elements, i.e., an Image/LabelArray or Point/ShapeFrame.}
 ...
 }
 \examples{
-# TODO
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
+(sd <- readSpatialData(zs, anndataR=TRUE))
+
+# show element
+image(sd)
+label(sd)
+point(sd)
+shape(sd)
+
+# show .zattrs
+meta(label(sd))
+meta(image(sd, 2))
 }
 \author{
 Helena L. Crowell
