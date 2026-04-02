@@ -34,12 +34,12 @@
 #'
 #' # add
 #' addCT(z, "scale", "scale", c(12, 34)) # overwrite
-#' CTdata(addCT(z, "new", "translation", c(12, 34)))
+#' CTname(addCT(z, "new", "translation", c(12, 34)))
 #' 
 #' # rmv
-#' CTdata(rmvCT(z, 2)) # by index
-#' CTdata(rmvCT(z, "scale")) # by name
-#' CTdata(rmvCT(z, 1)) # identity is protected
+#' CTname(rmvCT(z, 2))        # by index
+#' CTname(rmvCT(z, "scale"))  # by name
+#' CTname(rmvCT(z, "global")) # identity is protected
 NULL
 
 # TODO: currently applying transformations only on 'data.frame's for plotting,
@@ -248,7 +248,10 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
     i <- match(i, nms)
     # protect against dropping identity
     i <- i[CTtype(x)[i] != "identity"]
-    if (!length(i)) stop("can't drop identity")
+    if (!length(i)) {
+        warning("can't drop identity")
+        return(x)
+    }
     ms <- "multiscales"
     ct <- "coordinateTransformations"
     if (length(i)) {
@@ -290,7 +293,7 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         is.character(type), length(type) == 1)
     .check_ct(x, type, data)
     # use existing as skeleton
-    old <- CTdata(x)
+    old <- CTlist(x)
     new <- old[[1]][c("input", "output", "type")]
     new$type <- type
     new$output$name <- name
