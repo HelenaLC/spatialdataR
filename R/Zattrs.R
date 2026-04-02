@@ -11,11 +11,11 @@
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
-#' z <- meta(label(x))
-#' axes(z) 
-#' CTdata(z)
+#' (z <- meta(label(x)))
+#' 
 #' CTname(z)
 #' CTtype(z)
+#' CTdata(z, "scale")
 #'
 #' @export
 Zattrs <- \(x=list()) {
@@ -36,12 +36,13 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
 
 .showZattrs <- function(object) {
     cat("class: Zattrs\n")
-    cat(sprintf("axes(%d):\n", length(x)))
-    if (!is.null(x <- axes(object))) {
-        cat("- name:", unlist(x), "\n")
+    ax <- axes(object)
+    cat(sprintf("axes(%d):\n", length(ax)))
+    if (is.character(ax[[1]])) {
+        cat("- name:", unlist(ax), "\n")
     } else {
-        cat("- name:", vapply(x, \(.) .$name, character(1)), "\n")
-        cat("- type:", vapply(x, \(.) .$type, character(1)), "\n")
+        cat("- name:", vapply(ax, \(.) .$name, character(1)), "\n")
+        cat("- type:", vapply(ax, \(.) .$type, character(1)), "\n")
     }
     cat(sprintf("coordTrans(%d):\n", n <- length(CTname(object))))
     g <- \(.) {
