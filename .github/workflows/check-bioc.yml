@@ -52,8 +52,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: '4.5', bioc: '3.22', cont: "bioconductor/bioconductor_docker:RELEASE_3_22", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
-          - { os: ubuntu-latest, r: '4.6', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
+          - { os: ubuntu-latest, r: '4.5', bioc: '3.22', cont: "bioconductor/bioconductor_docker:RELEASE_3_22", rspm: "https://p3m.dev/cran/__linux__/noble/latest" }
+          - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://p3m.dev/cran/__linux__/noble/latest" }
           - { os: macOS-latest, r: 'devel', bioc: 'devel'}
           - { os: windows-latest, r: 'devel', bioc: 'devel'}
           ## Check https://github.com/r-lib/actions/tree/master/examples
@@ -117,23 +117,12 @@ jobs:
           key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.5-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.5-
 
-      # - name: Install Linux system dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu", "20.04")), collapse = " "))')
-      #     echo $sysreqs
-      #     sudo -s eval "$sysreqs"
-
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
         run: |
           ## Enable installing XML from source if needed
           brew install libxml2
           echo "XML_CONFIG=/usr/local/opt/libxml2/bin/xml2-config" >> $GITHUB_ENV
-
-          ## ## Required to install magick as noted at
-          ## ## https://github.com/r-lib/usethis/commit/f1f1e0d10c1ebc75fd4c18fa7e2de4551fd9978f#diff-9bfee71065492f63457918efcd912cf2
-          ## brew install imagemagick@6
 
           ## For textshaping, required by ragg, and required by pkgdown
           brew install harfbuzz fribidi
@@ -172,7 +161,11 @@ jobs:
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
-          install.packages(c("rcmdcheck", "BiocCheck"), repos = BiocManager::repositories())
+          install.packages(c("rcmdcheck", "BiocCheck", "remotes"), repos = BiocManager::repositories())
+          
+          ## TEMP REMOVE LATER:
+          ## For now install Rarr from github since ZarrArray needs >= 1.11.33
+          remotes::install_github("Huber-group-EMBL/Rarr")
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
