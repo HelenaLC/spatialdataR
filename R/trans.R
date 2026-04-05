@@ -143,6 +143,7 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
     for (. in seq_along(ts)) {
         t <- ts[[.]]$type
         d <- ts[[.]]$data
+        d <- unlist(d)
         if (length(d) == 3)
             d <- d[-1]
         switch(t, 
