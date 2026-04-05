@@ -98,7 +98,7 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     match.arg(i, unlist(nms[idx]))
     # count occurrences
     t <- lapply(tables(x), \(t) meta(t)$region)
-    ok <- rapply(t, \(.) i %in% ., "character")
+    ok <- vapply(t, \(.) i %in% ., logical(1))
     # failure when no/many matches
     if (!name) return(any(ok))
     if (!any(ok)) stop("no 'table' found for 'i'")

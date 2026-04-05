@@ -32,7 +32,7 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @aliases channels
 #' @export
-setMethod("channels", "Zattrs", \(x, ...) x$omero$channels)
+setMethod("channels", "Zattrs", \(x, ...) unlist(x$omero$channels))
 
 #' @rdname ImageArray
 #' @aliases channels
@@ -48,7 +48,8 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     # validate 'multiscales'
     .validate_multiscales_dataset_path(md)
     # get & validate 'path's
-    ps <- md$multiscales[[1]]$datasets[[1]]$path
+    ds <- md$multiscales[[1]]$datasets
+    ps <- vapply(ds, \(.) .$path, character(1))
     ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
     if (length(ps)) {
         qs <- seq(min(ps), max(ps))
