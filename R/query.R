@@ -131,13 +131,13 @@ setMethod("query", "PointFrame", \(x, ...) {
         mx <- .check_pol(mx <- args[[1]])
         xy <- st_as_sf(collect(data(x)[c("x", "y")]), coords=c("x", "y"))
         ok <- st_intersects(xy, st_polygon(list(mx)), sparse=FALSE)
-        x@data <- x@data[which(ok), ]
+        return(x[which(ok[, 1])])
     } else {
         .check_box(args)
         y <- filter(x, 
             x >= args$xmin, x <= args$xmax, 
             y >= args$ymin, y <= args$ymax)    
         x@data <- y@data
+        return(x)
     }
-    return(x)
 })
