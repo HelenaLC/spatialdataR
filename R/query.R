@@ -8,21 +8,24 @@
 #' @return same as input
 #'
 #' @examples
-#' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, tables=FALSE)
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="SpatialData")
+#' sd <- readSpatialData(zs, tables=FALSE)
 #' 
-#' image(x, "box") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+#' image(sd, "box") <- query(image(sd), xmin=0, xmax=30, ymin=30, ymax=50)
 #' 
-#' image(x)
-#' image(x, "box")
+#' image(sd)
+#' image(sd, "box")
 NULL
+
+# TODO: query with polygonal boundary region
 
 .check_bb <- \(args) {
     m <- match(names(args), c("xmin", "xmax", "ymin", "ymax"))
     if (any(is.na(m)) || !identical(sort(m), seq_len(4)))
         stop("currently only supporting bounding box query;", 
             " please provide 'xmin/xmax/ymin/ymax' as ...")
+    stopifnot(length(args) == 4, is.numeric(unlist(args)))
 }
 
 #' @rdname query
@@ -52,33 +55,15 @@ setMethod("query", "SpatialData", \(x, j=NULL, ...) {
 
 #' @rdname query
 #' @export
-setMethod("query", "ImageArray", \(x, j, ...) {
-    qu <- list(...)
-    .check_bb(qu)
-    if (missing(j)) j <- 1
-    if (is.numeric(j)) j <- CTname(x)[j]
-    stopifnot(length(j) == 1)
-    . <- grep(j, CTname(x))
-    if (!length(.) || is.na(.)) stop("invalid 'j'")
-    # transform query into target space
-    ts <- CTpath(x, j)
-    xy <- list(c(qu$xmin, qu$xmax), c(qu$ymin, qu$ymax))
-    xy <- data.frame(xy); names(xy) <- c("x", "y")
-    xy <- .trans_xy(xy, ts, TRUE)
-    xy <- lapply(xy, \(.) as.list(round(.)))
-    x <- x[, # crop (i.e., subset) array dimensions 2-3
-        do.call(seq, xy[[2]]),
-        do.call(seq, xy[[1]])]
-    # transform array dimensions into target space
-    os <- data.frame(x=c(0, dim(x)[3]), y=c(0, dim(x)[2]))
-    os <- vapply(.trans_xy(os, ts), min, numeric(1))
-    # add transformation of type translation as to
-    # offset origin by difference between new & old
-    os <- unlist(qu[c("xmin", "ymin")]) - os
-    if (!all(os == 0)) x <- addCT(x, 
-        name=j, type="translation", 
-        data=c(0, os[2], os[1]))
-    return(x)
+setMethod("query", "ImageArray", \(x, ...) {
+    args <- list(...)
+    .check_bb(args)
+    d <- dim(x)
+    args$ymax <- min(args$ymax, d[2])
+    args$xmax <- min(args$xmax, d[3])
+    j <- seq(args$ymin, args$ymax)
+    k <- seq(args$xmin, args$xmax)
+    return(x[, j, k])
 })
 
 #' @rdname query
@@ -87,28 +72,26 @@ setMethod("query", "LabelArray", \(x, ...) {
     args <- list(...)
     .check_bb(args)
     d <- dim(x)
-    if (args$ymax > d[1]) args$ymax <- d[1]
-    if (args$xmax > d[2]) args$xmax <- d[2]
-    a <- data(x)[
-        seq(args$ymin, args$ymax),
-        seq(args$xmin, args$xmax)] 
-    x@data <- a
-    return(x)
+    args$ymax <- min(args$ymax, d[1])
+    args$xmax <- min(args$xmax, d[2])
+    i <- seq(args$ymin, args$ymax)
+    j <- seq(args$xmin, args$xmax)
+    return(x[i, j])
 })
 
 #' @rdname query
+#' @importFrom sf st_as_sf st_crop
 #' @export
 setMethod("query", "ShapeFrame", \(x, ...) {
+    # TODO: this will drop geometries where any coordinate 
+    # is out of bounds; keep but crop to boundary region?
     args <- list(...)
     .check_bb(args)
-    df <- st_as_sf(data(x))
-    xy <- st_coordinates(df)
-    i <- 
-        xy[, 1] >= args$xmin & 
-        xy[, 1] <= args$xmax & 
-        xy[, 2] >= args$ymin & 
-        xy[, 2] <= args$ymax 
-    x@data <- data(x)[which(i), ]
+    sf <- st_as_sf(data(x))
+    bb <- st_bbox(unlist(args))
+    # note: non-spatial attributes (e.g., radius) gives warnings?
+    suppressWarnings(sf <- st_crop(sf, bb))
+    x@data <- sf[names(x)]
     return(x)  
 })
 

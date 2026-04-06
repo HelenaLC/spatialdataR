@@ -11,7 +11,7 @@
 \usage{
 \S4method{query}{SpatialData}(x, j = NULL, ...)
 
-\S4method{query}{ImageArray}(x, j, ...)
+\S4method{query}{ImageArray}(x, ...)
 
 \S4method{query}{LabelArray}(x, ...)
 
@@ -33,12 +33,12 @@ same as input
 spatial queries
 }
 \examples{
-x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, tables=FALSE)
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
+sd <- readSpatialData(zs, tables=FALSE)
 
-image(x, "box") <- query(image(x), xmin=0, xmax=30, ymin=30, ymax=50)
+image(sd, "box") <- query(image(sd), xmin=0, xmax=30, ymin=30, ymax=50)
 
-image(x)
-image(x, "box")
+image(sd)
+image(sd, "box")
 }
