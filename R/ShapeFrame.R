@@ -82,7 +82,7 @@ setMethod("[", c("ShapeFrame", "missing", "missing"),
 #' @export
 setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) { 
     i <- seq_len(nrow(x))[i]
-    j <- seq_len(nrow(x))[j]
+    j <- seq_len(ncol(x))[j]
     x@data <- x@data[i, j]
     return(x)
 })
