@@ -58,7 +58,7 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
         cat(sprintf("- %s: (%s%s)\n",
             CTname(object)[i],
             CTtype(object)[i],
-            f(CTdata(object)[[i]][[CTtype(object)[i]]])))
+            f(CTlist(object)[[i]][[CTtype(object)[i]]])))
     ms <- object$multiscales[[1]]
     if (!is.null(ms)) {
         ds <- ms$datasets
