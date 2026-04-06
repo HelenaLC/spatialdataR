@@ -11,6 +11,8 @@
 \alias{data,sdArray-method}
 \alias{dim,sdArray-method}
 \alias{length,sdArray-method}
+\alias{data_type,sdArray-method}
+\alias{data_type,DelayedArray-method}
 \title{Methods for `ImageArray` and `LabelArray` class}
 \usage{
 \S4method{data}{sdArray}(x, k = 1)
@@ -18,6 +20,10 @@
 \S4method{dim}{sdArray}(x)
 
 \S4method{length}{sdArray}(x)
+
+\S4method{data_type}{sdArray}(x)
+
+\S4method{data_type}{DelayedArray}(x)
 }
 \arguments{
 \item{x}{\code{ImageArray} or  \code{LabelArray}}

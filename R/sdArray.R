@@ -47,3 +47,14 @@ setMethod("dim", "sdArray", \(x) dim(data(x)))
 #' @rdname Array-methods
 #' @export
 setMethod("length", "sdArray", \(x) length(data(x, NULL)))
+
+#' @rdname Array-methods
+#' @export
+setMethod("data_type", "sdArray", \(x) data_type(data(x)))
+
+#' @rdname Array-methods
+#' @importFrom DelayedArray DelayedArray
+#' @importFrom Rarr zarr_overview
+#' @importFrom ZarrArray path
+#' @export
+setMethod("data_type", "DelayedArray", \(x) zarr_overview(path(x), as_data_frame=TRUE)$data_type)
