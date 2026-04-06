@@ -81,6 +81,7 @@ setGeneric("query", \(x, ...) standardGeneric("query"))
 setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("channels", \(x, ...) standardGeneric("channels"))
+setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 
 # tbl ----
 
