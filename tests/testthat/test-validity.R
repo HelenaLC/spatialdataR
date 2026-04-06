@@ -34,3 +34,15 @@ test_that("validity,PointFrame", {
     expect_error(validObject(select(x, -y)))
     expect_silent(validObject(select(x, -c(x, y))[0,]))
 })
+
+test_that("validity,ShapeFrame", {
+    x <- shape(sd,1)
+    x@data <- select(data(x), -radius)
+    expect_silent(validObject(x))
+    x <- shape(sd,1)
+    x@data <- filter(data(x), radius == Inf)
+    expect_silent(validObject(x))
+    x <- shape(sd,1)
+    x@data <- select(data(x), -geometry)
+    expect_error(validObject(x))
+})

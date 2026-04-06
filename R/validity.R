@@ -17,16 +17,6 @@
     return(msg)
 }
 
-.validatePointFrame <- \(object) {
-    msg <- c()
-    if (!length(object)) return(msg) 
-    if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
-    if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
-    return(msg)
-}
-#' @importFrom S4Vectors setValidity2
-setValidity2("PointFrame", .validatePointFrame)
-
 .validateImageArray <- \(object) {
     msg <- c()
     res <- length(object)
@@ -57,6 +47,25 @@ setValidity2("ImageArray", .validateImageArray)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("LabelArray", .validateLabelArray)
+
+.validatePointFrame <- \(object) {
+    msg <- c()
+    if (!length(object)) return(msg) 
+    if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
+    if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
+    return(msg)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("PointFrame", .validatePointFrame)
+
+.validateShapeFrame <- \(object) {
+    msg <- c()
+    if (!nrow(object)) return(msg) 
+    if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
+    return(msg)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("ShapeFrame", .validateShapeFrame)
 
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
