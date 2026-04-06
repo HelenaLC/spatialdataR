@@ -5,7 +5,7 @@ sd <- readSpatialData(zs, tables=FALSE)
 
 test_that("validity,ImageArray", {
     # all resolutions should be numbers
-    # (note: logical gets coerces to binary)
+    # (note: logical gets coerced to binary)
     expect_error(ImageArray(list(v <- character(1))))
     x <- image(sd,1); x@data[[1]][1,1,1] <- v; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]][1,1,1] <- v; expect_error(validObject(x))
