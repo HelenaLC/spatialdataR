@@ -118,6 +118,8 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
+    stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
+    if (t %% 360 == 0) return(x)
     y <- .y <- .x <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
@@ -133,7 +135,7 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, all(is.finite(t)))
+    stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
     if (all(t == 0)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
@@ -144,11 +146,23 @@ setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
 
 # shape ----
 
+# TODO: do this w/o realizing
+#' @importFrom sf st_as_sf st_geometry st_geometry<-
+.trans_s <- \(x, f) {
+    y <- st_as_sf(data(x))
+    xy <- st_coordinates(y)
+    xy <- data.frame(f(xy))
+    xy <- st_as_sf(xy, coords=names(xy))
+    st_geometry(y) <- st_geometry(xy)
+    x@data <- y
+    return(x)
+}
+
 #' @rdname trans
 #' @importFrom sf st_as_sf st_coordinates
 #' @export
 setMethod("scale", c("ShapeFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, t > 0, all(is.finite(t)))
+    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
     .trans_s(x, \(xy) sweep(xy, 2, t, `*`))
 })
 
@@ -209,17 +223,4 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
             })
     }
     return(xy)
-}
-
-# transform 'ShapeFrame' by realizing,
-# and updating 'sf' geometry coordinates
-#' @importFrom sf st_as_sf st_geometry st_geometry<-
-.trans_s <- \(x, f) {
-    y <- st_as_sf(data(x))
-    xy <- st_coordinates(y)
-    xy <- data.frame(f(xy))
-    xy <- st_as_sf(xy, coords=names(xy))
-    st_geometry(y) <- st_geometry(xy)
-    x@data <- y
-    return(x)
 }
