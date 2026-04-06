@@ -133,6 +133,8 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
+    stopifnot(is.numeric(t), length(t) == 2, all(is.finite(t)))
+    if (all(t == 0)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x+t[1]) |>

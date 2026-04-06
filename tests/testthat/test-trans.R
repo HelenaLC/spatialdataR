@@ -51,3 +51,26 @@ test_that("translation,labelArray", {
     expect_equal(dx[1,], dy[1,]/2)
     expect_identical(dx[2,], dy[2,])
 })
+
+test_that("translation,PointFrame", {
+    x <- point(sd, 1)
+    y <- translation(x, c(0,0))
+    expect_identical(x, y)
+    # invalid
+    expect_error(translation(x, numeric(1)))
+    expect_error(translation(x, numeric(3)))
+    expect_error(translation(x, logical(2)))
+    expect_error(translation(x, c(Inf, Inf)))
+    expect_error(translation(x, character(2)))
+    expect_error(translation(x, NA*numeric(2)))
+    # valid
+    i <- setdiff(names(x), c("x", "y"))
+    f <- \() sample(33, 1)*sample(c(-1, 1), 1)
+    replicate(10, \() {
+        n <- f(); m <- f()
+        y <- translation(x, c(n,m))
+        expect_identical(x$x, y$x+n)
+        expect_identical(x$y, y$y+m)
+        expect_identical(x[,i], y[i])
+    })
+})
