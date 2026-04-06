@@ -260,7 +260,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
     ct <- "coordinateTransformations"
     if (length(i)) {
         if (is.null(x[[ms]])) {
-            x[[ct]] <- x[[ct]][i]
+            x[[ct]] <- x[[ct]][-i]
         } else {
             y <- x[[ms]][[1]][[ct]][-i]
             x[[ms]][[1]][[ct]] <- y
