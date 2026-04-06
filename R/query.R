@@ -89,7 +89,7 @@ setMethod("query", "ShapeFrame", \(x, ...) {
     .check_bb(args)
     sf <- st_as_sf(data(x))
     bb <- st_bbox(unlist(args))
-    # note: non-spatial attributes (e.g., radius) gives warnings?
+    # note: non-spatial attributes (e.g., radius) give warnings?
     suppressWarnings(sf <- st_crop(sf, bb))
     x@data <- sf[names(x)]
     return(x)  
