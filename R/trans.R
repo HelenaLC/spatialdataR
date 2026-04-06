@@ -107,6 +107,8 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate
 #' @export
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
+    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
+    if (all(t == 1)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x*t[1]) |>
