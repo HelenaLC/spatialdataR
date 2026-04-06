@@ -101,6 +101,8 @@ setMethod("query", "ShapeFrame", \(x, ...) {
     # is out of bounds; keep but crop to boundary region?
     args <- list(...)
     if (length(args) == 1) {
+        # TODO: currently ignoring 'radius' for circles (i.e.,
+        # query based on centroids only); what does Python do?
         mx <- .check_pol(mx <- args[[1]])
         sf <- st_as_sf(data(x))
         ok <- st_intersects(sf, st_polygon(list(mx)), sparse=FALSE)
@@ -118,7 +120,7 @@ setMethod("query", "ShapeFrame", \(x, ...) {
 
 #' @rdname query
 #' @importFrom sf st_as_sf st_polygon st_intersects
-#' @importFrom dplyr collect
+#' @importFrom dplyr collect filter
 #' @export
 setMethod("query", "PointFrame", \(x, ...) {
     args <- list(...)

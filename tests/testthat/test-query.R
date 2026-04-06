@@ -30,7 +30,7 @@ test_that("query,ImageArray", {
     expect_equal(dim(j), c(3, 1+h-2, 1+w-1))
 })
 
-test_that("query,PointFrame", {
+test_that("query-box,PointFrame", {
     n <- length(p <- point(x))
     # this shouldn't do anything
     q <- query(p, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
@@ -53,7 +53,23 @@ test_that("query,PointFrame", {
     expect_identical(df[i, ], fd)
 })
 
-test_that("query,ShapeFrame", {
+test_that("query-pol,PointFrame", {
+    n <- length(p <- point(x))
+    # sample random points &
+    # query tiny polygon around them
+    replicate(5, {
+        i <- sample(n, 1)
+        xy <- c(p[i]$x, p[i]$y)
+        xy <- rbind(
+            xy+c(0, d <- 1e-6),
+            xy+c(-d,-d), xy+c(+d,-d))
+        q <- query(p, xy)
+        expect_length(q, 1)
+        expect_equal(q, p[i])
+    })
+})
+
+test_that("query-box,ShapeFrame", {
     n <- length(s <- shape(x))
     # mock query without any effect
     t <- query(s, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
@@ -70,4 +86,21 @@ test_that("query,ShapeFrame", {
     names(bb) <- c("xmin", "xmax", "ymin", "ymax")
     t <- do.call(query, c(list(x=s), bb))
     expect_equal(s[i], t)
+})
+
+test_that("query-pol,ShapeFrame", {
+    n <- length(s <- shape(x))
+    xy <- st_coordinates(st_as_sf(data(s)))
+    # sample random shapes &
+    # query tiny polygon around them
+    replicate(5, {
+        i <- sample(n, 1)
+        xy <- xy[i, ]
+        xy <- rbind(
+            xy+c(0, d <- 1e-6),
+            xy+c(-d,-d), xy+c(+d,-d))
+        t <- query(s, xy)
+        expect_length(t, 1)
+        expect_equal(t, s[i])
+    })
 })
