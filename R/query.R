@@ -20,19 +20,22 @@ NULL
 
 # TODO: query with polygonal boundary region
 
-.check_box <- \(args) {
-    m <- match(names(args), c("xmin", "xmax", "ymin", "ymax"))
-    if (any(is.na(m)) || !identical(sort(m), seq_len(4)))
-        stop("currently only supporting bounding box query;", 
-            " please provide 'xmin/xmax/ymin/ymax' as ...")
-    stopifnot(length(args) == 4, is.numeric(unlist(args)))
+.check_box <- \(bb) {
+    xy <- c("xmin", "xmax", "ymin", "ymax")
+    ok <- c(
+        length(bb) == 4, setequal(names(bb), xy),
+        is.numeric(bb <- unlist(bb)), !is.na(bb))
+    if (!all(ok)) stop(
+        "Invalid bounding box query; should be length-4 ",
+        "numeric vector with names 'xmin/xmax/ymin/ymax'")
 }
+
 .check_pol <- \(mx) {
     ok <- c(
         is.matrix(mx), is.numeric(mx), 
         nrow(mx) >= 3, ncol(mx) == 2)
     if (!all(ok)) stop(
-        "Invalid polygon query; should be a numeric matrix ",
+        "Invalid polygon query; should be numeric matrix ",
         "with ≥ 3 rows and 2 columns (= xy-coordinates)")
     # ensure polygon is closed
     top <- mx[1, ]
@@ -109,10 +112,10 @@ setMethod("query", "ShapeFrame", \(x, ...) {
         x@data <- x@data[which(ok), ]
         return(x)
     }
+    # note: non-spatial attributes (e.g., radius) give warnings?
     .check_box(args)
     sf <- st_as_sf(data(x))
     bb <- st_bbox(unlist(args))
-    # note: non-spatial attributes (e.g., radius) give warnings?
     suppressWarnings(sf <- st_crop(sf, bb))
     x@data <- sf[names(x)]
     return(x)  
