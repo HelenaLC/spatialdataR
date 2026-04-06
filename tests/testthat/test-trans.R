@@ -66,12 +66,12 @@ test_that("translation,PointFrame", {
     # valid
     i <- setdiff(names(x), c("x", "y"))
     f <- \() sample(33, 1)*sample(c(-1, 1), 1)
-    replicate(10, \() {
+    replicate(10, {
         n <- f(); m <- f()
         y <- translation(x, c(n,m))
-        expect_identical(x$x, y$x+n)
-        expect_identical(x$y, y$y+m)
-        expect_identical(x[,i], y[,i])
+        expect_equal(x$x+n, y$x)
+        expect_equal(x$y+m, y$y)
+        for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })
 
@@ -88,11 +88,11 @@ test_that("rotate,PointFrame", {
     # valid
     i <- setdiff(names(x), c("x", "y"))
     f <- \() sample(360, 1)*sample(c(-1, 1), 1)
-    g <- \(x) cbind(x$x, x$y)
-    replicate(10, \() {
+    g <- \(.) cbind(.$x, .$y)
+    replicate(10, {
         y <- rotate(x, t <- f())
         R <- .R(t*base::pi/180)
-        expect_identical(g(x) %*% R, g(y))
+        expect_equal(t(R %*% t(g(x))), g(y))
         for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })

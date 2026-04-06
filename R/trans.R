@@ -120,14 +120,13 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
-    y <- .y <- .x <- NULL # R CMD check
+    y <- a <- b <- c <- d <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
-        mutate(.x=x*R[1,1], .y=y*R[1,2]) |>
-        mutate(x=.x+.y) |>
-        mutate(.x=x*R[2,1], .y=y*R[2,2]) |>
-        mutate(y=.x+.y) |>
-        select(-.x, -.y)
+        mutate(a=x*R[1,1], b=y*R[1,2]) |>
+        mutate(c=x*R[2,1], d=y*R[2,2]) |>
+        mutate(x=a+b, y=c+d) |>
+        select(-c(a,b, c,d))
     return(x)
 })
 
@@ -185,7 +184,7 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
 # utils ----
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
-.R <- function(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+.R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
 
 # count occurrences of each coordinate space;
 # return most frequent (in order of appearance)
