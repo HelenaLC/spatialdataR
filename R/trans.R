@@ -56,7 +56,7 @@ setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
 # label ----
 
 #' @rdname trans
-#' @importFrom DelayedArray cbind rbind
+#' @importFrom DelayedArray cbind rbind ConstantArray
 #' @importFrom methods as
 #' @export
 setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
@@ -88,12 +88,12 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
         }
         if (t[2] != 0) {
             d <- c(nrow(y), abs(t[2]), n)
-            z <- DelayedArray(array(0, d))
+            z <- ConstantArray(0, dim=d)
             y <- if (t[2] > 0) cbind(z, y) else cbind(y, z)
         }
         if (t[1] != 0) {
             d <- c(abs(t[1]), ncol(y), n)
-            z <- DelayedArray(array(0, d))
+            z <- ConstantArray(0, dim=d)
             y <- if (t[1] > 0) rbind(z, y) else rbind(y, z)
         }
         if (!is.null(n)) aperm(y, c(3,1,2)) else y
