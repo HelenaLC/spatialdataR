@@ -211,7 +211,7 @@ readSpatialData <- function(x,
             if (is.numeric(opt) && opt > (. <- length(j))) 
                 stop("'", i, "=", opt, "', but only ", ., " elements found")
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
-                stop("couln't find ", i, " of name", .)
+                stop("couldn't find ", i, " of name", .)
             j <- j[opt]
         }
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
