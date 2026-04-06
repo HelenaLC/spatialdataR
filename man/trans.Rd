@@ -6,6 +6,7 @@
 \alias{rotate}
 \alias{translation}
 \alias{scale,sdArray,numeric-method}
+\alias{translation,sdArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
 \alias{rotate,PointFrame,numeric-method}
 \alias{translation,PointFrame,numeric-method}
@@ -15,6 +16,8 @@
 \title{Transformations}
 \usage{
 \S4method{scale}{sdArray,numeric}(x, j, t, ...)
+
+\S4method{translation}{sdArray,numeric}(x, t, ...)
 
 \S4method{scale}{PointFrame,numeric}(x, t, ...)
 
