@@ -53,7 +53,7 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
     if (length(ps)) {
         qs <- seq(min(ps), max(ps))
-        if (!all.equal(ps, qs))
+        if (!isTRUE(all.equal(ps, qs)))
             stop("ImageArray paths are ill-defined, should",
                 " be an integer sequence, e.g., 0,1,...,n")
     }
