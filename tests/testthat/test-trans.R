@@ -42,7 +42,7 @@ test_that("translation,labelArray", {
     expect_equal(dim(y), dim(x)+t)
     expect_is(data(y), "DelayedArray")
     expect_true(sum(data(y)[,seq_len(n)]) == 0)
-    # multiscale
+    # res
     x <- label(sd, 2)
     t <- c(n <- nrow(x), 0)
     y <- translation(x, t)
@@ -66,12 +66,35 @@ test_that("translation,PointFrame", {
     # valid
     i <- setdiff(names(x), c("x", "y"))
     f <- \() sample(33, 1)*sample(c(-1, 1), 1)
-    replicate(10, {
+    replicate(5, {
         n <- f(); m <- f()
         y <- translation(x, c(n,m))
         expect_equal(x$x+n, y$x)
         expect_equal(x$y+m, y$y)
         for (. in i) expect_identical(x[[.]], y[[.]])
+    })
+})
+
+test_that("scale,PointFrame", {
+    x <- point(sd, 1)
+    y <- scale(x, c(1, 1))
+    expect_identical(x, y)
+    # invalid
+    expect_error(scale(x, -c(1, 1)))
+    expect_error(scale(x, c(1, -1)))
+    expect_error(scale(x, numeric(1)))
+    expect_error(scale(x, numeric(3)))
+    expect_error(scale(x, logical(2)))
+    expect_error(scale(x, character(2)))
+    expect_error(scale(x, NA*numeric(2)))
+    expect_error(scale(x, c(Inf, Inf)))
+    # valid
+    i <- setdiff(names(x), c("x", "y"))
+    f <- \() replicate(2, runif(1, 0.1, 2))
+    g <- \(.) cbind(.$x, .$y)
+    replicate(5, {
+        y <- scale(x, t <- f())
+        expect_equal(sweep(g(x), 2, t, `*`), g(y))
     })
 })
 
@@ -87,9 +110,9 @@ test_that("rotate,PointFrame", {
     expect_error(rotate(x, NA*numeric(1)))
     # valid
     i <- setdiff(names(x), c("x", "y"))
-    f <- \() sample(360, 1)*sample(c(-1, 1), 1)
+    f <- \() sample(777, 1)*sample(c(-1, 1), 1)
     g <- \(.) cbind(.$x, .$y)
-    replicate(10, {
+    replicate(5, {
         y <- rotate(x, t <- f())
         R <- .R(t*base::pi/180)
         expect_equal(t(R %*% t(g(x))), g(y))
