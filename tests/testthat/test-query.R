@@ -55,6 +55,9 @@ test_that("query-box,PointFrame", {
 
 test_that("query-pol,PointFrame", {
     n <- length(p <- point(x))
+    # mock all-inclusive query
+    xy <- rbind(c(0,0), c(0,1e6), c(1e6,0))
+    expect_equal(query(p, xy), p)
     # sample random points &
     # query tiny polygon around them
     replicate(5, {
@@ -90,9 +93,12 @@ test_that("query-box,ShapeFrame", {
 
 test_that("query-pol,ShapeFrame", {
     n <- length(s <- shape(x))
-    xy <- st_coordinates(st_as_sf(data(s)))
+    # mock all-inclusive query
+    xy <- rbind(c(0,0), c(0,1e6), c(1e6,0))
+    expect_equal(query(s, xy), s)
     # sample random shapes &
     # query tiny polygon around them
+    xy <- st_coordinates(st_as_sf(data(s)))
     replicate(5, {
         i <- sample(n, 1)
         xy <- xy[i, ]
