@@ -65,57 +65,64 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 #' @examples
 #' library(SpatialData.data)
 #' dir.create(tf <- tempfile())
-#' base <- SpatialData.data:::.unzip_merfish_demo(tf)
-#' (x <- readSpatialData(base))
+#' zs <- SpatialData.data:::.unzip_merfish_demo(tf)
 #' 
-#' # import tables using anndataR
-#' (x <- readSpatialData(base, anndataR=TRUE))
+#' # read complete Zarr store
+#' (sd <- readSpatialData(zs, anndataR=TRUE))
+#' 
+#' # helper that gets path to first element in layer 'l' 
+#' fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
+#'   
+#' # read individual element  
+#' readImage(fn("images"))
+#' readShape(fn("shapes"))
+#' readPoint(fn("points"))
 NULL
 
+#' @importFrom Rarr read_zarr_attributes
 #' @importFrom ZarrArray ZarrArray
-readsdlayer <- function(x, ...) {
-  md <- fromJSON(file.path(x, ".zattrs"))
-  ps <- .get_multiscales_dataset_paths(md)
-  list(array = lapply(ps, \(.) ZarrArray::ZarrArray(file.path(x, as.character(.)))), 
-       md = md)
+.readArray <- function(x, ...) {
+    md <- read_zarr_attributes(x)
+    ps <- .get_multiscales_dataset_paths(md)
+    ps <- file.path(x, as.character(ps))
+    as <- lapply(ps, ZarrArray)
+    list(array=as, md=md)
 }
 
 #' @rdname readSpatialData
-#' @importFrom jsonlite fromJSON
 #' @export
 readImage <- function(x, ...) {
-    lyrs <- readsdlayer(x, ...)
-    ImageArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
+    l <- .readArray(x, ...)
+    ImageArray(data=l$array, meta=Zattrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
-#' @importFrom jsonlite fromJSON
 #' @export
 readLabel <- function(x, ...) {
-  lyrs <- readsdlayer(x, ...)
-  LabelArray(data=lyrs$array, meta=Zattrs(lyrs$md), ...)
+    l <- .readArray(x, ...)
+    LabelArray(data=l$array, meta=Zattrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
-#' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
+#' @importFrom Rarr read_zarr_attributes
 #' @export
 readPoint <- function(x, ...) {
-    md <- fromJSON(file.path(x, ".zattrs"))
+    md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     PointFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData
-#' @importFrom jsonlite fromJSON
 #' @importFrom arrow open_dataset
+#' @importFrom Rarr read_zarr_attributes
 #' @import geoarrow   
 #' @export
 readShape <- function(x, ...) {
-    requireNamespace("geoarrow", quietly=TRUE)
-    md <- fromJSON(file.path(x, ".zattrs"))
     # TODO: previously had read_parquet(), 
     # but that doesn't work with geoparquet?
+    #requireNamespace("geoarrow", quietly=TRUE)
+    md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     ShapeFrame(data=open_dataset(pq), meta=Zattrs(md))
 }
@@ -165,7 +172,6 @@ readShape <- function(x, ...) {
 }
 
 #' @rdname readSpatialData
-#' @importFrom jsonlite fromJSON
 #' @importFrom S4Vectors metadata metadata<-
 #' @importFrom SummarizedExperiment colData colData<- 
 #' @importFrom SingleCellExperiment 
@@ -193,7 +199,7 @@ readTable <- function(x) {
 #' @export
 readSpatialData <- function(x, 
     images=TRUE, labels=TRUE, points=TRUE, 
-    shapes=TRUE, tables=TRUE, anndataR=FALSE) {
+    shapes=TRUE, tables=TRUE, anndataR=TRUE) {
     if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
@@ -211,6 +217,6 @@ readSpatialData <- function(x,
         f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
         lapply(j, \(.) do.call(f, list(.)))
     }) 
-    if (!anndataR) sd$tables <- .readTables_basilisk(x)
+    if (!anndataR && !isFALSE(tables)) sd$tables <- .readTables_basilisk(x)
     do.call(SpatialData, sd)
 }

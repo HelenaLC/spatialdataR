@@ -43,7 +43,10 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     for (. in names(j)) {
         .j <- j[[.]]
         n <- length(attr(x, .))
-        if (length(.j) == 1 && is.infinite(.j)) {
+        if (is.character(.j)) {
+            if (!all(.j %in% names(attr(x, .))))
+                stop("invalid 'j'")
+        } else if (length(.j) == 1 && is.infinite(.j)) {
             .j <- n
         } else if (any(.j > n)) {
             stop("invalid 'j'")
@@ -217,7 +220,7 @@ NULL
 
 f <- \(.) setReplaceMethod(., 
     c("SpatialData", "character", typ[[.]]), 
-    \(x, i, value) { 
+    \(x, i, value) {
         y <- attr(x, paste0(., "s"))
         y[[i]] <- value
         attr(x, paste0(., "s")) <- y
@@ -253,7 +256,7 @@ NULL
 
 f <- \(.) setReplaceMethod(., 
     c("SpatialData", "missing", typ[[.]]), 
-    \(x, i, value) {
+    \(x, i, value) { 
         f <- get(paste0(., "<-"))
         f(x=x, i=1, value=value)
 })

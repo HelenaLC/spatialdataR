@@ -12,11 +12,13 @@
 \alias{rmvCT}
 \alias{axes,Zattrs-method}
 \alias{axes,SpatialDataElement-method}
+\alias{CTlist,Zattrs-method}
 \alias{CTdata,Zattrs-method}
-\alias{CTdata,SpatialDataElement-method}
 \alias{CTtype,Zattrs-method}
-\alias{CTtype,SpatialDataElement-method}
 \alias{CTname,Zattrs-method}
+\alias{CTlist,SpatialDataElement-method}
+\alias{CTdata,SpatialDataElement-method}
+\alias{CTtype,SpatialDataElement-method}
 \alias{CTname,SpatialDataElement-method}
 \alias{CTname,SpatialData-method}
 \alias{CTgraph,SpatialData-method}
@@ -34,15 +36,19 @@
 
 \S4method{axes}{SpatialDataElement}(x, ...)
 
-\S4method{CTdata}{Zattrs}(x, ...)
+\S4method{CTlist}{Zattrs}(x, ...)
 
-\S4method{CTdata}{SpatialDataElement}(x, ...)
+\S4method{CTdata}{Zattrs}(x, i = 1, ...)
 
 \S4method{CTtype}{Zattrs}(x, ...)
 
-\S4method{CTtype}{SpatialDataElement}(x, ...)
-
 \S4method{CTname}{Zattrs}(x, ...)
+
+\S4method{CTlist}{SpatialDataElement}(x, ...)
+
+\S4method{CTdata}{SpatialDataElement}(x, i = 1, ...)
+
+\S4method{CTtype}{SpatialDataElement}(x, ...)
 
 \S4method{CTname}{SpatialDataElement}(x, ...)
 
@@ -103,15 +109,15 @@ plotCoordGraph(g)
 # retrieve transformation from element to target space
 CTpath(x, "blobs_labels", "sequence")
 
-# view available coordinate transformations
-CTdata(z <- meta(label(x)))
+# view available target coordinate systems
+CTname(z <- meta(label(x)))
 
 # add
-addCT(z, "scale", "scale", c(12, 34)) # can't overwrite
-CTdata(addCT(z, "new", "translation", c(12, 34)))
+addCT(z, "scale", "scale", c(12, 34)) # overwrite
+CTname(addCT(z, "new", "translation", c(12, 34)))
 
 # rmv
-CTdata(rmvCT(z, 2)) # by index
-CTdata(rmvCT(z, "scale")) # by name
-CTdata(rmvCT(z, 1)) # identity is protected
+CTname(rmvCT(z, 2))        # by index
+CTname(rmvCT(z, "scale"))  # by name
+CTname(rmvCT(z, "global")) # identity is protected
 }

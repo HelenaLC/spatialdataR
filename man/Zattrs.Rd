@@ -25,10 +25,10 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-z <- meta(label(x))
-axes(z) 
-CTdata(z)
+(z <- meta(label(x)))
+
 CTname(z)
 CTtype(z)
+CTdata(z, "scale")
 
 }

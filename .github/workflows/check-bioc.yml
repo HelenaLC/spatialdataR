@@ -22,7 +22,6 @@
 
 on:
   push:
-  pull_request:
 
 name: R-CMD-check-bioc
 
@@ -52,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: '4.5', bioc: '3.22', cont: "bioconductor/bioconductor_docker:RELEASE_3_22", rspm: "https://p3m.dev/cran/__linux__/noble/latest" }
+          #- { os: ubuntu-latest, r: '4.5', bioc: '3.22', cont: "bioconductor/bioconductor_docker:RELEASE_3_22", rspm: "https://p3m.dev/cran/__linux__/noble/latest" }
           - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://p3m.dev/cran/__linux__/noble/latest" }
           - { os: macOS-latest, r: 'devel', bioc: 'devel'}
           - { os: windows-latest, r: 'devel', bioc: 'devel'}

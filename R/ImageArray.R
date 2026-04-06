@@ -32,7 +32,12 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @aliases channels
 #' @export
-setMethod("channels", "ImageArray", \(x, ...) meta(x)$omero$channels$label)
+setMethod("channels", "Zattrs", \(x, ...) unlist(x$omero$channels))
+
+#' @rdname ImageArray
+#' @aliases channels
+#' @export
+setMethod("channels", "ImageArray", \(x, ...) channels(meta(x)))
 
 #' @rdname ImageArray
 #' @export
@@ -40,52 +45,40 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
 .get_multiscales_dataset_paths <- function(md) {
-  
-    # validate multiscales attributes
+    # validate 'multiscales'
     .validate_multiscales_dataset_path(md)
-  
-    # get paths
-    paths <- md$multiscales$datasets[[1]]$path
-    paths <- suppressWarnings({as.numeric(sort(paths, decreasing=FALSE))})
-  
-    # TODO: how to check if a vector of values here are integers
-    # check paths and return
-    # if(all(paths %% 0 == 0)){
-    #   if(S4Vectors::isSequence(paths))
-    #     return(paths) 
-    # }
-    return(paths)
-  
-    # stop if not a sequence of integers
-    stop("ImageArray paths are ill-defined, should be e.g. 0,1,2, ..., n")
+    # get & validate 'path's
+    ds <- md$multiscales[[1]]$datasets
+    ps <- vapply(ds, \(.) .$path, character(1))
+    ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
+    if (length(ps)) {
+        qs <- seq(min(ps), max(ps))
+        if (!isTRUE(all.equal(ps, qs)))
+            stop("ImageArray paths are ill-defined, should",
+                " be an integer sequence, e.g., 0,1,...,n")
+    }
+    return(ps)
 }
 
 #' @noRd
 .validate_multiscales_dataset_path <- function(md) {
     # validate 'multiscales' 
-    if ("multiscales" %in% names(md)) {
-        ms <- md[["multiscales"]]
-    
+    ms <- md$multiscales
+    if (!is.null(ms)) {
         # validate 'datasets' 
-        if("datasets" %in% names(ms)) {
-          ds <- ms[["datasets"]]
-          
-          # validate 'paths'
-          valid <- vapply(ds, \(ds) "path" %in% colnames(ds), logical(1))
-          
-          if (!all(valid)) {
-            stop("'ImageArray' paths are ill-defined,",
-                " no 'path' attribute under 'multiscale-datasets'")
-          } 
-          
-        } else {
-            stop("'ImageArray' paths are ill-defined,",
-                " no 'datasets' attribute under 'multiscale'")
-        }
-    } else {
-        stop("'ImageArray' paths are ill-defined,",
-            " no 'multiscales' attribute under '.zattrs'")
-    }
+        ds <- ms[[1]]$datasets
+        if (!is.null(ds)) {
+            # validate 'paths'
+            ok <- vapply(ds, \(.) !is.null(.$path), logical(1))
+            if (!all(ok))
+                stop("'ImageArray' paths are ill-defined,",
+                    " no 'path' attribute under 'multiscale-datasets'")
+        } else stop(
+            "'ImageArray' paths are ill-defined,",
+            " no 'datasets' attribute under 'multiscale'")
+    } else stop( 
+        "'ImageArray' paths are ill-defined,",
+        " no 'multiscales' attribute under '.zattrs'")
 }
 
 .check_jk <- \(x, .) {

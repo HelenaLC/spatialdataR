@@ -53,6 +53,7 @@ setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 # trs ----
 
 setGeneric("axes", \(x, ...) standardGeneric("axes"))
+setGeneric("CTlist", \(x, ...) standardGeneric("CTlist"))
 setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
 setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
 setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))
@@ -80,6 +81,7 @@ setGeneric("query", \(x, ...) standardGeneric("query"))
 setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("channels", \(x, ...) standardGeneric("channels"))
+setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 
 # tbl ----
 

@@ -49,7 +49,7 @@ For demonstration, we read in a toy dataset that is available through the packag
 ```{r blobs-read}
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x, anndataR=FALSE))  # VJC Dec 8, test effect of absence of anndataR
+(x <- readSpatialData(x, anndataR=TRUE))
 ```
 
 `SpatialData` object behave like a list, thereby supporting flexible accession, 
@@ -119,9 +119,7 @@ To facilitate .zattrs handling, we provide a set of functions to access and modi
 - `rmv/addCT` to remove, add, or append coordinate transformations
 
 ```{r cs-methods}
-z <- meta(label(x))
-axes(z)
-CTdata(z)
+(z <- meta(label(x)))
 CTname(rmvCT(z, "scale"))
 CTname(addCT(z, 
     name="D'Artagnan", 
