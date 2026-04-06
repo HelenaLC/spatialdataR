@@ -27,7 +27,7 @@
         if (!type(x) %in% c("double", "integer")) msg <- c(msg, paste(
             "'ImageArray' resolution", k, "is not of type double or integer"))
     }
-    if (length(msg)) return(msg) else return(TRUE)
+    return(msg)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("ImageArray", .validateImageArray)
@@ -43,7 +43,7 @@ setValidity2("ImageArray", .validateImageArray)
         if (type(x) != "integer") msg <- c(msg, paste(
             "'LabelArray' resolution", k, "is not of type integer"))
     }
-    if (length(msg)) return(msg) else return(TRUE)
+    return(msg)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("LabelArray", .validateLabelArray)
@@ -69,25 +69,26 @@ setValidity2("ShapeFrame", .validateShapeFrame)
 
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
+    msg <- c()
     typ <- c(
         images="ImageArray",
         labels="LabelArray",
         points="PointFrame",
         shapes="ShapeFrame",
         tables="SingleCellExperiment")
-    msg <- NULL
     for (. in names(typ)) if (length(x[[.]]))
         if (!all(vapply(x[[.]], \(y) is(y, typ[.]), logical(1))))
             msg <- c(msg, sprintf("'%s' should be a list of '%s'", ., typ[.]))
-    msg <- c(msg, .validatePointFrame(x))
-    msg <- c(msg, .validateTable(x))
+    # TODO: validate .zattrs across all layers
     for (y in labels(x)) {
-        ok <- .validateLabelArray(y)
-        if (!isTRUE(ok)) msg <- c(msg, ok)
-        ok <- .validateZattrsLabelArray(y)
-        if (!isTRUE(ok)) msg <- c(msg, ok)
+        msg <- c(msg, .validateLabelArray(y))
+        msg <- c(msg, .validateZattrsLabelArray(y))
     }
-    if (length(msg)) return(msg) else return(TRUE)
+    for (y in images(x)) msg <- c(msg, .validateImageArray(y))
+    for (y in points(x)) msg <- c(msg, .validatePointFrame(y))
+    for (y in shapes(x)) msg <- c(msg, .validateShapeFrame(y))
+    msg <- c(msg, .validateTable(x))
+    return(msg)
 }
 
 #' @importFrom S4Vectors setValidity2
@@ -129,5 +130,5 @@ setValidity2("SpatialData", .validateSpatialData)
     ms <- za$multiscales[[1]]
     msg <- .validateZattrs_axes(ms, msg)
     msg <- .validateZattrs_coordTrans(ms, msg)
-    if (length(msg)) return(msg) else return(TRUE)
+    return(msg)
 }
