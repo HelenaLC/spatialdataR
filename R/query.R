@@ -80,7 +80,7 @@ setMethod("query", "LabelArray", \(x, ...) {
 })
 
 #' @rdname query
-#' @importFrom sf st_as_sf st_crop
+#' @importFrom sf st_as_sf st_bbox st_crop
 #' @export
 setMethod("query", "ShapeFrame", \(x, ...) {
     # TODO: this will drop geometries where any coordinate 
