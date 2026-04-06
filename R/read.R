@@ -64,8 +64,7 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 #'
 #' @examples
 #' library(SpatialData.data)
-#' dir.create(tf <- tempfile())
-#' zs <- SpatialData.data:::.unzip_merfish_demo(tf)
+#' zs <- get_demo_SDdata("merfish")
 #' 
 #' # read complete Zarr store
 #' (sd <- readSpatialData(zs, anndataR=TRUE))

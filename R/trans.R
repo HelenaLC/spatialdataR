@@ -55,7 +55,51 @@ setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
 
 # label ----
 
-#TODO
+#' @rdname trans
+#' @importFrom DelayedArray cbind rbind ConstantArray
+#' @importFrom methods as
+#' @export
+setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
+    #x <- label(sd, 2); t <- c(64,0)
+    stopifnot(
+        length(t) == length(dim(x)), 
+        t == round(t), all(is.finite(t)))
+    if (all(t == 0)) return(x)
+    ys <- data(x, NULL)
+    if (length(ys) == 1) {
+        ts <- list(t)
+    } else {
+        ds <- vapply(ys, ncol, integer(1))
+        sf <- c(1, ds[-1]/ds[-length(ds)])
+        ts <- lapply(cumprod(sf), `*`, t)
+    } 
+    x@data <- lapply(seq_along(ys), \(k) {
+        t <- ts[[k]]
+        y <- as(ys[[k]], "DelayedArray")
+        # TODO: no 'abind' support so that we 
+        # permute, 'c/rbind', and back-permute;
+        # surely there has to be a better way?
+        if (length(dim(y)) == 2) {
+            n <- NULL
+        } else {
+            t <- t[-1]
+            n <- dim(x)[1] 
+            y <- aperm(y, c(2,3,1))
+        }
+        if (t[2] != 0) {
+            d <- c(nrow(y), abs(t[2]), n)
+            z <- ConstantArray(0, dim=d)
+            y <- if (t[2] > 0) cbind(z, y) else cbind(y, z)
+        }
+        if (t[1] != 0) {
+            d <- c(abs(t[1]), ncol(y), n)
+            z <- ConstantArray(0, dim=d)
+            y <- if (t[1] > 0) rbind(z, y) else rbind(y, z)
+        }
+        if (!is.null(n)) aperm(y, c(3,1,2)) else y
+    })
+    return(x)
+})
 
 # point ----
 
@@ -63,6 +107,8 @@ setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
 #' @importFrom dplyr mutate
 #' @export
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
+    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
+    if (all(t == 1)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x*t[1]) |>
@@ -74,14 +120,15 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
-    y <- .y <- .x <- NULL # R CMD check
+    stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
+    if (t %% 360 == 0) return(x)
+    y <- a <- b <- c <- d <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
-        mutate(.x=x*R[1,1], .y=y*R[1,2]) |>
-        mutate(x=.x+.y) |>
-        mutate(.x=x*R[2,1], .y=y*R[2,2]) |>
-        mutate(y=.x+.y) |>
-        select(-.x, -.y)
+        mutate(a=x*R[1,1], b=y*R[1,2]) |>
+        mutate(c=x*R[2,1], d=y*R[2,2]) |>
+        mutate(x=a+b, y=c+d) |>
+        select(-c(a,b, c,d))
     return(x)
 })
 
@@ -89,6 +136,8 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @importFrom dplyr mutate select
 #' @export
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
+    stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
+    if (all(t == 0)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
         mutate(x=x+t[1]) |>
@@ -98,11 +147,23 @@ setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
 
 # shape ----
 
+# TODO: do this w/o realizing
+#' @importFrom sf st_as_sf st_geometry st_geometry<-
+.trans_s <- \(x, f) {
+    y <- st_as_sf(data(x))
+    xy <- st_coordinates(y)
+    xy <- data.frame(f(xy))
+    xy <- st_as_sf(xy, coords=names(xy))
+    st_geometry(y) <- st_geometry(xy)
+    x@data <- y
+    return(x)
+}
+
 #' @rdname trans
 #' @importFrom sf st_as_sf st_coordinates
 #' @export
 setMethod("scale", c("ShapeFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, t > 0, all(is.finite(t)))
+    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
     .trans_s(x, \(xy) sweep(xy, 2, t, `*`))
 })
 
@@ -125,7 +186,7 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
 # utils ----
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
-.R <- function(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
+.R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
 
 # count occurrences of each coordinate space;
 # return most frequent (in order of appearance)
@@ -163,17 +224,4 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
             })
     }
     return(xy)
-}
-
-# transform 'ShapeFrame' by realizing,
-# and updating 'sf' geometry coordinates
-#' @importFrom sf st_as_sf st_geometry st_geometry<-
-.trans_s <- \(x, f) {
-    y <- st_as_sf(data(x))
-    xy <- st_coordinates(y)
-    xy <- data.frame(f(xy))
-    xy <- st_as_sf(xy, coords=names(xy))
-    st_geometry(y) <- st_geometry(xy)
-    x@data <- y
-    return(x)
 }
