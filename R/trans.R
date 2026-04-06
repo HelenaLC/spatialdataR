@@ -55,7 +55,51 @@ setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
 
 # label ----
 
-#TODO
+#' @rdname trans
+#' @importFrom DelayedArray cbind rbind
+#' @importFrom methods as
+#' @export
+setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
+    #x <- label(sd, 2); t <- c(64,0)
+    stopifnot(
+        length(t) == length(dim(x)), 
+        t == round(t), all(is.finite(t)))
+    if (all(t == 0)) return(x)
+    ys <- data(x, NULL)
+    if (length(ys) == 1) {
+        ts <- list(t)
+    } else {
+        ds <- vapply(ys, ncol, integer(1))
+        sf <- c(1, ds[-1]/ds[-length(ds)])
+        ts <- lapply(cumprod(sf), `*`, t)
+    } 
+    x@data <- lapply(seq_along(ys), \(k) {
+        t <- ts[[k]]
+        y <- as(ys[[k]], "DelayedArray")
+        # TODO: no 'abind' support so that we 
+        # permute, 'c/rbind', and back-permute;
+        # surely there has to be a better way?
+        if (length(dim(y)) == 2) {
+            n <- NULL
+        } else {
+            t <- t[-1]
+            n <- dim(x)[1] 
+            y <- aperm(y, c(2,3,1))
+        }
+        if (t[2] != 0) {
+            d <- c(nrow(y), abs(t[2]), n)
+            z <- DelayedArray(array(0, d))
+            y <- if (t[2] > 0) cbind(z, y) else cbind(y, z)
+        }
+        if (t[1] != 0) {
+            d <- c(abs(t[1]), ncol(y), n)
+            z <- DelayedArray(array(0, d))
+            y <- if (t[1] > 0) rbind(z, y) else rbind(y, z)
+        }
+        if (!is.null(n)) aperm(y, c(3,1,2)) else y
+    })
+    return(x)
+})
 
 # point ----
 
