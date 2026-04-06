@@ -247,7 +247,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
     }
     nan <- setdiff(i, nms)
     if (length(nan)) stop(
-        "couln't find 'coordTrans' of name(s) ", 
+        "couldn't find 'coordTrans' of name(s) ", 
         paste(dQuote(nan), collapse=","))
     i <- match(i, nms)
     # protect against dropping identity
