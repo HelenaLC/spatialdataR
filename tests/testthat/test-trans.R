@@ -71,6 +71,28 @@ test_that("translation,PointFrame", {
         y <- translation(x, c(n,m))
         expect_identical(x$x, y$x+n)
         expect_identical(x$y, y$y+m)
-        expect_identical(x[,i], y[i])
+        expect_identical(x[,i], y[,i])
+    })
+})
+
+test_that("rotate,PointFrame", {
+    x <- point(sd, 1)
+    y <- rotate(x, 0)
+    expect_identical(x, y)
+    # invalid
+    expect_error(rotate(x, Inf))
+    expect_error(rotate(x, numeric(2)))
+    expect_error(rotate(x, logical(1)))
+    expect_error(rotate(x, character(1)))
+    expect_error(rotate(x, NA*numeric(1)))
+    # valid
+    i <- setdiff(names(x), c("x", "y"))
+    f <- \() sample(360, 1)*sample(c(-1, 1), 1)
+    g <- \(x) cbind(x$x, x$y)
+    replicate(10, \() {
+        y <- rotate(x, t <- f())
+        R <- .R(t*base::pi/180)
+        expect_identical(g(x) %*% R, g(y))
+        for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })
