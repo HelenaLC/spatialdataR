@@ -45,8 +45,8 @@ NULL
 
 #' @rdname trans
 #' @export
-setMethod("scale", c("ImageArray", "numeric"), \(x, j, t, ...) {
-    stopifnot(length(t) == 3, t > 0)
+setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
+    stopifnot(length(t) == length(dim(x)), t > 0)
     if (all(t == 1)) return(x)
     if (is.numeric(j)) j <- CTname(x)
     j <- match.arg(j, CTname(x))
