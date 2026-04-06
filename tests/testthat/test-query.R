@@ -63,12 +63,13 @@ test_that("query-pol,PointFrame", {
     replicate(5, {
         i <- sample(n, 1)
         xy <- c(p[i]$x, p[i]$y)
+        i <- p$x == xy[1] & p$y == xy[2]
         xy <- rbind(
             xy+c(0, d <- 1e-6),
             xy+c(-d,-d), xy+c(+d,-d))
         q <- query(p, xy)
-        expect_length(q, 1)
-        expect_equal(q, p[i])
+        expect_length(q, sum(i))
+        expect_equal(q, p[which(i)])
     })
 })
 
