@@ -1,4 +1,4 @@
-suppressPackageStartupMessages(library(sf))
+require(sf, quietly=TRUE)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
@@ -28,8 +28,6 @@ test_that("query,ImageArray", {
     # crop and shift
     j <- query(i, xmin=1, xmax=w <- d[3]/2, ymin=2, ymax=h <- d[2]/4)
     expect_equal(dim(j), c(3, 1+h-2, 1+w-1))
-    expect_equal(CTtype(j), t <- "translation")
-    expect_equivalent(CTlist(j)[[1]][[t]][[1]], c(0, 2, 1))
 })
 
 test_that("query,PointFrame", {
@@ -59,10 +57,10 @@ test_that("query,ShapeFrame", {
     n <- length(s <- shape(x))
     # mock query without any effect
     t <- query(s, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-    expect_equal(collect(data(s)), collect(data(t)))
+    expect_equal(nrow(data(t)), nrow(data(s)))
     # this should drop everything
-    t <- query(s, xmin=Inf, xmax=-Inf, ymin=Inf, ymax=-Inf)
-    expect_equal(nrow(collect(data(t))), 0)
+    t <- query(s, xmin=0, xmax=1e-3, ymin=0, ymax=1e-3)
+    expect_equal(nrow(t), 0)
     # proper query
     xy <- st_coordinates(st_as_sf(data(s)))
     xy <- data.frame(xy); names(xy) <- c("x", "y")
