@@ -17,7 +17,7 @@
 
 \S4method{query}{ShapeFrame}(x, ...)
 
-\S4method{query}{PointFrame}(x, j, ...)
+\S4method{query}{PointFrame}(x, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}

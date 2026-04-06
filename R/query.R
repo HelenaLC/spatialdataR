@@ -20,12 +20,26 @@ NULL
 
 # TODO: query with polygonal boundary region
 
-.check_bb <- \(args) {
+.check_box <- \(args) {
     m <- match(names(args), c("xmin", "xmax", "ymin", "ymax"))
     if (any(is.na(m)) || !identical(sort(m), seq_len(4)))
         stop("currently only supporting bounding box query;", 
             " please provide 'xmin/xmax/ymin/ymax' as ...")
     stopifnot(length(args) == 4, is.numeric(unlist(args)))
+}
+.check_pol <- \(mx) {
+    ok <- c(
+        is.matrix(mx), is.numeric(mx), 
+        nrow(mx) >= 3, ncol(mx) == 2)
+    if (!all(ok)) stop(
+        "Invalid polygon query; should be a numeric matrix ",
+        "with ≥ 3 rows and 2 columns (= xy-coordinates)")
+    # ensure polygon is closed
+    top <- mx[1, ]
+    bot <- mx[nrow(mx), ]
+    if (!all(top == bot)) 
+        mx <- rbind(mx, top)
+    return(mx)
 }
 
 #' @rdname query
@@ -33,7 +47,7 @@ NULL
 setMethod("query", "SpatialData", \(x, j=NULL, ...) {
     # check validity of dots
     args <- list(...)
-    .check_bb(args)
+    .check_box(args)
     # guess coordinate space
     stopifnot(length(j) == 1)
     j <- if (is.null(j)) {
@@ -57,7 +71,7 @@ setMethod("query", "SpatialData", \(x, j=NULL, ...) {
 #' @export
 setMethod("query", "ImageArray", \(x, ...) {
     args <- list(...)
-    .check_bb(args)
+    .check_box(args)
     d <- dim(x)
     args$ymax <- min(args$ymax, d[2])
     args$xmax <- min(args$xmax, d[3])
@@ -70,7 +84,7 @@ setMethod("query", "ImageArray", \(x, ...) {
 #' @export
 setMethod("query", "LabelArray", \(x, ...) {
     args <- list(...)
-    .check_bb(args)
+    .check_box(args)
     d <- dim(x)
     args$ymax <- min(args$ymax, d[1])
     args$xmax <- min(args$xmax, d[2])
@@ -80,13 +94,20 @@ setMethod("query", "LabelArray", \(x, ...) {
 })
 
 #' @rdname query
-#' @importFrom sf st_as_sf st_bbox st_crop
+#' @importFrom sf st_as_sf st_intersects st_polygon st_bbox st_crop
 #' @export
 setMethod("query", "ShapeFrame", \(x, ...) {
     # TODO: this will drop geometries where any coordinate 
     # is out of bounds; keep but crop to boundary region?
     args <- list(...)
-    .check_bb(args)
+    if (length(args) == 1) {
+        mx <- .check_pol(mx <- args[[1]])
+        sf <- st_as_sf(data(x))
+        ok <- st_intersects(sf, st_polygon(list(mx)), sparse=FALSE)
+        x@data <- x@data[which(ok), ]
+        return(x)
+    }
+    .check_box(args)
     sf <- st_as_sf(data(x))
     bb <- st_bbox(unlist(args))
     # note: non-spatial attributes (e.g., radius) give warnings?
@@ -96,13 +117,22 @@ setMethod("query", "ShapeFrame", \(x, ...) {
 })
 
 #' @rdname query
+#' @importFrom sf st_as_sf st_polygon st_intersects
+#' @importFrom dplyr collect
 #' @export
-setMethod("query", "PointFrame", \(x, j, ...) {
+setMethod("query", "PointFrame", \(x, ...) {
     args <- list(...)
-    .check_bb(args)
-    y <- filter(x, 
-        x >= args$xmin, x <= args$xmax, 
-        y >= args$ymin, y <= args$ymax)    
-    x@data <- y@data
+    if (length(args) == 1) {
+        mx <- .check_pol(mx <- args[[1]])
+        xy <- st_as_sf(collect(data(x)[c("x", "y")]), coords=c("x", "y"))
+        ok <- st_intersects(xy, st_polygon(list(mx)), sparse=FALSE)
+        x@data <- x@data[which(ok), ]
+    } else {
+        .check_box(args)
+        y <- filter(x, 
+            x >= args$xmin, x <= args$xmax, 
+            y >= args$ymin, y <= args$ymax)    
+        x@data <- y@data
+    }
     return(x)
 })
