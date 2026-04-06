@@ -1,7 +1,5 @@
-arr <- seq_len(12)
-
 test_that("LabelArray()", {
-  val <- sample(arr, 20*20, replace=TRUE)
+  val <- sample(seq_len(12), 20*20, replace=TRUE)
   mat <- array(val, dim=c(20, 20))
   # invalid
   expect_error(LabelArray(mat))
@@ -12,14 +10,14 @@ test_that("LabelArray()", {
   expect_silent(LabelArray(list(mat)))
   expect_silent(LabelArray(list(mat), Zattrs()))
   # multiscale
-  dim <- lapply(c(20, 10, 5), \(.) c(3, rep(., 2)))
-  lys <- lapply(dim, \(.) array(sample(arr, prod(.), replace=TRUE), dim=.))
+  dim <- lapply(c(20, 10, 5), \(.) rep(., 2))
+  lys <- lapply(dim, \(.) array(sample(seq_len(12), prod(.), replace=TRUE), dim=.))
   expect_silent(LabelArray(lys))
 })
 
 test_that("data(),LabelArray", {
-  dim <- lapply(c(8, 4, 2), \(.) c(3, rep(., 2)))
-  lys <- lapply(dim, \(.) array(0, dim=.))
+  dim <- lapply(c(8, 4, 2), \(.) rep(., 2))
+  lys <- lapply(dim, \(.) array(0L, dim=.))
   lab <- LabelArray(lys)
   for (. in seq_along(lys))
     expect_identical(data(lab, .), lys[[.]])
