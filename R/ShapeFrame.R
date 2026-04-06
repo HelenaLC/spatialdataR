@@ -22,7 +22,7 @@
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #' 
-#' y <- file.path(base, "shapes", "anatomical")
+#' y <- file.path(zs, "shapes", "anatomical")
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
