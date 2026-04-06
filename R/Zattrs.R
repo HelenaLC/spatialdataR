@@ -44,6 +44,7 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
         cat("- name:", vapply(ax, \(.) .$name, character(1)), "\n")
         cat("- type:", vapply(ax, \(.) .$type, character(1)), "\n")
     }
+    # TODO: more detailed 'sequence' display
     cat(sprintf("coordTrans(%d):\n", n <- length(CTname(object))))
     g <- \(.) {
         . <- paste(unlist(.), collapse=",")
