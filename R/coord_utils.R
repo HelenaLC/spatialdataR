@@ -86,7 +86,11 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
             i %in% seq_along(CTlist(x)))
     }
     t <- CTtype(x)[i]
-    CTlist(x)[[i]][[t]]
+    if (t != "sequence") 
+        return(CTlist(x)[[i]][[t]])
+    ts <- CTlist(x)[[i]]$transformations
+    names(ts) <- vapply(ts, \(.) .$type, character(1))
+    mapply(x=ts, i=names(ts), \(x, i) x[[i]], SIMPLIFY=FALSE)
 })
 
 #' @rdname coord-utils
