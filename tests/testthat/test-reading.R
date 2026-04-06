@@ -11,11 +11,7 @@ test_that("readElement()", {
     for (l in names(typ)) {
         f <- paste0(toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
         y <- list.files(file.path(x, l), full.names=TRUE)[1]
-        if (l != "tables") {
-            expect_is(get(paste0("read", f))(y), typ[l])
-        } else {
-            expect_is(.readTables_basilisk(x)[[1]], typ[l])
-        }
+        expect_is(get(paste0("read", f))(y), typ[l])
     }
 })
 

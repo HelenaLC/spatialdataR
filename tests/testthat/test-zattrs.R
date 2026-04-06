@@ -1,24 +1,26 @@
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=FALSE)
+x <- readSpatialData(x, anndataR=TRUE)
 
 test_that("axes", {
     # image
     y <- axes(image(x))
-    expect_is(y, "data.frame")
-    expect_equal(dim(y), c(3, 2))
+    expect_is(y, "list")
+    expect_length(y, 3)
     # label
     y <- axes(label(x))
-    expect_is(y, "data.frame")
-    expect_equal(dim(y), c(2, 2))
+    expect_is(y, "list")
+    expect_length(y, 2)
     # shape
     y <- axes(shape(x))
-    expect_is(y, "character")
+    expect_is(y, "list")
     expect_length(y, 2)
+    expect_equal(unlist(y), c("x", "y"))
     # point
     y <- axes(point(x))
-    expect_is(y, "character")
+    expect_is(y, "list")
     expect_length(y, 2)
+    expect_equal(unlist(y), c("x", "y"))
 })
 
 test_that("rmvCT", {
@@ -28,10 +30,10 @@ test_that("rmvCT", {
     expect_error(rmvCT(y, "."))
     expect_error(rmvCT(y, c(".", CTname(y)[1])))
     # by name
-    i <- sample(CTname(y), 2) 
+    i <- sample(setdiff(CTname(y), "global"), 2) 
     expect_identical(CTname(rmvCT(y, i)), setdiff(CTname(y), i))
     # by index
-    i <- sample(seq_along(CTname(y)), 2) 
+    i <- sample(which(CTtype(y) != "identity"), 2) 
     expect_identical(CTname(rmvCT(y, i)), CTname(y)[-i])
 })
 
@@ -41,7 +43,7 @@ test_that("addCT", {
     es <- lapply(ls, \(.) x[.,1][[.]][[1]])
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
-        ct <- CTdata(z)[CTname(z) == ".", ]
+        ct <- CTlist(z)[[which(CTname(z) == ".")]]
         expect_identical(ct[[t]][[1]], x)
     }
     for (y in es) {

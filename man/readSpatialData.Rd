@@ -26,7 +26,7 @@ readSpatialData(
   points = TRUE,
   shapes = TRUE,
   tables = TRUE,
-  anndataR = FALSE
+  anndataR = TRUE
 )
 }
 \arguments{
@@ -58,9 +58,16 @@ Reading `SpatialData`
 \examples{
 library(SpatialData.data)
 dir.create(tf <- tempfile())
-base <- SpatialData.data:::.unzip_merfish_demo(tf)
-(x <- readSpatialData(base))
+zs <- SpatialData.data:::.unzip_merfish_demo(tf)
 
-# import tables using anndataR
-(x <- readSpatialData(base, anndataR=TRUE))
+# read complete Zarr store
+(sd <- readSpatialData(zs, anndataR=TRUE))
+
+# helper that gets path to first element in layer 'l' 
+fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
+  
+# read individual element  
+readImage(fn("images"))
+readShape(fn("shapes"))
+readPoint(fn("points"))
 }

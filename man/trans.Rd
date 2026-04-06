@@ -55,7 +55,7 @@ CTpath(image(y), "global")
 # point
 y <- x
 point(y, "rot") <- rotate(point(y), 20)
-point(y, "wide") <- scale(point(y), c(1, 1.2))
+point(y, "wide") <- scale(point(y), c(1.2, 1))
 
 xy0 <- as.data.frame(point(y))
 xy1 <- as.data.frame(point(y, "rot"))
@@ -68,8 +68,7 @@ points(xy2[, c(1, 2)], col=4)
 # shape
 y <- x
 shape(y, "rot") <- rotate(shape(y), 5)
-shape(y, "high") <- scale(shape(y), c(1.2, 1))
+shape(y, "wide") <- scale(shape(y), c(1.2, 1))
 shape(y, "left") <- translation(shape(y), c(-5, 0))
-
-graph::plot(CTgraph(y))
+y["shapes", c("rot", "wide", "left")]
 }

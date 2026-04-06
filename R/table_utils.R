@@ -22,7 +22,7 @@
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, anndataR=FALSE)
+#' x <- readSpatialData(x, anndataR=TRUE)
 #' 
 #' # check if element has a 'table'
 #' hasTable(x, "blobs_points")
@@ -98,15 +98,12 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
     match.arg(i, unlist(nms[idx]))
     # count occurrences
     t <- lapply(tables(x), \(t) meta(t)$region)
-    n <- vapply(seq_along(t), \(.) i %in% t[[.]], numeric(1))
-    nan <- all(n == 0)
+    ok <- vapply(t, \(.) i %in% ., logical(1))
     # failure when no/many matches
-    if (name) {
-        dup <- length(unique(n)) != length(n)
-        if (nan) stop("no 'table' found for 'i'")
-        if (dup) stop("multiple 'table's found for 'i'")
-        return(names(t)[n == 1])
-    } else return(!nan)
+    if (!name) return(any(ok))
+    if (!any(ok)) stop("no 'table' found for 'i'")
+    if (sum(ok) > 1) stop("multiple 'table's found for 'i'")
+    return(names(t)[ok])
 })
 
 # get ----
@@ -121,15 +118,15 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
 setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
-    t <- table(x, hasTable(x, i, name=TRUE))
+    t <- SpatialData::table(x, hasTable(x, i, name=TRUE))
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- meta(t)$region_key
         # TODO: check the replacement below, search colData as well?
         # t <- t[, int_colData(t)[[rk]] == i]
-        coldata <-
-          if(rk %in% names(cd <- int_colData(t))) cd[[rk]] else colData(t)[[rk]]
-        t <- t[, coldata == i]
+        int <- rk %in% names(cd <- int_colData(t))
+        cd <- if (int) cd[[rk]] else t[[rk]]
+        t <- t[, cd == i]
     }
     return(t)
 })
@@ -221,8 +218,7 @@ setMethod("setTable",
     int_colData(sce) <- cbind(int_colData(sce), icd)
     md <- list(region=i, region_key=rk, instance_key=ik)
     int_metadata(sce)[[sda]] <- md
-    table(x, name) <- sce
-    return(x)
+    SpatialData::`table<-`(x, i=name, value=sce)
 })
 
 # val ----
