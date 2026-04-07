@@ -11,34 +11,48 @@
 \usage{
 \S4method{query}{SpatialData}(x, j = NULL, ...)
 
-\S4method{query}{ImageArray}(x, ...)
+\S4method{query}{ImageArray}(x, y)
 
-\S4method{query}{LabelArray}(x, ...)
+\S4method{query}{LabelArray}(x, y)
 
-\S4method{query}{ShapeFrame}(x, ...)
+\S4method{query}{ShapeFrame}(x, y)
 
-\S4method{query}{PointFrame}(x, ...)
+\S4method{query}{PointFrame}(x, y)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
 
-\item{j}{scalar character or integer; index or name of coordinate space.}
-
-\item{...}{optional arguments passed to and from other methods.}
+\item{y}{query specification; 
+bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax' 
+(order is irrelevant); polygon: numeric matrix with ≥ 3 rows and 2 columns.}
 }
 \value{
 same as input
 }
 \description{
-spatial queries
+Spatial queries serve to subset \code{SpatialData} elements 
+according to a rectangular bounding box or arbitrary polygonal shapes. 
+Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for 
+spatial operations, so that points on the boundary are included as well.
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs, tables=FALSE)
 
-image(sd, "box") <- query(image(sd), xmin=0, xmax=30, ymin=30, ymax=50)
+# bounding box
+y <- list(xmin=11, xmax=44, ymin=22, ymax=55)
+q <- query(p <- point(sd), y)
 
-image(sd)
-image(sd, "box")
+plot(data.frame(data(p))[c("x", "y")], asp=1)
+points(data.frame(data(q))[c("x", "y")], col="red")
+rect(y$xmin, y$ymin, y$xmax, y$ymax, border="blue")
+
+# polygon
+y <- rbind(c(20,10), c(50,30), c(20,50), c(30,30))
+q <- query(p <- point(sd), y)
+
+plot(data.frame(data(p))[c("x", "y")], asp=1)
+points(data.frame(data(q))[c("x", "y")], col="red")
+lines(rbind(y, y[1, ]), col="blue")
 }
