@@ -25,7 +25,10 @@ Input \code{SpatialData} object \code{x} with an additional table named
 masking elements directly (i.e., without \code{x} as input).
 }
 \description{
-...
+Masking operations serve to aggregate data across layers, e.g., 
+counting points in shapes, averaging image channels by labels, etc.
+For added flexibility, these may be carried out directly between elements,
+or using an input \code{SpatialData} object and specifying element names.
 }
 \examples{
 library(SingleCellExperiment)
