@@ -1,7 +1,11 @@
 #' @name mask
 #' @title Masking
 #'
-#' @description ...
+#' @description 
+#' Masking operations serve to aggregate data across layers, e.g., 
+#' counting points in shapes, averaging image channels by labels, etc.
+#' For added flexibility, these may be carried out directly between elements,
+#' or using an input \code{SpatialData} object and specifying element names.
 #' 
 #' @param x \code{\link{SpatialData}} object.
 #' @param i,j character string; names of elements to mask,
