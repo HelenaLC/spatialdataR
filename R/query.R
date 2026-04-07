@@ -5,6 +5,9 @@
 #' according to a rectangular bounding box or arbitrary polygonal shapes. 
 #' Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for 
 #' spatial operations, so that points on the boundary are included as well.
+#' Note: shape queries ignore non-spatial attributes (e.g., radius for circles)
+#' such that a circle is included if its centroid intersects the query region;
+#' similarly, a polygon is included if any vertex intersects the query region.
 #'
 #' @param x \code{SpatialData} element.
 #' @param y query specification; 
@@ -33,6 +36,19 @@
 #' plot(data.frame(data(p))[c("x", "y")], asp=1)
 #' points(data.frame(data(q))[c("x", "y")], col="red")
 #' lines(rbind(y, y[1, ]), col="blue")
+#' 
+#' # shapes that intersect the query region are kept
+#' y <- rbind(c(30,45), c(40,45), c(35,50))
+#' t <- query(s <- shape(sd, 3), y)
+#' 
+#' require(sf, quietly=TRUE)
+#' df <- st_coordinates(st_as_sf(data(s)))
+#' fd <- st_coordinates(st_as_sf(data(t)))
+#' plot(
+#'   asp=1, xlim=c(15, 60), ylim=c(15, 60),
+#'   rbind(pol, pol[1, ]), type="l", col="blue") 
+#' foo <- by(df, df[, "L2"], \(x) points(x, type="b", col="black"))
+#' foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
 NULL
 
 .check_box <- \(bb) {
