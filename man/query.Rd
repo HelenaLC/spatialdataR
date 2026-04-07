@@ -2,15 +2,12 @@
 % Please edit documentation in R/query.R
 \name{query}
 \alias{query}
-\alias{query,SpatialData-method}
 \alias{query,ImageArray-method}
 \alias{query,LabelArray-method}
 \alias{query,ShapeFrame-method}
 \alias{query,PointFrame-method}
 \title{spatial queries}
 \usage{
-\S4method{query}{SpatialData}(x, j = NULL, ...)
-
 \S4method{query}{ImageArray}(x, y)
 
 \S4method{query}{LabelArray}(x, y)
@@ -33,30 +30,32 @@ same as input
 Spatial queries serve to subset \code{SpatialData} elements 
 according to a rectangular bounding box or arbitrary polygonal shapes. 
 Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for 
-spatial operations, so that points on the boundary are included as well.
-Note: shape queries ignore non-spatial attributes (e.g., radius for circles)
-such that a circle is included if its centroid intersects the query region;
-similarly, a polygon is included if any vertex intersects the query region.
+spatial operations (i.e., instances that intersect the query region 
+in any way are kept). For circle shapes, radii are currently ignored
+(i.e., a circle is kept if its centroid intersects the query region).
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs, tables=FALSE)
 
+# helper for visualizing point coordinates
+.xy <- \(.) data.frame(data(.)[c("x", "y")])
+
 # bounding box
 y <- list(xmin=11, xmax=44, ymin=22, ymax=55)
 q <- query(p <- point(sd), y)
 
-plot(data.frame(data(p))[c("x", "y")], asp=1)
-points(data.frame(data(q))[c("x", "y")], col="red")
+plot(.xy(p), asp=1)
+points(.xy(q), col="red")
 rect(y$xmin, y$ymin, y$xmax, y$ymax, border="blue")
 
 # polygon
 y <- rbind(c(20,10), c(50,30), c(20,50), c(30,30))
 q <- query(p <- point(sd), y)
 
-plot(data.frame(data(p))[c("x", "y")], asp=1)
-points(data.frame(data(q))[c("x", "y")], col="red")
+plot(.xy(p), asp=1)
+points(.xy(q), col="red")
 lines(rbind(y, y[1, ]), col="blue")
 
 # shapes that intersect the query region are kept
