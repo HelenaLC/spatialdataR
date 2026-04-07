@@ -2,10 +2,10 @@
 % Please edit documentation in R/mask.R
 \name{mask}
 \alias{mask}
-\alias{mask,SpatialData-method}
+\alias{mask,SpatialData,ANY,ANY-method}
 \title{Masking}
 \usage{
-\S4method{mask}{SpatialData}(x, i, j, ...)
+\S4method{mask}{SpatialData,ANY,ANY}(x, i, j, how = NULL)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
@@ -14,10 +14,15 @@
 specifically, \code{i} will be masked by \code{j},
 adding a \code{table} for \code{j} in \code{x}.}
 
+\item{how}{character string; statistic to use for masking.
+Defaults to "mean" when masking images, ignored when masking points.}
+
 \item{...}{optional arguments passed to and from other methods.}
 }
 \value{
-\code{\link{SingleCellExperiment}}
+Input \code{SpatialData} object \code{x} with an additional table named 
+\code{<j>_masking_<i>}; or a \code{SingleCellExperiment} object when 
+masking elements directly (i.e., without \code{x} as input).
 }
 \description{
 ...
@@ -28,9 +33,14 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-# count points in circles
-x <- mask(x, "blobs_points", "blobs_circles")
-x <- mask(x, "blobs_image", "blobs_labels")
-tables(x)
+# count points in shapes
+y <- mask(x, "blobs_points", "blobs_circles")
+(sce <- mask(i=point(x), j=shape(x, 1)))
+identical(assay(table(y)), assay(sce))
+
+# average image channels by labels
+y <- mask(x, "blobs_image", "blobs_labels")
+(sce <- mask(i=image(x), j=label(x)))
+identical(assay(table(y)), assay(sce))
 
 }

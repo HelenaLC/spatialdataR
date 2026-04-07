@@ -1,7 +1,7 @@
 require(sf, quietly=TRUE)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, tables=FALSE)
+x <- readSpatialData(x, anndataR=TRUE)
 
 test_that("query,.check_box", {
     # valid
