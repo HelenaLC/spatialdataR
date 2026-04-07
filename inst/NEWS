@@ -1,3 +1,9 @@
+changes in version 0.99.27
+
+- spatial queries (aka subsetting) by bounding box 
+  (all element types) or polygons (points and shapes),
+  including unit tests, documentation, visual examples
+
 changes in version 0.99.26
 
 - added unit tests for existing transformations
