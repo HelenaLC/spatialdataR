@@ -57,6 +57,10 @@ setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("transform", \(x, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
+# sda ----
+
+setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
+
 # uts ----
 
 setGeneric("layer", \(x, i, ...) standardGeneric("layer"))

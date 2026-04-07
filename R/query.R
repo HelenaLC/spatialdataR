@@ -83,6 +83,31 @@ NULL
 }
 
 #' @rdname query
+#' @importFrom dplyr filter
+#' @export
+setMethod("query", "SpatialData", \(x, ..., i) {
+    # TODO: need more example data to properly implement this; 
+    # for now, just a proof of concept using 'spatialdata_attrs'
+    if (missing(i)) i <- 1
+    if (!length(tables(x))) 
+        stop("There aren't any tables")
+    if (is.numeric(i)) {
+        i <- tableNames(x)[i]
+    } else if (is.character(i)) {
+        i <- match.arg(i, tableNames(x))
+    }
+    t <- x$tables[[i]]
+    ns <- vapply(nm <- colnames(x), length, integer(1))
+    nm <- data.frame(layer=rep.int(names(nm), ns), region=unlist(nm))
+    nm <- filter(nm, ...)
+    i <- match(nm$layer, .LAYERS)
+    j <- split(nm$region, nm$layer)
+    x <- x[i, j]
+    x$tables$table <- t
+    return(x)
+})
+
+#' @rdname query
 #' @export
 setMethod("query", "ImageArray", \(x, y) {
     if (is.matrix(y)) stop("Polygon query not supported for images")

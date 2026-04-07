@@ -75,3 +75,6 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
     if (!is.null(cs)) coolcat("channels(%d): %s\n", cs)
 }
 setMethod("show", "Zattrs", .showZattrs)
+
+setMethod("feature_key", "Zattrs", \(x) x$spatialdata_attrs$feature_key)
+setMethod("feature_key", "SpatialDataElement", \(x) feature_key(meta(x)))
