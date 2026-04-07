@@ -4,10 +4,9 @@
 #' @description Spatial queries serve to subset \code{SpatialData} elements 
 #' according to a rectangular bounding box or arbitrary polygonal shapes. 
 #' Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for 
-#' spatial operations, so that points on the boundary are included as well.
-#' Note: shape queries ignore non-spatial attributes (e.g., radius for circles)
-#' such that a circle is included if its centroid intersects the query region;
-#' similarly, a polygon is included if any vertex intersects the query region.
+#' spatial operations (i.e., instances that intersect the query region 
+#' in any way are kept). For circle shapes, radii are currently ignored
+#' (i.e., a circle is kept if its centroid intersects the query region).
 #'
 #' @param x \code{SpatialData} element.
 #' @param y query specification; 
@@ -21,20 +20,23 @@
 #' zs <- system.file(zs, package="SpatialData")
 #' sd <- readSpatialData(zs, tables=FALSE)
 #' 
+#' # helper for visualizing point coordinates
+#' .xy <- \(.) data.frame(data(.)[c("x", "y")])
+#' 
 #' # bounding box
 #' y <- list(xmin=11, xmax=44, ymin=22, ymax=55)
 #' q <- query(p <- point(sd), y)
 #' 
-#' plot(data.frame(data(p))[c("x", "y")], asp=1)
-#' points(data.frame(data(q))[c("x", "y")], col="red")
+#' plot(.xy(p), asp=1)
+#' points(.xy(q), col="red")
 #' rect(y$xmin, y$ymin, y$xmax, y$ymax, border="blue")
 #' 
 #' # polygon
 #' y <- rbind(c(20,10), c(50,30), c(20,50), c(30,30))
 #' q <- query(p <- point(sd), y)
 #' 
-#' plot(data.frame(data(p))[c("x", "y")], asp=1)
-#' points(data.frame(data(q))[c("x", "y")], col="red")
+#' plot(.xy(p), asp=1)
+#' points(.xy(q), col="red")
 #' lines(rbind(y, y[1, ]), col="blue")
 #' 
 #' # shapes that intersect the query region are kept
@@ -82,32 +84,8 @@ NULL
 
 #' @rdname query
 #' @export
-setMethod("query", "SpatialData", \(x, j=NULL, ...) {
-    # check validity of dots
-    args <- list(...)
-    .check_box(args)
-    # guess coordinate space
-    stopifnot(length(j) == 1)
-    j <- if (is.null(j)) {
-        .guess_space(x)
-    } else {
-        if (is.character(j)) {
-            match.arg(j, CTname(x))
-        } else if (is.numeric(j)) {
-            stopifnot(j > 0, j == round(j))
-            CTname(x)[j]
-        }
-    }
-    # execute query
-    for (l in rownames(x))
-        for (e in colnames(x)[[l]])
-            x[[l]][[e]] <- query(x[[l]][[e]], j, ...)
-    return(x)  
-})
-
-#' @rdname query
-#' @export
 setMethod("query", "ImageArray", \(x, y) {
+    if (is.matrix(y)) stop("Polygon query not supported for images")
     .check_box(y)
     d <- dim(x)
     y$ymax <- min(y$ymax, d[2])
@@ -120,6 +98,7 @@ setMethod("query", "ImageArray", \(x, y) {
 #' @rdname query
 #' @export
 setMethod("query", "LabelArray", \(x, y) {
+    if (is.matrix(y)) stop("Polygon query not supported for labels")
     .check_box(y)
     d <- dim(x)
     y$ymax <- min(y$ymax, d[1])

@@ -36,18 +36,6 @@ test_that("query,.check_pol", {
     for (. in q) expect_error(.check_pol(.))
 })
 
-# test_that("query,...", {
-#     # extract 1st element from every layer
-#     lys <- lapply(seq_len(4), \(.) x[.,1][[.]][[1]])
-#     for (y in lys) {
-#         # missing bounding box coordinates
-#         expect_error(query(y, xmin=0, xmax=1, ymin=0))
-#         # # invalid coordinate space
-#         # expect_error(query(y, ".", xmin=0, xmax=1, ymin=0, ymax=1))
-#         # expect_error(query(y, 100, xmin=0, xmax=1, ymin=0, ymax=1))
-#     }
-# })
-
 test_that("query,ImageArray", {
     d <- dim(i <- image(x))
     # neither crop nor shift
