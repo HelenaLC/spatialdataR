@@ -74,8 +74,7 @@ setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 
 #' @noRd
 #' @importFrom methods as
-#' @importFrom DelayedArray realize
-#' @importFrom S4Arrays as.array.Array
+#' @importFrom Matrix sparseVector
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
@@ -96,7 +95,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 
 #' @noRd
 #' @importFrom methods as
-#' @importFrom Matrix rowSums sparseVector t
+#' @importFrom Matrix t rowSums sparseVector sparseMatrix
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom sf st_as_sf st_geometry_type st_distance
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
