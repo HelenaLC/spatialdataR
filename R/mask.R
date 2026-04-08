@@ -46,26 +46,29 @@
 #' @export
 NULL
 
-# TODO: table from point + shape, image + label etc. etc. etc.
+.check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))
 
 #' @rdname mask
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
+setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, 
+    how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
+    .check_ij(x, i); .check_ij(x, j)
     if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
-    stopifnot(length(i) == 1, is.character(i), i %in% unlist(colnames(x)))
-    stopifnot(length(j) == 1, is.character(j), j %in% unlist(colnames(x)))
     ok <- is.character(name) && length(name) == 1 && !name %in% tableNames(x)
     nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
         "Invalid 'name'; should be a function or a ",
         "character string not yet in 'tableNames(x)'")
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
     f <- \(i) names(which(rapply(colnames(x), \(.) i %in% ., "character")))
-    se <- .mask(i=element(x, f(i), i), j=element(x, f(j), j), how=how, table=t)
+    se <- .mask(i=element(x, f(i), i), j=element(x, f(j), j), how=how, table=t, ...)
     md <- list(region=j, region_key="region", instance_key="instance")
     int_metadata(se)$spatialdata_attrs <- md
-    cd <- data.frame(region=j, instance=colnames(se))
-    int_colData(se) <- cbind(int_colData(se), cd)
+    assay(se) <- as(assay(se), "dgCMatrix")
+    cd <- int_colData(se)
+    cd$region <- j
+    cd$instance <- colnames(se)
+    int_colData(se) <- cd
     `table<-`(x, nm, value=se)
 })
 
@@ -76,7 +79,7 @@ setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 #' @importFrom S4Arrays as.array.Array
 #' @importFrom SummarizedExperiment assayNames
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL) {
+setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
     if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
     stopifnot(dim(i)[-1] == dim(j))
     .j <- as(data(j), "sparseVector")
@@ -96,7 +99,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL) {
 #' @importFrom Matrix rowSums sparseVector t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom sf st_as_sf st_geometry_type st_distance
-setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL) {
+setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     n <- nrow(j <- st_as_sf(data(j)))
     fun <- switch(as.character(st_geometry_type(j[1, ])),
@@ -124,18 +127,20 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL) {
 #' @importFrom scuttle aggregateAcrossCells
 #' @importFrom SummarizedExperiment assayNames
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL) {
+setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
     #how <- value <- NULL; i <- shape(x, "cells"); j <- shape(x, "anatomical")
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
-    if (is.null(value)) value <- rownames(table)
+    ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
+    if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
     idx <- st_intersects(
         st_as_sf(data(j)), 
         st_as_sf(data(i)))
     foo <- integer(nrow(i))
     foo[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
     se <- aggregateAcrossCells(table, 
-        ids=foo, statistics=how, use.assay.type=1, 
+        ids=foo, subset.row=value,
+        statistics=how, use.assay.type=1, 
         store_number=paste0("n_", meta(table)$region))
     colnames(se) <- se[[1]]; se[[1]] <- NULL
     assayNames(se) <- how
