@@ -48,7 +48,7 @@
 #' fd <- st_coordinates(st_as_sf(data(t)))
 #' plot(
 #'   asp=1, xlim=c(15, 60), ylim=c(15, 60),
-#'   rbind(pol, pol[1, ]), type="l", col="blue") 
+#'   rbind(y, y[1, ]), type="l", col="blue") 
 #' foo <- by(df, df[, "L2"], \(x) points(x, type="b", col="black"))
 #' foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
 NULL
