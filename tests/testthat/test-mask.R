@@ -52,7 +52,8 @@ test_that("mask,ShapeFrame,ShapeFrame", {
     expect_identical(meta(new)$region, j)
     # 'value' should be a character 
     # vector of rownames in 'table(x, i)'
-    expect_error(mask(x, i, j, value="x"))
-    y <- mask(x, i, j, value=v <- sample(rownames(old), 5))
+    v <- sample(rownames(old), 5)
+    new <- getTable(mask(x, i, j, value=v), j)
     expect_equal(sum(assay(new[v, ])), sum(assay(old[v, ])))
+    expect_error(mask(x, i, j, value=`[<-`(v, i=1, "x")))
 })
