@@ -3,6 +3,7 @@
 \name{coord-utils}
 \alias{coord-utils}
 \alias{axes}
+\alias{CTlist}
 \alias{CTname}
 \alias{CTtype}
 \alias{CTdata}

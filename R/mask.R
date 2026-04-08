@@ -28,21 +28,20 @@
 #'
 #' # count points in shapes
 #' y <- mask(x, "blobs_points", "blobs_circles")
-#' t <- tail(y$tables, 1)[[1]]
-#' (sce <- .mask(i=point(x), j=shape(x, 1)))
-#' identical(assay(t), assay(sce))
+#' tail(tables(y), 1)
 #' 
 #' # average image channels by labels
 #' y <- mask(x, "blobs_image", "blobs_labels")
-#' t <- tail(y$tables, 1)[[1]]
-#' (sce <- .mask(i=image(x), j=label(x)))
-#' identical(assay(t), assay(sce))
+#' tail(tables(y), 1)
 #'
 #' library(SpatialData.data)
 #' x <- get_demo_SDdata("merfish")
 #' x <- readSpatialData(x)
+#' 
+#' # sum assay data from table by shapes
 #' y <- mask(x, "cells", "anatomical")
 #' tail(tables(y), 1)
+#' 
 #' @export
 NULL
 
@@ -133,7 +132,6 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
-    #how <- value <- NULL; i <- shape(x, "cells"); j <- shape(x, "anatomical")
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
     if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
