@@ -8,6 +8,8 @@
 #' dim,LabelArray-method
 #' length,ImageArray-method
 #' length,LabelArray-method
+#' data_type,ImageArray-method
+#' data_type,LabelArray-method
 #' 
 #' @param x \code{ImageArray} or  \code{LabelArray}
 #' @param k scalar index specifying which scale to extract.

@@ -8,6 +8,8 @@
 \alias{dim,LabelArray-method}
 \alias{length,ImageArray-method}
 \alias{length,LabelArray-method}
+\alias{data_type,ImageArray-method}
+\alias{data_type,LabelArray-method}
 \alias{data,sdArray-method}
 \alias{dim,sdArray-method}
 \alias{length,sdArray-method}

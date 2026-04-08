@@ -3,6 +3,15 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
+test_that("mask,unsupported", {
+    nm <- list(
+        c(imageNames(x)[1], imageNames(x)[2]), # image,image
+        c(labelNames(x)[1], labelNames(x)[2]), # label,label
+        c(labelNames(x)[1], imageNames(x)[1]), # label,image
+        c(shapeNames(x)[1], pointNames(x)[1])) # shape,point
+    for (ij in nm) expect_error(mask(x, ij[1], ij[2]))
+})
+
 test_that("mask,ImageArray,LabelArray", {
     i <- "blobs_image"
     j <- "blobs_labels"

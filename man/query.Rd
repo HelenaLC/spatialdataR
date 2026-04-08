@@ -22,6 +22,10 @@
 \arguments{
 \item{x}{\code{SpatialData} element.}
 
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{i}{for \code{SpatialData}, index or name of table to query.}
+
 \item{y}{query specification; 
 bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax' 
 (order is irrelevant); polygon: numeric matrix with ≥ 3 rows and 2 columns.}
