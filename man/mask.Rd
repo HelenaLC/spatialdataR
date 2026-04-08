@@ -2,10 +2,17 @@
 % Please edit documentation in R/mask.R
 \name{mask}
 \alias{mask}
-\alias{mask,SpatialData,ANY,ANY-method}
+\alias{mask,SpatialData-method}
 \title{Masking}
 \usage{
-\S4method{mask}{SpatialData,ANY,ANY}(x, i, j, how = NULL)
+\S4method{mask}{SpatialData}(
+  x,
+  i,
+  j,
+  how = NULL,
+  name = function(i, j) sprintf("\%s_by_\%s", i, j),
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
@@ -14,8 +21,9 @@
 specifically, \code{i} will be masked by \code{j},
 adding a \code{table} for \code{j} in \code{x}.}
 
-\item{how}{character string; statistic to use for masking.
-Defaults to "mean" when masking images, ignored when masking points.}
+\item{how}{character string; statistic to use for masking.}
+
+\item{name}{function use to generate the new \code{table}'s name.}
 
 \item{...}{optional arguments passed to and from other methods.}
 }
@@ -38,12 +46,19 @@ x <- readSpatialData(x, tables=FALSE)
 
 # count points in shapes
 y <- mask(x, "blobs_points", "blobs_circles")
-(sce <- mask(i=point(x), j=shape(x, 1)))
-identical(assay(table(y)), assay(sce))
+t <- y$tables$blobs_circles_masking_blobs_points
+(sce <- .mask(i=point(x), j=shape(x, 1)))
+identical(assay(t), assay(sce))
 
 # average image channels by labels
 y <- mask(x, "blobs_image", "blobs_labels")
-(sce <- mask(i=image(x), j=label(x)))
-identical(assay(table(y)), assay(sce))
+t <- y$tables$blobs_labels_masking_blobs_image
+(sce <- .mask(i=image(x), j=label(x)))
+identical(assay(t), assay(sce))
 
+library(SpatialData.data)
+x <- get_demo_SDdata("merfish")
+x <- readSpatialData(x)
+y <- mask(x, "cells", "anatomical")
+tail(tables(y), 1)
 }

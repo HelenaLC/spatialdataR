@@ -12,7 +12,7 @@
 #'   specifically, \code{i} will be masked by \code{j},
 #'   adding a \code{table} for \code{j} in \code{x}.
 #' @param how character string; statistic to use for masking.
-#'   Defaults to "mean" when masking images, ignored when masking points.
+#' @param name function use to generate the new \code{table}'s name.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return 
@@ -28,14 +28,21 @@
 #'
 #' # count points in shapes
 #' y <- mask(x, "blobs_points", "blobs_circles")
-#' (sce <- mask(i=point(x), j=shape(x, 1)))
-#' identical(assay(table(y)), assay(sce))
+#' t <- y$tables$blobs_circles_masking_blobs_points
+#' (sce <- .mask(i=point(x), j=shape(x, 1)))
+#' identical(assay(t), assay(sce))
 #' 
 #' # average image channels by labels
 #' y <- mask(x, "blobs_image", "blobs_labels")
-#' (sce <- mask(i=image(x), j=label(x)))
-#' identical(assay(table(y)), assay(sce))
+#' t <- y$tables$blobs_labels_masking_blobs_image
+#' (sce <- .mask(i=image(x), j=label(x)))
+#' identical(assay(t), assay(sce))
 #'
+#' library(SpatialData.data)
+#' x <- get_demo_SDdata("merfish")
+#' x <- readSpatialData(x)
+#' y <- mask(x, "cells", "anatomical")
+#' tail(tables(y), 1)
 #' @export
 NULL
 
@@ -44,27 +51,52 @@ NULL
 #' @rdname mask
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, how=NULL) {
+setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
+    if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
     stopifnot(length(i) == 1, is.character(i), i %in% unlist(colnames(x)))
     stopifnot(length(j) == 1, is.character(j), j %in% unlist(colnames(x)))
-    # get element types
+    ok <- is.character(name) && length(name) == 1 && !name %in% tableNames(x)
+    nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
+        "Invalid 'name'; should be a function or a ",
+        "character string not yet in 'tableNames(x)'")
+    t <- tryCatch(error=\(.) NULL, getTable(x, i))
     f <- \(i) names(which(rapply(colnames(x), \(.) i %in% ., "character")))
-    t <- mask(i=element(x, f(i), i), j=element(x, f(j), j), how=how)
-    md <- list(region=j, 
-        region_key="region", 
-        instance_key="instance")
-    int_metadata(t)$spatialdata_attrs <- md
-    cd <- data.frame(region=j, instance=colnames(t))
-    int_colData(t) <- cbind(int_colData(t), cd)
-    nm <- paste0(j, "_masking_", i)
-    `table<-`(x, nm, value=t)
+    se <- .mask(i=element(x, f(i), i), j=element(x, f(j), j), how=how, table=t)
+    md <- list(region=j, region_key="region", instance_key="instance")
+    int_metadata(se)$spatialdata_attrs <- md
+    cd <- data.frame(region=j, instance=colnames(se))
+    int_colData(se) <- cbind(int_colData(se), cd)
+    `table<-`(x, nm, value=se)
+})
+
+setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
+
+#' @importFrom methods as
+#' @importFrom DelayedArray realize
+#' @importFrom S4Arrays as.array.Array
+#' @importFrom SummarizedExperiment assayNames
+#' @importFrom SingleCellExperiment SingleCellExperiment
+setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL) {
+    if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
+    stopifnot(dim(i)[-1] == dim(j))
+    .j <- as(data(j), "sparseVector")
+    .j <- as.vector(.j[ok <- .j > 0])
+    mx <- apply(data(i), 1, \(.i) {
+        .i <- as(.i, "sparseVector")
+        .i <- as.vector(.i[ok])
+        tapply(.i, .j, how)
+    })
+    colnames(mx) <- channels(i)
+    se <- SingleCellExperiment(list(t(mx)))
+    assayNames(se) <- how
+    return(se)
 })
 
 #' @importFrom methods as
 #' @importFrom Matrix rowSums sparseVector t
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom sf st_as_sf st_geometry_type st_distance
-setMethod("mask", c("missing", "PointFrame", "ShapeFrame"), \(x, i, j, how=NULL) {
+setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     n <- nrow(j <- st_as_sf(data(j)))
     fun <- switch(as.character(st_geometry_type(j[1, ])),
@@ -89,25 +121,27 @@ setMethod("mask", c("missing", "PointFrame", "ShapeFrame"), \(x, i, j, how=NULL)
     SingleCellExperiment(list(counts=ns))
 })
 
-#' @importFrom methods as
-#' @importFrom DelayedArray realize
-#' @importFrom S4Arrays as.array.Array
+#' @importFrom scuttle aggregateAcrossCells
+#' @importFrom SummarizedExperiment assayNames
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod("mask", c("missing", "ImageArray", "LabelArray"), \(x, i, j, how=NULL) {
-    if (is.null(how)) how <- "mean"
-    stopifnot(dim(i)[-1] == dim(j))
-    .j <- as(data(j), "sparseVector")
-    .j <- as.vector(.j[ok <- .j > 0])
-    mx <- apply(data(i), 1, \(.i) {
-        .i <- as(.i, "sparseVector")
-        .i <- as.vector(.i[ok])
-        tapply(.i, .j, how)
-    })
-    colnames(mx) <- channels(i)
-    se <- SingleCellExperiment(list(t(mx)))
+setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL) {
+    #how <- value <- NULL; i <- shape(x, "cells"); j <- shape(x, "anatomical")
+    if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
+    if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
+    if (is.null(value)) value <- rownames(table)
+    idx <- st_intersects(
+        st_as_sf(data(j)), 
+        st_as_sf(data(i)))
+    foo <- integer(nrow(i))
+    foo[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
+    se <- aggregateAcrossCells(table, 
+        ids=foo, statistics=how, use.assay.type=1, 
+        store_number=paste0("n_", meta(table)$region))
+    colnames(se) <- se[[1]]; se[[1]] <- NULL
     assayNames(se) <- how
     return(se)
 })
 
-setMethod("mask", c("missing", "ANY", "ANY"), \(x, i, j, how=NULL) 
+setMethod(".mask", c("ANY", "ANY"), \(x, i, j, ...) 
     stop("'mask'ing between these element types not yet supported"))
+
