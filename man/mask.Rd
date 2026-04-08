@@ -28,9 +28,7 @@ adding a \code{table} for \code{j} in \code{x}.}
 \item{...}{optional arguments passed to and from other methods.}
 }
 \value{
-Input \code{SpatialData} object \code{x} with an additional table named 
-\code{<j>_masking_<i>}; or a \code{SingleCellExperiment} object when 
-masking elements directly (i.e., without \code{x} as input).
+Input \code{SpatialData} object \code{x} with an additional table.
 }
 \description{
 Masking operations serve to aggregate data across layers, e.g., 
