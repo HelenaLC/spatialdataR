@@ -46,13 +46,13 @@ x <- readSpatialData(x, tables=FALSE)
 
 # count points in shapes
 y <- mask(x, "blobs_points", "blobs_circles")
-t <- y$tables$blobs_circles_masking_blobs_points
+t <- tail(y$tables, 1)[[1]]
 (sce <- .mask(i=point(x), j=shape(x, 1)))
 identical(assay(t), assay(sce))
 
 # average image channels by labels
 y <- mask(x, "blobs_image", "blobs_labels")
-t <- y$tables$blobs_labels_masking_blobs_image
+t <- tail(y$tables, 1)[[1]]
 (sce <- .mask(i=image(x), j=label(x)))
 identical(assay(t), assay(sce))
 
