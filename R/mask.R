@@ -129,10 +129,10 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
     #how <- value <- NULL; i <- shape(x, "cells"); j <- shape(x, "anatomical")
-    if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
     if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
+    if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     idx <- st_intersects(
         st_as_sf(data(j)), 
         st_as_sf(data(i)))
