@@ -54,7 +54,7 @@ library(SpatialData.data)
 x <- get_demo_SDdata("merfish")
 x <- readSpatialData(x)
 
-# sum assay data from table by shapes
+# sum table counts by shapes
 y <- mask(x, "cells", "anatomical")
 tail(tables(y), 1)
 
