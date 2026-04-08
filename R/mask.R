@@ -15,10 +15,7 @@
 #' @param name function use to generate the new \code{table}'s name.
 #' @param ... optional arguments passed to and from other methods.
 #'
-#' @return 
-#' Input \code{SpatialData} object \code{x} with an additional table named 
-#' \code{<j>_masking_<i>}; or a \code{SingleCellExperiment} object when 
-#' masking elements directly (i.e., without \code{x} as input).
+#' @return Input \code{SpatialData} object \code{x} with an additional table.
 #'
 #' @examples
 #' library(SingleCellExperiment)
@@ -151,6 +148,6 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL
 })
 
 #' @noRd
-setMethod(".mask", c("ANY", "ANY"), \(x, i, j, ...) 
+setMethod(".mask", c("ANY", "ANY"), \(i, j, ...) 
     stop("'mask'ing between these element types not yet supported"))
 
