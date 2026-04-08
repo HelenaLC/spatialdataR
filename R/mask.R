@@ -57,9 +57,11 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
     nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
         "Invalid 'name'; should be a function or a ",
         "character string not yet in 'tableNames(x)'")
-    t <- tryCatch(error=\(.) NULL, getTable(x, i))
     f <- \(i) names(which(rapply(colnames(x), \(.) i %in% ., "character")))
-    se <- .mask(i=element(x, f(i), i), j=element(x, f(j), j), how=how, table=t, ...)
+    .i <- element(x, f(i), i)
+    .j <- element(x, f(j), j)
+    t <- tryCatch(error=\(.) NULL, getTable(x, i))
+    se <- .mask(.i, .j, how=how, table=t, ...)
     md <- list(region=j, region_key="region", instance_key="instance")
     int_metadata(se)$spatialdata_attrs <- md
     assay(se) <- as(assay(se), "dgCMatrix")

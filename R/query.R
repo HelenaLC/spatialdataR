@@ -79,8 +79,8 @@ NULL
     bot <- mx[nrow(mx), ]
     if (!all(top == bot)) 
         mx <- rbind(mx, top)
-    dup <- any(duplicated(mx[-1, ]))
-    if (dup) stop("Invalid polygon query; found duplicated vertices")
+    dup <- duplicated(as.data.frame(mx[-1, , drop=FALSE]))
+    if (any(dup)) stop("Invalid polygon query; found duplicated vertices")
     return(mx)
 }
 
