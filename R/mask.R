@@ -49,6 +49,8 @@ NULL
 .check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))
 
 #' @rdname mask
+#' @importFrom methods as
+#' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
 setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, 
@@ -74,10 +76,11 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
 
 setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 
+#' @noRd
 #' @importFrom methods as
 #' @importFrom DelayedArray realize
 #' @importFrom S4Arrays as.array.Array
-#' @importFrom SummarizedExperiment assayNames
+#' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
     if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
@@ -95,6 +98,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
     return(se)
 })
 
+#' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix rowSums sparseVector t
 #' @importFrom SingleCellExperiment SingleCellExperiment
@@ -124,8 +128,9 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     SingleCellExperiment(list(counts=ns))
 })
 
+#' @noRd
 #' @importFrom scuttle aggregateAcrossCells
-#' @importFrom SummarizedExperiment assayNames
+#' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
     #how <- value <- NULL; i <- shape(x, "cells"); j <- shape(x, "anatomical")
@@ -147,6 +152,7 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL
     return(se)
 })
 
+#' @noRd
 setMethod(".mask", c("ANY", "ANY"), \(x, i, j, ...) 
     stop("'mask'ing between these element types not yet supported"))
 
