@@ -2,6 +2,23 @@ zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs, tables=FALSE)
 
+test_that("mirror,sdArray", {
+    x <- label(sd, 1)[-1,-c(1,2)]
+    expect_error(mirror(x, "x"))
+    expect_identical(mirror(x, "v"), flip(x))
+    expect_identical(mirror(x, "h"), flop(x))
+    # vertical reflection
+    y <- flip(x)
+    expect_identical(dim(y), dim(x))
+    expect_equal(data(y)[1, ], rev(data(x)[1, ]))
+    expect_equal(data(y)[, 1], data(x)[, ncol(x)])
+    # horizontal reflection
+    y <- flop(x)
+    expect_identical(dim(y), dim(x))
+    expect_equal(data(y)[, 1], rev(data(x)[, 1]))
+    expect_equal(data(y)[1, ], data(x)[nrow(x), ])
+})
+
 test_that("translation,imageArray", {
     x <- image(sd, 1)
     # identity

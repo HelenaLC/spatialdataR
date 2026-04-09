@@ -46,7 +46,9 @@ NULL
 # array ----
 
 .mirror <- \(x, t) {
-    y <- aperm(data(x), c(1, 2, 3))
+    d <- length(dim(x)) == 3
+    i <- if (d) c(1, 3, 2) else c(2, 1)
+    y <- aperm(data(x), i)
     x@data <- list(y)
     rotate(x, t)
 }
@@ -94,9 +96,8 @@ setMethod("rotate", c("sdArray", "numeric"), \(x, t, ...) {
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
     f <- \(.) EBImage::rotate(., -t) 
-    metadata(x)$wh <- lapply(
-        rev(dim(x)[-1]), \(.) 
-        c(c(0, .) %*% .R(t*pi/180)))
+    if (length(d <- dim(x)) == 3) d <- d[-1]
+    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(-t*pi/180)))
     .trans_a(x, f)
 })
 
