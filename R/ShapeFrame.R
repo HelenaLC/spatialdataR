@@ -1,5 +1,6 @@
 #' @name ShapeFrame
 #' @title The `ShapeFrame` class
+#' @aliases geom_type
 #'
 #' @param x \code{ShapeFrame}
 #' @param data \code{arrow}-derived table for on-disk,

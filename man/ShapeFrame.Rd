@@ -2,6 +2,7 @@
 % Please edit documentation in R/ShapeFrame.R
 \name{ShapeFrame}
 \alias{ShapeFrame}
+\alias{geom_type}
 \alias{dim,ShapeFrame-method}
 \alias{length,ShapeFrame-method}
 \alias{names,ShapeFrame-method}
