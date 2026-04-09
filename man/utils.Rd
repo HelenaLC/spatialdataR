@@ -15,7 +15,7 @@
 
 \S4method{centroids}{ShapeFrame}(x, as = c("data.frame", "matrix", "list"))
 
-\S4method{centroids}{PointFrame}(x, as = c("data.frame", "matrix", "list"))
+\S4method{centroids}{PointFrame}(x, as = c("data.frame", "list"))
 }
 \arguments{
 \item{x}{a \code{SpatialData} element (any but image)}
