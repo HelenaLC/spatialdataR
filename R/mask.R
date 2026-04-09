@@ -138,30 +138,23 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # grouping
-    idx <- st_intersects(
-        st_as_sf(data(j)), 
-        st_as_sf(data(i)))
-    ids <- integer(nrow(i))
-    ids[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
-    ids <- factor(ids, seq(0, nrow(j)))
-    nid <- nlevels(ids)
+    js <- st_intersects(st_as_sf(data(j)), st_as_sf(data(i)))
+    is <- factor(integer(nrow(i)), seq(0, nrow(j)))
+    is[unlist(js)] <- rep(seq_along(js), lengths(js))
+    is <- factor(is, seq(0, nrow(j)))
+    ns <- tabulate(is, ni <- nlevels(is))
     # aggregation
     mx <- assay(table)
-    if (grepl("detected$", how)) {
-        mx <- mx > 0
-    }
+    if (grepl("detected$", how)) mx <- mx > 0
     my <- sparseMatrix(
-        x=rep(1, length(ids)), 
-        i=seq_along(ids), j=ids, 
-        dims=c(ncol(table), nid))
+        x=rep(1, length(is)), 
+        i=seq_along(is), j=is, 
+        dims=c(ncol(table), ni))
     mx <- mx %*% my
-    if (grepl("mean|prop", how)) {
-        ns <- tabulate(ids, nid)
-        mx <- t(t(mx)/ns)
-    }
+    if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
     # wrangling
     mx <- as(mx, "dgCMatrix")
-    colnames(mx) <- levels(ids)
+    colnames(mx) <- levels(is)
     mx <- list(mx); names(mx) <- how
     se <- SingleCellExperiment(mx)
     nm <- paste0("n_", meta(table)$region)
