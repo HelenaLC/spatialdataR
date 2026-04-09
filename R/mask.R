@@ -103,7 +103,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     n <- nrow(j <- st_as_sf(data(j)))
-    fun <- switch(as.character(st_geometry_type(j[1, ])),
+    fun <- switch(geom_type(j),
         POINT=\(i, j) rowSums(st_distance(j, i) <= j$radius),
         \(i, j) vapply(st_intersects(j, i), length, integer(1)))
     # realize one feature at i time
