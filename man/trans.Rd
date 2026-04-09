@@ -45,7 +45,7 @@ x <- readSpatialData(x, tables=FALSE)
 
 # image
 y <- x
-image(y) <- scale(image(y), 1, c(1, 1, 1/3))
+image(y) <- scale(image(y), c(1, 1, 1/3))
 CTpath(image(x), "global")
 CTpath(image(y), "global")
   
