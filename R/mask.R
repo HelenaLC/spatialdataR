@@ -126,29 +126,28 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 })
 
 #' @noRd
-#' @importFrom scuttle aggregateAcrossCells
+#' @importFrom methods as
+#' @importFrom scrapper aggregateAcrossCells.se
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
     if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
-    if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
+    if (!is.null(how)) { message("Can only 'sum' when masking shapes; ignoring 'sum'") }
     idx <- st_intersects(
         st_as_sf(data(j)), 
         st_as_sf(data(i)))
     foo <- integer(nrow(i))
     foo[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
-    se <- aggregateAcrossCells(table, 
-        ids=foo, subset.row=value,
-        statistics=how, use.assay.type=1, 
-        store_number=paste0("n_", meta(table)$region))
+    se <- aggregateAcrossCells.se(table, foo, assay.type=1,
+        counts.name=paste0("n_", meta(table)$region))
     colnames(se) <- se[[1]]; se[[1]] <- NULL
-    assayNames(se) <- how
-    return(se)
+    assayNames(se)[1] <- "counts"
+    metadata(se) <- list()
+    as(se, "SingleCellExperiment")
 })
 
 #' @noRd
 setMethod(".mask", c("ANY", "ANY"), \(i, j, ...) 
     stop("'mask'ing between these element types not yet supported"))
-
