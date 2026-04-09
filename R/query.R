@@ -55,6 +55,31 @@
 #' foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
 NULL
 
+#' @rdname query
+#' @importFrom dplyr filter
+#' @export
+setMethod("query", "SpatialData", \(x, ..., i) {
+    # TODO: need more example data to properly implement this; 
+    # for now, just a proof of concept using 'spatialdata_attrs'
+    if (missing(i)) i <- 1
+    if (!length(tables(x))) 
+        stop("There aren't any tables")
+    if (is.numeric(i)) {
+        i <- tableNames(x)[i]
+    } else if (is.character(i)) {
+        i <- match.arg(i, tableNames(x))
+    }
+    t <- x$tables[[i]]
+    ns <- vapply(nm <- colnames(x), length, integer(1))
+    nm <- data.frame(layer=rep.int(names(nm), ns), region=unlist(nm))
+    nm <- filter(nm, ...)
+    i <- match(nm$layer, .LAYERS)
+    j <- split(nm$region, nm$layer)
+    x <- x[i, j]
+    x$tables$table <- t
+    return(x)
+})
+
 .check_box <- \(bb) {
     xy <- c("xmin", "xmax", "ymin", "ymax")
     ok <- c(is.list(bb), 
@@ -83,31 +108,6 @@ NULL
     if (any(dup)) stop("Invalid polygon query; found duplicated vertices")
     return(mx)
 }
-
-#' @rdname query
-#' @importFrom dplyr filter
-#' @export
-setMethod("query", "SpatialData", \(x, ..., i) {
-    # TODO: need more example data to properly implement this; 
-    # for now, just a proof of concept using 'spatialdata_attrs'
-    if (missing(i)) i <- 1
-    if (!length(tables(x))) 
-        stop("There aren't any tables")
-    if (is.numeric(i)) {
-        i <- tableNames(x)[i]
-    } else if (is.character(i)) {
-        i <- match.arg(i, tableNames(x))
-    }
-    t <- x$tables[[i]]
-    ns <- vapply(nm <- colnames(x), length, integer(1))
-    nm <- data.frame(layer=rep.int(names(nm), ns), region=unlist(nm))
-    nm <- filter(nm, ...)
-    i <- match(nm$layer, .LAYERS)
-    j <- split(nm$region, nm$layer)
-    x <- x[i, j]
-    x$tables$table <- t
-    return(x)
-})
 
 .query_sdArray <- \(x, y) {
     if (is.matrix(y)) stop(

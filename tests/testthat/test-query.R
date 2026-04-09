@@ -29,10 +29,10 @@ test_that("query,.check_pol", {
     for (. in q) expect_silent(.check_pol(.))
     # invalid
     q <- list(
-        `[<-`(m, i=1, j=1, value=NA),  # missing value
-        `[<-`(m, i=1, j=1, value=Inf), # not finite
+        matrix(seq_len(6), 2, 3), # wrong dim.
         matrix(numeric(6), 3, 2), # duplicates
-        matrix(seq_len(6), 2, 3)) # wrong dim.
+        `[<-`(m, i=1, j=1, value=Inf), # not finite
+        `[<-`(m, i=1, j=1, value=NA))  # missing value
     for (. in q) expect_error(.check_pol(.))
 })
 
@@ -77,7 +77,7 @@ test_that("query,LabelArray", {
     expect_equal(dim(query(l, y)), c(1+h-dy, 1+w-dx))
     # non-finite boundaries
     y <- list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-    expect_silent(query(i, y))
+    expect_silent(query(l, y))
 })
 
 test_that("query-box,PointFrame", {
