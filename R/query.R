@@ -109,31 +109,37 @@ setMethod("query", "SpatialData", \(x, ..., i) {
     return(x)
 })
 
-#' @rdname query
-#' @export
-setMethod("query", "ImageArray", \(x, y) {
-    if (is.matrix(y)) stop("Polygon query not supported for images")
+.query_sdArray <- \(x, y) {
+    if (is.matrix(y)) stop(
+        "Polygon query not supported for ",
+        "element of type 'image/labelArray'")
     .check_box(y)
-    d <- dim(x)
-    y$ymax <- min(y$ymax, d[2])
-    y$xmax <- min(y$xmax, d[3])
-    j <- seq(y$ymin, y$ymax)
-    k <- seq(y$xmin, y$xmax)
-    return(x[, j, k])
-})
+    # protect image channels (i.e., 
+    # only query spatial dimensions)
+    n <- length(d <- dim(x))
+    if (n == 3) d <- d[-1]
+    # assure query is within bounds
+    y$xmin <- max(y$xmin, 0)
+    y$ymin <- max(y$ymin, 0)
+    y$ymax <- min(y$ymax, d[1])
+    y$xmax <- min(y$xmax, d[2])
+    # subset spatial dimensions
+    i <- seq(y$ymin, y$ymax)
+    j <- seq(y$xmin, y$xmax)
+    if (n == 3) {
+        return(x[, i, j])
+    } else {
+        return(x[i, j])
+    }
+}
 
 #' @rdname query
 #' @export
-setMethod("query", "LabelArray", \(x, y) {
-    if (is.matrix(y)) stop("Polygon query not supported for labels")
-    .check_box(y)
-    d <- dim(x)
-    y$ymax <- min(y$ymax, d[1])
-    y$xmax <- min(y$xmax, d[2])
-    i <- seq(y$ymin, y$ymax)
-    j <- seq(y$xmin, y$xmax)
-    return(x[i, j])
-})
+setMethod("query", "ImageArray", \(x, y) .query_sdArray(x, y))
+
+#' @rdname query
+#' @export
+setMethod("query", "LabelArray", \(x, y) .query_sdArray(x, y))
 
 #' @rdname query
 #' @importFrom sf st_as_sf st_intersects st_polygon st_bbox st_crop
