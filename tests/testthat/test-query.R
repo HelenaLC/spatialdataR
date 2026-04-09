@@ -38,7 +38,7 @@ test_that("query,.check_pol", {
 
 test_that("query,ImageArray", {
     d <- dim(i <- image(x))
-    # neither crop nor shift
+    # query equals dimensions
     y <- list(xmin=0, xmax=d[3], ymin=0, ymax=d[2])
     expect_identical(query(i, y), i)
     # order is irrelevant
@@ -49,8 +49,35 @@ test_that("query,ImageArray", {
     expect_equal(dim(j <- query(i, y)), c(3, h, w)) 
     expect_identical(CTlist(i), CTlist(j))
     # crop and shift
-    y <- list(xmin=1, xmax=w <- d[3]/2, ymin=2, ymax=h <- d[2]/4)
-    expect_equal(dim(query(i, y)), c(3, 1+h-2, 1+w-1))
+    y <- list(
+        xmin=dx <- 3, xmax=w <- d[3]/2, 
+        ymin=dy <- 5, ymax=h <- d[2]/4)
+    expect_equal(dim(query(i, y)), c(3, 1+h-dy, 1+w-dx))
+    # non-finite boundaries
+    y <- list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+    expect_silent(query(i, y))
+})
+
+test_that("query,LabelArray", {
+    d <- dim(l <- label(x))
+    # query equals dimensions
+    y <- list(xmin=0, xmax=d[2], ymin=0, ymax=d[1])
+    expect_identical(query(l, y), l)
+    # order is irrelevant
+    y <- list(ymax=d[1], xmax=d[2], xmin=0, ymin=0)
+    expect_identical(query(l, y), l)
+    # crop but don't shift
+    y <- list(xmin=0, xmax=w <- d[2]/2, ymin=0, ymax=h <- d[1]/4)
+    expect_equal(dim(m <- query(l, y)), c(h, w)) 
+    expect_identical(CTlist(l), CTlist(m))
+    # crop and shift
+    y <- list(
+        xmin=dx <- 3, xmax=w <- d[2]/2, 
+        ymin=dy <- 5, ymax=h <- d[1]/4)
+    expect_equal(dim(query(l, y)), c(1+h-dy, 1+w-dx))
+    # non-finite boundaries
+    y <- list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+    expect_silent(query(i, y))
 })
 
 test_that("query-box,PointFrame", {
