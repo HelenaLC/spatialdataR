@@ -72,7 +72,7 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
         stopifnot(
             i == round(i), 
             i %in% seq_along(CTlist(x)))
-    } else stop("Invlid 'i'; should be a scalar character or integer")
+    } else stop("Invalid 'i'; should be a scalar character or integer")
     t <- CTtype(x)[i]
     if (t != "sequence") 
         return(CTlist(x)[[i]][[t]])
@@ -203,23 +203,3 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     }
     return(x)
 })
-
-# Dec 8 VJC -- why is this in doc comment mode?  changing to plain comment
-# # @importFrom EBImage resize
-# setMethod("scale", "ImageArray", \(x, t, ...) {
-#     a <- as.array(data(x)) 
-#     # TODO: this should be done w/o realizing 
-#     # into memory, but EBImage needs an array?
-#     d <- length(dim(a))
-#     if (missing(t)) 
-#         t <- rep(1, d)
-#     b <- resize(aperm(a),
-#         w=dim(a)[d]*t[d],
-#         h=dim(a)[d-1]*t[d-1])
-#     x@data <- aperm(b)
-#     x
-# })
-# 
-# # @importFrom EBImage resize
-# setMethod("translation", "ImageArray", \(x, t, ...) {})
-# setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))

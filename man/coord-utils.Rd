@@ -7,8 +7,6 @@
 \alias{CTname}
 \alias{CTtype}
 \alias{CTdata}
-\alias{CTpath}
-\alias{CTgraph}
 \alias{addCT}
 \alias{rmvCT}
 \alias{axes,Zattrs-method}
