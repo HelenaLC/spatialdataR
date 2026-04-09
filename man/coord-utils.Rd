@@ -7,8 +7,6 @@
 \alias{CTname}
 \alias{CTtype}
 \alias{CTdata}
-\alias{CTpath}
-\alias{CTgraph}
 \alias{addCT}
 \alias{rmvCT}
 \alias{axes,Zattrs-method}
@@ -22,11 +20,6 @@
 \alias{CTtype,SpatialDataElement-method}
 \alias{CTname,SpatialDataElement-method}
 \alias{CTname,SpatialData-method}
-\alias{CTgraph,SpatialData-method}
-\alias{CTgraph,SpatialDataElement-method}
-\alias{CTgraph,ANY-method}
-\alias{CTpath,SpatialData-method}
-\alias{CTpath,SpatialDataElement-method}
 \alias{rmvCT,SpatialDataElement-method}
 \alias{rmvCT,Zattrs-method}
 \alias{addCT,SpatialDataElement-method}
@@ -55,16 +48,6 @@
 
 \S4method{CTname}{SpatialData}(x, ...)
 
-\S4method{CTgraph}{SpatialData}(x)
-
-\S4method{CTgraph}{SpatialDataElement}(x)
-
-\S4method{CTgraph}{ANY}(x)
-
-\S4method{CTpath}{SpatialData}(x, i, j)
-
-\S4method{CTpath}{SpatialDataElement}(x, j)
-
 \S4method{rmvCT}{SpatialDataElement}(x, i)
 
 \S4method{rmvCT}{Zattrs}(x, i)
@@ -81,14 +64,14 @@
 \item{i}{for \code{CTpath}, source node label; else, string or 
 scalar integer giving the name or index of a coordinate space.}
 
-\item{j}{character string; name of target coordinate space.}
-
 \item{name}{character(1); name of coordinate space}
 
 \item{type}{character(1); type of transformation}
 
 \item{data}{transformation data; size and shape depend on transformation and
 element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)}
+
+\item{j}{character string; name of target coordinate space.}
 }
 \description{
 Coordinate transformations
@@ -97,18 +80,6 @@ Coordinate transformations
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
-
-# element-wise
-g <- CTgraph(y <- image(x))
-graph::nodes(g)
-CTpath(y, "global")
-
-# object-wide
-g <- CTgraph(x)
-plotCoordGraph(g)
-
-# retrieve transformation from element to target space
-CTpath(x, "blobs_labels", "sequence")
 
 # view available target coordinate systems
 CTname(z <- meta(label(x)))

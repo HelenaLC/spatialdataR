@@ -1,6 +1,6 @@
 #' @name coord-utils
 #' @title Coordinate transformations
-#' @aliases axes CTlist CTname CTtype CTdata CTpath CTgraph addCT rmvCT
+#' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{Zattrs}.
 #' @param i for \code{CTpath}, source node label; else, string or 
@@ -16,18 +16,6 @@
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
-#' 
-#' # element-wise
-#' g <- CTgraph(y <- image(x))
-#' graph::nodes(g)
-#' CTpath(y, "global")
-#' 
-#' # object-wide
-#' g <- CTgraph(x)
-#' plotCoordGraph(g)
-#' 
-#' # retrieve transformation from element to target space
-#' CTpath(x, "blobs_labels", "sequence")
 #' 
 #' # view available target coordinate systems
 #' CTname(z <- meta(label(x)))
@@ -80,11 +68,11 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
     if (is.character(i)) {
         match.arg(i, CTname(x))
         i <- match(i, CTname(x))
-    } else {
+    } else if (is.numeric(i)) {
         stopifnot(
             i == round(i), 
             i %in% seq_along(CTlist(x)))
-    }
+    } else stop("Invalid 'i'; should be a scalar character or integer")
     t <- CTtype(x)[i]
     if (t != "sequence") 
         return(CTlist(x)[[i]][[t]])
@@ -124,110 +112,6 @@ setMethod("CTname", "SpatialData", \(x, ...) {
     t <- nodeData(g, nodes(g), "type")
     names(t)[unlist(t) == "space"]
 })
-
-# CTgraph() ----
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTgraph", "SpatialData", \(x) {
-    names(ls) <- ls <- setdiff(.LAYERS, "tables")
-    md <- lapply(ls, \(l) {
-        names(es) <- es <- names(x[[l]])
-        lapply(es, \(e) meta(x[[l]][[e]]))
-    })
-    .make_g(md)
-})
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTgraph", "SpatialDataElement", \(x) 
-    .make_g(list("mock"=list("self"=meta(x)))))
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTgraph", "ANY", \(x) stop("'x' should be a", 
-    " 'SpatialData' object, or a non-'table' element"))
-
-#' @importFrom graph graphAM nodeDataDefaults<- edgeDataDefaults<-
-.init_g <- \() {
-    g <- graphAM(edgemode="directed")
-    edgeDataDefaults(g, "data") <- list()
-    edgeDataDefaults(g, "type") <- character()
-    nodeDataDefaults(g, "type") <- character()
-    return(g)
-}
-
-#' @importFrom graph nodes addNode addEdge nodeData<- edgeData<- 
-.make_g <- \(md) {
-    g <- .init_g()
-    for (l in names(md)) for (e in names(md[[l]])) {
-        .md <- md[[l]][[e]]
-        ms <- .md$multiscales
-        if (!is.null(ms)) .md <- ms[[1]]
-        ct <- .md$coordinateTransformations
-        g <- addNode(e, g)
-        nodeData(g, e, "type") <- "element"
-        for (i in seq_along(ct)) {
-            n <- ct[[i]]$output$name
-            if (!n %in% nodes(g)) {
-                g <- addNode(n, g)
-                nodeData(g, n, "type") <- "space"
-            }
-            t <- ct[[i]]$type
-            if (t == "sequence") {
-                sq <- ct[[i]]$transformations
-                . <- e
-                for (j in seq_along(sq)) {
-                    if (j == length(sq)) {
-                        m <- n
-                    } else {
-                        m <- paste(e, n, j, sep="_")
-                        g <- addNode(m, g)
-                        nodeData(g, m, "type") <- "none"
-                    }
-                    t <- sq[[j]]$type
-                    d <- sq[[j]][[t]]
-                    g <- addEdge(., m, g)
-                    edgeData(g, ., m, "type") <- t
-                    edgeData(g, ., m, "data") <- list(d)
-                    . <- m
-                }
-            } else {
-                g <- addEdge(e, n, g)
-                d <- ct[[i]][[ct[[i]]$type]]
-                edgeData(g, e, n, "type") <- t
-                edgeData(g, e, n, "data") <- list(d)
-            }
-        }
-    }
-    return(g)
-}
-
-# CTpath() ----
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTpath", "SpatialData", \(x, i, j) {
-    g <- CTgraph(x)
-    .path_ij(g, i, j)
-})
-
-#' @rdname coord-utils
-#' @export
-setMethod("CTpath", "SpatialDataElement", \(x, j) {
-    g <- CTgraph(x)
-    .path_ij(g, "self", j)
-})
-
-#' @importFrom graph edgeData
-#' @importFrom RBGL sp.between
-.path_ij <- \(g, i, j) {
-    p <- sp.between(g, i, j)
-    p <- p[[1]]$path_detail
-    n <- length(p)-1
-    lapply(seq_len(n), \(.)
-        edgeData(g, p[.], p[.+1])[[1]])
-}
 
 # rmv ----
 
@@ -319,72 +203,3 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     }
     return(x)
 })
-
-# Dec 8 VJC -- why is this in doc comment mode?  changing to plain comment
-# # @importFrom EBImage resize
-# setMethod("scale", "ImageArray", \(x, t, ...) {
-#     a <- as.array(data(x)) 
-#     # TODO: this should be done w/o realizing 
-#     # into memory, but EBImage needs an array?
-#     d <- length(dim(a))
-#     if (missing(t)) 
-#         t <- rep(1, d)
-#     b <- resize(aperm(a),
-#         w=dim(a)[d]*t[d],
-#         h=dim(a)[d-1]*t[d-1])
-#     x@data <- aperm(b)
-#     x
-# })
-# 
-# # @importFrom EBImage resize
-# setMethod("translation", "ImageArray", \(x, t, ...) {})
-# setMethod("transform", "ImageArray", \(x, t) get(t$type)(x, unlist(t[[t$type]])))
-
-# plotCoordGraph() ----
-
-#' @name plotCoordGraph
-#' @title CT graph viz.
-#' 
-#' @description
-#' given a \code{graphNEL} instance, nodes with \code{nchar>max} are
-#' split and hyphenated at character position \code{floor(nchar/fac)}.
-#' 
-#' @param g base R graph; extracted with \code{\link{CTgraph}}.
-#' @param cex scalar numeric; controls fontsize of node labels.
-#' 
-#' @examples
-#' x <- file.path("extdata", "blobs.zarr")
-#' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, tables=FALSE)
-#' 
-#' g <- CTgraph(x)
-#' plotCoordGraph(g, cex=0.6)
-#' 
-#' @importFrom graph nodes nodes<- graph.par
-#' @export
-plotCoordGraph <- \(g, cex=0.6) {
-    if (!requireNamespace("Rgraphviz", quietly=TRUE))
-        stop("To use this function, install the 'Rgraphviz'.")
-    g2view <- g # leave 'g' alone
-    nodes(g2view) <- .nodefix(nodes(g2view))
-    graph.par(list(nodes=list(shape="plaintext", cex=cex)))
-    g2view <- Rgraphviz::layoutGraph(g2view)
-    Rgraphviz::renderGraph(g2view)
-}
-
-.nodefix <- \(x, fac=2, max=10) {
-    fix <- nchar(x) > max
-    if (!any(fix)) return(x)
-    x[fix] <- .fixup(x[fix], fac)
-    x
-}
-
-.fixup <- \(x, fac) {
-    xs <- strsplit(x, "")
-    nc <- floor(nchar(x)/fac)
-    vapply(seq_along(xs), \(i) {
-        j <- seq_len(nc[i])
-        y <- c(xs[[i]][j], "-\n", xs[[i]][-j])
-        paste(y, collapse="")
-    }, character(1))
-}

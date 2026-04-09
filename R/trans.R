@@ -41,64 +41,43 @@
 #' y["shapes", c("rot", "wide", "left")]
 NULL
 
-# image ----
+# array ----
 
-#' @rdname trans
-#' @export
-setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
-    stopifnot(length(t) == length(dim(x)), t > 0)
+#' @importFrom methods as
+#' @importFrom S4Vectors metadata<-
+.trans_a <- \(x, f) {
+    a <- f(aperm(as.array(data(x))))
+    x@data <- list(as(aperm(a), "SparseArray"))
+    metadata(x) <- list(data_type=data_type(x))
+    return(x)
+}
+
+#' @importFrom EBImage resize
+setMethod("scale", c("sdArray", "numeric"), \(x, t, ...) {
+    stopifnot(length(t) == length(dim(x)), is.finite(t), t > 0)
     if (all(t == 1)) return(x)
-    if (is.numeric(j)) j <- CTname(x)
-    j <- match.arg(j, CTname(x))
-    addCT(x, name=j, type="scale", data=t)
+    d <- length(dim(a))
+    f <- \(.) resize(.,
+        w=dim(.)[d]*t[d],
+        h=dim(.)[d-1]*t[d-1])
+    .trans_a(x, f)
 })
 
-# label ----
+#' @importFrom EBImage rotate
+setMethod("rotate", c("sdArray", "numeric"), \(x, t, ...) {
+    # negate angle since 'EBImage' rotates clockwise
+    stopifnot(length(t) == 1, is.finite(t))
+    if (t %% 360 == 0) return(x)
+    f <- \(.) rotate(., -t) 
+    .trans_a(x, f)
+})
 
-#' @rdname trans
-#' @importFrom DelayedArray cbind rbind ConstantArray
-#' @importFrom methods as
-#' @export
+#' @importFrom EBImage translate
 setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
-    #x <- label(sd, 2); t <- c(64,0)
-    stopifnot(
-        length(t) == length(dim(x)), 
-        t == round(t), all(is.finite(t)))
+    stopifnot(length(t) == length(dim(x)), is.finite(t))
     if (all(t == 0)) return(x)
-    ys <- data(x, NULL)
-    if (length(ys) == 1) {
-        ts <- list(t)
-    } else {
-        ds <- vapply(ys, ncol, integer(1))
-        sf <- c(1, ds[-1]/ds[-length(ds)])
-        ts <- lapply(cumprod(sf), `*`, t)
-    } 
-    x@data <- lapply(seq_along(ys), \(k) {
-        t <- ts[[k]]
-        y <- as(ys[[k]], "DelayedArray")
-        # TODO: no 'abind' support so that we 
-        # permute, 'c/rbind', and back-permute;
-        # surely there has to be a better way?
-        if (length(dim(y)) == 2) {
-            n <- NULL
-        } else {
-            t <- t[-1]
-            n <- dim(x)[1] 
-            y <- aperm(y, c(2,3,1))
-        }
-        if (t[2] != 0) {
-            d <- c(nrow(y), abs(t[2]), n)
-            z <- ConstantArray(0, dim=d)
-            y <- if (t[2] > 0) cbind(z, y) else cbind(y, z)
-        }
-        if (t[1] != 0) {
-            d <- c(abs(t[1]), ncol(y), n)
-            z <- ConstantArray(0, dim=d)
-            y <- if (t[1] > 0) rbind(z, y) else rbind(y, z)
-        }
-        if (!is.null(n)) aperm(y, c(3,1,2)) else y
-    })
-    return(x)
+    f <- \(.) translate(., t[-1])
+    .trans_a(x, f)
 })
 
 # point ----

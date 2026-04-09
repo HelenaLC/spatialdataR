@@ -5,8 +5,6 @@
 \alias{scale}
 \alias{rotate}
 \alias{translation}
-\alias{scale,sdArray,numeric-method}
-\alias{translation,sdArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
 \alias{rotate,PointFrame,numeric-method}
 \alias{translation,PointFrame,numeric-method}
@@ -15,10 +13,6 @@
 \alias{translation,ShapeFrame,numeric-method}
 \title{Transformations}
 \usage{
-\S4method{scale}{sdArray,numeric}(x, j, t, ...)
-
-\S4method{translation}{sdArray,numeric}(x, t, ...)
-
 \S4method{scale}{PointFrame,numeric}(x, t, ...)
 
 \S4method{rotate}{PointFrame,numeric}(x, t, ...)
@@ -34,12 +28,12 @@
 \arguments{
 \item{x}{\code{SpatialData} element}
 
-\item{j}{scalar character or numeric; 
-name or index of coordinate space.}
-
 \item{t}{transformation data.}
 
 \item{...}{option arguments passed to and from other methods.}
+
+\item{j}{scalar character or numeric; 
+name or index of coordinate space.}
 }
 \description{
 Transformations
