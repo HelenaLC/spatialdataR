@@ -38,6 +38,7 @@ Imports:
     BiocGenerics,
     DelayedArray,
     dplyr,
+    EBImage,
     geoarrow,
     graph,
     Matrix,
