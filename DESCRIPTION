@@ -47,7 +47,6 @@ Imports:
     RBGL,
     reticulate,
     anndataR,
-    scrapper,
     sf,
     S4Arrays,
     S4Vectors,

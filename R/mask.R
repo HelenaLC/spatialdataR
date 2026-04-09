@@ -52,7 +52,7 @@ NULL
 setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, 
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
-    if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
+    #if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
     ok <- is.character(name) && length(name) == 1 && !name %in% tableNames(x)
     nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
         "Invalid 'name'; should be a function or a ",
@@ -127,25 +127,46 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 
 #' @noRd
 #' @importFrom methods as
-#' @importFrom scrapper aggregateAcrossCells.se
-#' @importFrom SummarizedExperiment assayNames<-
+#' @importFrom Matrix sparseMatrix
+#' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
+    # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
     if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
-    if (!is.null(how)) { message("Can only 'sum' when masking shapes; ignoring 'sum'") }
+    if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
+    if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
+    # grouping
     idx <- st_intersects(
         st_as_sf(data(j)), 
         st_as_sf(data(i)))
-    foo <- integer(nrow(i))
-    foo[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
-    se <- aggregateAcrossCells.se(table, foo, assay.type=1,
-        counts.name=paste0("n_", meta(table)$region))
-    colnames(se) <- se[[1]]; se[[1]] <- NULL
-    assayNames(se)[1] <- "counts"
-    metadata(se) <- list()
-    as(se, "SingleCellExperiment")
+    ids <- integer(nrow(i))
+    ids[unlist(idx)] <- rep(seq_along(idx), lengths(idx))
+    ids <- factor(ids, seq(0, nrow(j)))
+    nid <- nlevels(ids)
+    # aggregation
+    mx <- assay(table)
+    if (grepl("detected$", how)) {
+        mx <- mx > 0
+    }
+    my <- sparseMatrix(
+        x=rep(1, length(ids)), 
+        i=seq_along(ids), j=ids, 
+        dims=c(ncol(table), nid))
+    mx <- mx %*% my
+    if (grepl("mean|prop", how)) {
+        ns <- tabulate(ids, nid)
+        mx <- t(t(mx)/ns)
+    }
+    # wrangling
+    mx <- as(mx, "dgCMatrix")
+    colnames(mx) <- levels(ids)
+    mx <- list(mx); names(mx) <- how
+    se <- SingleCellExperiment(mx)
+    nm <- paste0("n_", meta(table)$region)
+    se[[nm]] <- ns
+    return(se)
 })
 
 #' @noRd

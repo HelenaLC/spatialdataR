@@ -50,8 +50,8 @@ test_that("mask,ShapeFrame,ShapeFrame", {
     y <- x; tables(y) <- list()
     expect_error(mask(y, i, j))
     # default to 'sum' with a message
-    expect_silent(y <- mask(x, i, j))
-    expect_message(z <- mask(x, i, j, how="sum"))
+    expect_message(y <- mask(x, i, j))
+    expect_silent(z <- mask(x, i, j, how="sum"))
     expect_identical(y, z)
     old <- getTable(y, i)
     new <- getTable(y, j)
