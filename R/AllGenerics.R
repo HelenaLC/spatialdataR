@@ -57,6 +57,10 @@ setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("transform", \(x, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
+setGeneric("flip", \(x, ...) standardGeneric("flip"))
+setGeneric("flop", \(x, ...) standardGeneric("flop"))
+setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
+
 # sda ----
 
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
