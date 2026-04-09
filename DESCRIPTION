@@ -50,6 +50,7 @@ Imports:
     sf,
     S4Arrays,
     S4Vectors,
+    SparseArray,
     SingleCellExperiment,
     SummarizedExperiment
 Suggests:

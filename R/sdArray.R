@@ -51,7 +51,10 @@ setMethod("length", "sdArray", \(x) length(data(x, NULL)))
 
 #' @rdname Array-methods
 #' @export
-setMethod("data_type", "sdArray", \(x) data_type(data(x)))
+setMethod("data_type", "sdArray", \(x) {
+    if (is(y <- data(x), "DelayedArray")) 
+        data_type(y) else metadata(x)$data_type
+})
 
 #' @rdname Array-methods
 #' @importFrom DelayedArray DelayedArray

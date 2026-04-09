@@ -162,7 +162,7 @@ test_that("CTgraph", {
     # every element & transformation
     ns <- lapply(setdiff(SpatialData:::.LAYERS, "tables"), 
         \(l) lapply(names(x[[l]]), 
-        \(e) c(e, CTname(x[[l]][[e]]))))
+            \(e) c(e, CTname(x[[l]][[e]]))))
     ns <- sort(unique(unlist(ns)))
     expect_true(all(ns %in% sort(graph::nodes(g))))
     # element-wise
