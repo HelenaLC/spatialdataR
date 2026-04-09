@@ -141,7 +141,6 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL
     js <- st_intersects(st_as_sf(data(j)), st_as_sf(data(i)))
     is <- factor(integer(nrow(i)), seq(0, nrow(j)))
     is[unlist(js)] <- rep(seq_along(js), lengths(js))
-    is <- factor(is, seq(0, nrow(j)))
     ns <- tabulate(is, ni <- nlevels(is))
     # aggregation
     mx <- assay(table)
