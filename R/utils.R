@@ -39,9 +39,10 @@ setMethod("centroids", "LabelArray", \(x,
     xy <- tapply(i[, -3], i[[3]], colMeans)
     xy <- do.call(rbind, xy)
     xy <- cbind(xy, as.integer(rownames(xy)))
-    colnames(xy) <- c("x", "y", "i")
+    dimnames(xy) <- list(NULL, c("x", "y", "i"))
     if (as == "matrix") return(xy)
-    as.data.frame(xy)
+    xy <- as.data.frame(xy)
+    xy$i <- factor(xy$i); xy
 })
 
 #' @export
@@ -55,6 +56,10 @@ setMethod("centroids", "ShapeFrame", \(x,
     colnames(xy)[c(1, 2)] <- c("x", "y")
     if (as == "matrix") return(xy)
     xy <- as.data.frame(xy)
+    rownames(xy) <- NULL
+    if (ncol(xy) > 2) 
+        for (. in seq(3, ncol(xy))) 
+            xy[[.]] <- factor(xy[[.]], unique(xy[[.]]))
     if (as == "data.frame") return(xy)
     split(xy, xy[seq(3, ncol(xy))])
 })
@@ -62,12 +67,11 @@ setMethod("centroids", "ShapeFrame", \(x,
 #' @export
 #' @rdname utils
 setMethod("centroids", "PointFrame", \(x, 
-    as=c("data.frame", "matrix", "list")) {
+    as=c("data.frame", "list")) {
     as <- match.arg(as)
     i <- feature_key(x)
     xy <- data(x)[, c("x", "y", i)]
     xy <- as.data.frame(xy)
     if (as == "data.frame") return(xy)
-    if (as == "matrix") return(as.matrix(xy))
     lapply(split(xy, xy[[i]]), `[`, -3)
 })

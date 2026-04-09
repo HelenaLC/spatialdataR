@@ -30,7 +30,7 @@
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
 #' @export
-LabelArray <- function(data=array(), meta=Zattrs(), metadata=list(), ...) {
+LabelArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
     x <- .LabelArray(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)

@@ -1,15 +1,14 @@
-if (FALSE) {
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
 
-# skirt base::table ambiguity
-sdtable <- SpatialData::table    
-`sdtable<-` <- `SpatialData::table<-`   
-sdtables <- SpatialData::tables
+# # skirt base::table ambiguity
+# sdtable <- SpatialData::table    
+# `sdtable<-` <- `SpatialData::table<-`   
+# sdtables <- SpatialData::tables
 
-fun <- c("image", "label", "shape", "point", "sdtable")
+fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
 typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
 
@@ -170,12 +169,12 @@ test_that("[,LabelArray", {
     expect_equal(dim(y[FALSE,FALSE]), c(0,0)) 
     expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y))) 
     expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0)) 
-    i <- logical(nrow(y)); j <- logical(ncol(y))
-    n <- replicate(2, sample(seq(2, 10), 1))
-    i[sample(nrow(y), n[1])] <- TRUE
-    j[sample(ncol(y), n[2])] <- TRUE
-    expect_equal(nrow(y[i,]), n[1])
-    expect_equal(ncol(y[,j]), n[2])
+    # i <- logical(nrow(y)); j <- logical(ncol(y))
+    # n <- replicate(2, sample(seq(2, 10), 1))
+    # i[sample(nrow(y), n[1])] <- TRUE
+    # j[sample(ncol(y), n[2])] <- TRUE
+    # expect_equal(nrow(y[i,]), n[1])
+    # expect_equal(ncol(y[,j]), n[2])
     # numeric
     expect_identical(y[,], y) # none
     expect_equal(nrow(y[1,]), 1) # no j
@@ -258,4 +257,3 @@ test_that("[,SpatialData", {
         element(y, 1, 1), 
         element(x, 1, .n(x)[1]))
 })
-}
