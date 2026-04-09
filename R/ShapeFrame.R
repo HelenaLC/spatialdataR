@@ -65,8 +65,8 @@ setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])
 #' @export
 #' @importFrom sf st_as_sf st_geometry_type
 setMethod("geom_type", "ShapeFrame", \(x) {
-    y <- st_as_sf(data(x))
-    z <- st_geometry_type(y[1, ])
+    y <- st_as_sf(data(x[1, ]))
+    z <- st_geometry_type(y)
     return(as.character(z))
 })
 
