@@ -5,7 +5,14 @@
 \alias{mask,SpatialData-method}
 \title{Masking}
 \usage{
-\S4method{mask}{SpatialData}(x, i, j, ...)
+\S4method{mask}{SpatialData}(
+  x,
+  i,
+  j,
+  how = NULL,
+  name = function(i, j) sprintf("\%s_by_\%s", i, j),
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}
@@ -14,13 +21,20 @@
 specifically, \code{i} will be masked by \code{j},
 adding a \code{table} for \code{j} in \code{x}.}
 
+\item{how}{character string; statistic to use for masking.}
+
+\item{name}{function use to generate the new \code{table}'s name.}
+
 \item{...}{optional arguments passed to and from other methods.}
 }
 \value{
-\code{\link{SingleCellExperiment}}
+Input \code{SpatialData} object \code{x} with an additional table.
 }
 \description{
-...
+Masking operations serve to aggregate data across layers, e.g., 
+counting points in shapes, averaging image channels by labels, etc.
+For added flexibility, these may be carried out directly between elements,
+or using an input \code{SpatialData} object and specifying element names.
 }
 \examples{
 library(SingleCellExperiment)
@@ -28,9 +42,20 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
-# count points in circles
-x <- mask(x, "blobs_points", "blobs_circles")
-x <- mask(x, "blobs_image", "blobs_labels")
-tables(x)
+# count points in shapes
+y <- mask(x, "blobs_points", "blobs_circles")
+tail(tables(y), 1)
+
+# average image channels by labels
+y <- mask(x, "blobs_image", "blobs_labels")
+tail(tables(y), 1)
+
+library(SpatialData.data)
+x <- get_demo_SDdata("merfish")
+x <- readSpatialData(x)
+
+# sum table counts by shapes
+y <- mask(x, "cells", "anatomical")
+tail(tables(y), 1)
 
 }
