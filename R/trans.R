@@ -60,7 +60,6 @@ setMethod("scale", c("sdArray", "numeric"), \(x, j, t, ...) {
 #' @importFrom methods as
 #' @export
 setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
-    #x <- label(sd, 2); t <- c(64,0)
     stopifnot(
         length(t) == length(dim(x)), 
         t == round(t), all(is.finite(t)))
