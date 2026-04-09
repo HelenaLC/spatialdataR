@@ -74,6 +74,8 @@ setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("channels", \(x, ...) standardGeneric("channels"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
+setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
+setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
 
 # tbl ----
 
