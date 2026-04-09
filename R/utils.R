@@ -1,7 +1,7 @@
 #' @name utils
 #' @rdname utils
 #' @title Utilities
-#' @aliases centroids
+#' @aliases centroids extent
 #' 
 #' @param x a \code{SpatialData} element (any but image)
 #' @param as determines how results will be returned
@@ -20,7 +20,17 @@
 #' plot(xy$gene_a, col=a <- "red")
 #' points(xy$gene_b, col=b <- "blue")
 #' legend("topright", legend=names(xy), col=c(a, b), pch=21)
+#' 
+#' # object-wide
+#' extent(x)
+#' 
+#' # element-wise
+#' extent(label(x))
+#' extent(point(x))
+#' extent(shape(x))
 NULL
+
+# centroids ----
 
 #' @export
 #' @rdname utils
@@ -74,4 +84,36 @@ setMethod("centroids", "PointFrame", \(x,
     xy <- as.data.frame(xy)
     if (as == "data.frame") return(xy)
     lapply(split(xy, xy[[i]]), `[`, -3)
+})
+
+# extent ----
+
+# TODO: this needs more work to consider transformations
+
+#' @export
+#' @rdname utils
+setMethod("extent", "SpatialData", \(x) {
+    ls <- setdiff(.LAYERS, "tables")
+    ex <- lapply(ls, \(.) lapply(x[[.]], extent))
+    ex <- Reduce(c, ex)
+    names(xy) <- xy <- c("x", "y")
+    lapply(xy, \(z) {
+        d <- vapply(ex, \(.) .[[z]], numeric(2))
+        c(min(d[1, ]), max(d[2, ]))
+    })
+})
+
+#' @export
+#' @rdname utils
+setMethod("extent", "SpatialDataElement", \(x) {
+    if (is(x, "sdArray")) {
+        nm <- vapply(ax <- axes(x), \(.) .$name, character(1))
+        xy <- vapply(ax, \(.) .$type == "space", logical(1))
+        d <- dim(x); names(d) <- nm
+        lapply(d[xy], \(.) c(0, .))
+    } else {
+        ax <- unlist(axes(x))
+        xy <- centroids(x)[ax]
+        apply(xy, 2, range, simplify=FALSE)
+    }
 })
