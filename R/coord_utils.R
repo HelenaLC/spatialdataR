@@ -1,6 +1,6 @@
 #' @name coord-utils
 #' @title Coordinate transformations
-#' @aliases axes CTname CTtype CTdata CTpath CTgraph addCT rmvCT
+#' @aliases axes CTlist CTname CTtype CTdata CTpath CTgraph addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{Zattrs}.
 #' @param i for \code{CTpath}, source node label; else, string or 

@@ -2,6 +2,7 @@
 % Please edit documentation in R/Zattrs.R
 \name{Zattrs}
 \alias{Zattrs}
+\alias{feature_key}
 \alias{$,Zattrs-method}
 \title{The `Zattrs` class}
 \usage{
@@ -30,5 +31,7 @@ x <- readSpatialData(x, tables=FALSE)
 CTname(z)
 CTtype(z)
 CTdata(z, "scale")
+
+feature_key(point(x))
 
 }
