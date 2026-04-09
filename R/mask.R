@@ -130,7 +130,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @importFrom Matrix sparseMatrix
 #' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL, how=NULL, ...) {
+setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
@@ -143,7 +143,7 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, table=NULL, value=NULL
     is[unlist(js)] <- rep(seq_along(js), lengths(js))
     ns <- tabulate(is, ni <- nlevels(is))
     # aggregation
-    mx <- assay(table)
+    mx <- assay(table, assay)
     if (grepl("detected$", how)) mx <- mx > 0
     my <- sparseMatrix(
         x=rep(1, length(is)), 
