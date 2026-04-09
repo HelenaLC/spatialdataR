@@ -3,10 +3,13 @@
 \name{utils}
 \alias{utils}
 \alias{centroids}
+\alias{extent}
 \alias{centroids,ANY-method}
 \alias{centroids,LabelArray-method}
 \alias{centroids,ShapeFrame-method}
 \alias{centroids,PointFrame-method}
+\alias{extent,SpatialData-method}
+\alias{extent,SpatialDataElement-method}
 \title{Utilities}
 \usage{
 \S4method{centroids}{ANY}(x, ...)
@@ -16,6 +19,10 @@
 \S4method{centroids}{ShapeFrame}(x, as = c("data.frame", "matrix", "list"))
 
 \S4method{centroids}{PointFrame}(x, as = c("data.frame", "list"))
+
+\S4method{extent}{SpatialData}(x)
+
+\S4method{extent}{SpatialDataElement}(x)
 }
 \arguments{
 \item{x}{a \code{SpatialData} element (any but image)}
@@ -39,4 +46,12 @@ xy <- centroids(point(x), "list")
 plot(xy$gene_a, col=a <- "red")
 points(xy$gene_b, col=b <- "blue")
 legend("topright", legend=names(xy), col=c(a, b), pch=21)
+
+# object-wide
+extent(x)
+
+# element-wise
+extent(label(x))
+extent(point(x))
+extent(shape(x))
 }
