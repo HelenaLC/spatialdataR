@@ -132,7 +132,7 @@ We can represent these are a graph as follows:
 
 ```{r cs-graph}
 (g <- CTgraph(x))
-plotCoordGraph(g)
+CTplot(g)
 ```
 
 The above representation greatly facilitates queries of the transformation(s) 

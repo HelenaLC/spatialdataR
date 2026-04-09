@@ -21,6 +21,71 @@ test_that("axes", {
     expect_is(y, "list")
     expect_length(y, 2)
     expect_equal(unlist(y), c("x", "y"))
+    # missing
+    y <- image(x)
+    y@meta$multiscales[[1]]$axes <- NULL
+    expect_error(axes(y))
+})
+
+.CTtype <- c("identity", "scale", "rotate", "translation", "affine", "sequence")
+
+test_that("CTlist", {
+    y <- CTlist(label(x))
+    expect_is(y, "list")
+    expect_length(y, 5)
+    z <- Reduce(intersect, lapply(y, names))
+    expect_setequal(z, c("input", "output", "type"))
+    z <- vapply(y, \(.) .$type, character(1))
+    expect_true(all(z %in% .CTtype))
+})
+test_that("CTdata", {
+    # invalid
+    expect_error(CTdata(label(x), ""))
+    expect_error(CTdata(label(x), 99))
+    expect_error(CTdata(label(x), Inf))
+    expect_error(CTdata(label(x), TRUE))
+    # identity
+    y <- CTdata(label(x), "global")
+    expect_null(y)
+    # scale
+    y <- CTdata(label(x), "scale")
+    expect_is(y, "list")
+    expect_length(y, 2)
+    expect_is(unlist(y), "numeric")
+    expect_true(all(unlist(y) > 0))
+    # translation
+    y <- CTdata(label(x), "translation")
+    expect_is(y, "list")
+    expect_length(y, 2)
+    expect_is(unlist(y), "numeric")
+    # affine
+    y <- CTdata(label(x), "affine")
+    expect_is(y, "list")
+    expect_length(y, 2)
+    expect_is(unlist(y), "numeric")
+    expect_true(all(unlist(y) > 0))
+    z <- vapply(y, length, integer(1))
+    expect_true(all(z == 3))
+    # sequence
+    y <- CTdata(label(x), "sequence")
+    expect_is(y, "list")
+    expect_length(y, 2)
+    expect_true(all(names(y) %in% .CTtype))
+    z <- vapply(y, length, integer(1))
+    expect_true(all(z == 2))
+})
+test_that("CTtype", {
+    y <- CTtype(label(x))
+    expect_is(y, "character")
+    expect_length(y, 5)
+    expect_true(all(y %in% .CTtype))
+})
+test_that("CTname", {
+    y <- CTname(label(x))
+    expect_is(y, "character")
+    expect_length(y, 5)
+    expect_true(all(nchar(y) > 0))
+    expect_true(!any(duplicated(y)))
 })
 
 test_that("rmvCT", {
@@ -29,6 +94,9 @@ test_that("rmvCT", {
     expect_error(rmvCT(y, 100))
     expect_error(rmvCT(y, "."))
     expect_error(rmvCT(y, c(".", CTname(y)[1])))
+    # identity is kept with a warning
+    expect_warning(z <- rmvCT(y, "global"))
+    expect_identical(CTname(z), CTname(y))
     # by name
     i <- sample(setdiff(CTname(y), "global"), 2) 
     expect_identical(CTname(rmvCT(y, i)), setdiff(CTname(y), i))
@@ -119,7 +187,7 @@ test_that("CTpath", {
     expect_length(z$type, 1)
 })
 
-test_that("plotCoordGraph", {
+test_that("CTplot", {
     f <- function(.) {
         tf <- tempfile(fileext=".pdf")
         on.exit(unlink(tf))
@@ -127,10 +195,10 @@ test_that("plotCoordGraph", {
         file.size(tf)
     }
     g <- CTgraph(x)
-    p <- f(plotCoordGraph(g))
+    p <- f(CTplot(g))
     expect_is(p, "numeric")
     expect_true(p > f(plot(1)))
-    p <- f(plotCoordGraph(g, 0.1))
-    q <- f(plotCoordGraph(g, 0.9))
+    p <- f(CTplot(g, 0.1))
+    q <- f(CTplot(g, 0.9))
     expect_true(p < q)
 })
