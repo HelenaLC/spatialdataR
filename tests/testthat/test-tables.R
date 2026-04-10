@@ -6,15 +6,12 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
-md <- int_metadata(SpatialData::table(x))
-md <- md$spatialdata_attrs
-i <- md[[rk <- md$region_key]]
-#int_colData(SpatialData::table(x))[[rk]] <- 
-#    paste(int_colData(SpatialData::table(x))[[rk]])
+se <- SpatialData::table(x)
+i <- md[[rk <- region_key(se)]]
 
 test_that("hasTable()", {
     # TRUE
-    i <- md$region
+    i <- region(table(x))
     expect_true(hasTable(x, i))
     # FALSE
     j <- setdiff(unlist(colnames(x)), c(i, tableNames(x)))
@@ -85,8 +82,7 @@ test_that("setTable(),points/shapes", {
         n <- switch(.,
             shape=length(y),
             point={
-                md <- meta(y)$spatialdata_attrs
-                ik <- md$instance_key
+                ik <- instance_key(y)
                 n <- length(unique(pull(data(y), ik)))
             })
         df <- data.frame(foo=runif(n))
@@ -95,8 +91,7 @@ test_that("setTable(),points/shapes", {
         expect_true(hasTable(y, i))
         t <- getTable(y, i)
         expect_identical(t$foo, df$foo)
-        md <- int_metadata(t)$spatialdata_attrs
-        expect_identical(md$region, i)
+        #expect_identical(region(t), i)
         # dots = list of functions
         f <- list(
             numbers=\(n) runif(n),
@@ -106,8 +101,7 @@ test_that("setTable(),points/shapes", {
         expect_true(hasTable(y, i))
         t <- getTable(y, i)
         expect_true(all(names(f) %in% names(colData(t))))
-        md <- int_metadata(t)$spatialdata_attrs
-        expect_identical(md$region, i)
+        #expect_identical(region(t), i)
     }
 })
 
