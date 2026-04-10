@@ -7,6 +7,7 @@
         ok <- sce(se <- table(object, i))
         if (!ok) msg <- c(msg, paste0(
             i, "-th table is not a 'SingleCellExperiment'"))
+        if (!ok) next
         md <- int_metadata(se)$spatialdata_attrs
         nm <- c("region", "region_key", "instance_key")
         .nm <- sprintf("'%s'", paste(nm, collapse="/"))
