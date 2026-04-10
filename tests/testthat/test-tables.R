@@ -1,10 +1,10 @@
-oo = options()$arrow.pull_as_vector
-
-options(arrow.pull_as_vector=TRUE)
 require(SingleCellExperiment, quietly=TRUE)
+oo <- options()$arrow.pull_as_vector
+options(arrow.pull_as_vector=TRUE)
+
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, table=1, anndataR=TRUE)
+x <- readSpatialData(x, anndataR=TRUE)
 
 md <- int_metadata(SpatialData::table(x))
 md <- md$spatialdata_attrs
@@ -32,7 +32,6 @@ test_that("hasTable()", {
     expect_error(hasTable(setTable(x, i), i, name=TRUE)) # many
 })
 
-if (FALSE) {
 test_that("getTable()", {
     # invalid
     expect_error(getTable(x, 123))
@@ -46,21 +45,16 @@ test_that("getTable()", {
     expect_error(getTable(x, i, "."))
     expect_error(getTable(x, i, c(TRUE, FALSE)))
     # alter 'region' of a couple random observations
-    s <- t
-    . <- sample(ncol(s), 2)
-    # TODO: check the replacement of this test below
-    # int_colData(s)[[rk]][.] <- "."
-    tmp <- as.character(colData(s)[[rk]])
-    tmp[.] <- "."
-    colData(s)[[rk]] <- tmp
-    SpatialData::table(x) <- s
+    s <- t; y <- x
+    int_colData(s)[[rk]] <- paste(int_colData(s)[[rk]])
+    int_colData(s)[[rk]][. <- sample(ncol(s), 2)] <- "."
+    SpatialData::table(y) <- s
     # these should be gone when 'drop=TRUE'
-    t1 <- getTable(x, i, drop=FALSE)
-    t2 <- getTable(x, i, drop=TRUE)
+    t1 <- getTable(y, i, drop=FALSE)
+    t2 <- getTable(y, i, drop=TRUE)
     expect_identical(t1, s)
     expect_identical(t2, s[, -.])
 })
-}
 
 test_that("setTable(),labels", {
     # invalid 'i'
@@ -124,13 +118,13 @@ test_that("valTable()", {
     expect_error(valTable(x, i, 123))
     expect_error(valTable(x, i, sample(rownames(t), 2)))
     expect_error(valTable(x, i, sample(names(colData(t)), 2)))
-    # # 'colData'
-    # df <- DataFrame(a=sample(letters, n), b=runif(n),
-    #                 region = valTable(x, i, j <- "region"))
-    # s <- t; colData(s) <- df; y <- x; SpatialData::table(y) <- s
-    # expect_identical(valTable(y, i, j <- "a"), s[[j]])
-    # expect_identical(valTable(y, i, j <- "b"), s[[j]])
-    # expect_error(valTable(y, i, "c"))
+    # 'colData'
+    cd <- DataFrame(a=sample(letters, n), b=runif(n))
+    s <- t; colData(s) <- cd
+    y <- x; SpatialData::table(y) <- s
+    expect_identical(valTable(y, i, j <- "a"), s[[j]])
+    expect_identical(valTable(y, i, j <- "b"), s[[j]])
+    expect_error(valTable(y, i, "c"))
     # 'assay' data
     j <- sample(rownames(t), 1)
     v <- valTable(x, i, j)
