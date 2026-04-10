@@ -25,9 +25,11 @@
 \S4method{extent}{SpatialDataElement}(x)
 }
 \arguments{
-\item{x}{a \code{SpatialData} element (any but image)}
+\item{x}{a \code{SpatialData} element (any but image).}
 
-\item{as}{determines how results will be returned}
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{as}{character string; how results should be returned.}
 }
 \description{
 Utilities

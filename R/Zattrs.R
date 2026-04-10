@@ -1,8 +1,6 @@
 #' @name Zattrs
 #' @title The `Zattrs` class
 #' 
-#' @aliases feature_key
-#' 
 #' @param x list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
 #' 
@@ -80,22 +78,56 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
 }
 setMethod("show", "Zattrs", .showZattrs)
 
+#' @name SDattrs
+#' @title \code{SpatialData} attributes
+#' 
+#' @aliases
+#' region
+#' region_key
+#' feature_key
+#' instance_key
+#' 
+#' @param x depends on which attributes are available; 
+#'   specifically, \code{PointFrame} (\code{feature/instance_key}), or
+#'   \code{SingleCellExperiment} (\code{region}, \code{region/instance_key}),
+#' 
+#' @return character string
+#'
+#' @examples
+#' x <- file.path("extdata", "blobs.zarr")
+#' x <- system.file(x, package="SpatialData")
+#' x <- readSpatialData(x, anndataR=TRUE)
+#' 
+#' region(table(x))
+#' region_key(table(x))
+#' 
+#' instance_key(point(x))
+#' fk <- feature_key(point(x))
+#' base::table(point(x)[[fk]])
+NULL
+
 # TODO: only points can have this?
 #' @export
+#' @rdname SDattrs
 setMethod("feature_key", "list", \(x) x$spatialdata_attrs$feature_key)
 #' @export
 setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 
 # TODO: only tables can have this?
 #' @export
+#' @rdname SDattrs
 setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 #' @export
+#' @rdname SDattrs
 setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
 
 # TODO: only tables and points can have this?
 #' @export
+#' @rdname SDattrs
 setMethod("instance_key", "list", \(x) x$instance_key)
 #' @export
+#' @rdname SDattrs
 setMethod("instance_key", "PointFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
 #' @export
+#' @rdname SDattrs
 setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
