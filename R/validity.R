@@ -2,9 +2,9 @@
 #' @importFrom SingleCellExperiment int_metadata int_colData
 .validateTables <- \(object) {
     msg <- c()
+    sce <- \(.) is(., "SingleCellExperiment")
     for (i in seq_along(tables(object))) {
-        se <- table(object, i)
-        ok <- is(se, "SingleCellExperiment")
+        ok <- sce(se <- table(object, i))
         if (!ok) msg <- c(msg, paste0(
             i, "-th table is not a 'SingleCellExperiment'"))
         md <- int_metadata(se)$spatialdata_attrs
@@ -27,8 +27,8 @@
         }
     }
     na <- setdiff(
-        unlist(lapply(tables(object), region)), 
-        unlist(colnames(object)[setdiff(.LAYERS, "tables")]))
+        unlist(colnames(object)[setdiff(.LAYERS, "tables")]),
+        unlist(lapply(tables(object), \(.) if (sce(.)) region(.))))
     if (length(na)) 
         msg <- c(msg, paste(
             "table region(s) not found in any layer:", 
