@@ -2,9 +2,11 @@
 % Please edit documentation in R/ShapeFrame.R
 \name{ShapeFrame}
 \alias{ShapeFrame}
+\alias{geom_type}
 \alias{dim,ShapeFrame-method}
 \alias{length,ShapeFrame-method}
 \alias{names,ShapeFrame-method}
+\alias{.DollarNames.ShapeFrame}
 \alias{$,ShapeFrame-method}
 \alias{[,ShapeFrame,missing,ANY,ANY-method}
 \alias{[,ShapeFrame,ANY,missing,ANY-method}
@@ -19,6 +21,8 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{length}{ShapeFrame}(x)
 
 \S4method{names}{ShapeFrame}(x)
+
+\method{.DollarNames}{ShapeFrame}(x, pattern = "")
 
 \S4method{$}{ShapeFrame}(x, name)
 

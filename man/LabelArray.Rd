@@ -5,7 +5,7 @@
 \alias{[,LabelArray,ANY,ANY,ANY-method}
 \title{The \code{LabelArray} class}
 \usage{
-LabelArray(data = array(), meta = Zattrs(), metadata = list(), ...)
+LabelArray(data = list(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{[}{LabelArray,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }

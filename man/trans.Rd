@@ -5,6 +5,14 @@
 \alias{scale}
 \alias{rotate}
 \alias{translation}
+\alias{flip}
+\alias{flop}
+\alias{mirror}
+\alias{mirror,sdArray-method}
+\alias{flip,sdArray-method}
+\alias{flop,sdArray-method}
+\alias{scale,sdArray,numeric-method}
+\alias{rotate,sdArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
 \alias{rotate,PointFrame,numeric-method}
 \alias{translation,PointFrame,numeric-method}
@@ -13,6 +21,16 @@
 \alias{translation,ShapeFrame,numeric-method}
 \title{Transformations}
 \usage{
+\S4method{mirror}{sdArray}(x, t = c("v", "h"), k = 1, ...)
+
+\S4method{flip}{sdArray}(x, k = 1, ...)
+
+\S4method{flop}{sdArray}(x, k = 1, ...)
+
+\S4method{scale}{sdArray,numeric}(x, t, k = 1, ...)
+
+\S4method{rotate}{sdArray,numeric}(x, t, k = 1, ...)
+
 \S4method{scale}{PointFrame,numeric}(x, t, ...)
 
 \S4method{rotate}{PointFrame,numeric}(x, t, ...)
@@ -28,7 +46,13 @@
 \arguments{
 \item{x}{\code{SpatialData} element}
 
-\item{t}{transformation data.}
+\item{t}{transformation data; exceptions: for \code{mirror}, controls
+whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
+no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
+
+\item{k}{scalar index specifying which scale to use; 
+\code{Inf} to use lowest available resolution;
+only applies to \code{sdArray}s (images, labels).}
 
 \item{...}{option arguments passed to and from other methods.}
 
@@ -45,9 +69,9 @@ x <- readSpatialData(x, tables=FALSE)
 
 # image
 y <- x
-image(y) <- scale(image(y), 1, c(1, 1, 1/3))
-CTpath(image(x), "global")
-CTpath(image(y), "global")
+image(y) <- scale(image(y), c(1, 1, 1/3))
+dim(image(x))
+dim(image(y))
   
 # point
 y <- x

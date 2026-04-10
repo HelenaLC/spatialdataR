@@ -49,8 +49,9 @@ setMethod("dim", "sdArray", \(x) dim(data(x)))
 #' @export
 setMethod("length", "sdArray", \(x) length(data(x, NULL)))
 
-#' @rdname Array-methods
 #' @export
+#' @rdname Array-methods
+#' @importFrom S4Vectors metadata
 setMethod("data_type", "sdArray", \(x) {
     if (is(y <- data(x), "DelayedArray")) 
         data_type(y) else metadata(x)$data_type

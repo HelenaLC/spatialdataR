@@ -1,5 +1,6 @@
 #' @name ShapeFrame
 #' @title The `ShapeFrame` class
+#' @aliases geom_type
 #'
 #' @param x \code{ShapeFrame}
 #' @param data \code{arrow}-derived table for on-disk,
@@ -51,8 +52,9 @@ setMethod("length", "ShapeFrame", \(x) nrow(data(x)))
 #' @export
 setMethod("names", "ShapeFrame", \(x) names(data(x)))
 
-#' @importFrom utils .DollarNames
 #' @export
+#' @rdname ShapeFrame
+#' @importFrom utils .DollarNames
 .DollarNames.ShapeFrame <- \(x, pattern="") {
     grep(pattern, names(x), value=TRUE)
 }
@@ -60,6 +62,14 @@ setMethod("names", "ShapeFrame", \(x) names(data(x)))
 #' @rdname ShapeFrame
 #' @exportMethod $
 setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])
+
+#' @export
+#' @importFrom sf st_as_sf st_geometry_type
+setMethod("geom_type", "ShapeFrame", \(x) {
+    y <- st_as_sf(data(x[1, ]))
+    z <- st_geometry_type(y)
+    return(as.character(z))
+})
 
 # sub ----
 

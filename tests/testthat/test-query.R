@@ -38,6 +38,9 @@ test_that("query,.check_pol", {
 
 test_that("query,ImageArray", {
     d <- dim(i <- image(x))
+    # unsupported query
+    y <- matrix(seq_len(8), 4, 2)
+    expect_error(query(i, y))
     # query equals dimensions
     y <- list(xmin=0, xmax=d[3], ymin=0, ymax=d[2])
     expect_identical(query(i, y), i)
