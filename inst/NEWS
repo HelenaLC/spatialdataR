@@ -1,3 +1,9 @@
+changes in version 0.99.28
+
+- validity checks for 'table' elements
+- fixed and reenable broken/skipped tests
+- spatialdata_attrs utilities (instance_key(), region_key(), region())
+
 changes in version 0.99.27
 
 - spatial queries (aka subsetting) by bounding box 
