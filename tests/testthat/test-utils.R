@@ -79,7 +79,7 @@ test_that("extent,LabelArray", {
     expect_identical(z$y, c(0, dim(y)[1]))
     expect_identical(z$x, c(0, dim(y)[2]))
 })
-test_that("extent,PointFraome", {
+test_that("extent,PointFrame", {
     z <- extent(y <- point(x))
     expect_is(z, "list")
     expect_identical(names(z), xy)
