@@ -7,7 +7,9 @@ x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
 se <- SpatialData::table(x)
-i <- md[[rk <- region_key(se)]]
+md <- int_metadata(se)
+md <- md$spatialdata_attrs
+i <- md[[rk <- md$region_key]]
 
 test_that("hasTable()", {
     # TRUE
