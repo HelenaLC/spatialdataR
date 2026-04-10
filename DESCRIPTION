@@ -68,8 +68,7 @@ Suggests:
 Remotes:
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot,
-    Bioconductor/ZarrArray
+    HelenaLC/SpatialData.plot
 biocViews: 
     DataImport, 
     DataRepresentation, 
