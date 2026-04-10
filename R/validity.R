@@ -28,8 +28,8 @@
         }
     }
     na <- setdiff(
-        unlist(colnames(object)[setdiff(.LAYERS, "tables")]),
-        unlist(lapply(tables(object), \(.) if (sce(.)) region(.))))
+        unlist(lapply(tables(object), \(.) if (sce(.)) region(.))),
+        unlist(colnames(object)[setdiff(.LAYERS, "tables")])) # don't flip!
     if (length(na)) 
         msg <- c(msg, paste(
             "table region(s) not found in any layer:", 
