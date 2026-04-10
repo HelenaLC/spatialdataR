@@ -57,9 +57,16 @@ setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("transform", \(x, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
+setGeneric("flip", \(x, ...) standardGeneric("flip"))
+setGeneric("flop", \(x, ...) standardGeneric("flop"))
+setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
+
 # sda ----
 
+setGeneric("region", \(x, ...) standardGeneric("region"))
+setGeneric("region_key", \(x, ...) standardGeneric("region_key"))
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
+setGeneric("instance_key", \(x, ...) standardGeneric("instance_key"))
 
 # uts ----
 
@@ -74,6 +81,9 @@ setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("channels", \(x, ...) standardGeneric("channels"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
+setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
+setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
+setGeneric("extent", \(x, ...) standardGeneric("extent"))
 
 # tbl ----
 

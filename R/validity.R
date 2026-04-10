@@ -1,19 +1,39 @@
-# TODO: everything...
-
-.validateTable <- function(object) {
+# https://spatialdata.scverse.org/en/latest/design_doc.html#table-table-of-annotations-for-regions
+#' @importFrom SingleCellExperiment int_metadata int_colData
+.validateTables <- \(object) {
     msg <- c()
+    sce <- \(.) is(., "SingleCellExperiment")
     for (i in seq_along(tables(object))) {
-        t <- table(object, i)
-        if (!is(t, "SingleCellExperiment")) {
-            msg <- c(msg, paste0("Table ", i, " is not a 'SingleCellExperiment'"))
+        ok <- sce(se <- table(object, i))
+        if (!ok) msg <- c(msg, paste0(
+            i, "-th table is not a 'SingleCellExperiment'"))
+        if (!ok) next
+        md <- int_metadata(se)$spatialdata_attrs
+        nm <- c("region", "region_key", "instance_key")
+        .nm <- sprintf("'%s'", paste(nm, collapse="/"))
+        if (any(ok <- nm %in% names(md))) {
+            if (!all(ok)) msg <- c(msg, paste0(
+                i, "-th table missing ", .nm, "; must set all if any"))
+            ok <- \(.) is.character(.) && length(.) == 1
+            ok <- all(vapply(md, ok, logical(1)))
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table's", .nm, " is not a character string"))
+            ok <- !is.null(int_colData(se)[[md$region_key]])
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table missing 'region_key' column in 'int_colData'"))
+            ok <- !is.null(int_colData(se)[[md$instance_key]])
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table missing 'instance_key' column in 'int_colData'"))
+            
         }
-        # TODO: validate int_metadata$spatialdata_attrs
-        # md <- int_metadata(sce)[["spatialdata_attrs"]]
-        # if (!all(c("region_key", "instance_key") %in% names(md))) {
-        #     msg <- c(msg, paste0("region_key/instance_key not present in ",
-        #                          i, "-th sce int_metadata"))
-        # }
     }
+    na <- setdiff(
+        unlist(lapply(tables(object), \(.) if (sce(.)) region(.))),
+        unlist(colnames(object)[setdiff(.LAYERS, "tables")])) # don't flip!
+    if (length(na)) 
+        msg <- c(msg, paste(
+            "table region(s) not found in any layer:", 
+            paste(sprintf("'%s'", na), collapse=", ")))
     return(msg)
 }
 
@@ -87,7 +107,7 @@ setValidity2("ShapeFrame", .validateShapeFrame)
     for (y in images(x)) msg <- c(msg, .validateImageArray(y))
     for (y in points(x)) msg <- c(msg, .validatePointFrame(y))
     for (y in shapes(x)) msg <- c(msg, .validateShapeFrame(y))
-    msg <- c(msg, .validateTable(x))
+    msg <- c(msg, .validateTables(x))
     return(msg)
 }
 

@@ -1,12 +1,17 @@
 #' @name trans
 #' @rdname trans
 #' @title Transformations
-#' @aliases scale rotate translation
+#' @aliases scale rotate translation flip flop mirror
 #' 
 #' @param x \code{SpatialData} element
 #' @param j scalar character or numeric; 
 #'   name or index of coordinate space.
-#' @param t transformation data.
+#' @param t transformation data; exceptions: for \code{mirror}, controls
+#'   whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
+#'   no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).
+#' @param k scalar index specifying which scale to use; 
+#'   \code{Inf} to use lowest available resolution;
+#'   only applies to \code{sdArray}s (images, labels).
 #' @param ... option arguments passed to and from other methods.
 #' 
 #' @examples
@@ -16,9 +21,9 @@
 #' 
 #' # image
 #' y <- x
-#' image(y) <- scale(image(y), 1, c(1, 1, 1/3))
-#' CTpath(image(x), "global")
-#' CTpath(image(y), "global")
+#' image(y) <- scale(image(y), c(1, 1, 1/3))
+#' dim(image(x))
+#' dim(image(y))
 #'   
 #' # point
 #' y <- x
@@ -41,50 +46,89 @@
 #' y["shapes", c("rot", "wide", "left")]
 NULL
 
+# rotation matrix to rotate points counter-clockwise through an angle 't'
+.R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
+
 # array ----
+
+.mirror <- \(x, t, k=1) {
+    d <- length(dim(x)) == 3
+    i <- if (d) c(1, 3, 2) else c(2, 1)
+    x@data <- list(aperm(data(x, k), i))
+    rotate(x, t, k=1)
+}
+
+#' @export
+#' @rdname trans
+setMethod("mirror", "sdArray", \(x, t=c("v", "h"), k=1, ...) 
+    switch(match.arg(t), v=flip, h=flop)(x, k))
+
+#' @export
+#' @rdname trans
+setMethod("flip", "sdArray", \(x, k=1, ...) .mirror(x, -90, k))
+
+#' @export
+#' @rdname trans
+setMethod("flop", "sdArray", \(x, k=1, ...) .mirror(x, 90, k))
 
 #' @importFrom methods as
 #' @importFrom S4Vectors metadata<-
-.trans_a <- \(x, f) {
-    a <- f(aperm(as.array(data(x))))
+.trans_a <- \(x, f, k=1) {
+    a <- f(aperm(as.array(data(x, k))))
+    metadata(x)$data_type <- data_type(x)
     x@data <- list(as(aperm(a), "SparseArray"))
-    metadata(x) <- list(data_type=data_type(x))
     return(x)
 }
 
+#' @export
+#' @rdname trans
 #' @importFrom EBImage resize
-setMethod("scale", c("sdArray", "numeric"), \(x, t, ...) {
+setMethod("scale", c("sdArray", "numeric"), \(x, t, k=1, ...) {
     stopifnot(length(t) == length(dim(x)), is.finite(t), t > 0)
     if (all(t == 1)) return(x)
-    d <- length(dim(a))
+    n <- length(d <- dim(data(x, k)))
     f <- \(.) resize(.,
-        w=dim(.)[d]*t[d],
-        h=dim(.)[d-1]*t[d-1])
-    .trans_a(x, f)
+        w=d[n]*t[n],
+        h=d[n-1]*t[n-1])
+    .trans_a(x, f, k)
 })
 
+#' @export
+#' @rdname trans
 #' @importFrom EBImage rotate
-setMethod("rotate", c("sdArray", "numeric"), \(x, t, ...) {
+setMethod("rotate", c("sdArray", "numeric"), \(x, t, k=1,...) {
     # negate angle since 'EBImage' rotates clockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
-    f <- \(.) rotate(., -t) 
-    .trans_a(x, f)
+    f <- \(.) EBImage::rotate(., -t) 
+    if (length(d <- dim(data(x, k))) == 3) d <- d[-1]
+    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(-t*pi/180)))
+    .trans_a(x, f, k)
 })
 
 #' @importFrom EBImage translate
-setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) {
+setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
     stopifnot(length(t) == length(dim(x)), is.finite(t))
     if (all(t == 0)) return(x)
-    f <- \(.) translate(., t[-1])
-    .trans_a(x, f)
+    d <- dim(data(x, k))
+    if (length(d) == 3) {
+        # protect non-spatial dim.
+        t <- t[-1]; d <- d[-1]
+    }
+    t <- rev(t); d <- rev(d)
+    metadata(x)$wh <- list(
+        c(t[1], t[1]+d[1]), 
+        c(t[2], t[2]+d[2]))
+    #f <- \(.) translate(., t, output.dim=d+t)
+    #.trans_a(x, f)
+    x
 })
 
 # point ----
 
+#' @export
 #' @rdname trans
 #' @importFrom dplyr mutate
-#' @export
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
     if (all(t == 1)) return(x)
@@ -95,9 +139,9 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
     return(x)
 })
 
+#' @export
 #' @rdname trans
 #' @importFrom dplyr mutate select
-#' @export
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
@@ -161,46 +205,3 @@ setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
     .trans_s(x, \(xy) sweep(xy, 2, t, `+`))
 })
-
-# utils ----
-
-# rotation matrix to rotate points counter-clockwise through an angle 't'
-.R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
-
-# count occurrences of each coordinate space;
-# return most frequent (in order of appearance)
-.guess_space <- \(x) {
-    nms <- lapply(rownames(x), \(l) 
-        lapply(colnames(x)[[l]], \(e) 
-            CTname(x[[l]][[e]])))
-    cnt <- table(nms <- unlist(nms))
-    cnt <- cnt[unique(nms)]
-    names(which.max(cnt))
-}
-
-.trans_xy <- \(xy, ts, rev=FALSE) {
-    if (rev) ts <- rev(ts)
-    for (. in seq_along(ts)) {
-        t <- ts[[.]]$type
-        d <- ts[[.]]$data
-        d <- unlist(d)
-        if (length(d) == 3)
-            d <- d[-1]
-        switch(t, 
-            identity={},
-            scale={
-                op <- ifelse(rev, `/`, `*`)
-                xy$x <- op(xy$x, d[2])
-                xy$y <- op(xy$y, d[1])
-            },
-            rotate={
-                xy <- xy %*% .R(d*pi/180)
-            },
-            translation={
-                op <- ifelse(rev, `-`, `+`)
-                xy$x <- op(xy$x, d[2])
-                xy$y <- op(xy$y, d[1])
-            })
-    }
-    return(xy)
-}

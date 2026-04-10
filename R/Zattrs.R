@@ -80,8 +80,22 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
 }
 setMethod("show", "Zattrs", .showZattrs)
 
+# TODO: only points can have this?
 #' @export
-setMethod("feature_key", "Zattrs", \(x) x$spatialdata_attrs$feature_key)
+setMethod("feature_key", "list", \(x) x$spatialdata_attrs$feature_key)
+#' @export
+setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 
+# TODO: only tables can have this?
 #' @export
-setMethod("feature_key", "SpatialDataElement", \(x) feature_key(meta(x)))
+setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
+#' @export
+setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
+
+# TODO: only tables and points can have this?
+#' @export
+setMethod("instance_key", "list", \(x) x$instance_key)
+#' @export
+setMethod("instance_key", "PointFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
+#' @export
+setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))

@@ -17,7 +17,7 @@ test_that("readElement()", {
 
 test_that("readSpatialData()", {
     expect_is(y <- readSpatialData(x), "SpatialData")
-    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE)#, tables=TRUE)
+    a <- list(images=TRUE, labels=TRUE, shapes=TRUE, points=TRUE, tables=FALSE)
     for (. in names(a)) {
         # setting any layer to FALSE skips it
         b <- c(list(x=x), a); b[[.]] <- FALSE
