@@ -4,6 +4,11 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
+image(x, "x") <- flip(image(x, 2), k=1)
+image(x, "y") <- flip(image(x, 2), k=3)
+plotSpatialData() + plotImage(x, "x") +
+plotSpatialData() + plotImage(x, "y") 
+
 test_that("centroids,LabelArray", {
     y <- label(x)
     z <- centroids(y, "data.frame")
