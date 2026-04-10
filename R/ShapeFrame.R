@@ -55,9 +55,7 @@ setMethod("names", "ShapeFrame", \(x) names(data(x)))
 #' @export
 #' @rdname ShapeFrame
 #' @importFrom utils .DollarNames
-.DollarNames.ShapeFrame <- \(x, pattern="") {
-    grep(pattern, names(x), value=TRUE)
-}
+.DollarNames.ShapeFrame <- \(x) grep("", names(x), value=TRUE)
 
 #' @rdname ShapeFrame
 #' @exportMethod $

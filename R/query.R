@@ -10,8 +10,8 @@
 #'
 #' @param x \code{SpatialData} element.
 #' @param y query specification; 
-#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax' 
-#' (order is irrelevant); polygon: numeric matrix with ≥ 3 rows and 2 columns.
+#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
+#' polygon: numeric matrix with at least 3 rows and exactly 2 columns.
 #' @param i for \code{SpatialData}, index or name of table to query.
 #' @param ... optional arguments passed to and from other methods.
 #'

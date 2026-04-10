@@ -8,6 +8,8 @@
 #' image images image<- images<- imageNames 
 #' shape shapes shape<- shapes<- shapeNames 
 #' table tables table<- tables<- tableNames 
+#' [[<-,SpatialData,character,ANY-method
+#' [[<-,SpatialData,numeric,ANY-method
 #' 
 #' @description ...
 #' 

@@ -22,7 +22,7 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{names}{ShapeFrame}(x)
 
-\method{.DollarNames}{ShapeFrame}(x, pattern = "")
+\method{.DollarNames}{ShapeFrame}(x)
 
 \S4method{$}{ShapeFrame}(x, name)
 

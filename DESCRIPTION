@@ -51,7 +51,6 @@ Imports:
     sf,
     S4Arrays,
     S4Vectors,
-    SparseArray,
     SingleCellExperiment,
     SummarizedExperiment
 Suggests:
@@ -63,8 +62,7 @@ Suggests:
     Rgraphviz,
     SpatialData.data,
     SpatialData.plot,
-    testthat,
-    DT
+    testthat
 Remotes:
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,

@@ -3,8 +3,9 @@
 #' @title Utilities
 #' @aliases centroids extent
 #' 
-#' @param x a \code{SpatialData} element (any but image)
-#' @param as determines how results will be returned
+#' @param x a \code{SpatialData} element (any but image).
+#' @param as character string; how results should be returned.
+#' @param ... optional arguments passed to and from other methods.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
