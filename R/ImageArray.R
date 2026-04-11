@@ -33,6 +33,7 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @export
 setMethod("channels", "Zattrs", \(x, ...) {
     v <- x$spatialdata_attrs$version
+    if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
     if (v == "0.3") x <- x$ome
     unlist(x$omero$channels)
 })
