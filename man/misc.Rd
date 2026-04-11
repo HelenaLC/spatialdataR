@@ -24,7 +24,8 @@ elements, i.e., an Image/LabelArray or Point/ShapeFrame.}
 \code{NULL}
 }
 \description{
-...
+Miscellaneous methods (e.g., \code{show}) 
+for the \link{\code{SpatialData}} class and its elements.
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
