@@ -1,7 +1,7 @@
 changes in version 0.99.29
 
 - revision of Zarr version-specific .zattrs handling
-- added Zarr v3 example dataset 'inst/extradata/blobs_v3'
+- added Zarr v3 example dataset 'inst/extdata/blobs_v3'
 - reorganization of unit tests to facilitate v3-specific testing
 
 changes in version 0.99.28
