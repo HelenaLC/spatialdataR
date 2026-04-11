@@ -59,7 +59,7 @@ setMethod("CTlist", "Zattrs", \(x, ...) {
     ms <- multiscales(x)
     ct <- "coordinateTransformations"
     if (is.null(ms)) return(x[[ct]])
-    ms[[1]][[ct]][[1]]
+    ms[[1]][[ct]]
 })
 
 #' @rdname CTutils
@@ -84,11 +84,15 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTtype", "Zattrs", \(x, ...) vapply(CTlist(x), \(.) .$type, character(1)))
+setMethod("CTtype", "Zattrs", \(x, ...) {
+    vapply(CTlist(x), \(.) .$type, character(1))
+})
 
 #' @rdname CTutils
 #' @export
-setMethod("CTname", "Zattrs", \(x, ...) vapply(CTlist(x), \(.) .$output$name, character(1)))
+setMethod("CTname", "Zattrs", \(x, ...) {
+    vapply(CTlist(x), \(.) .$output$name, character(1))
+})
 
 #' @rdname CTutils
 #' @export
