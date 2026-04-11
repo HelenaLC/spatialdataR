@@ -40,7 +40,7 @@ setMethod("$", "Zattrs", \(x, name) x[[name]])
 #' @noRd 
 setMethod("multiscales", "list", \(x) {
     v <- x$spatialdata_attrs$version
-    if (is.null(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
+    if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
     switch(v, "0.3"=x$ome$multiscales, x$multiscales)
 })
 
