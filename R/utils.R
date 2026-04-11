@@ -3,8 +3,14 @@
 #' @title Utilities
 #' @aliases centroids extent
 #' 
-#' @param x a \code{SpatialData} element (any but image)
-#' @param as determines how results will be returned
+#' @param x a \code{SpatialData} element (any but image).
+#' @param as character string; how results should be returned.
+#' @param ... optional arguments passed to and from other methods.
+#' 
+#' @returns
+#' For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
+#' of spatial coordinates (if \code{as="list"}, split by instance);
+#' for extend, a length-2 numeric list of x- and y-ranges.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -42,11 +48,13 @@ setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
 #' @importFrom Matrix summary
 setMethod("centroids", "LabelArray", \(x, 
     as=c("data.frame", "matrix")) {
-    # TODO: should these be offset by 0.5?
     as <- match.arg(as)
     y <- data(x)
     y <- as(y, "dgCMatrix")
     i <- summary(y)
+    # flip dimensions so that columns=x, rows=y
+    # TODO: should these be offset by 0.5?
+    i[, c(1, 2)] <- i[, c(2, 1)]-0.5
     xy <- tapply(i[, -3], i[[3]], colMeans)
     xy <- do.call(rbind, xy)
     xy <- cbind(xy, as.integer(rownames(xy)))

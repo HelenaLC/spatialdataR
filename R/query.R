@@ -10,8 +10,8 @@
 #'
 #' @param x \code{SpatialData} element.
 #' @param y query specification; 
-#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax' 
-#' (order is irrelevant); polygon: numeric matrix with ≥ 3 rows and 2 columns.
+#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
+#' polygon: numeric matrix with at least 3 rows and exactly 2 columns.
 #' @param i for \code{SpatialData}, index or name of table to query.
 #' @param ... optional arguments passed to and from other methods.
 #'
@@ -97,8 +97,8 @@ setMethod("query", "SpatialData", \(x, ..., i) {
         nrow(mx) >= 3, ncol(mx) == 2,
         !is.na(mx), is.finite(mx))
     if (!all(ok)) stop(
-        "Invalid polygon query; should be numeric matrix ",
-        "with ≥ 3 rows and 2 columns (= xy-coordinates)")
+        "Invalid polygon query; should be numeric matrix with at ",
+        "least 3 rows and exactly 2 columns (= xy-coordinates)")
     # ensure polygon is closed
     top <- mx[1, ]
     bot <- mx[nrow(mx), ]

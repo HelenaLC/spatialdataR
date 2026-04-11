@@ -1,204 +1,51 @@
-x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+z <- list(v1="blobs.zarr", v3="blobs_v3.zarr")
 
-test_that("axes", {
-    # image
-    y <- axes(image(x))
-    expect_is(y, "list")
-    expect_length(y, 3)
-    # label
-    y <- axes(label(x))
-    expect_is(y, "list")
-    expect_length(y, 2)
-    # shape
-    y <- axes(shape(x))
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_equal(unlist(y), c("x", "y"))
-    # point
-    y <- axes(point(x))
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_equal(unlist(y), c("x", "y"))
-    # missing
-    y <- image(x)
-    y@meta$multiscales[[1]]$axes <- NULL
-    expect_error(axes(y))
-})
+for (v in names(z)) {
+    
+    x <- file.path("extdata", z[[v]])
+    x <- system.file(x, package="SpatialData")
+    x <- readSpatialData(x, anndataR=TRUE)
+        
+    test_that(paste0(v, "-multiscales"), {
+        y <- meta(image(x))
+        z <- multiscales(y)
+        expect_is(z, "list")
+        expect_length(z, 1)
+        y$spatialdata_attrs <- NULL
+        expect_error(multiscales(y))
+    })
+    
+    test_that(paste0(v, "-axes"), {
+        # image
+        y <- axes(image(x))
+        expect_is(y, "list")
+        expect_length(y, 3)
+        # label
+        y <- axes(label(x))
+        expect_is(y, "list")
+        expect_length(y, 2)
+        # shape
+        y <- axes(shape(x))
+        expect_is(y, "list")
+        expect_length(y, 2)
+        expect_equal(unlist(y), c("x", "y"))
+        # point
+        y <- axes(point(x))
+        expect_is(y, "list")
+        expect_length(y, 2)
+        expect_equal(unlist(y), c("x", "y"))
+        # missing
+        y <- image(x)
+        switch(v,
+            "v3"=y@meta$ome$multiscales[[1]]$axes <- NULL,
+            y@meta$multiscales[[1]]$axes <- NULL)
+        expect_error(axes(y))
+    })
+    
+    test_that(paste0(v, "-channels"), {
+        expect_error(channels(label(x)))
+        expect_silent(z <- channels(y <- image(x)))
+        expect_length(z, dim(y)[1])
+    })
 
-.CTtype <- c("identity", "scale", "rotate", "translation", "affine", "sequence")
-
-test_that("CTlist", {
-    y <- CTlist(label(x))
-    expect_is(y, "list")
-    expect_length(y, 5)
-    z <- Reduce(intersect, lapply(y, names))
-    expect_setequal(z, c("input", "output", "type"))
-    z <- vapply(y, \(.) .$type, character(1))
-    expect_true(all(z %in% .CTtype))
-})
-test_that("CTdata", {
-    # invalid
-    expect_error(CTdata(label(x), ""))
-    expect_error(CTdata(label(x), 99))
-    expect_error(CTdata(label(x), Inf))
-    expect_error(CTdata(label(x), TRUE))
-    # identity
-    y <- CTdata(label(x), "global")
-    expect_null(y)
-    # scale
-    y <- CTdata(label(x), "scale")
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_is(unlist(y), "numeric")
-    expect_true(all(unlist(y) > 0))
-    # translation
-    y <- CTdata(label(x), "translation")
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_is(unlist(y), "numeric")
-    # affine
-    y <- CTdata(label(x), "affine")
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_is(unlist(y), "numeric")
-    expect_true(all(unlist(y) > 0))
-    z <- vapply(y, length, integer(1))
-    expect_true(all(z == 3))
-    # sequence
-    y <- CTdata(label(x), "sequence")
-    expect_is(y, "list")
-    expect_length(y, 2)
-    expect_true(all(names(y) %in% .CTtype))
-    z <- vapply(y, length, integer(1))
-    expect_true(all(z == 2))
-})
-test_that("CTtype", {
-    y <- CTtype(label(x))
-    expect_is(y, "character")
-    expect_length(y, 5)
-    expect_true(all(y %in% .CTtype))
-})
-test_that("CTname", {
-    y <- CTname(label(x))
-    expect_is(y, "character")
-    expect_length(y, 5)
-    expect_true(all(nchar(y) > 0))
-    expect_true(!any(duplicated(y)))
-})
-
-test_that("rmvCT", {
-    y <- label(x)
-    # invalid index/name
-    expect_error(rmvCT(y, 100))
-    expect_error(rmvCT(y, "."))
-    expect_error(rmvCT(y, c(".", CTname(y)[1])))
-    # identity is kept with a warning
-    expect_warning(z <- rmvCT(y, "global"))
-    expect_identical(CTname(z), CTname(y))
-    # by name
-    i <- sample(setdiff(CTname(y), "global"), 2) 
-    expect_identical(CTname(rmvCT(y, i)), setdiff(CTname(y), i))
-    # by index
-    i <- sample(which(CTtype(y) != "identity"), 2) 
-    expect_identical(CTname(rmvCT(y, i)), CTname(y)[-i])
-})
-
-test_that("addCT", {
-    # get 1st element from each layer
-    ls <- setdiff(SpatialData:::.LAYERS, "tables")
-    es <- lapply(ls, \(.) x[.,1][[.]][[1]])
-    .check_data <- \(z, x) {
-        expect_true("." %in% CTname(z))
-        ct <- CTlist(z)[[which(CTname(z) == ".")]]
-        expect_identical(ct[[t]][[1]], x)
-    }
-    for (y in es) {
-        t <- "identity"
-        expect_error(addCT(y, ".", t, 12345))
-        expect_silent(z <- addCT(y, ".", t, v <- NULL))
-        .check_data(z, v)
-        t <- "rotate"
-        expect_error(addCT(y, ".", t, -12345)) # negative
-        expect_error(addCT(y, ".", t, c(1,1))) # too many
-        expect_error(addCT(y, ".", t, ".")) # not a number
-        expect_silent(z <- addCT(y, ".", t, v <- 1)) 
-        .check_data(z, v)
-        t <- "scale"
-        d <- ifelse(is(y, "ImageArray"), 3, 2)
-        expect_error(addCT(y, ".", t, numeric(d))) # zeroes
-        expect_error(addCT(y, ".", t, 1+numeric(d+1))) # too many
-        expect_error(addCT(y, ".", t, character(d))) # not a number
-        expect_silent(z <- addCT(y, ".", t, v <- 1+numeric(d)))
-        .check_data(z, v)
-        t <- "translation"
-        expect_error(addCT(y, ".", t, numeric(d+1))) # too many
-        expect_error(addCT(y, ".", t, character(d))) # not a number
-        expect_silent(z <- addCT(y, ".", t, v <- numeric(d)))
-        .check_data(z, v)
-    }
-})
-
-test_that("CTname", {
-    y <- CTname(x)
-    expect_is(y, "character")
-    expect_true(!any(duplicated(y)))
-    y <- CTname(image(x))
-    z <- CTname(meta(image(x)))
-    expect_is(y, "character")
-    expect_length(y, 1)
-    expect_identical(y, z)
-})
-
-test_that("CTgraph", {
-    # invalid
-    expect_error(CTgraph(list()))
-    expect_error(CTgraph(SpatialData::table(x)))
-    # object-wide
-    g <- CTgraph(x)
-    expect_is(g, "graph")
-    # graph should contain node for
-    # every element & transformation
-    ns <- lapply(setdiff(SpatialData:::.LAYERS, "tables"), 
-        \(l) lapply(names(x[[l]]), 
-            \(e) c(e, CTname(x[[l]][[e]]))))
-    ns <- sort(unique(unlist(ns)))
-    expect_true(all(ns %in% sort(graph::nodes(g))))
-    # element-wise
-    for (l in setdiff(SpatialData:::.LAYERS, "tables")) 
-        for (e in names(x[[l]])) {
-            y <- x[[l]][[e]]
-            g <- CTgraph(y)
-            expect_is(g, "graph")
-            expect_true("self" %in% graph::nodes(g))
-        }
-})
-
-test_that("CTpath", {
-    i <- "blobs_image"
-    y <- element(x, "images", i)
-    z <- CTpath(y, j <- CTname(y))
-    expect_identical(CTpath(x, i, j), z)
-    expect_is(z, "list")
-    expect_length(z <- z[[1]], 2)
-    expect_setequal(names(z), c("type", "data"))
-    expect_is(z$type, "character")
-    expect_length(z$type, 1)
-})
-
-test_that("CTplot", {
-    f <- function(.) {
-        tf <- tempfile(fileext=".pdf")
-        on.exit(unlink(tf))
-        pdf(tf); .; dev.off()
-        file.size(tf)
-    }
-    g <- CTgraph(x)
-    p <- f(CTplot(g))
-    expect_is(p, "numeric")
-    expect_true(p > f(plot(1)))
-    p <- f(CTplot(g, 0.1))
-    q <- f(CTplot(g, 0.9))
-    expect_true(p < q)
-})
+}

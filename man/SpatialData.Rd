@@ -34,6 +34,8 @@
 \alias{table<-}
 \alias{tables<-}
 \alias{tableNames}
+\alias{[[<-,SpatialData,character,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY-method}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
