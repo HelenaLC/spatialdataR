@@ -40,6 +40,19 @@ CTplot(g, cex = 0.5, fac = 2, max = 10)
 \item{fac, max}{scalar numeric; node labels with \code{nchar>max}
 are split and hyphenated at position \code{floor(nchar/fac)}}
 }
+\value{
+\itemize{
+\item \code{CTgraph}: 
+  \code{graph::graphAM} object with nodes for each element and
+  coordinate space, and edges for each transformation (if specified)
+\item \code{CTpath}: 
+  list of transformations from \code{i} to \code{j};
+  length > 1 if \code{type} is \code{"sequential"}, length-1 otherwise;
+  each element specifies \code{type} and \code{data} of the transformation
+\item \code{CTplot}: 
+  visualizes the element-coordinate space graph with \code{Rgraphviz}
+}
+}
 \description{
 Coord. trans. graph
 }
