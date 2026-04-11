@@ -97,8 +97,8 @@ setMethod("query", "SpatialData", \(x, ..., i) {
         nrow(mx) >= 3, ncol(mx) == 2,
         !is.na(mx), is.finite(mx))
     if (!all(ok)) stop(
-        "Invalid polygon query; should be numeric matrix ",
-        "with ≥ 3 rows and 2 columns (= xy-coordinates)")
+        "Invalid polygon query; should be numeric matrix with at ",
+        "least 3 rows and exactly 2 columns (= xy-coordinates)")
     # ensure polygon is closed
     top <- mx[1, ]
     bot <- mx[nrow(mx), ]

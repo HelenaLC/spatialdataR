@@ -10,7 +10,7 @@
 #'   content describing the overall object.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param i,j indices specifying elements to extract.
-#' @param drop ignored.
+#' @param drop pattern ignored.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{ShapeFrame}
@@ -55,13 +55,15 @@ setMethod("names", "ShapeFrame", \(x) names(data(x)))
 #' @export
 #' @rdname ShapeFrame
 #' @importFrom utils .DollarNames
-.DollarNames.ShapeFrame <- \(x) grep("", names(x), value=TRUE)
+.DollarNames.ShapeFrame <- \(x, pattern="") 
+    grep(pattern, names(x), value=TRUE)
 
 #' @rdname ShapeFrame
 #' @exportMethod $
 setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])
 
 #' @export
+#' @rdname ShapeFrame
 #' @importFrom sf st_as_sf st_geometry_type
 setMethod("geom_type", "ShapeFrame", \(x) {
     y <- st_as_sf(data(x[1, ]))

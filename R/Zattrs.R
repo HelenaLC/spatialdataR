@@ -119,6 +119,7 @@ NULL
 #' @rdname SDattrs
 setMethod("feature_key", "list", \(x) x$spatialdata_attrs$feature_key)
 #' @export
+#' @rdname SDattrs
 setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 
 # TODO: only tables can have this?
