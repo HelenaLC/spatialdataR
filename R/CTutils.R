@@ -11,6 +11,24 @@
 #'   element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)
 #' @param ... option arguments passed to and from other methods.
 #' 
+#' @returns
+#' \itemize{
+#' \item \code{CTname}: character string; 
+#'   transformation name (e.g., "global")
+#' \item \code{CTtype}: character string; 
+#'   transformation type (e.g., "affine")
+#' \item \code{CTdata}: list;
+#'   transformation data (e.g., scalar numeric for rotation)
+#' \item \code{CTlist}: list;
+#'   list of transformation specifications per OME-NGFF spec
+#' \item \code{add/rmvCT}: 
+#'   \code{SpatialDataElement} or \code{Zattrs} 
+#'   with transformation(s) added/removed
+#' \item \code{axes}: list; 
+#'   each element is a character string (name), or list 
+#'   with axis name and type (e.g., "space" or "channel")
+#' }
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
