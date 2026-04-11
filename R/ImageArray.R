@@ -31,7 +31,11 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname ImageArray
 #' @aliases channels
 #' @export
-setMethod("channels", "Zattrs", \(x, ...) unlist(x$omero$channels))
+setMethod("channels", "Zattrs", \(x, ...) {
+    v <- x$spatialdata_attrs$version
+    if (v == "0.3") x <- x$ome
+    unlist(x$omero$channels)
+})
 
 #' @rdname ImageArray
 #' @aliases channels
