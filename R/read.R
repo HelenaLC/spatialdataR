@@ -1,4 +1,3 @@
-#
 # allp = c("session_info==1.0.0", "spatialdata==0.3.0", "spatialdata_io==0.1.7", 
 # "pillow==11.1.0", "anndata==0.11.3", "annotated_types==0.7.0", "asciitree==0.3.3", 
 # "attr==0.3.2", "certifi==2025.01.31", "charset_normalizer==3.4.1", 
@@ -25,8 +24,14 @@
 # "typing_extensions==4.12.2", "urllib3==2.3.0", "wrapt==1.17.2", 
 # "xarray==2024.11.0", "xarray_dataclasses==1.9.1", "xarray_schema==0.0.3", 
 # "zarr==2.18.4", "zict==3.0.0")
-allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0", 
-         "spatialdata_plot==0.2.14", "setuptools==75.8.0")
+
+allp <- c(
+    "zarr==3.1.5", 
+    "spatialdata==0.7.0", 
+    "spatialdata_io==0.6.0", 
+    "spatialdata_plot==0.2.14", 
+    "setuptools==75.8.0")
+
 # notes from VJC/AM -- readSpatialData was modified below so
 # that if anndataR = FALSE, anndata.read_zarr is used
 # to get the whole zarr store, and then the tables are
@@ -34,7 +39,6 @@ allp = c("zarr==3.1.5", "spatialdata==0.7.0", "spatialdata_io==0.6.0",
 # for ingesting the visium_hd_3.0.0 example but fails on
 # the blobs dataset in example("table-utils") because
 # of matters related to metadata/hasTable behavior
-#
 
 #' @name readSpatialData
 #' @title Reading `SpatialData`
