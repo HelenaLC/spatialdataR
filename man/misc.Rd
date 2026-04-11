@@ -17,15 +17,15 @@
 \S4method{show}{ShapeFrame}(object)
 }
 \arguments{
-\item{object}{\code{\link{SpatialData}} object or one of its 
-elements, i.e., an Image/LabelArray or Point/ShapeFrame.}
+\item{object}{\code{\link{SpatialData}} object or one of its elements,
+i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.}
 }
 \value{
 \code{NULL}
 }
 \description{
-Miscellaneous methods (e.g., \code{show}) 
-for the \link{\code{SpatialData}} class and its elements.
+Miscellaneous methods (e.g., \code{show}) for the
+\link{\code{SpatialData}} class and its elements.
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")

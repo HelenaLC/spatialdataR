@@ -2,11 +2,13 @@
 #' @title Miscellaneous `SpatialData` methods
 #' @aliases show,SpatialData-method
 #' 
-#' @description Miscellaneous methods (e.g., \code{show}) 
-#' for the \link{\code{SpatialData}} class and its elements.
+#' @description 
+#' Miscellaneous methods (e.g., \code{show}) for the
+#' \link{\code{SpatialData}} class and its elements.
 #' 
-#' @param object \code{\link{SpatialData}} object or one of its 
-#'   elements, i.e., an Image/LabelArray or Point/ShapeFrame.
+#' @param object 
+#'   \code{\link{SpatialData}} object or one of its elements,
+#'   i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.
 #'
 #' @return \code{NULL}
 #'
