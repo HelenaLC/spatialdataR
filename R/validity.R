@@ -14,25 +14,27 @@
         if (any(ok <- nm %in% names(md))) {
             if (!all(ok)) msg <- c(msg, paste0(
                 i, "-th table missing ", .nm, "; must set all if any"))
-            ok <- \(.) is.character(.) && length(.) == 1
-            ok <- all(vapply(md, ok, logical(1)))
+            ok <- all(vapply(md, is.character, logical(1)))
             if (!ok) msg <- c(msg, paste0(
-                i, "-th table's", .nm, " is not a character string"))
+                i, "-th table's ", .nm, " is not of type character"))
+            ok <- all(vapply(intersect(md, nm[-1]), length, integer(1)) == 1)
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table's 'region/instance_key' is not length 1"))
             ok <- !is.null(int_colData(se)[[md$region_key]])
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'region_key' column in 'int_colData'"))
             ok <- !is.null(int_colData(se)[[md$instance_key]])
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'instance_key' column in 'int_colData'"))
-            
+
         }
     }
     na <- setdiff(
         unlist(lapply(tables(object), \(.) if (sce(.)) region(.))),
         unlist(colnames(object)[setdiff(.LAYERS, "tables")])) # don't flip!
-    if (length(na)) 
+    if (length(na))
         msg <- c(msg, paste(
-            "table region(s) not found in any layer:", 
+            "table region(s) not found in any layer:",
             paste(sprintf("'%s'", na), collapse=", ")))
     return(msg)
 }
@@ -70,7 +72,7 @@ setValidity2("LabelArray", .validateLabelArray)
 
 .validatePointFrame <- \(object) {
     msg <- c()
-    if (!length(object)) return(msg) 
+    if (!length(object)) return(msg)
     if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
     if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
     return(msg)
@@ -80,7 +82,7 @@ setValidity2("PointFrame", .validatePointFrame)
 
 .validateShapeFrame <- \(object) {
     msg <- c()
-    if (!nrow(object)) return(msg) 
+    if (!nrow(object)) return(msg)
     if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
     return(msg)
 }
@@ -100,10 +102,7 @@ setValidity2("ShapeFrame", .validateShapeFrame)
         if (!all(vapply(x[[.]], \(y) is(y, typ[.]), logical(1))))
             msg <- c(msg, sprintf("'%s' should be a list of '%s'", ., typ[.]))
     # TODO: validate .zattrs across all layers
-    for (y in labels(x)) {
-        msg <- c(msg, .validateLabelArray(y))
-        msg <- c(msg, .validateZattrsLabelArray(y))
-    }
+    for (y in labels(x)) msg <- c(msg, .validateLabelArray(y))
     for (y in images(x)) msg <- c(msg, .validateImageArray(y))
     for (y in points(x)) msg <- c(msg, .validatePointFrame(y))
     for (y in shapes(x)) msg <- c(msg, .validateShapeFrame(y))
@@ -113,6 +112,8 @@ setValidity2("ShapeFrame", .validateShapeFrame)
 
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialData", .validateSpatialData)
+
+# TODO: version-specific .zattrs validation for all layers
 
 .validateZattrs_multiscales <- \(x, msg) {
     if (is.null(ms <- x$multiscales[[1]]))

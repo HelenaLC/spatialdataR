@@ -37,7 +37,8 @@ test_that("filter", {
     n <- length(p <- point(x))
     expect_length(filter(p), n)
     expect_length(filter(p, x > Inf), 0)
-    expect_error(filter(p, z == 1))
+    f <- \() filter(p, z == 1)
+    expect_error(show(f()))
 })
 
 test_that("select", {
