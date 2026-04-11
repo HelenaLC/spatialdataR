@@ -17,6 +17,9 @@ do_tx_to_ext(srcdir, dest, coordinate_system, ...)
 can include "maintain_positioning" (logical (1)) or numerics for
 target_unit_to_pixels, target_width, target_height, target_depth.}
 }
+\value{
+\code{SpatialData} object.
+}
 \description{
 Use Python's 'spatialdata' 'transform_to_data_extent' on a spatialdata zarr store
 }

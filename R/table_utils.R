@@ -18,6 +18,19 @@
 #' @param ... \code{data.frame} or list of data generation function(s) 
 #'   that accept an argument for the number of observations; see examples.
 #'   
+#' @returns 
+#' \itemize{
+#' \item \code{hasTable}: 
+#'   logical scalar (or character string, if \code{name=TRUE});
+#'   whether or not a \code{table} annotating \code{i} exists in \code{x}
+#' \item \code{getTable}: 
+#'   \code{SingleCellExperiment}; the \code{table} annotating 
+#'   \code{i} with optional filtering of matching observations
+#' \item \code{valTable}: 
+#'   vector of values (according to \code{j})
+#'   from the \code{table} annotating \code{i}
+#' }  
+#'   
 #' @examples
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
