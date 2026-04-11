@@ -21,6 +21,8 @@
 #'   can include "maintain_positioning" (logical (1)) or numerics for
 #'   target_unit_to_pixels, target_width, target_height, target_depth.
 #'   
+#' @return \code{SpatialData} object. 
+#'   
 #' @examples
 #' src <- system.file("extdata", "blobs.zarr", package="SpatialData")
 #' td <- tempfile()

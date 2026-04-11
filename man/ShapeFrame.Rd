@@ -8,6 +8,7 @@
 \alias{names,ShapeFrame-method}
 \alias{.DollarNames.ShapeFrame}
 \alias{$,ShapeFrame-method}
+\alias{geom_type,ShapeFrame-method}
 \alias{[,ShapeFrame,missing,ANY,ANY-method}
 \alias{[,ShapeFrame,ANY,missing,ANY-method}
 \alias{[,ShapeFrame,missing,missing,ANY-method}
@@ -25,6 +26,8 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \method{.DollarNames}{ShapeFrame}(x, pattern = "")
 
 \S4method{$}{ShapeFrame}(x, name)
+
+\S4method{geom_type}{ShapeFrame}(x)
 
 \S4method{[}{ShapeFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -51,7 +54,7 @@ content describing the overall object.}
 
 \item{i, j}{indices specifying elements to extract.}
 
-\item{drop}{ignored.}
+\item{drop, pattern}{ignored.}
 }
 \value{
 \code{ShapeFrame}

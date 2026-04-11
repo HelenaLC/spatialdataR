@@ -13,6 +13,7 @@
 \alias{flop,sdArray-method}
 \alias{scale,sdArray,numeric-method}
 \alias{rotate,sdArray,numeric-method}
+\alias{translation,sdArray,numeric-method}
 \alias{scale,PointFrame,numeric-method}
 \alias{rotate,PointFrame,numeric-method}
 \alias{translation,PointFrame,numeric-method}
@@ -31,6 +32,8 @@
 
 \S4method{rotate}{sdArray,numeric}(x, t, k = 1, ...)
 
+\S4method{translation}{sdArray,numeric}(x, t, k = 1, ...)
+
 \S4method{scale}{PointFrame,numeric}(x, t, ...)
 
 \S4method{rotate}{PointFrame,numeric}(x, t, ...)
@@ -44,7 +47,7 @@
 \S4method{translation}{ShapeFrame,numeric}(x, t, ...)
 }
 \arguments{
-\item{x}{\code{SpatialData} element}
+\item{x}{\code{SpatialData} element.}
 
 \item{t}{transformation data; exceptions: for \code{mirror}, controls
 whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
@@ -55,9 +58,9 @@ no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
 only applies to \code{sdArray}s (images, labels).}
 
 \item{...}{option arguments passed to and from other methods.}
-
-\item{j}{scalar character or numeric; 
-name or index of coordinate space.}
+}
+\value{
+\code{SpatialData} element with transformation(s) applied.
 }
 \description{
 Transformations

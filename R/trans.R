@@ -3,9 +3,7 @@
 #' @title Transformations
 #' @aliases scale rotate translation flip flop mirror
 #' 
-#' @param x \code{SpatialData} element
-#' @param j scalar character or numeric; 
-#'   name or index of coordinate space.
+#' @param x \code{SpatialData} element.
 #' @param t transformation data; exceptions: for \code{mirror}, controls
 #'   whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
 #'   no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).
@@ -13,6 +11,8 @@
 #'   \code{Inf} to use lowest available resolution;
 #'   only applies to \code{sdArray}s (images, labels).
 #' @param ... option arguments passed to and from other methods.
+#' 
+#' @returns \code{SpatialData} element with transformation(s) applied.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -106,6 +106,8 @@ setMethod("rotate", c("sdArray", "numeric"), \(x, t, k=1,...) {
     .trans_a(x, f, k)
 })
 
+#' @export
+#' @rdname trans
 #' @importFrom EBImage translate
 setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
     stopifnot(length(t) == length(dim(x)), is.finite(t))

@@ -56,6 +56,19 @@ or row name to retrieve \code{assay} data.}
 \item{assay}{character string or scalar integer; 
 specifies which \code{assay} to use when \code{j} is a row name.}
 }
+\value{
+\itemize{
+\item \code{hasTable}: 
+  logical scalar (or character string, if \code{name=TRUE});
+  whether or not a \code{table} annotating \code{i} exists in \code{x}
+\item \code{getTable}: 
+  \code{SingleCellExperiment}; the \code{table} annotating 
+  \code{i} with optional filtering of matching observations
+\item \code{valTable}: 
+  vector of values (according to \code{j})
+  from the \code{table} annotating \code{i}
+}
+}
 \description{
 \code{SpatialData} annotations
 }

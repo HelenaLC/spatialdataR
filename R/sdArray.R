@@ -1,15 +1,14 @@
-#' @name Array-methods
+#' @name sdArray
 #' @title Methods for `ImageArray` and `LabelArray` class
 #' 
 #' @aliases 
+#' data_type
 #' data,ImageArray-method
 #' data,LabelArray-method
 #' dim,ImageArray-method
 #' dim,LabelArray-method
 #' length,ImageArray-method
 #' length,LabelArray-method
-#' data_type,ImageArray-method
-#' data_type,LabelArray-method
 #' 
 #' @param x \code{ImageArray} or  \code{LabelArray}
 #' @param k scalar index specifying which scale to extract.
@@ -30,7 +29,7 @@
 #' @importFrom methods new
 NULL
 
-#' @rdname Array-methods
+#' @rdname sdArray
 #' @export
 setMethod("data", "sdArray", \(x, k=1) {
   if (is.null(k)) return(x@data)
@@ -41,25 +40,25 @@ setMethod("data", "sdArray", \(x, k=1) {
   stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
-#' @rdname Array-methods
+#' @rdname sdArray
 #' @export
 setMethod("dim", "sdArray", \(x) dim(data(x)))
 
-#' @rdname Array-methods
+#' @rdname sdArray
 #' @export
 setMethod("length", "sdArray", \(x) length(data(x, NULL)))
 
 #' @export
-#' @rdname Array-methods
+#' @rdname sdArray
 #' @importFrom S4Vectors metadata
 setMethod("data_type", "sdArray", \(x) {
     if (is(y <- data(x), "DelayedArray")) 
         data_type(y) else metadata(x)$data_type
 })
 
-#' @rdname Array-methods
+#' @export
+#' @rdname sdArray
 #' @importFrom DelayedArray DelayedArray
 #' @importFrom Rarr zarr_overview
 #' @importFrom ZarrArray path
-#' @export
 setMethod("data_type", "DelayedArray", \(x) zarr_overview(path(x), as_data_frame=TRUE)$data_type)
