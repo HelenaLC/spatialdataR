@@ -12,6 +12,8 @@
 #'   only applies to \code{sdArray}s (images, labels).
 #' @param ... option arguments passed to and from other methods.
 #' 
+#' @returns \code{SpatialData} element with transformation(s) applied.
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")

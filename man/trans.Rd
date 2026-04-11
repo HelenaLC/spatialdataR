@@ -59,6 +59,9 @@ only applies to \code{sdArray}s (images, labels).}
 
 \item{...}{option arguments passed to and from other methods.}
 }
+\value{
+\code{SpatialData} element with transformation(s) applied.
+}
 \description{
 Transformations
 }
