@@ -31,6 +31,11 @@
 
 \item{as}{character string; how results should be returned.}
 }
+\value{
+For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
+of spatial coordinates (if \code{as="list"}, split by instance);
+for extend, a length-2 numeric list of x- and y-ranges.
+}
 \description{
 Utilities
 }

@@ -7,6 +7,11 @@
 #' @param as character string; how results should be returned.
 #' @param ... optional arguments passed to and from other methods.
 #' 
+#' @returns
+#' For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
+#' of spatial coordinates (if \code{as="list"}, split by instance);
+#' for extend, a length-2 numeric list of x- and y-ranges.
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
