@@ -5,7 +5,6 @@
 #' @param x \code{SpatialData}, an element, or \code{Zattrs}.
 #' @param i for \code{CTpath}, source node label; else, string or 
 #'   scalar integer giving the name or index of a coordinate space.
-#' @param j character string; name of target coordinate space.
 #' @param name character(1); name of coordinate space
 #' @param type character(1); type of transformation
 #' @param data transformation data; size and shape depend on transformation and

@@ -7,6 +7,7 @@
 \alias{feature_key}
 \alias{instance_key}
 \alias{feature_key,list-method}
+\alias{feature_key,PointFrame-method}
 \alias{region_key,SingleCellExperiment-method}
 \alias{region,SingleCellExperiment-method}
 \alias{instance_key,list-method}
@@ -15,6 +16,8 @@
 \title{\code{SpatialData} attributes}
 \usage{
 \S4method{feature_key}{list}(x)
+
+\S4method{feature_key}{PointFrame}(x)
 
 \S4method{region_key}{SingleCellExperiment}(x)
 

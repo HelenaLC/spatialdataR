@@ -70,8 +70,6 @@ scalar integer giving the name or index of a coordinate space.}
 
 \item{data}{transformation data; size and shape depend on transformation and
 element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)}
-
-\item{j}{character string; name of target coordinate space.}
 }
 \description{
 Coord. trans. utilities
