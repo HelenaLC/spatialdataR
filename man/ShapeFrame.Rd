@@ -54,7 +54,7 @@ content describing the overall object.}
 
 \item{i, j}{indices specifying elements to extract.}
 
-\item{drop}{pattern ignored.}
+\item{drop, pattern}{ignored.}
 }
 \value{
 \code{ShapeFrame}

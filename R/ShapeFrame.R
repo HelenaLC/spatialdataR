@@ -10,7 +10,7 @@
 #'   content describing the overall object.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param i,j indices specifying elements to extract.
-#' @param drop pattern ignored.
+#' @param drop,pattern ignored.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{ShapeFrame}

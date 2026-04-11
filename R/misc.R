@@ -4,7 +4,7 @@
 #' 
 #' @description 
 #' Miscellaneous methods (e.g., \code{show}) for the
-#' \link{\code{SpatialData}} class and its elements.
+#' \code{\link{SpatialData}} class and its elements.
 #' 
 #' @param object 
 #'   \code{\link{SpatialData}} object or one of its elements,
