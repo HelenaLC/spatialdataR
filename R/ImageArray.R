@@ -43,11 +43,11 @@ setMethod("channels", "ImageArray", \(x, ...) channels(meta(x)))
 setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
-.get_multiscales_dataset_paths <- function(md) {
+.get_multiscales_dataset_paths <- function(za) {
     # validate 'multiscales'
-    .validate_multiscales_dataset_path(md)
+    ms <- .check_ms(za)
     # get & validate 'path's
-    ds <- md$multiscales[[1]]$datasets
+    ds <- ms[[1]]$datasets
     ps <- vapply(ds, \(.) .$path, character(1))
     ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
     if (length(ps)) {
@@ -59,10 +59,9 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     return(ps)
 }
 
-#' @noRd
-.validate_multiscales_dataset_path <- function(md) {
-    # validate 'multiscales' 
-    ms <- md$multiscales
+.check_ms <- \(za) {
+    # validate 'multiscales'
+    ms <- multiscales(za)
     if (!is.null(ms)) {
         # validate 'datasets' 
         ds <- ms[[1]]$datasets
@@ -78,6 +77,7 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     } else stop( 
         "'ImageArray' paths are ill-defined,",
         " no 'multiscales' attribute under '.zattrs'")
+    return(ms)
 }
 
 .check_jk <- \(x, .) {

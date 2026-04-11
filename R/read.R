@@ -203,8 +203,10 @@ readSpatialData <- function(x,
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     sd <- lapply(.LAYERS[!skip], \(i) {
-        y <- file.path(x, i)
-        j <- list.files(y, full.names=TRUE)
+        j <- list.dirs(
+            file.path(x, i), 
+            recursive=FALSE, 
+            full.names=TRUE)
         names(j) <- basename(j)
         if (!isTRUE(opt <- args[[i]])) {
             if (is.numeric(opt) && opt > (. <- length(j))) 

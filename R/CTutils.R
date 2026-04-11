@@ -1,5 +1,5 @@
-#' @name coord-utils
-#' @title Coordinate transformations
+#' @name CTutils
+#' @title Coord. trans. utilities
 #' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{Zattrs}.
@@ -38,30 +38,31 @@ NULL
 
 # axes() ----
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("axes", "Zattrs", \(x, ...) {
-    if (!is.null(ms <- x$multiscales)) x <- ms[[1]]
+    ms <- multiscales(x)
+    if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
     return(x)
 })
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 # CTlist/data/type/name() ----
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTlist", "Zattrs", \(x, ...) {
-    ms <- "multiscales"
+    ms <- multiscales(x)
     ct <- "coordinateTransformations"
-    if (is.null(x[[ms]])) return(x[[ct]])
-    x[[ms]][[1]][[ct]]
+    if (is.null(ms)) return(x[[ct]])
+    ms[[1]][[ct]][[1]]
 })
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
     stopifnot(length(i) == 1)
@@ -81,31 +82,31 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
     mapply(x=ts, i=names(ts), \(x, i) x[[i]], SIMPLIFY=FALSE)
 })
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTtype", "Zattrs", \(x, ...) vapply(CTlist(x), \(.) .$type, character(1)))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTname", "Zattrs", \(x, ...) vapply(CTlist(x), \(.) .$output$name, character(1)))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x)))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTdata", "SpatialDataElement", \(x, i=1, ...) CTdata(meta(x), i))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("CTname", "SpatialData", \(x, ...) {
     g <- CTgraph(x)
@@ -115,12 +116,12 @@ setMethod("CTname", "SpatialData", \(x, ...) {
 
 # rmv ----
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("rmvCT", "SpatialDataElement", 
     \(x, i) { x@meta <- rmvCT(meta(x), i); x })
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("rmvCT", "Zattrs", \(x, i) {
     nms <- CTname(x)
@@ -155,7 +156,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
 
 # add ----
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     x@meta <- addCT(meta(x), name, type, data); x })
@@ -173,7 +174,7 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
     if (!.) f(t)
 }
 
-#' @rdname coord-utils
+#' @rdname CTutils
 #' @export
 setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     stopifnot(
