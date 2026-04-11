@@ -14,10 +14,12 @@
         if (any(ok <- nm %in% names(md))) {
             if (!all(ok)) msg <- c(msg, paste0(
                 i, "-th table missing ", .nm, "; must set all if any"))
-            ok <- \(.) is.character(.) && length(.) == 1
-            ok <- all(vapply(md, ok, logical(1)))
+            ok <- all(vapply(md, is.character, logical(1)))
             if (!ok) msg <- c(msg, paste0(
-                i, "-th table's", .nm, " is not a character string"))
+                i, "-th table's ", .nm, " is not of type character"))
+            ok <- all(vapply(intersect(md, nm[-1]), length, integer(1)) == 1)
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table's 'region/instance_key' is not length 1"))
             ok <- !is.null(int_colData(se)[[md$region_key]])
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'region_key' column in 'int_colData'"))
