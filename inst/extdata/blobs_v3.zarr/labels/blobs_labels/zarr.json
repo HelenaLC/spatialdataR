@@ -1,0 +1,307 @@
+{
+  "attributes": {
+    "ome": {
+      "version": "0.5-dev-spatialdata",
+      "multiscales": [
+        {
+          "datasets": [
+            {
+              "path": "0",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    1.0,
+                    1.0
+                  ]
+                }
+              ]
+            }
+          ],
+          "name": "blobs_labels",
+          "axes": [
+            {
+              "name": "y",
+              "type": "space"
+            },
+            {
+              "name": "x",
+              "type": "space"
+            }
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "yx",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "scale",
+              "scale": [
+                3.0,
+                2.0
+              ],
+              "input": {
+                "name": "yx",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "scale",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "translation",
+              "translation": [
+                -50.0,
+                10.0
+              ],
+              "input": {
+                "name": "yx",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "translation",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "affine",
+              "affine": [
+                [
+                  20.0,
+                  10.0,
+                  30.0
+                ],
+                [
+                  50.0,
+                  40.0,
+                  60.0
+                ]
+              ],
+              "input": {
+                "name": "yx",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "affine",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "sequence",
+              "transformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    3.0,
+                    2.0
+                  ],
+                  "input": {
+                    "name": "yx",
+                    "axes": [
+                      {
+                        "name": "y",
+                        "type": "space",
+                        "unit": "unit"
+                      },
+                      {
+                        "name": "x",
+                        "type": "space",
+                        "unit": "unit"
+                      }
+                    ]
+                  },
+                  "output": {
+                    "name": "global",
+                    "axes": [
+                      {
+                        "name": "y",
+                        "type": "space",
+                        "unit": "unit"
+                      },
+                      {
+                        "name": "x",
+                        "type": "space",
+                        "unit": "unit"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "translation",
+                  "translation": [
+                    -50.0,
+                    10.0
+                  ],
+                  "input": {
+                    "name": "yx",
+                    "axes": [
+                      {
+                        "name": "y",
+                        "type": "space",
+                        "unit": "unit"
+                      },
+                      {
+                        "name": "x",
+                        "type": "space",
+                        "unit": "unit"
+                      }
+                    ]
+                  },
+                  "output": {
+                    "name": "global",
+                    "axes": [
+                      {
+                        "name": "y",
+                        "type": "space",
+                        "unit": "unit"
+                      },
+                      {
+                        "name": "x",
+                        "type": "space",
+                        "unit": "unit"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "input": {
+                "name": "yx",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "sequence",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "image-label": {
+        "version": "0.5"
+      }
+    },
+    "spatialdata_attrs": {
+      "version": "0.3"
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}
