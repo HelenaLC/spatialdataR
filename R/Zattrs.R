@@ -38,6 +38,15 @@ Zattrs <- \(x=list()) {
 #' @exportMethod $
 setMethod("$", "Zattrs", \(x, name) x[[name]])
 
+# internal use only!
+#' @noRd 
+setMethod("multiscales", "Zattrs", \(x) {
+    v <- x$spatialdata_attrs$version
+    switch(v, 
+        "0.2"=x$multiscales, 
+        "0.3"=x$ome$multiscales)
+})
+
 .showZattrs <- function(object) {
     cat("class: Zattrs\n")
     ax <- axes(object)

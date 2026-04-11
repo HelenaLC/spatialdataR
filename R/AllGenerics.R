@@ -40,7 +40,6 @@ setGeneric("tables<-", \(x, value) standardGeneric("tables<-"))
 
 # trs ----
 
-setGeneric("axes", \(x, ...) standardGeneric("axes"))
 setGeneric("CTlist", \(x, ...) standardGeneric("CTlist"))
 setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
 setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
@@ -79,11 +78,13 @@ setGeneric("meta", \(x, ...) standardGeneric("meta"))
 setGeneric("query", \(x, ...) standardGeneric("query"))
 setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
+setGeneric("axes", \(x, ...) standardGeneric("axes"))
+setGeneric("extent", \(x, ...) standardGeneric("extent"))
 setGeneric("channels", \(x, ...) standardGeneric("channels"))
+setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
-setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
-setGeneric("extent", \(x, ...) standardGeneric("extent"))
+setGeneric("multiscales", \(x, ...) standardGeneric("multiscales"))
 
 # tbl ----
 
