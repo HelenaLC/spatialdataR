@@ -10,3 +10,4 @@ inst/extdata/xenium1.zarr
 inst/extdata/visiumhd.zarr
 *.Rproj
 *.html
+R/_*

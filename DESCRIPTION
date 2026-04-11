@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
-Depends: R (>= 4.5)
-Version: 0.99.28
+Depends: R (>= 4.6)
+Version: 0.99.29
 Description: Interface to Python's 'SpatialData', currently including:
     reticulate-based use of 'spatialdata-io' for reading of manufacturer
     data and writing to .zarr, on-disk representation of images/labels as
@@ -66,8 +66,7 @@ Suggests:
 Remotes:
     keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot,
-    Bioconductor/ZarrArray
+    HelenaLC/SpatialData.plot
 biocViews: 
     DataImport, 
     DataRepresentation, 
