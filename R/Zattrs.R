@@ -126,9 +126,17 @@ setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 #' @export
 #' @rdname SDattrs
 setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
+
 #' @export
 #' @rdname SDattrs
 setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
+
+#' @importFrom SingleCellExperiment int_metadata<-
+setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
+    stopifnot(length(value) > 0)
+    int_metadata(x)$spatialdata_attrs$region <- value
+    return(x)
+})
 
 # TODO: only tables and points can have this?
 #' @export
