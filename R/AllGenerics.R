@@ -63,6 +63,8 @@ setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
 # sda ----
 
 setGeneric("region", \(x, ...) standardGeneric("region"))
+setGeneric("region<-", \(x, ..., value) standardGeneric("region<-"))
+
 setGeneric("region_key", \(x, ...) standardGeneric("region_key"))
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
 setGeneric("instance_key", \(x, ...) standardGeneric("instance_key"))
