@@ -22,7 +22,15 @@ setGeneric("shapeNames", \(x, ...) standardGeneric("shapeNames"))
 setGeneric("pointNames", \(x, ...) standardGeneric("pointNames"))
 setGeneric("tableNames", \(x, ...) standardGeneric("tableNames"))
 
-# set one -----
+# set nms ----
+
+setGeneric("imageNames<-", \(x, ..., value) standardGeneric("imageNames<-"))
+setGeneric("labelNames<-", \(x, ..., value) standardGeneric("labelNames<-"))
+setGeneric("shapeNames<-", \(x, ..., value) standardGeneric("shapeNames<-"))
+setGeneric("pointNames<-", \(x, ..., value) standardGeneric("pointNames<-"))
+setGeneric("tableNames<-", \(x, ..., value) standardGeneric("tableNames<-"))
+
+# set one ----
 
 setGeneric("image<-", \(x, i, ..., value) standardGeneric("image<-"))
 setGeneric("shape<-", \(x, i, ..., value) standardGeneric("shape<-"))
@@ -30,7 +38,7 @@ setGeneric("label<-", \(x, i, ..., value) standardGeneric("label<-"))
 setGeneric("point<-", \(x, i, ..., value) standardGeneric("point<-"))
 setGeneric("table<-", \(x, i, ..., value) standardGeneric("table<-"))
 
-# set all -----
+# set all ----
 
 setGeneric("images<-", \(x, value) standardGeneric("images<-"))
 setGeneric("labels<-", \(x, value) standardGeneric("labels<-"))

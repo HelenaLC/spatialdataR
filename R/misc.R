@@ -69,8 +69,10 @@ NULL
     d <- lapply(tables(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
-    for (. in seq_along(t)) 
-        cat(sprintf("  - %s (%s)\n", t[.], d[.]))
+    for (. in seq_along(t)) {
+        r <- paste(region(table(object, t[.])), collapse=",")
+        cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+    }
     # spaces
     e <- c(i, l, s, p)
     g <- CTgraph(object)

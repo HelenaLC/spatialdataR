@@ -163,13 +163,35 @@ NULL
 f <- \(.) setMethod(., "SpatialData", \(x) x[[.]])
 for (. in all) eval(f(.), parent.env(environment()))
 
-# nms ----
+# get nms ----
 
 #' @name SpatialData
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
 NULL
 
 f <- \(.) setMethod(paste0(., "Names"), "SpatialData", \(x) names(x[[.]]))
+for (. in one) eval(f(.), parent.env(environment()))
+
+# set nms ----
+
+#' @name SpatialData
+#' @exportMethod imageNames<- labelNames<- pointNames<- shapeNames<- tableNames<-
+NULL
+
+f <- \(.) setReplaceMethod(
+    paste0(., "Names"),
+    c("SpatialData", "character"),
+    \(x, value) {
+        stopifnot(!any(duplicated(value)), nchar(value) > 0)
+        old <- names(x[[paste0(., "s")]])
+        new <- names(x[[paste0(., "s")]]) <- value
+        if (. == "table" || !length(tables(x))) return(x)
+        for (i in seq_along(tables(x))) {
+            j <- match(region(table(x, i)), old)
+            region(table(x, i)) <- new[j]
+        }
+        return(x)
+    })
 for (. in one) eval(f(.), parent.env(environment()))
 
 # get one ----

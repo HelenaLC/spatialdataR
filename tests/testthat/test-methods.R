@@ -1,7 +1,7 @@
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x)
+x <- readSpatialData(x, anndataR=TRUE)
 
 # # skirt base::table ambiguity
 # sdtable <- SpatialData::table    
@@ -130,6 +130,18 @@ test_that("get nms", {
         expect_is(nms(x), "character")
         expect_identical(nms(x), names(lys(x)))
     }
+})
+
+test_that("set nms", {
+    expect_error(imageNames(x)[1] <- "")
+    expect_error(imageNames(x) <- rep("x", length(images(x))))
+    y <- x; val <- letters[seq_along(images(x))]
+    expect_silent(imageNames(y) <- val)
+    expect_identical(imageNames(y), val)
+    r <- region(table(x))
+    y <- x; labelNames(y) <- "x"
+    r <- region(table(y))
+    expect_identical(r, "x")
 })
 
 # $ ----
