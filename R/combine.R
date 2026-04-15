@@ -5,9 +5,8 @@
 #' @param ... ignored.
 #' 
 #' @returns
-#' For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
-#' of spatial coordinates (if \code{as="list"}, split by instance);
-#' for extend, a length-2 numeric list of x- and y-ranges.
+#' A \code{SpatialData} objects containing all elements 
+#' from \code{x} and \code{y} with names made unique.
 #' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
