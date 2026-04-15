@@ -13,7 +13,7 @@ test_that("CTgraph", {
     # every element & transformation
     ns <- lapply(setdiff(SpatialData:::.LAYERS, "tables"), 
         \(l) lapply(names(x[[l]]), 
-            \(e) c(e, CTname(x[[l]][[e]]))))
+            \(e) c(paste0("_", e), CTname(x[[l]][[e]]))))
     ns <- sort(unique(unlist(ns)))
     expect_true(all(ns %in% sort(graph::nodes(g))))
     # element-wise
@@ -22,7 +22,7 @@ test_that("CTgraph", {
             y <- x[[l]][[e]]
             g <- CTgraph(y)
             expect_is(g, "graph")
-            expect_true("self" %in% graph::nodes(g))
+            expect_true("_self" %in% graph::nodes(g))
         }
 })
 

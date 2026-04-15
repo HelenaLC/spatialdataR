@@ -77,11 +77,12 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
     g <- .init_g()
     for (l in names(md)) for (e in names(md[[l]])) {
         .md <- md[[l]][[e]]
-        ms <- .md$multiscales
+        ms <- multiscales(.md)
         if (!is.null(ms)) .md <- ms[[1]]
+        .e <- paste0("_", e)
+        g <- addNode(.e, g)
+        nodeData(g, .e, "type") <- "element"
         ct <- .md$coordinateTransformations
-        g <- addNode(e, g)
-        nodeData(g, e, "type") <- "element"
         for (i in seq_along(ct)) {
             n <- ct[[i]]$output$name
             if (!n %in% nodes(g)) {
@@ -91,7 +92,7 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
             t <- ct[[i]]$type
             if (t == "sequence") {
                 sq <- ct[[i]]$transformations
-                . <- e
+                . <- .e
                 for (j in seq_along(sq)) {
                     if (j == length(sq)) {
                         m <- n
@@ -108,10 +109,10 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
                     . <- m
                 }
             } else {
-                g <- addEdge(e, n, g)
+                g <- addEdge(.e, n, g)
                 d <- ct[[i]][[ct[[i]]$type]]
-                edgeData(g, e, n, "type") <- t
-                edgeData(g, e, n, "data") <- list(d)
+                edgeData(g, .e, n, "type") <- t
+                edgeData(g, .e, n, "data") <- list(d)
             }
         }
     }
@@ -123,6 +124,7 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
 #' @importFrom graph edgeData
 #' @importFrom RBGL sp.between
 .path_ij <- \(g, i, j) {
+    i <- paste0("_", i)
     p <- sp.between(g, i, j)
     p <- p[[1]]$path_detail
     n <- length(p)-1

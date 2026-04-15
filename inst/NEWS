@@ -1,5 +1,6 @@
 changes in version 0.99.30
 
+- added xNames<-() methods (x = image, label, ...)
 - added combine() to make one SpatialData object from two
 
 changes in version 0.99.29

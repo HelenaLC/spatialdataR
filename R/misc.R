@@ -80,8 +80,8 @@ NULL
     n <- sum(i <- (t == "space"))
     cat(sprintf("coordinate systems(%s):\n", n))
     for (c in nodes(g)[i]) {
-        pa <- suppressWarnings(sp.between(g, e, c))
-        ss <- strsplit(names(pa), ":")
+        pa <- suppressWarnings(sp.between(g, paste0("_", e), c))
+        ss <- strsplit(gsub("^_", "", names(pa)), ":")
         ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
             paste0("- ", c, "(%d): %s"),
