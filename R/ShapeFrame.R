@@ -6,7 +6,7 @@
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
 #' @param meta \code{\link{Zattrs}}
-#' @param metadata optional list of arbitrary 
+#' @param metadata optional list of arbitrary
 #'   content describing the overall object.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param i,j indices specifying elements to extract.
@@ -18,11 +18,11 @@
 #' @examples
 #' library(SpatialData.data)
 #' zs <- get_demo_SDdata("merfish")
-#' 
+#'
 #' y <- file.path(zs, "shapes", "cells")
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
-#' 
+#'
 #' y <- file.path(zs, "shapes", "anatomical")
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
@@ -37,36 +37,41 @@ ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 }
 
 # TODO: it's really annoying that this doesn't just inherit
-# data.frame() operations, cuz data are in an extra slot... 
+# data.frame() operations, cuz data are in an extra slot...
 # but else not sure how to assure validity, stash .zattrs etc.
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("dim", "ShapeFrame", \(x) dim(data(x)))
+#' @importFrom dplyr tally pull
+setMethod("dim", "ShapeFrame", \(x) c(length(x),
+                                      ncol(data(x))))
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("length", "ShapeFrame", \(x) nrow(data(x)))
+#' @importFrom dplyr tally pull
+setMethod("length", "ShapeFrame", \(x) data(x) |> tally() |> pull(n))
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("names", "ShapeFrame", \(x) names(data(x)))
+setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
 
 #' @export
 #' @rdname ShapeFrame
 #' @importFrom utils .DollarNames
-.DollarNames.ShapeFrame <- \(x, pattern="") 
+.DollarNames.ShapeFrame <- \(x, pattern="")
     grep(pattern, names(x), value=TRUE)
 
 #' @rdname ShapeFrame
+#' @importFrom dplyr pull
 #' @exportMethod $
-setMethod("$", "ShapeFrame", \(x, name) data(x)[[name]])
+setMethod("$", "ShapeFrame", \(x, name) data(x) |> pull(.data[[name]]))
 
 #' @export
 #' @rdname ShapeFrame
 #' @importFrom sf st_as_sf st_geometry_type
+#' @importFrom dplyr slice
 setMethod("geom_type", "ShapeFrame", \(x) {
-    y <- st_as_sf(data(x[1, ]))
+    y <- st_as_sf(data(x) |> head(1))
     z <- st_geometry_type(y)
     return(as.character(z))
 })
@@ -75,24 +80,29 @@ setMethod("geom_type", "ShapeFrame", \(x) {
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "missing", "ANY"), 
+setMethod("[", c("ShapeFrame", "missing", "ANY"),
     \(x, i, j, ...) x[seq_len(nrow(x)), j])
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "ANY", "missing"), 
+setMethod("[", c("ShapeFrame", "ANY", "missing"),
     \(x, i, j, ...) x[i, seq_len(ncol(x))])
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "missing", "missing"), 
+setMethod("[", c("ShapeFrame", "missing", "missing"),
     \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) { 
+#' @importFrom dplyr mutate filter select all_of row_number
+#' @importFrom rlang .data !!
+setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
     i <- seq_len(nrow(x))[i]
     j <- seq_len(ncol(x))[j]
-    x@data <- x@data[i, j]
+    cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
+    x@data <- x@data |> mutate(!!cn := row_number()) |>
+        filter(.data[[cn]] %in% i) |>
+        select(-all_of(cn)) |> select(j)
     return(x)
 })
