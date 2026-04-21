@@ -43,7 +43,7 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{optional list of arbitrary 
+\item{metadata}{optional list of arbitrary
 content describing the overall object.}
 
 \item{...}{optional arguments passed to and from other methods.}

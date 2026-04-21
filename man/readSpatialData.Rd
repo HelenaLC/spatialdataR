@@ -30,7 +30,7 @@ readSpatialData(
 )
 }
 \arguments{
-\item{x}{For \code{readImage/Label/Point/Shape/Table}, 
+\item{x}{For \code{readImage/Label/Point/Shape/Table},
 path to a \code{SpatialData} element.
 For \code{readSpatialData},
 path to a \code{SpatialData}-.zarr store.}
@@ -38,18 +38,18 @@ path to a \code{SpatialData}-.zarr store.}
 \item{...}{option arguments passed to and from other methods.}
 
 \item{images, labels, points, shapes, tables}{Control which elements should be read for each layer.
-The default, NULL, reads all elements; alternatively, may be FALSE 
+The default, NULL, reads all elements; alternatively, may be FALSE
 to skip a layer, or a integer vector specifying which elements to read.}
 
-\item{anndataR}{logical specifying whether 
-to use \code{anndataR} to read tables; 
+\item{anndataR}{logical specifying whether
+to use \code{anndataR} to read tables;
 defaults to FALSE in `readSpatialData`, and `readTable`,
 so that pythonic \code{anndata} are used.}
 }
 \value{
 \itemize{
 \item{For \code{readSpatialData}, a \code{SpatialData}.},
-\item{For element readers, a \code{ImageArray}, \code{LabelArray}, 
+\item{For element readers, a \code{ImageArray}, \code{LabelArray},
 \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 }
 \description{
@@ -62,10 +62,10 @@ zs <- get_demo_SDdata("merfish")
 # read complete Zarr store
 (sd <- readSpatialData(zs, anndataR=TRUE))
 
-# helper that gets path to first element in layer 'l' 
+# helper that gets path to first element in layer 'l'
 fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
-  
-# read individual element  
+
+# read individual element
 readImage(fn("images"))
 readShape(fn("shapes"))
 readPoint(fn("points"))
