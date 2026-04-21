@@ -1,12 +1,12 @@
 #' @name mask
 #' @title Masking
 #'
-#' @description 
-#' Masking operations serve to aggregate data across layers, e.g., 
+#' @description
+#' Masking operations serve to aggregate data across layers, e.g.,
 #' counting points in shapes, averaging image channels by labels, etc.
 #' For added flexibility, these may be carried out directly between elements,
 #' or using an input \code{SpatialData} object and specifying element names.
-#' 
+#'
 #' @param x \code{\link{SpatialData}} object.
 #' @param i,j character string; names of elements to mask,
 #'   specifically, \code{i} will be masked by \code{j},
@@ -26,7 +26,7 @@
 #' # count points in shapes
 #' y <- mask(x, "blobs_points", "blobs_circles")
 #' tail(tables(y), 1)
-#' 
+#'
 #' # average image channels by labels
 #' y <- mask(x, "blobs_image", "blobs_labels")
 #' tail(tables(y), 1)
@@ -34,11 +34,11 @@
 #' library(SpatialData.data)
 #' x <- get_demo_SDdata("merfish")
 #' x <- readSpatialData(x)
-#' 
+#'
 #' # sum table counts by shapes
 #' y <- mask(x, "cells", "anatomical")
 #' tail(tables(y), 1)
-#' 
+#'
 #' @export
 NULL
 
@@ -49,7 +49,7 @@ NULL
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, 
+setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
     #if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
@@ -96,32 +96,53 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 })
 
 #' @noRd
-#' @importFrom methods as
-#' @importFrom Matrix t rowSums sparseVector sparseMatrix
+#' @importFrom Matrix sparseMatrix
 #' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom sf st_as_sf st_geometry_type st_distance
+#' @importFrom duckspatial ddbs_intersects
+#' @importFrom dplyr mutate inner_join join_by select count collect
+#' @importFrom rlang .data
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
-    fun <- switch(geom_type(j),
-        POINT=\(i, j) rowSums(st_distance(j, i) <= j$radius),
-        \(i, j) vapply(st_intersects(j, i), length, integer(1)))
-    # realize one feature at i time
-    n <- nrow(j <- st_as_sf(data(j)))
-    is <- split(seq_len(length(i)), i[[feature_key(i)]])
-    ns <- lapply(is, \(.) {
-        # make points 'sf'-compliant
-        i <- as.data.frame(i[., c("x", "y")])
-        i <- st_as_sf(i, coords=c("x", "y"))
-        # for each shape, count intersecting points
-        z <- fun(i, j)
-        # sparsify counts
-        sv <- sparseVector(z[i <- z > 0], which(i), n)
-        sm <- as(sv, "sparseMatrix")
-    })    
-    # collect into matrix w/ dim. features x shapes
-    ns <- t(do.call(cbind, ns))
-    rownames(ns) <- names(is)
-    colnames(ns) <- seq(ncol(ns))
+    jdata <- switch(
+        geom_type(j),
+        "POINT"=j@data |> mutate(geometry=ST_Buffer(geometry, radius)),
+        j@data
+    )
+    res <- ddbs_intersects(
+        jdata,
+        i@data) |>
+        inner_join(i@data |> mutate(id_y=row_number()),
+                   by = join_by(id_y)) |>
+        select(all_of(c("id_x", feature_key(i)))) |>
+        count(id_x, .data[[feature_key(i)]]) |>
+        collect() |>
+        mutate(genes = factor(.data[[feature_key(i)]]))
+    ns <- sparseMatrix(i=res$genes,
+                       j=res$id_x,
+                       x=res$n,
+                       dimnames=list(levels(res$genes),
+                                     seq_len(length(unique(res$id_x)))))
+
+    # fun <- switch(geom_type(j),
+    #     POINT=\(i, j) rowSums(ddbs_distance(j, i) <= j$radius),
+    #     \(i, j) vapply(ddbs_intersects(j, i), length, integer(1)))
+    # # realize one feature at i time
+    # n <- nrow(j <- st_as_sf(data(j)))
+    # is <- split(seq_len(length(i)), i[[feature_key(i)]])
+    # ns <- lapply(is, \(.) {
+    #     # make points 'sf'-compliant
+    #     i <- as.data.frame(i[., c("x", "y")])
+    #     i <- st_as_sf(i, coords=c("x", "y"))
+    #     # for each shape, count intersecting points
+    #     z <- fun(i, j)
+    #     # sparsify counts
+    #     sv <- sparseVector(z[i <- z > 0], which(i), n)
+    #     sm <- as(sv, "sparseMatrix")
+    # })
+    # # collect into matrix w/ dim. features x shapes
+    # ns <- t(do.call(cbind, ns))
+    # rownames(ns) <- names(is)
+    # colnames(ns) <- seq(ncol(ns))
     SingleCellExperiment(list(counts=ns))
 })
 
@@ -146,8 +167,8 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     mx <- assay(table, assay)
     if (grepl("detected$", how)) mx <- mx > 0
     my <- sparseMatrix(
-        x=rep(1, length(is)), 
-        i=seq_along(is), j=is, 
+        x=rep(1, length(is)),
+        i=seq_along(is), j=is,
         dims=c(ncol(table), ni))
     mx <- mx %*% my
     if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
@@ -162,5 +183,5 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
 })
 
 #' @noRd
-setMethod(".mask", c("ANY", "ANY"), \(i, j, ...) 
+setMethod(".mask", c("ANY", "ANY"), \(i, j, ...)
     stop("'mask'ing between these element types not yet supported"))

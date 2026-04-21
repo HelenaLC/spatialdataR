@@ -40,7 +40,7 @@ test_that("validity,ShapeFrame", {
     x@data <- select(data(x), -radius)
     expect_silent(validObject(x))
     x <- shape(sd,1)
-    x@data <- filter(data(x), radius == Inf)
+    x@data <- filter(data(x), radius == 1e7)
     expect_silent(validObject(x))
     x <- shape(sd,1)
     x@data <- select(data(x), -geometry)

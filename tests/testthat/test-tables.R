@@ -57,11 +57,11 @@ test_that("getTable()", {
 
 test_that("setTable(),labels", {
     # invalid 'i'
-    expect_error(setTable(x, 123)) 
+    expect_error(setTable(x, 123))
     expect_error(setTable(x, "."))
     expect_error(setTable(x, character(2)))
     # 'name' that already exists fails
-    expect_error(setTable(x, i, name=tableNames(x))) 
+    expect_error(setTable(x, i, name=tableNames(x)))
     # valid w/o dots
     y <- setTable(x, i)
     expect_length(tables(y), 2)
