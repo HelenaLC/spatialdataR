@@ -2,12 +2,18 @@
 % Please edit documentation in R/trans.R
 \name{trans}
 \alias{trans}
+\alias{transform}
 \alias{scale}
 \alias{rotate}
 \alias{translation}
 \alias{flip}
 \alias{flop}
 \alias{mirror}
+\alias{sequence}
+\alias{transform,SpatialDataElement,missing-method}
+\alias{transform,SpatialDataElement,numeric-method}
+\alias{transform,SpatialDataElement,character-method}
+\alias{sequence,SpatialDataElement,list-method}
 \alias{mirror,sdArray-method}
 \alias{flip,sdArray-method}
 \alias{flop,sdArray-method}
@@ -22,6 +28,14 @@
 \alias{translation,ShapeFrame,numeric-method}
 \title{Transformations}
 \usage{
+\S4method{transform}{SpatialDataElement,missing}(x, i)
+
+\S4method{transform}{SpatialDataElement,numeric}(x, i)
+
+\S4method{transform}{SpatialDataElement,character}(x, i)
+
+\S4method{sequence}{SpatialDataElement,list}(x, t, ...)
+
 \S4method{mirror}{sdArray}(x, t = c("v", "h"), k = 1, ...)
 
 \S4method{flip}{sdArray}(x, k = 1, ...)
@@ -53,11 +67,11 @@
 whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
 no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
 
+\item{...}{option arguments passed to and from other methods.}
+
 \item{k}{scalar index specifying which scale to use; 
 \code{Inf} to use lowest available resolution;
 only applies to \code{sdArray}s (images, labels).}
-
-\item{...}{option arguments passed to and from other methods.}
 }
 \value{
 \code{SpatialData} element with transformation(s) applied.

@@ -14,21 +14,21 @@ typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExpe
 
 # get ----
 
-test_that("layer()", {
-    # invalid
-    expect_error(layer(x, 0))
-    expect_error(layer(x, 9))
-    expect_error(layer(x, "."))
-    expect_error(layer(x, TRUE))
-    expect_error(layer(x, SpatialData:::.LAYERS))
-    expect_silent(layer(x)) # missing
-    # valid
-    i <- sample(SpatialData:::.LAYERS, 1)
-    n <- length(attr(x, i))
-    y <- layer(x, i)
-    expect_is(y, "list")
-    expect_length(y, n)
-})
+# test_that("layer()", {
+#     # invalid
+#     expect_error(layer(x, 0))
+#     expect_error(layer(x, 9))
+#     expect_error(layer(x, "."))
+#     expect_error(layer(x, TRUE))
+#     expect_error(layer(x, SpatialData:::.LAYERS))
+#     expect_silent(layer(x)) # missing
+#     # valid
+#     i <- sample(SpatialData:::.LAYERS, 1)
+#     n <- length(attr(x, i))
+#     y <- layer(x, i)
+#     expect_is(y, "list")
+#     expect_length(y, n)
+# })
 
 test_that("element()", {
     # invalid
@@ -258,7 +258,7 @@ test_that("[,SpatialData", {
     expect_true(all(n[-1] > 0))
     # missing 'j'
     n <- .n(y <- x[1,])
-    expect_length(layer(y, 1), n[1])
+    expect_length(y[[1]], n[1])
     expect_true(all(n[-1] == 0))
     # negative 'j'
     n <- .n(y <- x[,-1])

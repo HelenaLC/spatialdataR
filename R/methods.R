@@ -93,30 +93,17 @@ setMethod("colnames", "SpatialData", \(x) {
 
 # layer ----
 
-.err_i <- c(
-    "invalid 'i'; should be an integer in [1, 5], or a ",
-    "string in ", dQuote(paste(.LAYERS, collapse="/"))) 
-
 #' @rdname SpatialData
 #' @export
-setMethod("layer", c("SpatialData", "character"), 
-    \(x, i) attr(x, match.arg(i, .LAYERS, TRUE)))
-
-#' @rdname SpatialData
-#' @export
-setMethod("layer", c("SpatialData", "numeric"), \(x, i) {
-    ok <- length(i) == 1 && (i > 0 & i < 6 & i == round(i))
-    if (!ok) stop(.err_i)
-    attr(x, .LAYERS[i])
+setMethod("layer", c("SpatialData", "character"), \(x, i) {
+    j <- vapply(.LAYERS, \(.) i %in% names(x[[.]]), logical(1))
+    return(names(which(j)))
 })
 
 #' @rdname SpatialData
 #' @export
-setMethod("layer", c("SpatialData", "missing"), \(x, i) layer(x, 1))
-
-#' @rdname SpatialData
-#' @export
-setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.err_i))
+setMethod("layer", c("SpatialData", "ANY"), \(x, i) 
+    stop("invalid 'i'; should be a string specifying an element in 'x'"))
 
 # element ----
 
@@ -127,7 +114,7 @@ setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.err_i))
 #' @rdname SpatialData
 #' @export
 setMethod("element", c("SpatialData", "ANY", "character"), \(x, i, j) {
-    y <- layer(x, i)
+    y <- x[[i]]
     j <- match.arg(j, names(y))
     y[[j]]
 })
@@ -135,7 +122,7 @@ setMethod("element", c("SpatialData", "ANY", "character"), \(x, i, j) {
 #' @rdname SpatialData
 #' @export
 setMethod("element", c("SpatialData", "ANY", "numeric"), \(x, i, j) {
-    n <- length(y <- layer(x, i))
+    n <- length(y <- x[[i]])
     if (n == 0) stop("there aren't any ", dQuote(i))
     if (is.infinite(j)) j <- n
     ok <- length(j) == 1 && (j > 0 & j <= n & j == round(j))
