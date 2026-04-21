@@ -1,92 +1,92 @@
 #' @name table-utils
 #' @title \code{SpatialData} annotations
 #' @aliases hasTable getTable setTable valTable
-#' 
+#'
 #' @param x \code{\link{SpatialData}} object.
 #' @param i character string; name of the
 #'   element for which to get/set a \code{table}.
-#' @param j character string; \code{colData} column, 
+#' @param j character string; \code{colData} column,
 #'   or row name to retrieve \code{assay} data.
-#' @param drop logical; should observations (columns) 
+#' @param drop logical; should observations (columns)
 #'   that don't belong to \code{i} be filtered out?
-#' @param name logical; should the \code{table} 
+#' @param name logical; should the \code{table}
 #'   name be returned instead of TRUE/FALSE?
-#' @param assay character string or scalar integer; 
+#' @param assay character string or scalar integer;
 #'   specifies which \code{assay} to use when \code{j} is a row name.
-#' @param rk,ik character string; region and instance key (the latter will be 
+#' @param rk,ik character string; region and instance key (the latter will be
 #'   ignored if an instance key is already specified within element \code{i}).
-#' @param ... \code{data.frame} or list of data generation function(s) 
+#' @param ... \code{data.frame} or list of data generation function(s)
 #'   that accept an argument for the number of observations; see examples.
-#'   
-#' @returns 
+#'
+#' @returns
 #' \itemize{
-#' \item \code{hasTable}: 
+#' \item \code{hasTable}:
 #'   logical scalar (or character string, if \code{name=TRUE});
 #'   whether or not a \code{table} annotating \code{i} exists in \code{x}
-#' \item \code{getTable}: 
-#'   \code{SingleCellExperiment}; the \code{table} annotating 
+#' \item \code{getTable}:
+#'   \code{SingleCellExperiment}; the \code{table} annotating
 #'   \code{i} with optional filtering of matching observations
-#' \item \code{valTable}: 
+#' \item \code{valTable}:
 #'   vector of values (according to \code{j})
 #'   from the \code{table} annotating \code{i}
-#' }  
-#'   
+#' }
+#'
 #' @examples
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, anndataR=TRUE)
-#' 
+#'
 #' # check if element has a 'table'
 #' hasTable(x, "blobs_points")
 #' hasTable(x, "blobs_labels")
-#' 
+#'
 #' # retrieve 'table' for element 'i'
 #' sce <- getTable(x, i="blobs_labels")
 #' head(colData(sce))
 #' meta(sce)
-#' 
-#' # get values from 'table' 
-#' valTable(x, 
-#'   i="blobs_labels", 
+#'
+#' # get values from 'table'
+#' valTable(x,
+#'   i="blobs_labels",
 #'   j="channel_0_sum")
-#' 
+#'
 #' # add 'table' annotating an element 'i'
 #' # (w/ or w/o supplying additional data)
-#' 
+#'
 #' # labels
 #' y <- x; tables(y) <- list()
 #' y <- setTable(y, i <- "blobs_labels")
 #' head(colData(sce <- getTable(y, i)))
-#' 
+#'
 #' # points
 #' y <- setTable(x, i <- "blobs_points")
 #' head(colData(sce <- getTable(y, i)))
-#' 
+#'
 #' # labels
 #' y <- setTable(x, i <- "blobs_circles")
 #' head(colData(sce <- getTable(y, i)))
-#' 
+#'
 #' # list of data generating functions
 #' f <- list(
 #'   numbers=\(n) runif(n),
 #'   letters=\(n) sample(letters, n, TRUE))
-#' 
+#'
 #' args <- c(list(x, i <- "blobs_points"), f)
 #' y <- do.call(setTable, args)
 #' head(colData(getTable(y, i)))
-#' 
+#'
 #' # passing a preconstructed 'data.frame'
 #' id <- unique(point(x, i)$instance_id)
 #' df <- data.frame(n=runif(length(id)))
-#' 
+#'
 #' y <- setTable(x, i, df)
 #' head(colData(getTable(y, i)))
 NULL
 
 #' @rdname table-utils
 #' @export
-setMethod("meta", c("SingleCellExperiment"), 
+setMethod("meta", c("SingleCellExperiment"),
     \(x) int_metadata(x)$spatialdata_attrs)
 
 .invalid_i <- \() stop(
@@ -153,14 +153,14 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 # it seems pull below dispatches to arrow, and a warning on as_vector was being produced
 #' @rdname table-utils
 #' @importFrom methods as
-#' @importFrom dplyr pull     
+#' @importFrom dplyr pull
 #' @importFrom sf st_as_sf
-#' @importFrom S4Vectors make_zero_col_DFrame 
-#' @importFrom SingleCellExperiment SingleCellExperiment 
-#'   int_colData int_colData<- int_metadata<- 
+#' @importFrom S4Vectors make_zero_col_DFrame
+#' @importFrom SingleCellExperiment SingleCellExperiment
+#'   int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("setTable", 
-    c("SpatialData", "character"), 
+setMethod("setTable",
+    c("SpatialData", "character"),
     # TODO: 'assay' data argument
     \(x, i, ..., name=NULL, rk="rk", ik="ik") {
     dots <- list(...)
@@ -169,23 +169,23 @@ setMethod("setTable",
         length(i) == 1, is.character(i),
         length(rk) == 1, is.character(rk),
         length(ik) == 1, is.character(ik))
-    if (!i %in% unlist(colnames(x))) 
+    if (!i %in% unlist(colnames(x)))
         stop(dQuote(i), " is not an element of 'x'")
-    if (length(dots)) stopifnot(is.data.frame(dots) || 
+    if (length(dots)) stopifnot(is.data.frame(dots) ||
         all(vapply(dots, is.function, logical(1))))
     # make up 'name' if not provided
     if (is.null(name)) {
         nt <- length(tables(x))
         name <- paste0("table", nt+1)
-    } else if (name %in% tableNames(x)) 
+    } else if (name %in% tableNames(x))
         stop("'table' with name ", dQuote(name),
             " exists; use 'table<-' to replace it.")
     # get element type
-    for (l in rownames(x)) 
+    for (l in rownames(x))
         for (e in colnames(x)[[l]])
             if (i == e) typ <- l
     sda <- "spatialdata_attrs"
-    sce <- switch(typ, 
+    sce <- switch(typ,
         labels={
             y <- label(x, i)
             md <- meta(y)[[sda]]
@@ -199,7 +199,7 @@ setMethod("setTable",
             y <- point(x, i)
             md <- meta(y)[[sda]]
             ik <- md$instance_key
-            is <- pull(data(y), ik, as_vector=TRUE)  # needed to scotch new warning
+            is <- pull(data(y), ik)  # needed to scotch new warning
             n <- length(is <- unique(is))
         },
         shapes={
@@ -207,7 +207,7 @@ setMethod("setTable",
             ex <- c("geometry", "radius")
             ki <- setdiff(names(y), ex)
             if (length(ki)) {
-                is <- pull(data(y), ik <- ki, as_vector=TRUE)
+                is <- pull(data(y), ik <- ki)
             } else {
                 # in case of missing 'instance_key', make one
                 df <- st_as_sf(data(y))

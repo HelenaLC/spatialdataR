@@ -123,26 +123,6 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
                        dimnames=list(levels(res$genes),
                                      seq_len(length(unique(res$id_x)))))
 
-    # fun <- switch(geom_type(j),
-    #     POINT=\(i, j) rowSums(ddbs_distance(j, i) <= j$radius),
-    #     \(i, j) vapply(ddbs_intersects(j, i), length, integer(1)))
-    # # realize one feature at i time
-    # n <- nrow(j <- st_as_sf(data(j)))
-    # is <- split(seq_len(length(i)), i[[feature_key(i)]])
-    # ns <- lapply(is, \(.) {
-    #     # make points 'sf'-compliant
-    #     i <- as.data.frame(i[., c("x", "y")])
-    #     i <- st_as_sf(i, coords=c("x", "y"))
-    #     # for each shape, count intersecting points
-    #     z <- fun(i, j)
-    #     # sparsify counts
-    #     sv <- sparseVector(z[i <- z > 0], which(i), n)
-    #     sm <- as(sv, "sparseMatrix")
-    # })
-    # # collect into matrix w/ dim. features x shapes
-    # ns <- t(do.call(cbind, ns))
-    # rownames(ns) <- names(is)
-    # colnames(ns) <- seq(ncol(ns))
     SingleCellExperiment(list(counts=ns))
 })
 
