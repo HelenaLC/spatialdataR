@@ -33,7 +33,6 @@ Authors@R: c(
         email="louise.deconinck@gmail.com",
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
-    arrow,
     basilisk,
     BiocGenerics,
     DelayedArray,

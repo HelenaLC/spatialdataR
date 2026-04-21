@@ -2,34 +2,34 @@
 #' @rdname utils
 #' @title Utilities
 #' @aliases centroids extent
-#' 
+#'
 #' @param x a \code{SpatialData} element (any but image).
 #' @param as character string; how results should be returned.
 #' @param ... optional arguments passed to and from other methods.
-#' 
+#'
 #' @returns
-#' For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
+#' For \code{centroids}, a table (\code{data.frame} or \code{matrix})
 #' of spatial coordinates (if \code{as="list"}, split by instance);
 #' for extend, a length-2 numeric list of x- and y-ranges.
-#' 
+#'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, tables=FALSE)
-#' 
+#'
 #' centroids(label(x))
 #' centroids(shape(x))
 #' centroids(shape(x, 3), "list")
-#' 
+#'
 #' head(centroids(point(x)))
 #' xy <- centroids(point(x), "list")
 #' plot(xy$gene_a, col=a <- "red")
 #' points(xy$gene_b, col=b <- "blue")
 #' legend("topright", legend=names(xy), col=c(a, b), pch=21)
-#' 
+#'
 #' # object-wide
 #' extent(x)
-#' 
+#'
 #' # element-wise
 #' extent(label(x))
 #' extent(point(x))
@@ -46,7 +46,7 @@ setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
 #' @export
 #' @rdname utils
 #' @importFrom Matrix summary
-setMethod("centroids", "LabelArray", \(x, 
+setMethod("centroids", "LabelArray", \(x,
     as=c("data.frame", "matrix")) {
     as <- match.arg(as)
     y <- data(x)
@@ -67,7 +67,7 @@ setMethod("centroids", "LabelArray", \(x,
 #' @export
 #' @rdname utils
 #' @importFrom sf st_as_sf st_geometry_type st_coordinates
-setMethod("centroids", "ShapeFrame", \(x, 
+setMethod("centroids", "ShapeFrame", \(x,
     as=c("data.frame", "matrix", "list")) {
     as <- match.arg(as)
     y <- st_as_sf(data(x))
@@ -76,8 +76,8 @@ setMethod("centroids", "ShapeFrame", \(x,
     if (as == "matrix") return(xy)
     xy <- as.data.frame(xy)
     rownames(xy) <- NULL
-    if (ncol(xy) > 2) 
-        for (. in seq(3, ncol(xy))) 
+    if (ncol(xy) > 2)
+        for (. in seq(3, ncol(xy)))
             xy[[.]] <- factor(xy[[.]], unique(xy[[.]]))
     if (as == "data.frame") return(xy)
     split(xy, xy[seq(3, ncol(xy))])
@@ -85,11 +85,11 @@ setMethod("centroids", "ShapeFrame", \(x,
 
 #' @export
 #' @rdname utils
-setMethod("centroids", "PointFrame", \(x, 
+setMethod("centroids", "PointFrame", \(x,
     as=c("data.frame", "list")) {
     as <- match.arg(as)
     i <- feature_key(x)
-    xy <- data(x)[, c("x", "y", i)]
+    xy <- data(x) |> select(c("x", "y", i))
     xy <- as.data.frame(xy)
     if (as == "data.frame") return(xy)
     lapply(split(xy, xy[[i]]), `[`, -3)

@@ -4,8 +4,8 @@ x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
 # # skirt base::table ambiguity
-# sdtable <- SpatialData::table    
-# `sdtable<-` <- `SpatialData::table<-`   
+# sdtable <- SpatialData::table
+# `sdtable<-` <- `SpatialData::table<-`
 # sdtables <- SpatialData::tables
 
 fun <- c("image", "label", "shape", "point", "table")
@@ -51,7 +51,7 @@ test_that("get all", {
 
 test_that("get one", {
     # i=numeric
-    mapply(f=fun, t=typ, \(f, t) 
+    mapply(f=fun, t=typ, \(f, t)
         expect_is(get(f)(x, i=1), t))
     # i=character
     mapply(f=fun, t=typ, n=nms, \(f, t, n)
@@ -72,8 +72,8 @@ test_that("get one", {
 
 test_that("set all", {
     obj <- list(
-        ImageArray(), LabelArray(), 
-        ShapeFrame(), PointFrame(), 
+        ImageArray(), LabelArray(),
+        ShapeFrame(), PointFrame(),
         SingleCellExperiment())
     names(obj) <- SpatialData:::.LAYERS
     for (. in SpatialData:::.LAYERS) {
@@ -100,8 +100,8 @@ test_that("set one", {
     }
     # value=in/valid
     obj <- list(
-        ImageArray(), LabelArray(), 
-        ShapeFrame(), PointFrame(), 
+        ImageArray(), LabelArray(),
+        ShapeFrame(), PointFrame(),
         SingleCellExperiment())
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
         set <- get(paste0(f, "<-"))
@@ -162,25 +162,34 @@ test_that("$", {
 # sub ----
 
 test_that("[,Shape/PointFrame", {
-    for (y in list(shape(x), point(x))) {
-        # one index subsets in vector-like fashion
-        expect_equal(dim(y[1]), c(1, ncol(y)))
-        # two indices subset in array-like fashion
-        expect_equal(nrow(y[1,]), 1) # no j
-        expect_equal(ncol(y[,1]), 1) # no i
-        expect_equal(dim(y[1,1]), c(1,1)) # both
-        expect_identical(dim(y[,]), dim(y)) # none
-        expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
-    }
+    y <- shape(x)
+    # one index subsets in vector-like fashion
+    expect_equal(dim(y[1]), c(1, ncol(y)))
+    # two indices subset in array-like fashion
+    expect_equal(nrow(y[1,]), 1) # no j
+    expect_equal(ncol(y[,1]), 1) # no i
+    expect_equal(dim(y[1,1]), c(1,1)) # both
+    expect_identical(dim(y[,]), dim(y)) # none
+    expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
+
+    y <- point(x)
+    # one index subsets in vector-like fashion
+    expect_equal(dim(y[1]), c(1, ncol(y)))
+    # two indices subset in array-like fashion
+    expect_equal(nrow(y[1,]), 1) # no j
+    expect_equal(ncol(y[,1]), 2) # no i (preserve geometry)
+    expect_equal(dim(y[1,1]), c(1,2)) # both
+    expect_identical(dim(y[,]), dim(y)) # none
+    expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
 })
 
 test_that("[,LabelArray", {
     y <- label(x)
     # logical
-    expect_identical(y[TRUE,TRUE], y) 
-    expect_equal(dim(y[FALSE,FALSE]), c(0,0)) 
-    expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y))) 
-    expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0)) 
+    expect_identical(y[TRUE,TRUE], y)
+    expect_equal(dim(y[FALSE,FALSE]), c(0,0))
+    expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y)))
+    expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0))
     # i <- logical(nrow(y)); j <- logical(ncol(y))
     # n <- replicate(2, sample(seq(2, 10), 1))
     # i[sample(nrow(y), n[1])] <- TRUE
@@ -240,7 +249,7 @@ test_that("[,SpatialData", {
     expect_true(n[i] == 2)
     expect_true(all(n[-i] == 0))
     expect_identical(
-        colnames(y)[[i]], 
+        colnames(y)[[i]],
         colnames(x)[[i]][j])
     n <- .n(y <- x[c(1, 2), list(1, j <- c(1, 2))])
     expect_true(all(n[j] == c(1, 2)))
@@ -249,7 +258,7 @@ test_that("[,SpatialData", {
     expect_error(x[9,1])
     expect_error(x[1,9])
     # missing both
-    expect_identical(x[,], x) 
+    expect_identical(x[,], x)
     # missing 'i'
     expect_true(all(.n(x[,1]) == 1))
     # negative 'i'
@@ -266,6 +275,6 @@ test_that("[,SpatialData", {
     # infinite 'j'
     expect_silent(y <- x[1, Inf])
     expect_identical(
-        element(y, 1, 1), 
+        element(y, 1, 1),
         element(x, 1, .n(x)[1]))
 })

@@ -1,11 +1,11 @@
 z <- list(v1="blobs.zarr", v3="blobs_v3.zarr")
 
 for (v in names(z)) {
-    
+
     x <- file.path("extdata", z[[v]])
     x <- system.file(x, package="SpatialData")
     x <- readSpatialData(x, anndataR=TRUE)
-        
+
     test_that(paste0(v, "-multiscales"), {
         y <- meta(image(x))
         z <- multiscales(y)
@@ -14,7 +14,7 @@ for (v in names(z)) {
         y$spatialdata_attrs <- NULL
         expect_error(multiscales(y))
     })
-    
+
     test_that(paste0(v, "-axes"), {
         # image
         y <- axes(image(x))
@@ -41,7 +41,7 @@ for (v in names(z)) {
             y@meta$multiscales[[1]]$axes <- NULL)
         expect_error(axes(y))
     })
-    
+
     test_that(paste0(v, "-channels"), {
         expect_error(channels(label(x)))
         expect_silent(z <- channels(y <- image(x)))
