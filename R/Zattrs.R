@@ -129,7 +129,7 @@ setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 
 #' @export
 #' @rdname SDattrs
-setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
+setMethod("region", "SingleCellExperiment", \(x) meta(x)$region)
 
 #' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
@@ -148,3 +148,7 @@ setMethod("instance_key", "PointFrame", \(x) instance_key(meta(x)$spatialdata_at
 #' @export
 #' @rdname SDattrs
 setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_colData
+setMethod("instances", "SingleCellExperiment", \(x) int_colData(x)[[instance_key(x)]])

@@ -82,8 +82,8 @@ setValidity2("PointFrame", .validatePointFrame)
 
 .validateShapeFrame <- \(object) {
     msg <- c()
-    if (!nrow(object)) return(msg)
-    if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
+    #if (!nrow(object)) return(msg)
+    #if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2

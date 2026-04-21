@@ -45,8 +45,6 @@
 \alias{rownames,SpatialData-method}
 \alias{colnames,SpatialData-method}
 \alias{layer,SpatialData,character-method}
-\alias{layer,SpatialData,numeric-method}
-\alias{layer,SpatialData,missing-method}
 \alias{layer,SpatialData,ANY-method}
 \alias{element,SpatialData,ANY,character-method}
 \alias{element,SpatialData,ANY,numeric-method}
@@ -73,10 +71,6 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{colnames}{SpatialData}(x)
 
 \S4method{layer}{SpatialData,character}(x, i)
-
-\S4method{layer}{SpatialData,numeric}(x, i)
-
-\S4method{layer}{SpatialData,missing}(x, i)
 
 \S4method{layer}{SpatialData,ANY}(x, i)
 

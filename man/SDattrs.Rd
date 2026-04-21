@@ -13,6 +13,7 @@
 \alias{instance_key,list-method}
 \alias{instance_key,PointFrame-method}
 \alias{instance_key,SingleCellExperiment-method}
+\alias{instances,SingleCellExperiment-method}
 \title{\code{SpatialData} attributes}
 \usage{
 \S4method{feature_key}{list}(x)
@@ -28,6 +29,8 @@
 \S4method{instance_key}{PointFrame}(x)
 
 \S4method{instance_key}{SingleCellExperiment}(x)
+
+\S4method{instances}{SingleCellExperiment}(x)
 }
 \arguments{
 \item{x}{depends on which attributes are available; 

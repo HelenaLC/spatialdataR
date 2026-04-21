@@ -117,8 +117,8 @@ readPoint <- function(x, ...) {
 }
 
 #' @rdname readSpatialData
-#' @importFrom arrow open_dataset
 #' @importFrom Rarr read_zarr_attributes
+#' @importFrom duckspatial ddbs_open_dataset
 #' @import geoarrow   
 #' @export
 readShape <- function(x, ...) {
@@ -127,7 +127,7 @@ readShape <- function(x, ...) {
     #requireNamespace("geoarrow", quietly=TRUE)
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    ShapeFrame(data=open_dataset(pq), meta=Zattrs(md))
+    ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
 }
 
 #' @importFrom basilisk BasiliskEnvironment

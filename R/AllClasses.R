@@ -22,6 +22,7 @@ setClassUnion(
 # this somehow does the trick...
 setClass("FileSystemDataset", "VIRTUAL")
 setClass("arrow_dplyr_query", "VIRTUAL")
+setClass("duckspatial_df", "VIRTUAL")
 setClass("Table", "VIRTUAL")
 
 # TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
@@ -30,7 +31,7 @@ setClass("Table", "VIRTUAL")
 #' @importFrom methods setClassUnion
 setClassUnion(
     "arrow_OR_df",
-    c("FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
+    c("duckspatial_df", "FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
 
 .PointFrame <- setClass(
     Class="PointFrame",

@@ -61,7 +61,8 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
-setGeneric("transform", \(x, ...) standardGeneric("transform"))
+setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
+setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
@@ -72,6 +73,9 @@ setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
 
 setGeneric("region", \(x, ...) standardGeneric("region"))
 setGeneric("region<-", \(x, ..., value) standardGeneric("region<-"))
+
+setGeneric("regions", \(x, ...) standardGeneric("regions"))
+setGeneric("instances", \(x, ...) standardGeneric("instances"))
 
 setGeneric("region_key", \(x, ...) standardGeneric("region_key"))
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))

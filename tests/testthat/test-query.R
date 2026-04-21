@@ -3,6 +3,13 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
+# test_that("query,table", {
+#     expect_error(query(x, foo == "x"))
+#     expect_error(query(x, instance_id == 99))
+#     t <- table(x)
+#     y <- query(x, sym("region") == region(t))
+# })
+
 test_that("query,.check_box", {
     # valid
     q <- list(

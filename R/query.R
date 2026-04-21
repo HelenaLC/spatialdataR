@@ -56,11 +56,11 @@
 NULL
 
 #' @rdname query
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter pull
+#' @importFrom SummarizedExperiment colData
+#' @importFrom SingleCellExperiment int_colData
 #' @export
 setMethod("query", "SpatialData", \(x, ..., i) {
-    # TODO: need more example data to properly implement this; 
-    # for now, just a proof of concept using 'spatialdata_attrs'
     if (missing(i)) i <- 1
     if (!length(tables(x))) 
         stop("There aren't any tables")
@@ -70,13 +70,27 @@ setMethod("query", "SpatialData", \(x, ..., i) {
         i <- match.arg(i, tableNames(x))
     }
     t <- x$tables[[i]]
-    ns <- vapply(nm <- colnames(x), length, integer(1))
-    nm <- data.frame(layer=rep.int(names(nm), ns), region=unlist(nm))
-    nm <- filter(nm, ...)
-    i <- match(nm$layer, .LAYERS)
-    j <- split(nm$region, nm$layer)
-    x <- x[i, j]
-    x$tables$table <- t
+    df <- data.frame(.i=seq_len(ncol(t)), colData(t), int_colData(t))
+    df <- filter(df, ...)
+    if (!nrow(df)) stop("Nothing left after query")
+    t <- t[, df$.i]
+    colData(t) <- droplevels(colData(t))
+    int_colData(t) <- droplevels(int_colData(t))
+    region(t) <- levels(int_colData(t)[[region_key(t)]])
+    for (l in setdiff(.LAYERS, "tables")) {
+        j <- !names(x[[l]]) %in% region(t)
+        if (sum(j)) x[[l]] <- x[[l]][-which(j)]
+    }
+    for (r in region(t)) {
+        l <- layer(x, r)
+        if (l == "labels") next
+        e <- x[[l]][[r]]
+        ik <- instance_key(t)
+        j <- pull(data(e), ik)
+        j <- j %in% instances(t)
+        x[[l]][[r]] <- e[which(j), ]
+    }
+    table(x, i) <- t
     return(x)
 })
 
@@ -126,6 +140,11 @@ setMethod("query", "SpatialData", \(x, ..., i) {
     # subset spatial dimensions
     i <- seq(y$ymin, y$ymax)
     j <- seq(y$xmin, y$xmax)
+    wh <- list(
+        y[c("xmin", "xmax")], 
+        y[c("ymin", "ymax")])
+    wh <- lapply(wh, unlist)
+    metadata(x)$wh <- wh
     if (n == 3) {
         return(x[, i, j])
     } else {
@@ -166,15 +185,15 @@ setMethod("query", "ShapeFrame", \(x, y) {
 })
 
 #' @rdname query
+#' @importFrom dplyr filter
 #' @importFrom sf st_as_sf st_polygon st_intersects
-#' @importFrom dplyr collect filter
 #' @export
 setMethod("query", "PointFrame", \(x, y) {
     if (is.matrix(y)) {
         mx <- .check_pol(y)
-        xy <- st_as_sf(collect(data(x)[c("x", "y")]), coords=c("x", "y"))
+        xy <- st_as_sf(as.data.frame(x)[xy <- c("x", "y")], coords=xy)
         ok <- st_intersects(xy, st_polygon(list(mx)), sparse=FALSE)
-        return(x[which(ok[, 1])])
+        return(x[which(ok[, 1]), ])
     } else {
         .check_box(bb <- y)
         filter(x, 

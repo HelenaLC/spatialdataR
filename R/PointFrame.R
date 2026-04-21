@@ -77,8 +77,6 @@ setMethod("[[", "PointFrame", \(x, i, ...) {
 #' @importFrom dplyr select all_of collect
 #' @exportMethod $
 setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
-    # x <- select(data(x), !"__null_dask_index__")
-    # collect(select(x, all_of(name)))[[1]] })
 
 # sub ----
 
@@ -104,10 +102,21 @@ setMethod("[", c("PointFrame", "ANY", "character"), \(x, i, j, ...) {
     x[i, match(j, names(x))]
 })
 
+#' @export
+#' @rdname PointFrame
+setMethod("[", c("PointFrame", "logical", "ANY"), \(x, i, j, ...) {
+    if (isTRUE(i)) return(x[, j])
+    if (isFALSE(i)) return(x[0, j])
+    stopifnot(length(i) != length(x))
+    x[seq_len(nrow(x))[i], j]
+})
+    
 #' @rdname PointFrame
 #' @importFrom dplyr mutate filter select
 #' @export
 setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
+    # TODO: this worked having assumed indices are unique;
+    # they may not be, so subsetting on a query doesn't work
     .i <- `__null_dask_index__` <- NULL # R CMD check
     i <- seq_len(nrow(x))[i]
     x@data <- data(x) |>
