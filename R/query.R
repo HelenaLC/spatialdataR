@@ -160,12 +160,7 @@ setMethod("query", "ImageArray", \(x, y) .query_sdArray(x, y))
 #' @export
 setMethod("query", "LabelArray", \(x, y) .query_sdArray(x, y))
 
-#' @rdname query
-#' @importFrom sf st_as_sfc st_polygon st_bbox st_sfc st_sf
-#' @importFrom duckspatial ddbs_intersects
-#' @importFrom dplyr pull
-#' @export
-setMethod("query", "ShapeFrame", \(x, y) {
+.query_Frame <- \(x, y) {
     # TODO: this will drop geometries where any coordinate
     # is out of bounds; keep but crop to boundary region?
     if (is.matrix(y)) {
@@ -182,6 +177,15 @@ setMethod("query", "ShapeFrame", \(x, y) {
     ok <- ddbs_intersects(data(x), polygon, sparse=TRUE)
     x <- x[ok |> pull(id_x), ]
     return(x)
+}
+
+#' @rdname query
+#' @importFrom sf st_as_sfc st_polygon st_bbox st_sfc st_sf
+#' @importFrom duckspatial ddbs_intersects
+#' @importFrom dplyr pull
+#' @export
+setMethod("query", "ShapeFrame", \(x, y) {
+    .query_Frame(x, y)
 })
 
 #' @rdname query
@@ -189,15 +193,5 @@ setMethod("query", "ShapeFrame", \(x, y) {
 #' @importFrom sf st_as_sf st_polygon st_intersects
 #' @export
 setMethod("query", "PointFrame", \(x, y) {
-    if (is.matrix(y)) {
-        mx <- .check_pol(y)
-        xy <- st_as_sf(as.data.frame(x)[xy <- c("x", "y")], coords=xy)
-        ok <- st_intersects(xy, st_polygon(list(mx)), sparse=FALSE)
-        return(x[which(ok[, 1]), ])
-    } else {
-        .check_box(bb <- y)
-        filter(x,
-            x >= bb$xmin, x <= bb$xmax,
-            y >= bb$ymin, y <= bb$ymax)
-    }
+    .query_Frame(x, y)
 })
