@@ -13,7 +13,7 @@ i <- md[[rk <- md$region_key]]
 
 test_that("hasTable()", {
     # TRUE
-    i <- region(table(x))
+    i <- region(SpatialData::table(x))
     expect_true(hasTable(x, i))
     # FALSE
     j <- setdiff(unlist(colnames(x)), c(i, tableNames(x)))
