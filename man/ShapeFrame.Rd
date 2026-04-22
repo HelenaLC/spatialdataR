@@ -6,6 +6,7 @@
 \alias{dim,ShapeFrame-method}
 \alias{length,ShapeFrame-method}
 \alias{names,ShapeFrame-method}
+\alias{[[,ShapeFrame,ANY,ANY-method}
 \alias{.DollarNames.ShapeFrame}
 \alias{$,ShapeFrame-method}
 \alias{geom_type,ShapeFrame-method}
@@ -22,6 +23,8 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{length}{ShapeFrame}(x)
 
 \S4method{names}{ShapeFrame}(x)
+
+\S4method{[[}{ShapeFrame,ANY,ANY}(x, i, j, ...)
 
 \method{.DollarNames}{ShapeFrame}(x, pattern = "")
 
@@ -52,9 +55,9 @@ content describing the overall object.}
 
 \item{x}{\code{ShapeFrame}}
 
-\item{name}{character string for extraction (see \code{?base::`$`}).}
-
 \item{i, j}{indices specifying elements to extract.}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
 
 \item{drop, pattern}{ignored.}
 }
