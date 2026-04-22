@@ -3,8 +3,10 @@
 #' @aliases geom_type
 #'
 #' @param x \code{ShapeFrame}
-#' @param data \code{arrow}-derived table for on-disk,
-#'   \code{data.frame} for in-memory representation.
+#' @param data \code{duckspatial_df} for on-disk representation,
+#'   a 3-column \code{data.frame} (with columns \code{x}, \code{y} and
+#'   \code{id}) with vertices of polygons, or any object that can be passed
+#'   to \code{\link[duckspatial]{as_duckspatial_df}}.
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary
 #'   content describing the overall object.
@@ -29,8 +31,25 @@
 #'
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
+#' @importFrom duckspatial as_duckspatial_df
 #' @export
 ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+    if (is.data.frame(data)) {
+        if (ncol(data) == 3L &&
+            all(c("x", "y", "id") %in% colnames(data))) {
+            # create sf polygons from vertices
+            mxL <- lapply(split(data, data$id), function(df) {
+                as.matrix(df[, c("x", "y")]) + 0.0
+            })
+            data <- st_sf(geometry = st_sfc(lapply(mxL, function(x) st_polygon(list(x)))))
+            rownames(data) <- names(mxL)
+            data <- as_duckspatial_df(data)
+        } else if (nrow(data) > 0L) {
+            data <- as_duckspatial_df(data)
+        }
+    } else {
+        data <- as_duckspatial_df(data)
+    }
     x <- .ShapeFrame(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
