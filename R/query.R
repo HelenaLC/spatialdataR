@@ -160,10 +160,15 @@ setMethod("query", "ImageArray", \(x, y) .query_sdArray(x, y))
 #' @export
 setMethod("query", "LabelArray", \(x, y) .query_sdArray(x, y))
 
+#' @importFrom sf st_as_sfc st_polygon st_bbox st_sfc st_sf
+#' @importFrom duckspatial ddbs_intersects
+#' @importFrom dplyr pull
 .query_Frame <- \(x, y) {
     # TODO: this will drop geometries where any coordinate
     # is out of bounds; keep but crop to boundary region?
-    if (is.matrix(y)) {
+    if (is(y, "sf")) {
+        polygon <- y
+    } else if (is.matrix(y)) {
         # TODO: currently ignoring 'radius' for circles (i.e.,
         # query based on centroids only); what does Python do?
         mx <- .check_pol(y)
@@ -180,17 +185,12 @@ setMethod("query", "LabelArray", \(x, y) .query_sdArray(x, y))
 }
 
 #' @rdname query
-#' @importFrom sf st_as_sfc st_polygon st_bbox st_sfc st_sf
-#' @importFrom duckspatial ddbs_intersects
-#' @importFrom dplyr pull
 #' @export
 setMethod("query", "ShapeFrame", \(x, y) {
     .query_Frame(x, y)
 })
 
 #' @rdname query
-#' @importFrom dplyr filter
-#' @importFrom sf st_as_sf st_polygon st_intersects
 #' @export
 setMethod("query", "PointFrame", \(x, y) {
     .query_Frame(x, y)

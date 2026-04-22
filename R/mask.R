@@ -131,6 +131,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @importFrom Matrix sparseMatrix
 #' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom sf st_intersects
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
