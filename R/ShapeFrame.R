@@ -80,6 +80,13 @@ setMethod("length", "ShapeFrame", \(x) {
 #' @export
 setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
 
+#' @rdname ShapeFrame
+#' @importFrom dplyr collect select
+#' @exportMethod [[
+setMethod("[[", "ShapeFrame", \(x, i, ...) {
+    collect(select(data(x), all_of(i)))[[1]]
+})
+
 #' @export
 #' @rdname ShapeFrame
 #' @importFrom utils .DollarNames
@@ -87,9 +94,8 @@ setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
     grep(pattern, names(x), value=TRUE)
 
 #' @rdname ShapeFrame
-#' @importFrom dplyr pull
 #' @exportMethod $
-setMethod("$", "ShapeFrame", \(x, name) data(x) |> pull(.data[[name]]))
+setMethod("$", "ShapeFrame", \(x, name) do.call(`[[`, list(x, name)))
 
 #' @export
 #' @rdname ShapeFrame
@@ -131,3 +137,4 @@ setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
         select(-all_of(cn)) |> select(all_of(j))
     return(x)
 })
+
