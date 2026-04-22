@@ -52,19 +52,19 @@ test_that("get all", {
 test_that("get one", {
     # i=numeric
     mapply(f=fun, t=typ, \(f, t)
-        expect_is(get(f)(x, i=1), t))
+        expect_is(get(f, envir=asNamespace("SpatialData"))(x, i=1), t))
     # i=character
     mapply(f=fun, t=typ, n=nms, \(f, t, n)
-        expect_is(get(f)(x, i=n), t))
+        expect_is(get(f, envir=asNamespace("SpatialData"))(x, i=n), t))
     # i=invalid
     for (f in fun) {
-        expect_error(get(f)(x, 0))
-        expect_error(get(f)(x, "."))
-        expect_error(get(f)(x, c(1,1)))
-        expect_silent(y <- get(f)(x, Inf))
+        expect_error(get(f, envir=asNamespace("SpatialData"))(x, 0))
+        expect_error(get(f, envir=asNamespace("SpatialData"))(x, "."))
+        expect_error(get(f, envir=asNamespace("SpatialData"))(x, c(1,1)))
+        expect_silent(y <- get(f, envir=asNamespace("SpatialData"))(x, Inf))
         set <- get(paste0(f, "s<-"))
         y <- set(x, list())
-        expect_error(get(f)(y, 1))
+        expect_error(get(f, envir=asNamespace("SpatialData"))(y, 1))
     }
 })
 
@@ -109,10 +109,10 @@ test_that("set one", {
         # character
         x <- set(x, i=".", value=o)
         expect_true("." %in% nms(x))
-        expect_is(get(f)(x, "."), t)
+        expect_is(get(f, envir=asNamespace("SpatialData"))(x, "."), t)
         # numeric
         x <- set(x, i=1, value=o)
-        expect_is(get(f)(x, 1), t)
+        expect_is(get(f, envir=asNamespace("SpatialData"))(x, 1), t)
         # missing
         n <- \(.) length(get(paste0(f, "s"))(.))
         expect_silent(set(x, value=o))
@@ -138,9 +138,9 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
-    r <- region(table(x))
+    r <- region(SpatialData::table(x))
     y <- x; labelNames(y) <- "x"
-    r <- region(table(y))
+    r <- region(SpatialData::table(y))
     expect_identical(r, "x")
 })
 
