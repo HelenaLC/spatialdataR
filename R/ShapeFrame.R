@@ -48,8 +48,14 @@ setMethod("dim", "ShapeFrame", \(x) c(length(x),
 #' @rdname ShapeFrame
 #' @export
 #' @importFrom dplyr tally pull
-#' @importFrom duckspatial ddbs_drop_geometry
-setMethod("length", "ShapeFrame", \(x) data(x) |> ddbs_drop_geometry() |> tally() |> pull(n))
+setMethod("length", "ShapeFrame", \(x) {
+    # suppress warning caused by the 'geometry' column being dropped
+    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
+    # 'geometry' is the only column
+    suppressWarnings({
+        data(x) |> tally() |> pull(n)
+    })
+})
 
 #' @rdname ShapeFrame
 #' @export
@@ -103,6 +109,6 @@ setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
     cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
     x@data <- x@data |> mutate(!!cn := row_number()) |>
         filter(.data[[cn]] %in% i) |>
-        select(-all_of(cn)) |> select(j)
+        select(-all_of(cn)) |> select(all_of(j))
     return(x)
 })
