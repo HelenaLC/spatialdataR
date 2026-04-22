@@ -42,14 +42,14 @@ ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ShapeFrame
 #' @export
-#' @importFrom dplyr tally pull
 setMethod("dim", "ShapeFrame", \(x) c(length(x),
                                       ncol(data(x))))
 
 #' @rdname ShapeFrame
 #' @export
 #' @importFrom dplyr tally pull
-setMethod("length", "ShapeFrame", \(x) data(x) |> tally() |> pull(n))
+#' @importFrom duckspatial ddbs_drop_geometry
+setMethod("length", "ShapeFrame", \(x) data(x) |> ddbs_drop_geometry() |> tally() |> pull(n))
 
 #' @rdname ShapeFrame
 #' @export

@@ -38,33 +38,33 @@
 \item{i}{character string; name of the
 element for which to get/set a \code{table}.}
 
-\item{name}{logical; should the \code{table} 
+\item{name}{logical; should the \code{table}
 name be returned instead of TRUE/FALSE?}
 
-\item{drop}{logical; should observations (columns) 
+\item{drop}{logical; should observations (columns)
 that don't belong to \code{i} be filtered out?}
 
-\item{...}{\code{data.frame} or list of data generation function(s) 
+\item{...}{\code{data.frame} or list of data generation function(s)
 that accept an argument for the number of observations; see examples.}
 
-\item{rk, ik}{character string; region and instance key (the latter will be 
+\item{rk, ik}{character string; region and instance key (the latter will be
 ignored if an instance key is already specified within element \code{i}).}
 
-\item{j}{character string; \code{colData} column, 
+\item{j}{character string; \code{colData} column,
 or row name to retrieve \code{assay} data.}
 
-\item{assay}{character string or scalar integer; 
+\item{assay}{character string or scalar integer;
 specifies which \code{assay} to use when \code{j} is a row name.}
 }
 \value{
 \itemize{
-\item \code{hasTable}: 
+\item \code{hasTable}:
   logical scalar (or character string, if \code{name=TRUE});
   whether or not a \code{table} annotating \code{i} exists in \code{x}
-\item \code{getTable}: 
-  \code{SingleCellExperiment}; the \code{table} annotating 
+\item \code{getTable}:
+  \code{SingleCellExperiment}; the \code{table} annotating
   \code{i} with optional filtering of matching observations
-\item \code{valTable}: 
+\item \code{valTable}:
   vector of values (according to \code{j})
   from the \code{table} annotating \code{i}
 }
@@ -87,9 +87,9 @@ sce <- getTable(x, i="blobs_labels")
 head(colData(sce))
 meta(sce)
 
-# get values from 'table' 
-valTable(x, 
-  i="blobs_labels", 
+# get values from 'table'
+valTable(x,
+  i="blobs_labels",
   j="channel_0_sum")
 
 # add 'table' annotating an element 'i'
