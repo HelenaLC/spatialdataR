@@ -60,9 +60,14 @@ setMethod("dim", "PointFrame", \(x) c(length(x), length(names(x))))
 #' @rdname PointFrame
 #' @export
 #' @importFrom dplyr tally pull
-#' @importFrom duckspatial ddbs_drop_geometry
-setMethod("length", "PointFrame", \(x) data(x) |> ddbs_drop_geometry() |>
-              tally() |> pull(n))
+setMethod("length", "PointFrame", \(x) {
+    # suppress warning caused by the 'geometry' column being dropped
+    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
+    # 'geometry' is the only column
+    suppressWarnings({
+        data(x) |> tally() |> pull(n)
+    })
+})
 
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
