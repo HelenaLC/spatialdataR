@@ -85,11 +85,12 @@ setMethod("centroids", "ShapeFrame", \(x,
 
 #' @export
 #' @rdname utils
+#' @importFrom dplyr all_of select
 setMethod("centroids", "PointFrame", \(x,
     as=c("data.frame", "list")) {
     as <- match.arg(as)
     i <- feature_key(x)
-    xy <- data(x) |> select(c("x", "y", i))
+    xy <- data(x) |> select(all_of(c("x", "y", i)))
     xy <- as.data.frame(xy)
     if (as == "data.frame") return(xy)
     lapply(split(xy, xy[[i]]), `[`, -3)

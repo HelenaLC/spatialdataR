@@ -3,8 +3,10 @@
 #' @aliases geom_type
 #'
 #' @param x \code{ShapeFrame}
-#' @param data \code{arrow}-derived table for on-disk,
-#'   \code{data.frame} for in-memory representation.
+#' @param data \code{duckspatial_df} for on-disk representation,
+#'   a 3-column \code{data.frame} (with columns \code{x}, \code{y} and
+#'   \code{id}) with vertices of polygons, or any object that can be passed
+#'   to \code{\link[duckspatial]{as_duckspatial_df}}.
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary
 #'   content describing the overall object.
@@ -29,8 +31,25 @@
 #'
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
+#' @importFrom duckspatial as_duckspatial_df
 #' @export
 ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+    if (is.data.frame(data)) {
+        if (ncol(data) == 3L &&
+            all(c("x", "y", "id") %in% colnames(data))) {
+            # create sf polygons from vertices
+            mxL <- lapply(split(data, data$id), function(df) {
+                as.matrix(df[, c("x", "y")]) + 0.0
+            })
+            data <- st_sf(geometry = st_sfc(lapply(mxL, function(x) st_polygon(list(x)))))
+            rownames(data) <- names(mxL)
+            data <- as_duckspatial_df(data)
+        } else if (nrow(data) > 0L) {
+            data <- as_duckspatial_df(data)
+        }
+    } else {
+        data <- as_duckspatial_df(data)
+    }
     x <- .ShapeFrame(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
@@ -42,18 +61,31 @@ ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 
 #' @rdname ShapeFrame
 #' @export
-#' @importFrom dplyr tally pull
 setMethod("dim", "ShapeFrame", \(x) c(length(x),
                                       ncol(data(x))))
 
 #' @rdname ShapeFrame
 #' @export
 #' @importFrom dplyr tally pull
-setMethod("length", "ShapeFrame", \(x) data(x) |> tally() |> pull(n))
+setMethod("length", "ShapeFrame", \(x) {
+    # suppress warning caused by the 'geometry' column being dropped
+    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
+    # 'geometry' is the only column
+    suppressWarnings({
+        data(x) |> tally() |> pull(n)
+    })
+})
 
 #' @rdname ShapeFrame
 #' @export
 setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
+
+#' @rdname ShapeFrame
+#' @importFrom dplyr collect select
+#' @exportMethod [[
+setMethod("[[", "ShapeFrame", \(x, i, ...) {
+    collect(select(data(x), all_of(i)))[[1]]
+})
 
 #' @export
 #' @rdname ShapeFrame
@@ -62,9 +94,8 @@ setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
     grep(pattern, names(x), value=TRUE)
 
 #' @rdname ShapeFrame
-#' @importFrom dplyr pull
 #' @exportMethod $
-setMethod("$", "ShapeFrame", \(x, name) data(x) |> pull(.data[[name]]))
+setMethod("$", "ShapeFrame", \(x, name) do.call(`[[`, list(x, name)))
 
 #' @export
 #' @rdname ShapeFrame
@@ -103,6 +134,7 @@ setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
     cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
     x@data <- x@data |> mutate(!!cn := row_number()) |>
         filter(.data[[cn]] %in% i) |>
-        select(-all_of(cn)) |> select(j)
+        select(-all_of(cn)) |> select(all_of(j))
     return(x)
 })
+
