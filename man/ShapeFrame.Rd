@@ -6,6 +6,7 @@
 \alias{dim,ShapeFrame-method}
 \alias{length,ShapeFrame-method}
 \alias{names,ShapeFrame-method}
+\alias{[[,ShapeFrame,ANY,ANY-method}
 \alias{.DollarNames.ShapeFrame}
 \alias{$,ShapeFrame-method}
 \alias{geom_type,ShapeFrame-method}
@@ -23,6 +24,8 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{names}{ShapeFrame}(x)
 
+\S4method{[[}{ShapeFrame,ANY,ANY}(x, i, j, ...)
+
 \method{.DollarNames}{ShapeFrame}(x, pattern = "")
 
 \S4method{$}{ShapeFrame}(x, name)
@@ -38,8 +41,10 @@ ShapeFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{[}{ShapeFrame,numeric,numeric,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
-\item{data}{\code{arrow}-derived table for on-disk,
-\code{data.frame} for in-memory representation.}
+\item{data}{\code{duckspatial_df} for on-disk representation,
+a 3-column \code{data.frame} (with columns \code{x}, \code{y} and
+\code{id}) with vertices of polygons, or any object that can be passed
+to \code{\link[duckspatial]{as_duckspatial_df}}.}
 
 \item{meta}{\code{\link{Zattrs}}}
 
@@ -50,9 +55,9 @@ content describing the overall object.}
 
 \item{x}{\code{ShapeFrame}}
 
-\item{name}{character string for extraction (see \code{?base::`$`}).}
-
 \item{i, j}{indices specifying elements to extract.}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
 
 \item{drop, pattern}{ignored.}
 }

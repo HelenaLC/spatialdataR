@@ -12,7 +12,7 @@
 \item{...}{ignored.}
 }
 \value{
-A \code{SpatialData} objects containing all elements 
+A \code{SpatialData} objects containing all elements
 from \code{x} and \code{y} with names made unique.
 }
 \description{

@@ -6,7 +6,7 @@ x <- readSpatialData(x, anndataR=TRUE)
 # test_that("query,table", {
 #     expect_error(query(x, foo == "x"))
 #     expect_error(query(x, instance_id == 99))
-#     t <- table(x)
+#     t <- SpatialData::table(x)
 #     y <- query(x, sym("region") == region(t))
 # })
 

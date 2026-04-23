@@ -59,7 +59,15 @@ setMethod("dim", "PointFrame", \(x) c(length(x), length(names(x))))
 
 #' @rdname PointFrame
 #' @export
-setMethod("length", "PointFrame", \(x) data(x) |> tally() |> pull(n))
+#' @importFrom dplyr tally pull
+setMethod("length", "PointFrame", \(x) {
+    # suppress warning caused by the 'geometry' column being dropped
+    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
+    # 'geometry' is the only column
+    suppressWarnings({
+        data(x) |> tally() |> pull(n)
+    })
+})
 
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
@@ -112,7 +120,7 @@ setMethod("[", c("PointFrame", "logical", "ANY"), \(x, i, j, ...) {
 })
 
 #' @rdname PointFrame
-#' @importFrom dplyr mutate filter select
+#' @importFrom dplyr mutate filter select all_of
 #' @export
 setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
     # TODO: this worked having assumed indices are unique;
@@ -126,7 +134,7 @@ setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
     # make sure this is kept in any case
     ndi <- "__null_dask_index__"
     ndi <- match(ndi, colnames(x@data), nomatch=0)
-    x@data <- x@data |> select(c(j, ndi))
+    x@data <- x@data |> select(all_of(c(j, ndi)))
     return(x)
 })
 

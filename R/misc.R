@@ -1,12 +1,12 @@
 #' @name misc
 #' @title Miscellaneous `SpatialData` methods
 #' @aliases show,SpatialData-method
-#' 
-#' @description 
+#'
+#' @description
 #' Miscellaneous methods (e.g., \code{show}) for the
 #' \code{\link{SpatialData}} class and its elements.
-#' 
-#' @param object 
+#'
+#' @param object
 #'   \code{\link{SpatialData}} object or one of its elements,
 #'   i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.
 #'
@@ -18,13 +18,13 @@
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
 #' (sd <- readSpatialData(zs, anndataR=TRUE))
-#' 
+#'
 #' # show element
 #' image(sd)
 #' label(sd)
 #' point(sd)
 #' shape(sd)
-#' 
+#'
 #' # show .zattrs
 #' meta(label(sd))
 #' meta(image(sd, 2))
@@ -44,18 +44,18 @@ NULL
     d <- lapply(images(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- images(%s):\n", length(i)))
-    for (. in seq_along(i)) 
+    for (. in seq_along(i))
         cat(sprintf("  - %s (%s)\n", i[.], d[.]))
     # labels
     d <- lapply(labels(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- labels(%s):\n", length(l)))
-    for (. in seq_along(l)) 
+    for (. in seq_along(l))
         cat(sprintf("  - %s (%s)\n", l[.], d[.]))
     # points
     d <- lapply(points(object), length)
     cat(sprintf("- points(%s):\n", length(p)))
-    for (. in seq_along(p)) 
+    for (. in seq_along(p))
         cat(sprintf("  - %s (%s)\n", p[.], d[.]))
     # shapes
     nc <- vapply(shapes(object), ncol, numeric(1))
@@ -63,14 +63,14 @@ NULL
     d <- vapply(shapes(object), nrow, numeric(1))
     d <- paste(d, unname(geom), sep=",")
     cat(sprintf("- shapes(%s):\n", length(s)))
-    for (. in seq_along(s)) 
+    for (. in seq_along(s))
         cat(sprintf("  - %s (%s)\n", s[.], d[.]))
     # tables
     d <- lapply(tables(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
     for (. in seq_along(t)) {
-        r <- paste(region(table(object, t[.])), collapse=",")
+        r <- paste(region(SpatialData::table(object, t[.])), collapse=",")
         cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
     }
     # spaces

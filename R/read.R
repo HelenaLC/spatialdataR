@@ -116,7 +116,7 @@ readPoint <- function(x, ...) {
     dat <- ddbs_open_dataset(pq) |>
         mutate(geometry = sql(paste0("ST_Point(", md$axes[[1]], ", ",
                                      md$axes[[2]], ")"))) |>
-        as_duckspatial_df()
+        as_duckspatial_df(crs = NA_character_)
     PointFrame(data=dat, meta=Zattrs(md))
 }
 
