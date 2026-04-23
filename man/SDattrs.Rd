@@ -11,8 +11,13 @@
 \alias{region_key,SingleCellExperiment-method}
 \alias{region,SingleCellExperiment-method}
 \alias{instance_key,list-method}
+\alias{instance_key,LabelArray-method}
 \alias{instance_key,PointFrame-method}
+\alias{instance_key,ShapeFrame-method}
 \alias{instance_key,SingleCellExperiment-method}
+\alias{instances,LabelArray-method}
+\alias{instances,PointFrame-method}
+\alias{instances,ShapeFrame-method}
 \alias{instances,SingleCellExperiment-method}
 \title{\code{SpatialData} attributes}
 \usage{
@@ -26,9 +31,19 @@
 
 \S4method{instance_key}{list}(x)
 
+\S4method{instance_key}{LabelArray}(x)
+
 \S4method{instance_key}{PointFrame}(x)
 
+\S4method{instance_key}{ShapeFrame}(x)
+
 \S4method{instance_key}{SingleCellExperiment}(x)
+
+\S4method{instances}{LabelArray}(x)
+
+\S4method{instances}{PointFrame}(x)
+
+\S4method{instances}{ShapeFrame}(x)
 
 \S4method{instances}{SingleCellExperiment}(x)
 }
