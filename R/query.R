@@ -61,7 +61,9 @@ NULL
 #' @importFrom SingleCellExperiment int_colData
 #' @export
 setMethod("query", "SpatialData", \(x, ..., i) {
-    if (missing(i)) i <- 1
+    if (missing(i)) { 
+    } else {
+    # spatial query
     if (!length(tables(x)))
         stop("There aren't any tables")
     if (is.numeric(i)) {
@@ -92,6 +94,7 @@ setMethod("query", "SpatialData", \(x, ..., i) {
     }
     table(x, i) <- t
     return(x)
+    }
 })
 
 .check_box <- \(bb) {

@@ -1,6 +1,6 @@
 #' @name table-utils
 #' @title \code{SpatialData} annotations
-#' @aliases hasTable getTable setTable valTable
+#' @aliases hasTable getTable setTable
 #'
 #' @param x \code{\link{SpatialData}} object.
 #' @param i character string; name of the
@@ -47,7 +47,7 @@
 #' meta(sce)
 #'
 #' # get values from 'table'
-#' valTable(x,
+#' getTable(x,
 #'   i="blobs_labels",
 #'   j="channel_0_sum")
 #'
@@ -123,25 +123,34 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
 
 #' @rdname table-utils
 #' @export
-setMethod("getTable", c("SpatialData", "ANY"), \(x, i, drop=TRUE) .invalid_i())
+setMethod("getTable", c("SpatialData", "ANY"), \(x, i, j, assay=1, drop=TRUE) .invalid_i())
 
 #' @rdname table-utils
+#' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment int_colData
 #' @export
-setMethod("getTable", c("SpatialData", "character"), \(x, i, drop=TRUE) {
+setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
-    t <- SpatialData::table(x, hasTable(x, i, name=TRUE))
+    i <- hasTable(x, i, name=TRUE)
+    t <- SpatialData::table(x, i)
     # only keep observations belonging to 'i' (optional)
     if (drop) {
-        rk <- meta(t)$region_key
+        rk <- region_key(t)
+        ik <- instance_key(t)
+        cd <- int_colData(t)
         # TODO: check the replacement below, search colData as well?
         # t <- t[, int_colData(t)[[rk]] == i]
-        int <- rk %in% names(cd <- int_colData(t))
+        int <- rk %in% names(cd)
         cd <- if (int) cd[[rk]] else t[[rk]]
         t <- t[, cd == i]
     }
-    return(t)
+    if (missing(j)) return(t)
+    rs <- j %in% rownames(t)
+    cd <- j %in% names(colData(t))
+    if (!(rs || cd)) stop("invalid 'j'")
+    if (cd) return(t[[j]])
+    assay(t, assay)[j, ]
 })
 
 # set ----
@@ -232,19 +241,4 @@ setMethod("setTable",
     md <- list(region=i, region_key=rk, instance_key=ik)
     int_metadata(sce)[[sda]] <- md
     SpatialData::`table<-`(x, i=name, value=sce)
-})
-
-# val ----
-
-#' @rdname table-utils
-#' @importFrom SummarizedExperiment assay colData
-#' @export
-setMethod("valTable", "SpatialData", \(x, i, j, assay=1, drop=TRUE) {
-    stopifnot(length(j) == 1, is.character(j))
-    t <- getTable(x, i, drop)
-    rs <- j %in% rownames(t)
-    cd <- j %in% names(colData(t))
-    if (!(rs || cd)) stop("invalid 'j'")
-    if (cd) return(t[[j]])
-    assay(t, assay)[j, ]
 })
