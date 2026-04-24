@@ -7,12 +7,6 @@
 \alias{length,PointFrame-method}
 \alias{[[,PointFrame,ANY,ANY-method}
 \alias{$,PointFrame-method}
-\alias{[,PointFrame,missing,ANY,ANY-method}
-\alias{[,PointFrame,ANY,missing,ANY-method}
-\alias{[,PointFrame,missing,missing,ANY-method}
-\alias{[,PointFrame,ANY,character,ANY-method}
-\alias{[,PointFrame,logical,ANY,ANY-method}
-\alias{[,PointFrame,numeric,numeric,ANY-method}
 \alias{as.data.frame,PointFrame-method}
 \title{The `PointFrame` class}
 \usage{
@@ -27,18 +21,6 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \S4method{[[}{PointFrame,ANY,ANY}(x, i, j, ...)
 
 \S4method{$}{PointFrame}(x, name)
-
-\S4method{[}{PointFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,ANY,missing,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,missing,missing,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,ANY,character,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,logical,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{PointFrame,numeric,numeric,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{as.data.frame}{PointFrame}(x)
 }
