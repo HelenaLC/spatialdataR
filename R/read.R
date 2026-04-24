@@ -109,13 +109,14 @@ readLabel <- function(x, ...) {
 #' @rdname readSpatialData
 #' @importFrom duckspatial ddbs_open_dataset as_duckspatial_df
 #' @importFrom Rarr read_zarr_attributes
+#' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     dat <- ddbs_open_dataset(pq) |>
-        mutate(geometry = sql(paste0("ST_Point(", md$axes[[1]], ", ",
-                                     md$axes[[2]], ")"))) |>
+        mutate(geometry=dplyr::sql(paste0("ST_Point(", 
+            md$axes[[1]], ", ", md$axes[[2]], ")"))) |>
         as_duckspatial_df(crs = NA_character_)
     PointFrame(data=dat, meta=Zattrs(md))
 }
@@ -126,9 +127,6 @@ readPoint <- function(x, ...) {
 #' @import geoarrow
 #' @export
 readShape <- function(x, ...) {
-    # TODO: previously had read_parquet(),
-    # but that doesn't work with geoparquet?
-    #requireNamespace("geoarrow", quietly=TRUE)
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))

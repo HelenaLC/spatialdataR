@@ -41,7 +41,7 @@ zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs, tables=FALSE)
 
 # helper for visualizing point coordinates
-.xy <- \(.) data.frame(data(.)[c("x", "y")])
+.xy <- \(.) as.data.frame(.)[c("x", "y")]
 
 # bounding box
 y <- list(xmin=11, xmax=44, ymin=22, ymax=55)

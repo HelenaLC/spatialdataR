@@ -125,16 +125,18 @@ setMethod("[", c("ShapeFrame", "missing", "missing"),
     \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
 
 #' @rdname ShapeFrame
-#' @export
 #' @importFrom dplyr mutate filter select all_of row_number
-#' @importFrom rlang .data !!
+#' @importFrom rlang .data !! :=
+#' @export
 setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
     i <- seq_len(nrow(x))[i]
     j <- seq_len(ncol(x))[j]
     cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
-    x@data <- x@data |> mutate(!!cn := row_number()) |>
+    x@data <- x@data |> 
+        mutate(!!cn := row_number()) |>
         filter(.data[[cn]] %in% i) |>
-        select(-all_of(cn)) |> select(all_of(j))
+        select(-all_of(cn)) |> 
+        select(all_of(j))
     return(x)
 })
 

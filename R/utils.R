@@ -23,8 +23,8 @@
 #'
 #' head(centroids(point(x)))
 #' xy <- centroids(point(x), "list")
-#' plot(xy$gene_a, col=a <- "red")
-#' points(xy$gene_b, col=b <- "blue")
+#' plot(xy$gene_a[, -3], col=a <- "red")
+#' points(xy$gene_b[, -3], col=b <- "blue")
 #' legend("topright", legend=names(xy), col=c(a, b), pch=21)
 #'
 #' # object-wide
