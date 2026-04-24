@@ -103,25 +103,23 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 #' @importFrom rlang .data
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
+    geometry <- radius <- id_x <- id_y <- NULL # R CMD check
     jdata <- switch(
-        geom_type(j),
-        "POINT"=j@data |> mutate(geometry=ST_Buffer(geometry, radius)),
-        j@data
-    )
-    res <- ddbs_intersects(
-        jdata,
-        i@data) |>
-        inner_join(i@data |> mutate(id_y=row_number()),
-                   by = join_by(id_y)) |>
+        geom_type(j), 
+        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
+        j@data)
+    res <- ddbs_intersects(jdata, i@data) |>
+        inner_join(mutate(i@data, id_y=row_number()), by=join_by(id_y)) |>
         select(all_of(c("id_x", feature_key(i)))) |>
         count(id_x, .data[[feature_key(i)]]) |>
         collect() |>
-        mutate(genes = factor(.data[[feature_key(i)]]))
-    ns <- sparseMatrix(i=res$genes,
-                       j=res$id_x,
-                       x=res$n,
-                       dimnames=list(levels(res$genes),
-                                     seq_len(length(unique(res$id_x)))))
+        mutate(genes=factor(.data[[feature_key(i)]]))
+    nms <- list(
+        levels(res$genes),
+        seq_along(unique(res$id_x)))
+    ns <- sparseMatrix(
+        i=res$genes, j=res$id_x,
+        x=res$n, dimnames=nms)
     SingleCellExperiment(list(counts=ns))
 })
 
