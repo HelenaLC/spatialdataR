@@ -2,11 +2,11 @@
 #' @title The `PointFrame` class
 #'
 #' @description
-#' The \code{PointFrame} class stores \code{SpatialData} elements from its 
+#' The \code{PointFrame} class stores \code{SpatialData} elements from its
 #' \code{"points"} layers. These are represented as \code{\link[arrow]{Table}}
-#' (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+#' (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}}
 #' (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
-#'  
+#'
 #' Currently defined methods (here, \code{x} is a \code{PointFrame}):
 #' \itemize{
 #' \item \code{data/meta(x)} to access underlying \code{Table/Zattrs}
@@ -21,7 +21,7 @@
 #' @param data \code{arrow}-derived table for on-disk,
 #'   \code{data.frame} for in-memory representation.
 #' @param meta \code{\link{Zattrs}}
-#' @param metadata optional list of arbitrary 
+#' @param metadata optional list of arbitrary
 #'   content describing the overall object.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param i,j indices for subsetting (see \code{?base::Extract}).
@@ -35,7 +35,7 @@
 #' zs <- get_demo_SDdata("merfish")
 #' x <- file.path(zs, "points", "single_molecule")
 #' (p <- readPoint(x))
-#' 
+#'
 #' head(as.data.frame(data(p)))
 #' (q <- dplyr::filter(p, cell_type == "VISp_wm"))
 #'
@@ -51,15 +51,23 @@ PointFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 #' @rdname PointFrame
 #' @export
 setMethod("names", "PointFrame", \(x) {
-    setdiff(names(data(x)), "__null_dask_index__") })
+    setdiff(colnames(data(x)), "__null_dask_index__") })
 
 #' @rdname PointFrame
 #' @export
-setMethod("dim", "PointFrame", \(x) c(nrow(data(x)), length(names(x))))
+setMethod("dim", "PointFrame", \(x) c(length(x), length(names(x))))
 
 #' @rdname PointFrame
 #' @export
-setMethod("length", "PointFrame", \(x) nrow(data(x)))
+#' @importFrom dplyr tally pull
+setMethod("length", "PointFrame", \(x) {
+    # suppress warning caused by the 'geometry' column being dropped
+    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
+    # 'geometry' is the only column
+    suppressWarnings({
+        data(x) |> tally() |> pull(n)
+    })
+})
 
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
@@ -71,30 +79,28 @@ setMethod("[[", "PointFrame", \(x, i, ...) {
 #' @importFrom utils .DollarNames
 #' @export
 .DollarNames.PointFrame <- \(x, pattern="") {
-    setdiff(names(data(x)), "__null_dask_index__") }
+    setdiff(colnames(data(x)), "__null_dask_index__") }
 
 #' @rdname PointFrame
 #' @importFrom dplyr select all_of collect
 #' @exportMethod $
 setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
-    # x <- select(data(x), !"__null_dask_index__")
-    # collect(select(x, all_of(name)))[[1]] })
 
 # sub ----
 
 #' @rdname PointFrame
 #' @export
-setMethod("[", c("PointFrame", "missing", "ANY"), 
+setMethod("[", c("PointFrame", "missing", "ANY"),
     \(x, i, j, ...) x[seq_len(nrow(x)), j])
 
 #' @rdname PointFrame
 #' @export
-setMethod("[", c("PointFrame", "ANY", "missing"), 
+setMethod("[", c("PointFrame", "ANY", "missing"),
     \(x, i, j, ...) x[i, seq_len(ncol(x))])
 
 #' @rdname PointFrame
 #' @export
-setMethod("[", c("PointFrame", "missing", "missing"), 
+setMethod("[", c("PointFrame", "missing", "missing"),
     \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
 
 #' @rdname PointFrame
@@ -104,20 +110,39 @@ setMethod("[", c("PointFrame", "ANY", "character"), \(x, i, j, ...) {
     x[i, match(j, names(x))]
 })
 
+#' @export
 #' @rdname PointFrame
-#' @importFrom dplyr mutate filter select
+setMethod("[", c("PointFrame", "logical", "ANY"), \(x, i, j, ...) {
+    if (isTRUE(i)) return(x[, j])
+    if (isFALSE(i)) return(x[0, j])
+    stopifnot(length(i) != length(x))
+    x[seq_len(nrow(x))[i], j]
+})
+
+#' @rdname PointFrame
+#' @importFrom dplyr mutate filter select all_of
 #' @export
 setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
-    .i <- `__null_dask_index__` <- NULL # R CMD check
     i <- seq_len(nrow(x))[i]
-    x@data <- data(x) |>
-        mutate(.i=1+`__null_dask_index__`) |>
-        filter(.i %in% i) |>
-        select(-.i)
-    # make sure this is kept in any case
-    ndi <- "__null_dask_index__"
-    ndi <- match(ndi, names(x@data), nomatch=0)
-    x@data <- x@data[, c(j, ndi)]
+    j <- seq_len(ncol(x))[j]
+    cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
+    x@data <- x@data |> 
+        mutate(!!cn := row_number()) |>
+        filter(.data[[cn]] %in% i) |>
+        select(-all_of(cn)) |> 
+        select(all_of(j))
+    # # TODO: this worked having assumed indices are unique;
+    # # they may not be, so subsetting on a query doesn't work
+    # .i <- `__null_dask_index__` <- NULL # R CMD check
+    # i <- seq_len(nrow(x))[i]
+    # x@data <- data(x) |>
+    #     mutate(.i=1+`__null_dask_index__`) |>
+    #     filter(.i %in% i) |>
+    #     select(-.i)
+    # # make sure this is kept in any case
+    # ndi <- "__null_dask_index__"
+    # ndi <- match(ndi, colnames(x@data), nomatch=0)
+    # x@data <- x@data |> select(all_of(c(j, ndi)))
     return(x)
 })
 
@@ -132,14 +157,14 @@ setAs(
 
 #' @importFrom dplyr filter
 #' @export
-filter.PointFrame <- \(.data, ...) { 
+filter.PointFrame <- \(.data, ...) {
     .data@data <- filter(data(.data), ...)
     return(.data)
 }
 
 #' @importFrom dplyr select
 #' @export
-select.PointFrame <- \(.data, ...) { 
+select.PointFrame <- \(.data, ...) {
     .data@data <- select(data(.data), ...)
     return(.data)
 }

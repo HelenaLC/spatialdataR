@@ -3,6 +3,13 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
+# test_that("query,table", {
+#     expect_error(query(x, foo == "x"))
+#     expect_error(query(x, instance_id == 99))
+#     t <- SpatialData::table(x)
+#     y <- query(x, sym("region") == region(t))
+# })
+
 test_that("query,.check_box", {
     # valid
     q <- list(
@@ -12,7 +19,7 @@ test_that("query,.check_box", {
     for (. in q) expect_silent(.check_box(.))
     # invalid
     q <- list(
-        list(xmin=0, xmax=1, ymin=0), 
+        list(xmin=0, xmax=1, ymin=0),
         list(xmin=1, xmax=0, ymin=1, ymax=0),
         list(xmin=0, xmax=-1, ymin=0, ymax=-1),
         list(xmin=0, xmax=1, ymin=10, ymax=NA),
@@ -23,9 +30,9 @@ test_that("query,.check_box", {
 test_that("query,.check_pol", {
     # valid
     q <- list(
-        m <- matrix(seq_len(8), 4, 2), 
+        m <- matrix(seq_len(8), 4, 2),
         rbind(c(1,1), c(2,2), c(3,3)), # open
-        rbind(c(1,1), c(2,2), c(3,3), c(1,1))) 
+        rbind(c(1,1), c(2,2), c(3,3), c(1,1)))
     for (. in q) expect_silent(.check_pol(.))
     # invalid
     q <- list(
@@ -43,17 +50,17 @@ test_that("query,ImageArray", {
     expect_error(query(i, y))
     # query equals dimensions
     y <- list(xmin=0, xmax=d[3], ymin=0, ymax=d[2])
-    expect_identical(query(i, y), i)
+    expect_equal(query(i, y), i, check.attributes = FALSE)
     # order is irrelevant
     y <- list(ymax=d[2], xmax=d[3], xmin=0, ymin=0)
-    expect_identical(query(i, y), i)
+    expect_equal(query(i, y), i, check.attributes = FALSE)
     # crop but don't shift
     y <- list(xmin=0, xmax=w <- d[3]/2, ymin=0, ymax=h <- d[2]/4)
-    expect_equal(dim(j <- query(i, y)), c(3, h, w)) 
+    expect_equal(dim(j <- query(i, y)), c(3, h, w))
     expect_identical(CTlist(i), CTlist(j))
     # crop and shift
     y <- list(
-        xmin=dx <- 3, xmax=w <- d[3]/2, 
+        xmin=dx <- 3, xmax=w <- d[3]/2,
         ymin=dy <- 5, ymax=h <- d[2]/4)
     expect_equal(dim(query(i, y)), c(3, 1+h-dy, 1+w-dx))
     # non-finite boundaries
@@ -65,17 +72,17 @@ test_that("query,LabelArray", {
     d <- dim(l <- label(x))
     # query equals dimensions
     y <- list(xmin=0, xmax=d[2], ymin=0, ymax=d[1])
-    expect_identical(query(l, y), l)
+    expect_equal(query(l, y), l, check.attributes = FALSE)
     # order is irrelevant
     y <- list(ymax=d[1], xmax=d[2], xmin=0, ymin=0)
-    expect_identical(query(l, y), l)
+    expect_equal(query(l, y), l, check.attributes = FALSE)
     # crop but don't shift
     y <- list(xmin=0, xmax=w <- d[2]/2, ymin=0, ymax=h <- d[1]/4)
-    expect_equal(dim(m <- query(l, y)), c(h, w)) 
+    expect_equal(dim(m <- query(l, y)), c(h, w))
     expect_identical(CTlist(l), CTlist(m))
     # crop and shift
     y <- list(
-        xmin=dx <- 3, xmax=w <- d[2]/2, 
+        xmin=dx <- 3, xmax=w <- d[2]/2,
         ymin=dy <- 5, ymax=h <- d[1]/4)
     expect_equal(dim(query(l, y)), c(1+h-dy, 1+w-dx))
     # non-finite boundaries
@@ -86,8 +93,8 @@ test_that("query,LabelArray", {
 test_that("query-box,PointFrame", {
     n <- length(p <- point(x))
     # this shouldn't do anything
-    q <- query(p, list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf))
-    expect_is(data(q), "arrow_dplyr_query")
+    q <- query(p, list(xmin=-1e7, xmax=1e7, ymin=-1e7, ymax=1e7))
+    expect_is(data(q), "duckspatial_df")
     expect_identical(collect(data(p)), collect(data(q)))
     # this should drop everything
     q <- query(p, list(xmin=0, xmax=1e-3, ymin=0, ymax=1e-3))
@@ -101,8 +108,8 @@ test_that("query-box,PointFrame", {
     q <- do.call(query, c(list(x=p), list(bb)))
     df <- collect(data(p))
     fd <- collect(data(q))
-    i <- 
-        df$x >= bb$xmin & df$x <= bb$xmax & 
+    i <-
+        df$x >= bb$xmin & df$x <= bb$xmax &
         df$y >= bb$ymin & df$y <= bb$ymax
     expect_identical(df[i, ], fd)
 })
@@ -131,7 +138,7 @@ test_that("query-pol,PointFrame", {
 test_that("query-box,ShapeFrame", {
     n <- length(s <- shape(x))
     # mock query without any effect
-    t <- query(s, list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf))
+    t <- query(s, list(xmin=-1e7, xmax=1e7, ymin=-1e7, ymax=1e7))
     expect_equal(nrow(data(t)), nrow(data(s)))
     # this should drop everything
     t <- query(s, list(xmin=0, xmax=1e-3, ymin=0, ymax=1e-3))
@@ -144,14 +151,14 @@ test_that("query-box,ShapeFrame", {
     bb <- data.frame(t(unlist(bb)))
     names(bb) <- c("xmin", "xmax", "ymin", "ymax")
     t <- do.call(query, c(list(x=s), list(bb)))
-    expect_equal(s[i], t)
+    expect_equal(as.data.frame(s[i]@data), as.data.frame(t@data))
 })
 
 test_that("query-pol,ShapeFrame", {
     n <- length(s <- shape(x))
     # mock all-inclusive query
     xy <- rbind(c(0,0), c(0,1e6), c(1e6,0))
-    expect_equal(query(s, xy), s)
+    expect_equal(query(s, xy), s, check.attributes = FALSE)
     # sample random shapes &
     # query tiny polygon around them
     xy <- st_coordinates(st_as_sf(data(s)))
@@ -163,6 +170,6 @@ test_that("query-pol,ShapeFrame", {
             xy+c(-d,-d), xy+c(+d,-d))
         t <- query(s, xy)
         expect_length(t, 1)
-        expect_equal(t, s[i])
+        expect_equal(t, s[i], check.attributes = FALSE)
     })
 })

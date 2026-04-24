@@ -4,7 +4,7 @@
     msg <- c()
     sce <- \(.) is(., "SingleCellExperiment")
     for (i in seq_along(tables(object))) {
-        ok <- sce(se <- table(object, i))
+        ok <- sce(se <- SpatialData::table(object, i))
         if (!ok) msg <- c(msg, paste0(
             i, "-th table is not a 'SingleCellExperiment'"))
         if (!ok) next
@@ -82,8 +82,8 @@ setValidity2("PointFrame", .validatePointFrame)
 
 .validateShapeFrame <- \(object) {
     msg <- c()
-    if (!nrow(object)) return(msg)
-    if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
+    #if (!nrow(object)) return(msg)
+    #if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2

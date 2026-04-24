@@ -11,6 +11,7 @@
 \alias{[,PointFrame,ANY,missing,ANY-method}
 \alias{[,PointFrame,missing,missing,ANY-method}
 \alias{[,PointFrame,ANY,character,ANY-method}
+\alias{[,PointFrame,logical,ANY,ANY-method}
 \alias{[,PointFrame,numeric,numeric,ANY-method}
 \alias{as.data.frame,PointFrame-method}
 \title{The `PointFrame` class}
@@ -35,6 +36,8 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \S4method{[}{PointFrame,ANY,character,ANY}(x, i, j, ..., drop = TRUE)
 
+\S4method{[}{PointFrame,logical,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
 \S4method{[}{PointFrame,numeric,numeric,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{as.data.frame}{PointFrame}(x)
@@ -45,7 +48,7 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \item{meta}{\code{\link{Zattrs}}}
 
-\item{metadata}{optional list of arbitrary 
+\item{metadata}{optional list of arbitrary
 content describing the overall object.}
 
 \item{...}{optional arguments passed to and from other methods.}
@@ -62,11 +65,11 @@ content describing the overall object.}
 \code{PointFrame}
 }
 \description{
-The \code{PointFrame} class stores \code{SpatialData} elements from its 
+The \code{PointFrame} class stores \code{SpatialData} elements from its
 \code{"points"} layers. These are represented as \code{\link[arrow]{Table}}
-(\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+(\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}}
 (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
- 
+
 Currently defined methods (here, \code{x} is a \code{PointFrame}):
 \itemize{
 \item \code{data/meta(x)} to access underlying \code{Table/Zattrs}

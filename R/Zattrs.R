@@ -126,9 +126,17 @@ setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 #' @export
 #' @rdname SDattrs
 setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
+
 #' @export
 #' @rdname SDattrs
-setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
+setMethod("region", "SingleCellExperiment", \(x) meta(x)$region)
+
+#' @importFrom SingleCellExperiment int_metadata<-
+setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
+    stopifnot(length(value) > 0)
+    int_metadata(x)$spatialdata_attrs$region <- value
+    return(x)
+})
 
 # TODO: only tables and points can have this?
 #' @export
@@ -136,7 +144,35 @@ setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
 setMethod("instance_key", "list", \(x) x$instance_key)
 #' @export
 #' @rdname SDattrs
+setMethod("instance_key", "LabelArray", \(x) instance_key(meta(x)$spatialdata_attrs))
+#' @export
+#' @rdname SDattrs
 setMethod("instance_key", "PointFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
 #' @export
 #' @rdname SDattrs
+setMethod("instance_key", "ShapeFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
+#' @export
+#' @rdname SDattrs
 setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
+
+#' @export
+#' @rdname SDattrs
+setMethod("instances", "LabelArray", \(x) {
+    # unique values in first scale, excluding 0
+    z <- data(x, 1)
+    as.integer(setdiff(unique(as.vector(z)), 0))
+})
+#' @export
+#' @rdname SDattrs
+setMethod("instances", "PointFrame", \(x) pull(data(x), instance_key(x)))
+#' @export
+#' @rdname SDattrs
+setMethod("instances", "ShapeFrame", \(x) {
+    ik <- tryCatch(instance_key(x), error=\(e) NULL)
+    if (is.null(ik)) return(seq_len(nrow(x)))
+    pull(data(x), ik)
+})
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_colData
+setMethod("instances", "SingleCellExperiment", \(x) int_colData(x)[[instance_key(x)]])

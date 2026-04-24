@@ -1,3 +1,13 @@
+changes in version 0.99.30
+
+- query() by table method draft
+- added xNames<-() methods (x = image, label, ...)
+- added combine() to make one SpatialData object from two
+- 'duckspatial' for handling of points and shapes
+- add ShapeFrame construction from matrix & 'sf'
+- bug fix in coord trans. graph representation 
+  for when element and space names collide
+
 changes in version 0.99.29
 
 - revision of Zarr version-specific .zattrs handling

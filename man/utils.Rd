@@ -32,7 +32,7 @@
 \item{as}{character string; how results should be returned.}
 }
 \value{
-For \code{centroids}, a table (\code{data.frame} or \code{matrix}) 
+For \code{centroids}, a table (\code{data.frame} or \code{matrix})
 of spatial coordinates (if \code{as="list"}, split by instance);
 for extend, a length-2 numeric list of x- and y-ranges.
 }
@@ -50,8 +50,8 @@ centroids(shape(x, 3), "list")
 
 head(centroids(point(x)))
 xy <- centroids(point(x), "list")
-plot(xy$gene_a, col=a <- "red")
-points(xy$gene_b, col=b <- "blue")
+plot(xy$gene_a[, -3], col=a <- "red")
+points(xy$gene_b[, -3], col=b <- "blue")
 legend("topright", legend=names(xy), col=c(a, b), pch=21)
 
 # object-wide

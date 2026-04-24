@@ -3,21 +3,15 @@
 \name{query}
 \alias{query}
 \alias{query,SpatialData-method}
-\alias{query,ImageArray-method}
-\alias{query,LabelArray-method}
-\alias{query,ShapeFrame-method}
-\alias{query,PointFrame-method}
+\alias{query,sdArray-method}
+\alias{query,sdFrame-method}
 \title{spatial queries}
 \usage{
 \S4method{query}{SpatialData}(x, ..., i)
 
-\S4method{query}{ImageArray}(x, y)
+\S4method{query}{sdArray}(x, y)
 
-\S4method{query}{LabelArray}(x, y)
-
-\S4method{query}{ShapeFrame}(x, y)
-
-\S4method{query}{PointFrame}(x, y)
+\S4method{query}{sdFrame}(x, y)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
@@ -26,7 +20,7 @@
 
 \item{i}{for \code{SpatialData}, index or name of table to query.}
 
-\item{y}{query specification; 
+\item{y}{query specification;
 bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
 polygon: numeric matrix with at least 3 rows and exactly 2 columns.}
 }
@@ -34,10 +28,10 @@ polygon: numeric matrix with at least 3 rows and exactly 2 columns.}
 same as input
 }
 \description{
-Spatial queries serve to subset \code{SpatialData} elements 
-according to a rectangular bounding box or arbitrary polygonal shapes. 
-Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for 
-spatial operations (i.e., instances that intersect the query region 
+Spatial queries serve to subset \code{SpatialData} elements
+according to a rectangular bounding box or arbitrary polygonal shapes.
+Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for
+spatial operations (i.e., instances that intersect the query region
 in any way are kept). For circle shapes, radii are currently ignored
 (i.e., a circle is kept if its centroid intersects the query region).
 }
@@ -47,7 +41,7 @@ zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs, tables=FALSE)
 
 # helper for visualizing point coordinates
-.xy <- \(.) data.frame(data(.)[c("x", "y")])
+.xy <- \(.) as.data.frame(.)[c("x", "y")]
 
 # bounding box
 y <- list(xmin=11, xmax=44, ymin=22, ymax=55)
@@ -74,7 +68,7 @@ df <- st_coordinates(st_as_sf(data(s)))
 fd <- st_coordinates(st_as_sf(data(t)))
 plot(
   asp=1, xlim=c(15, 60), ylim=c(15, 60),
-  rbind(y, y[1, ]), type="l", col="blue") 
+  rbind(y, y[1, ]), type="l", col="blue")
 foo <- by(df, df[, "L2"], \(x) points(x, type="b", col="black"))
 foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
 }

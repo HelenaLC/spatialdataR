@@ -22,7 +22,15 @@ setGeneric("shapeNames", \(x, ...) standardGeneric("shapeNames"))
 setGeneric("pointNames", \(x, ...) standardGeneric("pointNames"))
 setGeneric("tableNames", \(x, ...) standardGeneric("tableNames"))
 
-# set one -----
+# set nms ----
+
+setGeneric("imageNames<-", \(x, ..., value) standardGeneric("imageNames<-"))
+setGeneric("labelNames<-", \(x, ..., value) standardGeneric("labelNames<-"))
+setGeneric("shapeNames<-", \(x, ..., value) standardGeneric("shapeNames<-"))
+setGeneric("pointNames<-", \(x, ..., value) standardGeneric("pointNames<-"))
+setGeneric("tableNames<-", \(x, ..., value) standardGeneric("tableNames<-"))
+
+# set one ----
 
 setGeneric("image<-", \(x, i, ..., value) standardGeneric("image<-"))
 setGeneric("shape<-", \(x, i, ..., value) standardGeneric("shape<-"))
@@ -30,7 +38,7 @@ setGeneric("label<-", \(x, i, ..., value) standardGeneric("label<-"))
 setGeneric("point<-", \(x, i, ..., value) standardGeneric("point<-"))
 setGeneric("table<-", \(x, i, ..., value) standardGeneric("table<-"))
 
-# set all -----
+# set all ----
 
 setGeneric("images<-", \(x, value) standardGeneric("images<-"))
 setGeneric("labels<-", \(x, value) standardGeneric("labels<-"))
@@ -53,7 +61,8 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
-setGeneric("transform", \(x, ...) standardGeneric("transform"))
+setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
+setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
@@ -63,6 +72,11 @@ setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
 # sda ----
 
 setGeneric("region", \(x, ...) standardGeneric("region"))
+setGeneric("region<-", \(x, ..., value) standardGeneric("region<-"))
+
+setGeneric("regions", \(x, ...) standardGeneric("regions"))
+setGeneric("instances", \(x, ...) standardGeneric("instances"))
+
 setGeneric("region_key", \(x, ...) standardGeneric("region_key"))
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
 setGeneric("instance_key", \(x, ...) standardGeneric("instance_key"))
@@ -91,4 +105,3 @@ setGeneric("multiscales", \(x, ...) standardGeneric("multiscales"))
 setGeneric("hasTable", \(x, i, ...) standardGeneric("hasTable"))
 setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
 setGeneric("setTable", \(x, i, ...) standardGeneric("setTable"))
-setGeneric("valTable", \(x, i, ...) standardGeneric("valTable"))

@@ -1,0 +1,16 @@
+x <- file.path("extdata", "blobs.zarr")
+x <- system.file(x, package="SpatialData")
+x <- readSpatialData(x, anndataR=TRUE)
+
+test_that("combine", {
+    expect_error(combine(x))
+    expect_silent(y <- combine(x, x))
+    f <- \(.) unlist(colnames(.))
+    expect_all_true(f(x) %in% f(y))
+    expect_length(f(y), 2*length(f(x)))
+    r <- unlist(lapply(tables(y), region))
+    expect_all_true(r %in% f(y))
+    expect_true(!all(r %in% f(x)))
+    expect_all_true(!duplicated(r))
+    expect_true(r[1] == region(SpatialData::table(x)))
+})
