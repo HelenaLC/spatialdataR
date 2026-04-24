@@ -70,7 +70,7 @@ setMethod("query", "SpatialData", \(x, ..., i) {
         i <- match.arg(i, tableNames(x))
     }
     t <- x$tables[[i]]
-    ns <- vapply(nm <- colnames(x), length, integer(1))
+    ns <- lengths(nm <- colnames(x))
     nm <- data.frame(layer=rep.int(names(nm), ns), region=unlist(nm))
     nm <- filter(nm, ...)
     i <- match(nm$layer, .LAYERS)
