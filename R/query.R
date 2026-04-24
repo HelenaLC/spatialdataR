@@ -55,11 +55,11 @@
 #' foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
 NULL
 
+#' @export
 #' @rdname query
 #' @importFrom dplyr filter pull
 #' @importFrom SummarizedExperiment colData
 #' @importFrom SingleCellExperiment int_colData
-#' @export
 setMethod("query", "SpatialData", \(x, ..., i) {
     if (missing(i)) { 
     } else {
@@ -126,7 +126,9 @@ setMethod("query", "SpatialData", \(x, ..., i) {
     return(mx)
 }
 
-.query_sdArray <- \(x, y) {
+#' @export
+#' @rdname query
+setMethod("query", "sdArray", \(x, y) {
     if (is.matrix(y)) stop(
         "Polygon query not supported for ",
         "element of type 'image/labelArray'")
@@ -153,53 +155,36 @@ setMethod("query", "SpatialData", \(x, ..., i) {
     } else {
         return(x[i, j])
     }
-}
+})
 
-#' @rdname query
 #' @export
-setMethod("query", "ImageArray", \(x, y) .query_sdArray(x, y))
-
 #' @rdname query
-#' @export
-setMethod("query", "LabelArray", \(x, y) .query_sdArray(x, y))
-
-#' @importFrom sf st_as_sfc st_polygon st_bbox st_sfc st_sf st_geometry
-#' @importFrom duckspatial ddbs_intersects
 #' @importFrom dplyr pull
-.query_Frame <- \(x, y) {
+#' @importFrom methods is
+#' @importFrom duckspatial ddbs_intersects
+#' @importFrom sf st_sf st_sfc st_as_sfc st_geometry st_bbox st_polygon 
+setMethod("query", "sdFrame", \(x, y) {
     # TODO: this will drop geometries where any coordinate
     # is out of bounds; keep but crop to boundary region?
     if (is(y, "sf")) {
         polygon <- y
         st_geometry(polygon) <- "geometry"
     } else if (is(y, "sfc")) {
-        polygon <- st_sf(geometry = y)
+        polygon <- st_sf(geometry=y)
     } else if (is(y, "sfg")) {
-        polygon <- st_sf(geometry = st_sfc(y))
+        polygon <- st_sf(geometry=st_sfc(y))
     } else if (is.matrix(y)) {
         # TODO: currently ignoring 'radius' for circles (i.e.,
         # query based on centroids only); what does Python do?
         mx <- .check_pol(y)
-        polygon <- st_sf(geometry = st_sfc(st_polygon(list(mx))))
+        polygon <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
     } else {
         # bounding box
         .check_box(y)
-        polygon <- st_sf(geometry = st_as_sfc(st_bbox(unlist(y))))
+        polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
     # sf <- st_as_sf(data(x))
     ok <- ddbs_intersects(data(x), polygon, sparse=TRUE)
     x <- x[ok |> pull(id_x), ]
     return(x)
-}
-
-#' @rdname query
-#' @export
-setMethod("query", "ShapeFrame", \(x, y) {
-    .query_Frame(x, y)
-})
-
-#' @rdname query
-#' @export
-setMethod("query", "PointFrame", \(x, y) {
-    .query_Frame(x, y)
 })
