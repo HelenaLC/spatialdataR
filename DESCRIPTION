@@ -45,6 +45,7 @@ Authors@R: c(
         email="louise.deconinck@gmail.com",
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
+    anndataR,
     basilisk,
     BiocGenerics,
     DelayedArray,
@@ -59,7 +60,7 @@ Imports:
     Rarr,
     RBGL,
     reticulate,
-    anndataR,
+    rlang,
     sf,
     S4Arrays,
     S4Vectors,
