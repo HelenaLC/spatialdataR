@@ -161,6 +161,7 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
 
 #' @export
 #' @rdname trans
+#' @importFrom rlang !!
 #' @importFrom dplyr mutate
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == length(axes(x)), t > 0, is.finite(t))
@@ -174,6 +175,7 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
 
 #' @export
 #' @rdname trans
+#' @importFrom rlang !!
 #' @importFrom dplyr mutate select
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
@@ -188,9 +190,10 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     return(x)
 })
 
-#' @rdname trans
-#' @importFrom dplyr mutate select
 #' @export
+#' @rdname trans
+#' @importFrom rlang !!
+#' @importFrom dplyr mutate select
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == length(axes(x)), is.finite(t))
     if (all(t == 0)) return(x)
