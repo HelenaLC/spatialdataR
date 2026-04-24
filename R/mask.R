@@ -121,7 +121,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     # collect into matrix w/ dim. features x shapes
     ns <- t(do.call(cbind, ns))
     rownames(ns) <- names(is)
-    colnames(ns) <- seq(ncol(ns))
+    colnames(ns) <- seq_len(ncol(ns))
     SingleCellExperiment(list(counts=ns))
 })
 
