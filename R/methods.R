@@ -25,7 +25,7 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
 .sub_i <- \(x, i) {
     if (isTRUE(i)) return(x)
     if (is.numeric(i) || is.logical(i)) i <- rownames(x)[i]
-    if (any(is.na(i))) stop("invalid 'i'")
+    if (anyNA(i)) stop("invalid 'i'")
     for (. in setdiff(rownames(x), i)) attr(x, .) <- list()
     x
 }
