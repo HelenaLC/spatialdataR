@@ -58,7 +58,7 @@ setMethod("multiscales", "list", \(x) {
     cat(sprintf("coordTrans(%d):\n", n <- length(CTname(object))))
     g <- \(.) {
         . <- paste(unlist(.), collapse=",")
-        if (!grepl(",", .)) return(.)
+        if (!grepl(",", ., fixed = TRUE)) return(.)
         sprintf("[%s]", .)
     }
     f <- \(.) {
