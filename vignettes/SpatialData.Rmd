@@ -93,7 +93,7 @@ Currently supported methods for the `tables` layers include:
 head(colData(t))
 meta(t)
 # get values from an element's 'table'
-valTable(x, i, "channel_0_sum")
+getTable(x, i, "channel_0_sum")
 # add an artificial 'table' to an element
 i <- "blobs_points"
 # ...passing a preconstructed 'data.frame'
