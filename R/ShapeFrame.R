@@ -111,31 +111,51 @@ setMethod("geom_type", "ShapeFrame", \(x) {
 
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "missing", "ANY"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), j])
+setMethod("[", c("sdFrame", "missing", "missing"),
+    \(x, i, j, ...) x[TRUE, TRUE])
 
+#' @rdname ShapeFrame    
+#' @export
+setMethod("[", c("sdFrame", "missing", "ANY"),
+    \(x, i, j, ...) x[seq_len(nrow(x)), j])
+    
 #' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "ANY", "missing"),
+setMethod("[", c("sdFrame", "ANY", "missing"),
     \(x, i, j, ...) x[i, seq_len(ncol(x))])
 
-#' @rdname ShapeFrame
 #' @export
-setMethod("[", c("ShapeFrame", "missing", "missing"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
+#' @rdname ShapeFrame
+setMethod("[", c("sdFrame", "logical", "ANY"), \(x, i, j, ...) {
+    if (isTRUE(i)) return(x[, j])
+    if (isFALSE(i)) return(x[0, j])
+    stopifnot(length(i) != nrow(x))
+    x[seq_len(nrow(x))[i], j]
+})
+    
+#' @export
+#' @rdname ShapeFrame
+setMethod("[", c("sdFrame", "ANY", "logical"), \(x, i, j, ...) {
+    if (isTRUE(j)) return(x[i, ])
+    if (isFALSE(j)) return(x[i, 0])
+    stopifnot(length(j) != ncol(x))
+    x[i, seq_len(nrow(x))[j]]
+})
 
 #' @rdname ShapeFrame
-#' @importFrom dplyr mutate filter select all_of row_number
-#' @importFrom rlang .data !! :=
 #' @export
-setMethod("[", c("ShapeFrame", "numeric", "numeric"), \(x, i, j, ...) {
-    i <- seq_len(nrow(x))[i]
-    j <- seq_len(ncol(x))[j]
-    cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
+setMethod("[", c("sdFrame", "ANY", "character"), \(x, i, j, ...) {
+    stopifnot(all(j %in% names(x)))
+    x[i, match(j, names(x))]
+})
+    
+#' @rdname ShapeFrame
+#' @importFrom dplyr row_number select all_of 
+#' @export
+setMethod("[", c("sdFrame", "numeric", "numeric"), \(x, i, j, ...) {
+    if (any(i < 0)) stop("negative row-subsetting not supported")
     x@data <- x@data |> 
-        mutate(!!cn := row_number()) |>
-        filter(.data[[cn]] %in% i) |>
-        select(-all_of(cn)) |> 
+        filter(row_number() %in% i) |>
         select(all_of(j))
     return(x)
 })

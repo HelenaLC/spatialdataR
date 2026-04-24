@@ -163,6 +163,7 @@ test_that("$", {
 
 test_that("[,Shape/PointFrame", {
     y <- shape(x)
+    expect_error(y[-1,])
     # one index subsets in vector-like fashion
     expect_equal(dim(y[1]), c(1, ncol(y)))
     # two indices subset in array-like fashion
@@ -170,9 +171,9 @@ test_that("[,Shape/PointFrame", {
     expect_equal(ncol(y[,1]), 1) # no i
     expect_equal(dim(y[1,1]), c(1,1)) # both
     expect_identical(dim(y[,]), dim(y)) # none
-    expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
 
     y <- point(x)
+    expect_error(y[-1,])
     # one index subsets in vector-like fashion
     expect_equal(dim(y[1]), c(1, ncol(y)))
     # two indices subset in array-like fashion
@@ -180,7 +181,6 @@ test_that("[,Shape/PointFrame", {
     expect_equal(ncol(y[,1]), 2) # no i (preserve geometry)
     expect_equal(dim(y[1,1]), c(1,2)) # both
     expect_identical(dim(y[,]), dim(y)) # none
-    expect_equal(nrow(y[-1,]), nrow(y)-1) # neg
 })
 
 test_that("[,LabelArray", {
