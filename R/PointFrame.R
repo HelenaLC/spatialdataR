@@ -86,66 +86,6 @@ setMethod("[[", "PointFrame", \(x, i, ...) {
 #' @exportMethod $
 setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
 
-# sub ----
-
-#' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "missing", "ANY"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), j])
-
-#' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "ANY", "missing"),
-    \(x, i, j, ...) x[i, seq_len(ncol(x))])
-
-#' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "missing", "missing"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), seq_len(ncol(x))])
-
-#' @rdname PointFrame
-#' @export
-setMethod("[", c("PointFrame", "ANY", "character"), \(x, i, j, ...) {
-    stopifnot(all(j %in% names(x)))
-    x[i, match(j, names(x))]
-})
-
-#' @export
-#' @rdname PointFrame
-setMethod("[", c("PointFrame", "logical", "ANY"), \(x, i, j, ...) {
-    if (isTRUE(i)) return(x[, j])
-    if (isFALSE(i)) return(x[0, j])
-    stopifnot(length(i) != length(x))
-    x[seq_len(nrow(x))[i], j]
-})
-
-#' @rdname PointFrame
-#' @importFrom dplyr mutate filter select all_of
-#' @export
-setMethod("[", c("PointFrame", "numeric", "numeric"), \(x, i, j, ...) {
-    i <- seq_len(nrow(x))[i]
-    j <- seq_len(ncol(x))[j]
-    cn <- make.unique(c(names(x), "rn"))[ncol(x) + 1]
-    x@data <- x@data |> 
-        mutate(!!cn := row_number()) |>
-        filter(.data[[cn]] %in% i) |>
-        select(-all_of(cn)) |> 
-        select(all_of(j))
-    # # TODO: this worked having assumed indices are unique;
-    # # they may not be, so subsetting on a query doesn't work
-    # .i <- `__null_dask_index__` <- NULL # R CMD check
-    # i <- seq_len(nrow(x))[i]
-    # x@data <- data(x) |>
-    #     mutate(.i=1+`__null_dask_index__`) |>
-    #     filter(.i %in% i) |>
-    #     select(-.i)
-    # # make sure this is kept in any case
-    # ndi <- "__null_dask_index__"
-    # ndi <- match(ndi, colnames(x@data), nomatch=0)
-    # x@data <- x@data |> select(all_of(c(j, ndi)))
-    return(x)
-})
-
 #' @rdname PointFrame
 #' @importFrom BiocGenerics as.data.frame
 #' @export
