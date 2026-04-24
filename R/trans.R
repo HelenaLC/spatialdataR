@@ -167,8 +167,8 @@ setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
     if (all(t == 1)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
-        mutate(x=x*t[1]) |>
-        mutate(y=y*t[2])
+        mutate(x=x*!!t[1]) |>
+        mutate(y=y*!!t[2])
     return(x)
 })
 
@@ -181,8 +181,8 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     y <- a <- b <- c <- d <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
-        mutate(a=x*R[1,1], b=y*R[1,2]) |>
-        mutate(c=x*R[2,1], d=y*R[2,2]) |>
+        mutate(a=x*!!R[1,1], b=y*!!R[1,2]) |>
+        mutate(c=x*!!R[2,1], d=y*!!R[2,2]) |>
         mutate(x=a+b, y=c+d) |>
         select(-c(a,b, c,d))
     return(x)
@@ -196,8 +196,8 @@ setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
     if (all(t == 0)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
-        mutate(x=x+t[1]) |>
-        mutate(y=y+t[2])
+        mutate(x=x+!!t[1]) |>
+        mutate(y=y+!!t[2])
     return(x)
 })
 

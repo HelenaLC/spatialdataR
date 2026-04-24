@@ -132,17 +132,14 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, j, assay=1, drop=TRUE) .i
 setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
-    i <- hasTable(x, i, name=TRUE)
-    t <- SpatialData::table(x, i)
+    nm <- hasTable(x, i, name=TRUE) 
+    t <- SpatialData::table(x, nm)
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- region_key(t)
         ik <- instance_key(t)
         cd <- int_colData(t)
-        # TODO: check the replacement below, search colData as well?
-        # t <- t[, int_colData(t)[[rk]] == i]
-        int <- rk %in% names(cd)
-        cd <- if (int) cd[[rk]] else t[[rk]]
+        cd <- if (rk %in% names(cd)) cd[[rk]] else t[[rk]]
         t <- t[, cd == i]
     }
     if (missing(j)) return(t)

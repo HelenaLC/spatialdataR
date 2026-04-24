@@ -122,7 +122,6 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
                        x=res$n,
                        dimnames=list(levels(res$genes),
                                      seq_len(length(unique(res$id_x)))))
-
     SingleCellExperiment(list(counts=ns))
 })
 
@@ -146,7 +145,7 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     ns <- tabulate(is, ni <- nlevels(is))
     # aggregation
     mx <- assay(table, assay)
-    if (grepl("detected$", how)) mx <- mx > 0
+    if (endsWith(how, "detected")) mx <- mx > 0
     my <- sparseMatrix(
         x=rep(1, length(is)),
         i=seq_along(is), j=is,

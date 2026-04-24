@@ -173,7 +173,7 @@ CTplot <- \(g, cex=0.5, fac=2, max=10) {
 }
 
 .fixup <- \(x, fac) {
-    xs <- strsplit(x, "")
+    xs <- strsplit(x, "", fixed = TRUE)
     nc <- floor(nchar(x)/fac)
     vapply(seq_along(xs), \(i) {
         j <- seq_len(nc[i])
