@@ -104,10 +104,10 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     fun <- switch(geom_type(j),
         POINT=\(i, j) rowSums(st_distance(j, i) <= j$radius),
-        \(i, j) vapply(st_intersects(j, i), length, integer(1)))
+        \(i, j) lengths(st_intersects(j, i)))
     # realize one feature at i time
     n <- nrow(j <- st_as_sf(data(j)))
-    is <- split(seq_len(length(i)), i[[feature_key(i)]])
+    is <- split(seq_along(i), i[[feature_key(i)]])
     ns <- lapply(is, \(.) {
         # make points 'sf'-compliant
         i <- as.data.frame(i[., c("x", "y")])
@@ -121,7 +121,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     # collect into matrix w/ dim. features x shapes
     ns <- t(do.call(cbind, ns))
     rownames(ns) <- names(is)
-    colnames(ns) <- seq(ncol(ns))
+    colnames(ns) <- seq_len(ncol(ns))
     SingleCellExperiment(list(counts=ns))
 })
 
@@ -144,7 +144,7 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     ns <- tabulate(is, ni <- nlevels(is))
     # aggregation
     mx <- assay(table, assay)
-    if (grepl("detected$", how)) mx <- mx > 0
+    if (endsWith(how, "detected")) mx <- mx > 0
     my <- sparseMatrix(
         x=rep(1, length(is)), 
         i=seq_along(is), j=is, 

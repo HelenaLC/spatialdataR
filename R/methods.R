@@ -25,7 +25,7 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
 .sub_i <- \(x, i) {
     if (isTRUE(i)) return(x)
     if (is.numeric(i) || is.logical(i)) i <- rownames(x)[i]
-    if (any(is.na(i))) stop("invalid 'i'")
+    if (anyNA(i)) stop("invalid 'i'")
     for (. in setdiff(rownames(x), i)) attr(x, .) <- list()
     x
 }
@@ -33,7 +33,7 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     if (isTRUE(j)) return(x)
     # count number of elements in each layer,
     # and number of layers with any elements
-    nl <- sum((ne <- vapply(colnames(x), length, numeric(1))) > 0)
+    nl <- sum((ne <- lengths(colnames(x))) > 0)
     if (!is.list(j)) {
         if (nl == 1) j <- list(j)
         if (length(j) == 1) j <- as.list(rep(j, nl))

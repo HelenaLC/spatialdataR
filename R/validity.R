@@ -17,7 +17,7 @@
             ok <- all(vapply(md, is.character, logical(1)))
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table's ", .nm, " is not of type character"))
-            ok <- all(vapply(intersect(md, nm[-1]), length, integer(1)) == 1)
+            ok <- all(lengths(intersect(md, nm[-1])) == 1)
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table's 'region/instance_key' is not length 1"))
             ok <- !is.null(int_colData(se)[[md$region_key]])
