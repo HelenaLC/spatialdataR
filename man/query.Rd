@@ -3,21 +3,15 @@
 \name{query}
 \alias{query}
 \alias{query,SpatialData-method}
-\alias{query,ImageArray-method}
-\alias{query,LabelArray-method}
-\alias{query,ShapeFrame-method}
-\alias{query,PointFrame-method}
+\alias{query,sdArray-method}
+\alias{query,sdFrame-method}
 \title{spatial queries}
 \usage{
 \S4method{query}{SpatialData}(x, ..., i)
 
-\S4method{query}{ImageArray}(x, y)
+\S4method{query}{sdArray}(x, y)
 
-\S4method{query}{LabelArray}(x, y)
-
-\S4method{query}{ShapeFrame}(x, y)
-
-\S4method{query}{PointFrame}(x, y)
+\S4method{query}{sdFrame}(x, y)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}

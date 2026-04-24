@@ -45,9 +45,8 @@ setClassUnion(
     contains=c("Annotated"),
     slots=list(data="arrow_OR_df", meta="Zattrs"))
 
-setClassUnion(
-  "sdArray",
-  c("ImageArray", "LabelArray"))
+setClassUnion("sdArray", c("ImageArray", "LabelArray"))
+setClassUnion("sdFrame", c("PointFrame", "ShapeFrame"))
 
 setClassUnion(
     "SpatialDataElement",
