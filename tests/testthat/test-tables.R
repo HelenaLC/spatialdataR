@@ -13,7 +13,7 @@ i <- md[[rk <- md$region_key]]
 
 test_that("hasTable()", {
     # TRUE
-    i <- region(table(x))
+    i <- region(SpatialData::table(x))
     expect_true(hasTable(x, i))
     # FALSE
     j <- setdiff(unlist(colnames(x)), c(i, tableNames(x)))
@@ -57,11 +57,11 @@ test_that("getTable()", {
 
 test_that("setTable(),labels", {
     # invalid 'i'
-    expect_error(setTable(x, 123)) 
+    expect_error(setTable(x, 123))
     expect_error(setTable(x, "."))
     expect_error(setTable(x, character(2)))
     # 'name' that already exists fails
-    expect_error(setTable(x, i, name=tableNames(x))) 
+    expect_error(setTable(x, i, name=tableNames(x)))
     # valid w/o dots
     y <- setTable(x, i)
     expect_length(tables(y), 2)
@@ -110,26 +110,26 @@ test_that("setTable(),points/shapes", {
 test_that("valTable()", {
     n <- ncol(t <- getTable(x, i))
     # invalid
-    expect_error(valTable(x, i, "."))
-    expect_error(valTable(x, i, 123))
-    expect_error(valTable(x, i, sample(rownames(t), 2)))
-    expect_error(valTable(x, i, sample(names(colData(t)), 2)))
+    expect_error(getTable(x, i, "."))
+    expect_error(getTable(x, i, 123))
+    expect_error(getTable(x, i, sample(rownames(t), 2)))
+    expect_error(getTable(x, i, sample(names(colData(t)), 2)))
     # 'colData'
     cd <- DataFrame(a=sample(letters, n), b=runif(n))
     s <- t; colData(s) <- cd
     y <- x; SpatialData::table(y) <- s
-    expect_identical(valTable(y, i, j <- "a"), s[[j]])
-    expect_identical(valTable(y, i, j <- "b"), s[[j]])
-    expect_error(valTable(y, i, "c"))
+    expect_identical(getTable(y, i, j <- "a"), s[[j]])
+    expect_identical(getTable(y, i, j <- "b"), s[[j]])
+    expect_error(getTable(y, i, "c"))
     # 'assay' data
     j <- sample(rownames(t), 1)
-    v <- valTable(x, i, j)
+    v <- getTable(x, i, j)
     expect_identical(v, assay(t)[j, ])
     # 'assay' argument
     assay(t, ".") <- 1+assay(t); SpatialData::table(x) <- t
-    v <- valTable(x, i, j, assay=".")
+    v <- getTable(x, i, j, assay=".")
     expect_identical(v, assay(t, ".")[j, ])
-    expect_error(valTable(x, i, rownames(t)[1], assay=".."))
+    expect_error(getTable(x, i, rownames(t)[1], assay=".."))
 })
 
 options(arrow.pull_as_vector=oo) # reset

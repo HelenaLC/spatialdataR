@@ -3,7 +3,7 @@
     contains="list")
 
 #' @importFrom methods setClassUnion
-#' @importClassesFrom S4Arrays Array 
+#' @importClassesFrom S4Arrays Array
 setClassUnion(
     "array_OR_df",
     c("Array", "array", "data.frame"))
@@ -22,15 +22,17 @@ setClassUnion(
 # this somehow does the trick...
 setClass("FileSystemDataset", "VIRTUAL")
 setClass("arrow_dplyr_query", "VIRTUAL")
+setClass("tbl_duckdb_connection", "VIRTUAL")
+setClass("duckspatial_df", "VIRTUAL")
 setClass("Table", "VIRTUAL")
 
 # TODO: this isn't great... arrow::open_dataset gives a FileSystemDataset,
-# read_parquet gives a Table, dplyr calls give a query, but also wanna 
+# read_parquet gives a Table, dplyr calls give a query, but also wanna
 # be able to store a normal data.frame, maybe?
 #' @importFrom methods setClassUnion
 setClassUnion(
     "arrow_OR_df",
-    c("FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
+    c("tbl_duckdb_connection", "duckspatial_df", "FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
 
 .PointFrame <- setClass(
     Class="PointFrame",
@@ -43,9 +45,8 @@ setClassUnion(
     contains=c("Annotated"),
     slots=list(data="arrow_OR_df", meta="Zattrs"))
 
-setClassUnion(
-  "sdArray",
-  c("ImageArray", "LabelArray"))
+setClassUnion("sdArray", c("ImageArray", "LabelArray"))
+setClassUnion("sdFrame", c("PointFrame", "ShapeFrame"))
 
 setClassUnion(
     "SpatialDataElement",

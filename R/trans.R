@@ -1,7 +1,7 @@
 #' @name trans
 #' @rdname trans
 #' @title Transformations
-#' @aliases scale rotate translation flip flop mirror
+#' @aliases transform scale rotate translation flip flop mirror sequence
 #' 
 #' @param x \code{SpatialData} element.
 #' @param t transformation data; exceptions: for \code{mirror}, controls
@@ -45,6 +45,37 @@
 #' shape(y, "left") <- translation(shape(y), c(-5, 0))
 #' y["shapes", c("rot", "wide", "left")]
 NULL
+
+#' @export
+#' @rdname trans
+setMethod("transform", c("SpatialDataElement", "missing"), \(x, i) transform(x, 1))
+
+#' @export
+#' @rdname trans
+setMethod("transform", c("SpatialDataElement", "numeric"), \(x, i) transform(x, CTname(x)[i]))
+
+#' @export
+#' @rdname trans
+setMethod("transform", c("SpatialDataElement", "character"), \(x, i) {
+    t <- CTdata(x, i)
+    f <- CTtype(x)[match(i, CTname(x))]
+    if (f == "sequence") {
+        t <- lapply(t, unlist)
+    } else t <- unlist(t)
+    if (f == "identity") return(x)
+    get(f)(x, t)
+})
+
+#' @export
+#' @rdname trans
+setMethod("sequence", c("SpatialDataElement", "list"), \(x, t, ...) {
+    for (. in seq_along(t)) {
+        f <- names(t)[.]
+        if (is.null(t[[.]])) next
+        x <- get(f)(x, t[[.]])
+    }
+    return(x)
+})
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
 .R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
@@ -130,19 +161,21 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
 
 #' @export
 #' @rdname trans
+#' @importFrom rlang !!
 #' @importFrom dplyr mutate
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
+    stopifnot(is.numeric(t), length(t) == length(axes(x)), t > 0, is.finite(t))
     if (all(t == 1)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
-        mutate(x=x*t[1]) |>
-        mutate(y=y*t[2])
+        mutate(x=x*!!t[1]) |>
+        mutate(y=y*!!t[2])
     return(x)
 })
 
 #' @export
 #' @rdname trans
+#' @importFrom rlang !!
 #' @importFrom dplyr mutate select
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
@@ -150,23 +183,24 @@ setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     y <- a <- b <- c <- d <- NULL # R CMD check
     R <- .R(t*pi/180)
     x@data <- x@data |>
-        mutate(a=x*R[1,1], b=y*R[1,2]) |>
-        mutate(c=x*R[2,1], d=y*R[2,2]) |>
+        mutate(a=x*!!R[1,1], b=y*!!R[1,2]) |>
+        mutate(c=x*!!R[2,1], d=y*!!R[2,2]) |>
         mutate(x=a+b, y=c+d) |>
         select(-c(a,b, c,d))
     return(x)
 })
 
-#' @rdname trans
-#' @importFrom dplyr mutate select
 #' @export
+#' @rdname trans
+#' @importFrom rlang !!
+#' @importFrom dplyr mutate select
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
+    stopifnot(is.numeric(t), length(t) == length(axes(x)), is.finite(t))
     if (all(t == 0)) return(x)
     y <- NULL # R CMD check
     x@data <- x@data |>
-        mutate(x=x+t[1]) |>
-        mutate(y=y+t[2])
+        mutate(x=x+!!t[1]) |>
+        mutate(y=y+!!t[2])
     return(x)
 })
 
@@ -189,7 +223,7 @@ setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
 #' @export
 setMethod("scale", c("ShapeFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
-    .trans_s(x, \(xy) sweep(xy, 2, t, `*`))
+    .trans_s(x, \(.) .*unlist(t))
 })
 
 #' @rdname trans
@@ -205,5 +239,5 @@ setMethod("rotate", c("ShapeFrame", "numeric"), \(x, t, ...) {
 #' @export
 setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
-    .trans_s(x, \(xy) sweep(xy, 2, t, `+`))
+    .trans_s(x, \(.) .+unlist(t))
 })

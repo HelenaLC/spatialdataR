@@ -1,12 +1,12 @@
 #' @name misc
 #' @title Miscellaneous `SpatialData` methods
 #' @aliases show,SpatialData-method
-#' 
-#' @description 
+#'
+#' @description
 #' Miscellaneous methods (e.g., \code{show}) for the
 #' \code{\link{SpatialData}} class and its elements.
-#' 
-#' @param object 
+#'
+#' @param object
 #'   \code{\link{SpatialData}} object or one of its elements,
 #'   i.e., an \code{Image/LabelArray} or \code{Point/ShapeFrame}.
 #'
@@ -18,13 +18,13 @@
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
 #' (sd <- readSpatialData(zs, anndataR=TRUE))
-#' 
+#'
 #' # show element
 #' image(sd)
 #' label(sd)
 #' point(sd)
 #' shape(sd)
-#' 
+#'
 #' # show .zattrs
 #' meta(label(sd))
 #' meta(image(sd, 2))
@@ -65,7 +65,10 @@ NULL
     d <- lapply(tables(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
-    cat(sprintf("  - %s (%s)\n", t, d), sep="")
+    for (. in seq_along(t)) {
+        r <- paste(region(SpatialData::table(object, t[.])), collapse=",")
+        cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+    }
     # spaces
     e <- c(i, l, s, p)
     g <- CTgraph(object)
@@ -73,8 +76,8 @@ NULL
     n <- sum(i <- (t == "space"))
     cat(sprintf("coordinate systems(%s):\n", n))
     for (c in nodes(g)[i]) {
-        pa <- suppressWarnings(sp.between(g, e, c))
-        ss <- strsplit(names(pa), ":")
+        pa <- suppressWarnings(sp.between(g, paste0("_", e), c))
+        ss <- strsplit(gsub("^_", "", names(pa)), ":")
         ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
             paste0("- ", c, "(%d): %s"),
