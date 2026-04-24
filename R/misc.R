@@ -44,33 +44,28 @@ NULL
     d <- lapply(images(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- images(%s):\n", length(i)))
-    for (. in seq_along(i)) 
-        cat(sprintf("  - %s (%s)\n", i[.], d[.]))
+    cat(sprintf("  - %s (%s)\n", i, d), sep="")
     # labels
     d <- lapply(labels(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- labels(%s):\n", length(l)))
-    for (. in seq_along(l)) 
-        cat(sprintf("  - %s (%s)\n", l[.], d[.]))
+    cat(sprintf("  - %s (%s)\n", l, d), sep="")
     # points
-    d <- lapply(points(object), length)
+    d <- lengths(points(object))
     cat(sprintf("- points(%s):\n", length(p)))
-    for (. in seq_along(p)) 
-        cat(sprintf("  - %s (%s)\n", p[.], d[.]))
+    cat(sprintf("  - %s (%s)\n", p, d), sep="")
     # shapes
     nc <- vapply(shapes(object), ncol, numeric(1))
     geom <- ifelse(nc == 1, "polygon", "circle")
     d <- vapply(shapes(object), nrow, numeric(1))
     d <- paste(d, unname(geom), sep=",")
     cat(sprintf("- shapes(%s):\n", length(s)))
-    for (. in seq_along(s)) 
-        cat(sprintf("  - %s (%s)\n", s[.], d[.]))
+    cat(sprintf("  - %s (%s)\n", s, d), sep="")
     # tables
     d <- lapply(tables(object), dim)
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
-    for (. in seq_along(t)) 
-        cat(sprintf("  - %s (%s)\n", t[.], d[.]))
+    cat(sprintf("  - %s (%s)\n", t, d), sep="")
     # spaces
     e <- c(i, l, s, p)
     g <- CTgraph(object)
@@ -94,8 +89,8 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showsdArray <- function(object) {
     n.object <- length(object@data)
     cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    scales <- vapply(object@data, \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), character(1))
-    coolcat("Scales (%d): %s", scales)
+    scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
+    coolcat("Scales (%d): (%s)", scales)
 }
 
 #' @rdname misc
