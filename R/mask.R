@@ -107,7 +107,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
         \(i, j) lengths(st_intersects(j, i)))
     # realize one feature at i time
     n <- nrow(j <- st_as_sf(data(j)))
-    is <- split(seq_len(length(i)), i[[feature_key(i)]])
+    is <- split(seq_along(i), i[[feature_key(i)]])
     ns <- lapply(is, \(.) {
         # make points 'sf'-compliant
         i <- as.data.frame(i[., c("x", "y")])
