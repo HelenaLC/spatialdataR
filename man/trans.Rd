@@ -20,12 +20,9 @@
 \alias{scale,sdArray,numeric-method}
 \alias{rotate,sdArray,numeric-method}
 \alias{translation,sdArray,numeric-method}
-\alias{scale,PointFrame,numeric-method}
-\alias{rotate,PointFrame,numeric-method}
-\alias{translation,PointFrame,numeric-method}
-\alias{scale,ShapeFrame,numeric-method}
-\alias{rotate,ShapeFrame,numeric-method}
-\alias{translation,ShapeFrame,numeric-method}
+\alias{scale,sdFrame,numeric-method}
+\alias{rotate,sdFrame,numeric-method}
+\alias{translation,sdFrame,numeric-method}
 \title{Transformations}
 \usage{
 \S4method{transform}{SpatialDataElement,missing}(x, i)
@@ -48,17 +45,11 @@
 
 \S4method{translation}{sdArray,numeric}(x, t, k = 1, ...)
 
-\S4method{scale}{PointFrame,numeric}(x, t, ...)
+\S4method{scale}{sdFrame,numeric}(x, t, ...)
 
-\S4method{rotate}{PointFrame,numeric}(x, t, ...)
+\S4method{rotate}{sdFrame,numeric}(x, t, ...)
 
-\S4method{translation}{PointFrame,numeric}(x, t, ...)
-
-\S4method{scale}{ShapeFrame,numeric}(x, t, ...)
-
-\S4method{rotate}{ShapeFrame,numeric}(x, t, ...)
-
-\S4method{translation}{ShapeFrame,numeric}(x, t, ...)
+\S4method{translation}{sdFrame,numeric}(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
