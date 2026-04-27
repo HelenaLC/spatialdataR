@@ -78,7 +78,7 @@ setMethod("sequence", c("SpatialDataElement", "list"), \(x, t, ...) {
 })
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
-.R <- \(t) matrix(c(cos(t), sin(t), -sin(t), cos(t)), 2, 2)
+.R <- \(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
 
 # array ----
 
@@ -133,7 +133,7 @@ setMethod("rotate", c("sdArray", "numeric"), \(x, t, k=1,...) {
     if (t %% 360 == 0) return(x)
     f <- \(.) EBImage::rotate(., -t) 
     if (length(d <- dim(data(x, k))) == 3) d <- d[-1]
-    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(-t*pi/180)))
+    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(t*pi/180)))
     .trans_a(x, f, k)
 })
 
@@ -157,79 +157,48 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
     x
 })
 
-# point ----
+# point/shape ----
 
-#' @export
-#' @rdname trans
-#' @importFrom rlang !!
 #' @importFrom dplyr mutate
-setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == length(axes(x)), t > 0, is.finite(t))
-    if (all(t == 1)) return(x)
-    ST_Scale <- NULL # R CMD check
-    x@data <- x@data |> mutate(geometry=ST_Scale(geometry, !!t[1], !!t[2]))
-    return(x)
-})
-
-#' @export
-#' @rdname trans
-#' @importFrom rlang !!
-#' @importFrom dplyr mutate
-setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
-    if (t %% 360 == 0) return(x)
-    ST_Rotate <- NULL # R CMD check
-    r <- t*pi/180 # degree to radians
-    x@data <- x@data |> mutate(geometry=ST_Rotate(geometry, !!r))
-    return(x)
-})
-
-#' @export
-#' @rdname trans
-#' @importFrom rlang !!
-#' @importFrom dplyr mutate
-setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == length(axes(x)), is.finite(t))
-    if (all(t == 0)) return(x)
-    ST_Translate <- NULL # R CMD check
-    x@data <- x@data |> mutate(geometry=ST_Translate(geometry, !!t[1], !!t[2]))
-    return(x)
-})
-
-# shape ----
-
-# TODO: do this w/o realizing
-#' @importFrom sf st_as_sf st_geometry st_geometry<-
-.trans_s <- \(x, f) {
-    y <- st_as_sf(data(x))
-    xy <- st_coordinates(y)
-    xy <- data.frame(f(xy))
-    xy <- st_as_sf(xy, coords=names(xy))
-    st_geometry(y) <- st_geometry(xy)
-    x@data <- y
+#' @importFrom rlang call2 !!
+.trans_f <- \(x, t, f=c("scale", "rotate", "translation")) {
+    f <- match.arg(f)
+    n <- length(axes(x))
+    ST_Scale <- ST_Rotate <- ST_Translate <- NULL # R CMD check
+    
+    # setup: length, identity, function
+    map <- list(
+        len=c(scale=n, translation=n, rotate=1),
+        ids=c(scale=1, translation=0, rotate=0),
+        fns=c(scale="ST_Scale", translation="ST_Translate", rotate="ST_Rotate"))
+    
+    # validation
+    stopifnot(
+        is.numeric(t), is.finite(t), 
+        f != "scale" || all(t > 0),
+        length(t) == map$len[f]) 
+    
+    # skip identity
+    id <- switch(f, 
+        rotate=(t %% 360 == 0), 
+        all(t == map$ids[f]))
+    if (id) return(x)
+    
+    # dynamic injection 'ST_*(geo, v1, v2, ...)'
+    v <- switch(f, rotate=t*pi/180, t) # radians
+    x@data <- mutate(x@data, geometry=!!call2(map$fns[f], quote(geometry), !!!v))
     return(x)
 }
 
-#' @rdname trans
-#' @importFrom sf st_as_sf st_coordinates
 #' @export
-setMethod("scale", c("ShapeFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, t > 0, is.finite(t))
-    .trans_s(x, \(.) .*unlist(t))
-})
+#' @rdname trans
+setMethod("scale", c("sdFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "scale"))
 
-#' @rdname trans
-#' @importFrom sf st_as_sf st_coordinates
 #' @export
-setMethod("rotate", c("ShapeFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
-    .trans_s(x, \(xy) xy %*% .R(t*pi/180))
-})
+#' @rdname trans
+setMethod("rotate", 
+    c("sdFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "rotate"))
 
-#' @rdname trans
-#' @importFrom sf st_as_sf st_coordinates
 #' @export
-setMethod("translation", c("ShapeFrame", "numeric"), \(x, t, ...) {
-    stopifnot(is.numeric(t), length(t) == 2, is.finite(t))
-    .trans_s(x, \(.) .+unlist(t))
-})
+#' @rdname trans
+setMethod("translation", c("sdFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "translation"))
