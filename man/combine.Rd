@@ -2,7 +2,8 @@
 % Please edit documentation in R/combine.R
 \name{combine}
 \alias{combine}
-\title{Combine two \code{SpatialData} objects}
+\alias{combine,SpatialData,SpatialData-method}
+\title{Combine \code{SpatialData} objects}
 \usage{
 \S4method{combine}{SpatialData,SpatialData}(x, y, ...)
 }
@@ -16,7 +17,7 @@ A \code{SpatialData} objects containing all elements
 from \code{x} and \code{y} with names made unique.
 }
 \description{
-Combine two \code{SpatialData} objects
+Combine \code{SpatialData} objects
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
@@ -27,5 +28,4 @@ y <- combine(x, x)
 imageNames(y)
 region(table(y, 1))
 region(table(y, 2))
-
 }

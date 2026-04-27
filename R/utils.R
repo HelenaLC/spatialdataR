@@ -23,8 +23,8 @@
 #'
 #' head(centroids(point(x)))
 #' xy <- centroids(point(x), "list")
-#' plot(xy$gene_a[, -3], col=a <- "red")
-#' points(xy$gene_b[, -3], col=b <- "blue")
+#' plot(xy$gene_a, col=a <- "red")
+#' points(xy$gene_b, col=b <- "blue")
 #' legend("topright", legend=names(xy), col=c(a, b), pch=21)
 #'
 #' # object-wide
@@ -85,15 +85,20 @@ setMethod("centroids", "ShapeFrame", \(x,
 
 #' @export
 #' @rdname utils
-#' @importFrom dplyr all_of select
+#' @importFrom dplyr pull
+#' @importFrom sf st_as_sf st_coordinates
 setMethod("centroids", "PointFrame", \(x,
     as=c("data.frame", "list")) {
     as <- match.arg(as)
-    i <- feature_key(x)
-    xy <- data(x) |> select(all_of(c("x", "y", i)))
-    xy <- as.data.frame(xy)
+    xy <- data(x) |>
+        st_as_sf() |> 
+        st_coordinates()
+    xy <- data.frame(xy)
+    names(xy) <- axes(x)
+    fk <- feature_key(x)
+    xy[[fk]] <- pull(x, fk)
     if (as == "data.frame") return(xy)
-    lapply(split(xy, xy[[i]]), `[`, -3)
+    lapply(split(xy, xy[[fk]]), `[`, -3)
 })
 
 # extent ----

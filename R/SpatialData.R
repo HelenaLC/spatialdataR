@@ -2,14 +2,14 @@
 #' @title The `SpatialData` class
 #' 
 #' @aliases data meta layer element
-#' image images image<- images<- imageNames 
-#' label labels label<- labels<- labelNames 
-#' point points point<- points<- pointNames 
-#' image images image<- images<- imageNames 
-#' shape shapes shape<- shapes<- shapeNames 
-#' table tables table<- tables<- tableNames 
-#' [[<-,SpatialData,character,ANY-method
 #' [[<-,SpatialData,numeric,ANY-method
+#' [[<-,SpatialData,character,ANY-method
+#' image images image<- images<- imageNames imageNames<- 
+#' label labels label<- labels<- labelNames labelNames<-
+#' point points point<- points<- pointNames pointNames<-
+#' image images image<- images<- imageNames imageNames<-
+#' shape shapes shape<- shapes<- shapeNames shapeNames<-
+#' table tables table<- tables<- tableNames tableNames<-
 #' 
 #' @description ...
 #' 

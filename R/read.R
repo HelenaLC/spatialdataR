@@ -112,13 +112,14 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    dat <- ddbs_open_dataset(pq) |>
-        mutate(geometry=dplyr::sql(paste0("ST_Point(", 
-            md$axes[[1]], ", ", md$axes[[2]], ")"))) |>
-        as_duckspatial_df(crs = NA_character_)
-    PointFrame(data=dat, meta=Zattrs(md))
+    md <- read_zarr_attributes(x)
+    ax <- unlist(md$axes)
+    df <- ddbs_open_dataset(pq) |>
+        mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
+        as_duckspatial_df(crs=NA_character_) |>
+        select(-all_of(ax))
+    PointFrame(data=df, meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData

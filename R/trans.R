@@ -166,41 +166,33 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, k=1, ...) {
 setMethod("scale", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == length(axes(x)), t > 0, is.finite(t))
     if (all(t == 1)) return(x)
-    y <- NULL # R CMD check
-    x@data <- x@data |>
-        mutate(x=x*!!t[1]) |>
-        mutate(y=y*!!t[2])
+    ST_Scale <- NULL # R CMD check
+    x@data <- x@data |> mutate(geometry=ST_Scale(geometry, !!t[1], !!t[2]))
     return(x)
 })
 
 #' @export
 #' @rdname trans
 #' @importFrom rlang !!
-#' @importFrom dplyr mutate select
+#' @importFrom dplyr mutate
 setMethod("rotate", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
-    y <- a <- b <- c <- d <- NULL # R CMD check
-    R <- .R(t*pi/180)
-    x@data <- x@data |>
-        mutate(a=x*!!R[1,1], b=y*!!R[1,2]) |>
-        mutate(c=x*!!R[2,1], d=y*!!R[2,2]) |>
-        mutate(x=a+b, y=c+d) |>
-        select(-c(a,b, c,d))
+    ST_Rotate <- NULL # R CMD check
+    r <- t*pi/180 # degree to radians
+    x@data <- x@data |> mutate(geometry=ST_Rotate(geometry, !!r))
     return(x)
 })
 
 #' @export
 #' @rdname trans
 #' @importFrom rlang !!
-#' @importFrom dplyr mutate select
+#' @importFrom dplyr mutate
 setMethod("translation", c("PointFrame", "numeric"), \(x, t, ...) {
     stopifnot(is.numeric(t), length(t) == length(axes(x)), is.finite(t))
     if (all(t == 0)) return(x)
-    y <- NULL # R CMD check
-    x@data <- x@data |>
-        mutate(x=x+!!t[1]) |>
-        mutate(y=y+!!t[2])
+    ST_Translate <- NULL # R CMD check
+    x@data <- x@data |> mutate(geometry=ST_Translate(geometry, !!t[1], !!t[2]))
     return(x)
 })
 
