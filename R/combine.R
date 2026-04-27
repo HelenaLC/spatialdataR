@@ -1,5 +1,5 @@
 #' @name combine
-#' @title Combine two \code{SpatialData} objects
+#' @title Combine \code{SpatialData} objects
 #'
 #' @param x,y \code{SpatialData} objects to combine.
 #' @param ... ignored.
@@ -17,9 +17,11 @@
 #' imageNames(y)
 #' region(table(y, 1))
 #' region(table(y, 2))
-#'
-#' @importFrom BiocGenerics combine
+NULL
+
 #' @export
+#' @rdname combine
+#' @importFrom BiocGenerics combine
 setMethod("combine",
     c("SpatialData", "SpatialData"),
     \(x, y, ...) {

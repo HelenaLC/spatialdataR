@@ -100,17 +100,17 @@ test_that("query-box,PointFrame", {
     q <- query(p, list(xmin=0, xmax=1e-3, ymin=0, ymax=1e-3))
     expect_equal(nrow(collect(data(q))), 0)
     # proper query
+    xy <- centroids(p)
     bb <- lapply(c("x", "y"), \(.) {
-        v <- collect(data(p))[[.]]
-        d <- c((d <- diff(range(v)))/4, d/2)
+        d <- c((d <- diff(range(xy[[.]])))/4, d/2)
         names(d) <- paste0(., c("min", "max"))
         as.list(d) }) |> Reduce(f=c)
     q <- do.call(query, c(list(x=p), list(bb)))
     df <- collect(data(p))
     fd <- collect(data(q))
     i <-
-        df$x >= bb$xmin & df$x <= bb$xmax &
-        df$y >= bb$ymin & df$y <= bb$ymax
+        xy$x >= bb$xmin & xy$x <= bb$xmax &
+        xy$y >= bb$ymin & xy$y <= bb$ymax
     expect_identical(df[i, ], fd)
 })
 
@@ -122,14 +122,14 @@ test_that("query-pol,PointFrame", {
     expect_identical(f(query(p, xy)), f(p))
     # sample random points &
     # query tiny polygon around them
+    df <- centroids(p)
     replicate(5, {
-        i <- sample(n, 1)
-        xy <- c(p[i]$x, p[i]$y)
-        i <- p$x == xy[1] & p$y == xy[2]
+        xy <- unlist(df[i <- sample(n, 1), -3])
+        i <- df$x == xy[1] & df$y == xy[2]
         xy <- rbind(
             xy+c(0, d <- 1e-6),
             xy+c(-d,-d), xy+c(+d,-d))
-        q <- query(p, xy)
+        q <- query(p, as.matrix(xy))
         expect_length(q, sum(i))
         expect_identical(f(q), f(p[which(i)]))
     })

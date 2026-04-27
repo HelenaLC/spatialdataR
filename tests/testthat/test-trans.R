@@ -103,13 +103,15 @@ test_that("translation,PointFrame", {
     expect_error(translation(x, character(2)))
     expect_error(translation(x, NA*numeric(2)))
     # valid
-    i <- setdiff(names(x), c("x", "y"))
+    xy <- unlist(axes(x))
+    i <- setdiff(names(x), "geometry")
     f <- \() sample(33, 1)*sample(c(-1, 1), 1)
+    g <- \(.) unname(as.matrix(centroids(.)[unlist(axes(.))]))
     replicate(5, {
         n <- f(); m <- f()
         y <- translation(x, c(n,m))
-        expect_equal(x$x+n, y$x)
-        expect_equal(x$y+m, y$y)
+        z <- sweep(g(x), 2, c(n, m), "+")
+        expect_equal(g(y), z)
         for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })
@@ -128,12 +130,14 @@ test_that("scale,PointFrame", {
     expect_error(scale(x, NA*numeric(2)))
     expect_error(scale(x, c(Inf, Inf)))
     # valid
-    i <- setdiff(names(x), c("x", "y"))
+    i <- setdiff(names(x), "geometry")
     f <- \() replicate(2, runif(1, 0.1, 2))
-    g <- \(.) cbind(.$x, .$y)
+    g <- \(.) unname(as.matrix(centroids(.)[unlist(axes(.))]))
     replicate(5, {
         y <- scale(x, t <- f())
-        expect_equal(sweep(g(x), 2, t, `*`), g(y))
+        z <- sweep(g(x), 2, t, "*")
+        expect_equal(g(y), z)
+        for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })
 
@@ -148,13 +152,13 @@ test_that("rotate,PointFrame", {
     expect_error(rotate(x, character(1)))
     expect_error(rotate(x, NA*numeric(1)))
     # valid
-    i <- setdiff(names(x), c("x", "y"))
+    i <- setdiff(names(x), "geometry")
     f <- \() sample(777, 1)*sample(c(-1, 1), 1)
-    g <- \(.) cbind(.$x, .$y)
+    g <- \(.) unname(as.matrix(centroids(.)[unlist(axes(.))]))
     replicate(5, {
         y <- rotate(x, t <- f())
         R <- .R(t*base::pi/180)
-        expect_equal(t(R %*% t(g(x))), g(y))
+        expect_equal(g(y), t(R %*% t(g(x))))
         for (. in i) expect_identical(x[[.]], y[[.]])
     })
 })

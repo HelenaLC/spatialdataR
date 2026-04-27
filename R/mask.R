@@ -103,7 +103,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 #' @importFrom rlang .data
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
-    geometry <- radius <- id_x <- id_y <- NULL # R CMD check
+    ST_Scale <- geometry <- radius <- id_x <- id_y <- NULL # R CMD check
     jdata <- switch(
         geom_type(j), 
         "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
