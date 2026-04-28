@@ -26,7 +26,7 @@ wrap_plots(ps, nrow=1) & theme(legend.position="none")
 
 ```{r fig.width=8, fig.height=3}
 bb <- list(xmin=0, xmax=800, ymin=200, ymax=500)
-(sp <- crop(sd, bb, j="point23"))
+(sp <- crop(sd, bb, j="point23")) # TODO: crop() should filter tables
 plotSpatialData() + plotImage(sp, cl=cl) # TODO: auto-drop legend?
 ```
 
