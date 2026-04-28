@@ -1,0 +1,24 @@
+execute: 
+  cache: false
+  message: false
+  warning: false
+
+project:
+  type: website
+  output-dir: docs
+  execute-dir: project
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    standalone: true
+    embed-resources: true
+
+website:
+  title: "SpatialData"
+  navbar:
+    left:
+      - code/index.qmd
+      - code/merfish.qmd
