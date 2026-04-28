@@ -90,6 +90,7 @@ setGeneric("data", \(x, ...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
+setGeneric("crop", \(x, y, ...) standardGeneric("crop"))
 setGeneric("mask", \(x, i, j, ...) standardGeneric("mask"))
 
 setGeneric("axes", \(x, ...) standardGeneric("axes"))
