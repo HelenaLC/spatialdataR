@@ -94,20 +94,21 @@ head(colData(t))
 meta(t)
 # get values from an element's 'table'
 getTable(x, i, "channel_0_sum")
-# add an artificial 'table' to an element
-i <- "blobs_points"
-# ...passing a preconstructed 'data.frame'
-id <- unique(point(x)$instance_id)
-df <- data.frame(n=runif(length(id)))
-y <- setTable(x, i, df)
-head(colData(getTable(y, i)))
-# ...using a list of data generating functions
-f <- list(
-    numbers=\(n) runif(n),
-    letters=\(n) sample(letters, n, TRUE))
-args <- c(list(x, i), f)
-y <- do.call(setTable, args)
-head(colData(getTable(y, i)))
+# TODO: utils for adding tables
+# # add an artificial 'table' to an element
+# i <- "blobs_points"
+# # ...passing a preconstructed 'data.frame'
+# id <- unique(instances(point(x)))
+# df <- data.frame(n=runif(length(id)))
+# y <- setTable(x, i, df)
+# head(colData(getTable(y, i)))
+# # ...using a list of data generating functions
+# f <- list(
+#     numbers=\(n) runif(n),
+#     letters=\(n) sample(letters, n, TRUE))
+# args <- c(list(x, i), f)
+# y <- do.call(setTable, args)
+# head(colData(getTable(y, i)))
 ```
 
 ## Transformations
