@@ -23,8 +23,10 @@ website:
   title: "SpatialData"
   navbar:
     left:
-      - demo/index.qmd
       - demo/merfish.qmd
       - demo/mibitof.qmd
+      - demo/index.qmd
+      - demo/cosmx.qmd
       - demo/xenium.qmd
       - demo/visium.qmd
+      - demo/visiumhd.qmd
