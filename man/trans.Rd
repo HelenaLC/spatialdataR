@@ -86,9 +86,9 @@ y <- x
 point(y, "rot") <- rotate(point(y), 20)
 point(y, "wide") <- scale(point(y), c(1.2, 1))
 
-xy0 <- as.data.frame(point(y))
-xy1 <- as.data.frame(point(y, "rot"))
-xy2 <- as.data.frame(point(y, "wide"))
+xy0 <- centroids(point(y))
+xy1 <- centroids(point(y, "rot"))
+xy2 <- centroids(point(y, "wide"))
 
 plot(xy0[, c(1, 2)], asp=1)
 points(xy1[, c(1, 2)], col=2)
