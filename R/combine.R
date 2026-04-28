@@ -1,29 +1,27 @@
 #' @name combine
-#' @title Combine \code{SpatialData} objects
-#'
+#' @title Combine two \code{SpatialData} objects
+#' 
 #' @param x,y \code{SpatialData} objects to combine.
 #' @param ... ignored.
-#'
+#' 
 #' @returns
-#' A \code{SpatialData} objects containing all elements
+#' A \code{SpatialData} objects containing all elements 
 #' from \code{x} and \code{y} with names made unique.
-#'
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
 #' x <- readSpatialData(x, anndataR=TRUE)
-#'
+#' 
 #' y <- combine(x, x)
 #' imageNames(y)
 #' region(table(y, 1))
 #' region(table(y, 2))
-NULL
-
-#' @export
-#' @rdname combine
+#' 
 #' @importFrom BiocGenerics combine
-setMethod("combine",
-    c("SpatialData", "SpatialData"),
+#' @export
+setMethod("combine", 
+    c("SpatialData", "SpatialData"), 
     \(x, y, ...) {
         # ensure element names are unique across objects
         old <- list(unlist(colnames(x)), unlist(colnames(y)))
@@ -37,7 +35,7 @@ setMethod("combine",
             }
             # update tables accordingly
             for (t in tableNames(z)) {
-                r <- region(se <- SpatialData::table(z, t))
+                r <- region(se <- table(z, t))
                 j <- match(r, old[[i]])
                 region(se) <- new[[i]][j]
                 table(z, t) <- se

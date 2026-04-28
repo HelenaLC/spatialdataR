@@ -38,6 +38,9 @@ NULL
 
 # centroids ----
 
+# Internal helper for null-coalescing
+`%||%` <- \(a, b) if (is.null(a)) b else a
+
 #' @export
 #' @rdname utils
 setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
