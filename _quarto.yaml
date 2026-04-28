@@ -25,7 +25,6 @@ website:
     left:
       - demo/merfish.qmd
       - demo/mibitof.qmd
-      - demo/index.qmd
       - demo/cosmx.qmd
       - demo/xenium.qmd
       - demo/visium.qmd
