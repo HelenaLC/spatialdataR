@@ -23,8 +23,7 @@ feature_key(p <- point(sd))
 data(p) |>
     distinct(cell_type) |>
     pull(cell_type)
-p <- filter(p, cell_type == "VISp_V")
-p[sample(length(p), 2e3)]
+filter(p, cell_type == "VISp_V")
 ```
 
 ```{r fig.width=10, fig.height=5}
