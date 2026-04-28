@@ -8,8 +8,8 @@ project:
   output-dir: docs
   execute-dir: project
   render: 
-    - code/index.qmd
-    - code/*.qmd
+    - demo/index.qmd
+    - demo/*.qmd
 
 format:
   html:
@@ -23,5 +23,5 @@ website:
   title: "SpatialData"
   navbar:
     left:
-      - code/index.qmd
-      - code/merfish.qmd
+      - demo/index.qmd
+      - demo/merfish.qmd
