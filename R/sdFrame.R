@@ -51,7 +51,10 @@ PointFrame <- \(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr tally pull
-setMethod("length", "sdFrame", \(x) suppressWarnings(pull(tally(data(x)), n)))
+setMethod("length", "sdFrame", \(x) { 
+    n <- NULL # R CMD check
+    suppressWarnings(pull(tally(data(x)), n))
+})
 
 #' @export
 #' @rdname sdFrame
