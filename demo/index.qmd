@@ -3,3 +3,4 @@
 - [MERFISH](merfish.qmd) Mouse brain (1 section, 268 genes x 2389 cells)
 - [MIBITOF](mibitof.qmd) Colorectal carcinoma  (3 regions, 36 proteins x 3309 cells)
 - [Xenium](xenium.qmd) Lung cancer (1 section, 313 genes x 167780 cells)
+- [Visium](visium.qmd) Mouse brain (2 sections, 31053 genes x 6384 spots)
