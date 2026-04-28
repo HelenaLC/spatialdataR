@@ -1,3 +1,4 @@
+demo/
 docs/
 ^.*\.Rproj$
 ^\.Rproj\.user$

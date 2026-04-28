@@ -195,9 +195,12 @@ setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 #' @rdname SDattrs
 setMethod("region", "SingleCellExperiment", \(x) meta(x)$region)
 
-#' @importFrom SingleCellExperiment int_metadata<-
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_colData<- int_metadata<-
 setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
-    stopifnot(length(value) > 0)
+    stopifnot(length(value) == 1)
+    int_colData(x)[[region_key(x)]] <- value
     int_metadata(x)$spatialdata_attrs$region <- value
     return(x)
 })

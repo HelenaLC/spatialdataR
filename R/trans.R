@@ -172,7 +172,7 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) .trans_a(x, t, "t
     map <- list(
         len=c(scale=n, translation=n, rotate=1),
         ids=c(scale=1, translation=0, rotate=0),
-        fns=c(scale="ST_Scale", translation="ST_Translate", rotate="ST_Rotate"))
+        fns=c(scale="ST_Scale", rotate="ST_Rotate", translation="ST_Translate"))
     
     # validation
     stopifnot(
