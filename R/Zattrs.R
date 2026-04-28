@@ -3,9 +3,18 @@
 #' 
 #' @param x list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
+#' @param type character string; either "array" (image/label) or "frame" (point/shape).
+#' @param axes list of axes; if NULL, defaults to cyx (array) or xy (frame).
+#' @param transformations list of transformations; if NULL, defaults to global identity.
+#' @param ... additional attributes (e.g., version, feature_key).
+#' 
+#' @details 
+#' When missing \code{x}, \code{Zattrs} will generate a valid object with
+#' default axes (array: cyx, frame: xy) and transformations (identify) 
+#' according to the specified type.
 #' 
 #' @return \code{Zattrs}
-#'
+#' 
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
@@ -18,18 +27,72 @@
 #' CTdata(z, "scale")
 #' 
 #' feature_key(point(x))
-#'
+#' 
+#' # constructor
+#' Zattrs(type="frame")
+#' Zattrs(type="array")
+#' Zattrs(type="array", n=7)
+#' Zattrs(type="array", label=TRUE)
+#' 
 #' @export
-Zattrs <- \(x=list()) {
-    .Zattrs(x)
+Zattrs <- function(x, type=c("array", "frame"), label=FALSE, trans=NULL, ver="0.4", n=3, ...) {
+    if (!missing(x)) return(.Zattrs(x))
+    type <- match.arg(type)
+    # axes:
+    # xy for points/shapes
+    ax <-  list(
+        list(name="x", type="space"), 
+        list(name="y", type="space"))
+    if (type == "array") {
+        # yx for labels
+        ax <- rev(ax)
+        # cyx for images
+        if (!label) ax <- c(list(list(name="c", type="channel")), ax)
+    }
+    # transformations:
+    ct <- trans %||% .default_ct(ax)
+    # .zattrs list:
+    if (type == "array") {
+        # default structure
+        res <- list(
+            omero=list(channels=list(label=letters[seq_len(n)])),
+            multiscales=list(list(
+                axes=ax,
+                version="0.4",
+                coordinateTransformations=ct,
+                datasets=list(list(path="0", coordinateTransformations=list(list(type="scale", scale=list(1, 1))))))))
+        if (ver == "0.3") res <- list(ome=res)
+    } else {
+        # points/shapes
+        res <- list(axes=ax, coordinateTransformations=ct)
+    }
+    res$spatialdata_attrs <- list(version=ver)
+    Zattrs(res)
 }
 
-# TODO: ideally some valid empty constructor for each type of element,
-# e.g., .zattrs are different for point/label/shape/image elements;
-# simplest would be xyz (time, channel), identity transformation etc. 
+# Internal helper to generate OME-NGFF axes
+.default_ax <- \(type=c("array", "frame")) {
+    switch(match.arg(type),
+        # cyx for images/labels
+        array=list(
+            list(name="c", type="channel"),
+            list(name="y", type="space"),
+            list(name="x", type="space")),
+        # xy for points/shapes
+        list(
+            list(name="x", type="space"),
+            list(name="y", type="space")))
+}
 
-#' @importFrom utils .DollarNames
+# Internal helper to generate coordinate transformations
+.default_ct <- \(axes, name="global", type="identity", data=NULL) {
+    ct <- list(input=axes, output=list(name=name), type=type)
+    if (!is.null(data)) ct[[type]] <- data
+    list(ct)
+}
+
 #' @export
+#' @importFrom utils .DollarNames
 .DollarNames.Zattrs <- \(x, pattern="") names(x)
 
 #' @rdname Zattrs
@@ -44,6 +107,7 @@ setMethod("multiscales", "list", \(x) {
     switch(v, "0.3"=x$ome$multiscales, x$multiscales)
 })
 
+#' @importFrom S4Vectors coolcat
 .showZattrs <- function(object) {
     cat("class: Zattrs\n")
     ax <- axes(object)
@@ -164,6 +228,7 @@ setMethod("instances", "LabelArray", \(x) {
 })
 #' @export
 #' @rdname SDattrs
+#' @importFrom dplyr pull
 setMethod("instances", "PointFrame", \(x) pull(data(x), instance_key(x)))
 #' @export
 #' @rdname SDattrs
