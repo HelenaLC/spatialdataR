@@ -27,3 +27,4 @@ website:
       - demo/merfish.qmd
       - demo/mibitof.qmd
       - demo/xenium.qmd
+      - demo/visium.qmd
