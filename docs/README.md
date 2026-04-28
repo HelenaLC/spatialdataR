@@ -1,1 +1,1 @@
-[demo](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/docs/docs/index.html)
+[demo](https://htmlpreview.github.io/?https://github.com/HelenaLC/SpatialData/blob/devel/docs/docs/index.html
