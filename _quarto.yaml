@@ -25,3 +25,4 @@ website:
     left:
       - demo/index.qmd
       - demo/merfish.qmd
+      - demo/mibitof.qmd
