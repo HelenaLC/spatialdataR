@@ -41,6 +41,16 @@ plotSpatialData() +
     scale_fill_gradientn(colors=hcl.colors(9, "Roma"), trans="log10")
 ```
 
+```{r fig.width=}
+ks <- c("CAFs", "Endothelial")
+(sp <- query(sd, 
+    i=tableNames(sd)[1], 
+    celltype_major %in% ks))
+plotSpatialData() +
+    plotShape(sp, size=0.2, colour="celltype_major") +
+    guides(col=guide_legend(override.aes=list(size=2)))
+```
+
 ### appendix
 
 ::: {.callout-note icon=false, collapse=true}
