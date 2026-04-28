@@ -41,7 +41,7 @@ plotSpatialData() +
     scale_fill_gradientn(colors=hcl.colors(9, "Roma"), trans="log10")
 ```
 
-```{r fig.width=}
+```{r}
 ks <- c("CAFs", "Endothelial")
 (sp <- query(sd, 
     i=tableNames(sd)[1], 
