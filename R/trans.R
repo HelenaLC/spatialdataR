@@ -189,6 +189,10 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) .trans_a(x, t, "t
     # (optional) reverse
     if (rev) t <- switch(f, scale=1/t, -t)
     
+    # edge case: rescale radii
+    if (f == "scale" && "radius" %in% names(x))
+        x@data <- mutate(x@data, radius=!!t[1]*radius)
+    
     # dynamic injection 'ST_*(geo, v1, v2, ...)'
     v <- switch(f, rotate=t*pi/180, t) # radians
     x@data <- mutate(x@data, geometry=!!call2(map$fns[f], quote(geometry), !!!v))
