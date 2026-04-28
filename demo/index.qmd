@@ -1,4 +1,4 @@
 # Contents
 
 - [MERFISH](merfish.qmd) Mouse Brain (1 section, 268 genes x 2389 cells)
-- [MIBITOF](merfish.qmd) Colorectal carcinoma  (3 regions, 36 proteins x 3309 cells)
+- [MIBITOF](mibitof.qmd) Colorectal carcinoma  (3 regions, 36 proteins x 3309 cells)
