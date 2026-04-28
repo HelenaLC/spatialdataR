@@ -34,23 +34,24 @@
 #' @importFrom methods new
 #' @importFrom duckspatial as_duckspatial_df
 #' @export
-ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+ShapeFrame <- function(data=data.frame(), meta=Zattrs(type="frame"), metadata=list(), ...) {
     if (is.data.frame(data)) {
         if (ncol(data) == 3L &&
             all(c("x", "y", "id") %in% colnames(data))) {
             # create sf polygons from vertices
-            mxl <- lapply(split(data, data$id), \(df)
-                as.matrix(df[, c("x", "y")]) + 0.0)
-            df <- st_sf(geometry=st_sfc(lapply(mxl, \(x) st_polygon(list(x)))))
-            rownames(df) <- names(mxl)
-            df <- as_duckspatial_df(df)
+            mxL <- lapply(split(data, data$id), function(df) {
+                as.matrix(df[, c("x", "y")]) + 0.0
+            })
+            data <- st_sf(geometry = st_sfc(lapply(mxL, function(x) st_polygon(list(x)))))
+            rownames(data) <- names(mxL)
+            data <- as_duckspatial_df(data)
         } else if (nrow(data) > 0L) {
-            df <- as_duckspatial_df(data)
+            data <- as_duckspatial_df(data)
         }
     } else {
-        df <- as_duckspatial_df(data)
+        data <- as_duckspatial_df(data)
     }
-    x <- .ShapeFrame(data=df, meta=meta, ...)
+    x <- .ShapeFrame(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }

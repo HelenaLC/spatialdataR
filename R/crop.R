@@ -160,6 +160,7 @@ setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
         .check_box(y)
         polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
+    id_x <- NULL # R CMD check
     ok <- ddbs_intersects(data(x), polygon, sparse=TRUE)
     x <- x[pull(ok, id_x), ]
     return(x)
