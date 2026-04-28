@@ -130,6 +130,8 @@ setMethod("getTable", c("SpatialData", "ANY"), \(x, i, j, assay=1, drop=TRUE) .i
 #' @importFrom SingleCellExperiment int_colData
 #' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TRUE) {
+    # x <- sd; i <- "cell_circles"; drop <- TRUE
+    # shape(x, i) <- shape(x, 2)[1:5, ]
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
     nm <- hasTable(x, i, name=TRUE) 
@@ -141,6 +143,8 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
         cd <- int_colData(t)
         cd <- if (rk %in% names(cd)) cd[[rk]] else t[[rk]]
         t <- t[, cd == i]
+        l <- names(which(vapply(colnames(x), \(.) i %in% ., logical(1))))
+        t <- t[, match(instances(t), instances(x[[l]][[i]]), nomatch=0)]
     }
     if (missing(j)) return(t)
     rs <- j %in% rownames(t)
