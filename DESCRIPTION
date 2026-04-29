@@ -49,7 +49,7 @@ Authors@R: c(
         email="louise.deconinck@gmail.com",
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
-    anndataR,
+    anndataR (>= 1.1.3),
     basilisk,
     BiocGenerics,
     DelayedArray,
@@ -81,7 +81,6 @@ Suggests:
     SpatialData.plot,
     testthat
 Remotes:
-    keller-mark/anndataR@spatialdata,
     HelenaLC/SpatialData.data,
     HelenaLC/SpatialData.plot
 biocViews: 
