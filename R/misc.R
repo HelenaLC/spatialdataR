@@ -120,6 +120,7 @@ setMethod("show", "ShapeFrame", .showShapeFrame)
 #' @importFrom S4Vectors coolcat
 .showZattrs <- function(object) {
     cat("class: Zattrs\n")
+    # axes
     ax <- axes(object)
     cat(sprintf("axes(%d):\n", length(ax)))
     if (is.character(ax[[1]])) {
@@ -128,37 +129,42 @@ setMethod("show", "ShapeFrame", .showShapeFrame)
         cat("- name:", vapply(ax, \(.) .$name, character(1)), "\n")
         cat("- type:", vapply(ax, \(.) .$type, character(1)), "\n")
     }
-    # TODO: more detailed 'sequence' display
-    cat(sprintf("coordTrans(%d):\n", n <- length(CTname(object))))
-    f <- \(.) {
-        . <- paste(unlist(.), collapse=",")
-        if (!grepl(",", ., fixed = TRUE)) return(.)
-        sprintf("[%s]", .)
-    }
-    g <- \(.) {
-        if (is.null(.)) return("")
-        f(lapply(., f))
-    }
-    for (i in seq_len(n)) {
-        l <- CTlist(object)[[i]]
-        name <- l$output$name
-        l <- switch(l$type, sequence=l$transformations, list(l))
-        msg <- vapply(l, \(.) sprintf("(%s:%s)", .$type, g(.[[.$type]])), character(1))
-        cat(sprintf("- %s: %s\n", name, paste(msg, collapse=", ")))
-    }
-    ms <- multiscales(object)[[1]]
-    if (!is.null(ms)) {
-        ds <- ms$datasets
-        ps <- vapply(ds, \(.) .$path, character(1))
-        coolcat("datasets(%d): %s\n", ps)
-        for (i in seq_along(ds)) {
-            ct <- ds[[i]]$coordinateTransformations[[1]]
-            cat(sprintf("- %s: (%s:%s)\n", 
-                ps[i], ct$type, g(ct[[ct$type]]))) 
+    # coordinate transformations
+    CTshow <- \(l) {
+        f <- \(.) {
+            . <- paste(unlist(.), collapse=",")
+            ifelse(grepl(",", .), sprintf("[%s]", .), .)
+        }
+        g <- \(.) {
+            na <- is.null(.) || !length(unlist(.))
+            ifelse(na, "", paste0(":", f(lapply(., f))))
+        }
+        h <- \(.) sprintf("(%s%s)", .$type, g(.[[.$type]]))
+        if (l$type == "sequence") {
+            l$transformations |>
+                vapply(\(.) h(.), character(1)) |>
+                paste(collapse=", ")
+        } else {
+            h(l)
         }
     }
-    cs <- unlist(channels(object))
-    if (!is.null(cs)) coolcat("channels(%d): %s\n", cs)
+    ct <- CTlist(object)
+    cat(sprintf("coordTrans(%d):\n", length(ct)))
+    for (l in ct) {
+        cat(sprintf("- %s: %s\n", l$output$name, CTshow(l)))
+    }
+    # datasets (multiscales)
+    if (!is.null(ms <- multiscales(object)[[1]])) {
+        ps <- vapply(ms$datasets, \(.) .$path, character(1))
+        coolcat("datasets(%d): %s\n", ps)
+        for (d in ms$datasets) {
+            l <- d$coordinateTransformations[[1]]
+            cat(sprintf("- %s: %s\n", d$path, CTshow(l)))
+        }
+    }
+    # channels
+    if (!is.null(cs <- unlist(channels(object))))
+        coolcat("channels(%d): %s\n", cs)
 }
 
 setMethod("show", "Zattrs", .showZattrs)
