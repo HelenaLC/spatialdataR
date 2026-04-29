@@ -42,7 +42,7 @@ for handling spatial omics data. Developed as part of the
 challenges of integrating diverse spatial datasets—including imaging, spatial 
 transcriptomics, and proteomics—by employing the 
 [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
-standard [@Marconato2024-SpatialData].
+standard [@Marconato2025-SpatialData].
 
 The Python implementation and core specifications can be found at the 
 [official SpatialData website](https://spatialdata.scverse.org).
@@ -70,7 +70,8 @@ library(SingleCellExperiment)
 ## Reading Data
 
 `SpatialData` objects are typically read from `.zarr` stores. The package provides 
-the `readSpatialData()` function to ingest an entire store.
+the `readSpatialData()` function to ingest an entire store. For this demonstration, 
+we use a toy dataset included in the package.
 
 ```{r read-data}
 # Path to a toy dataset included in the package
@@ -80,6 +81,43 @@ path <- system.file("extdata", "blobs.zarr", package="SpatialData")
 sd <- readSpatialData(path)
 sd
 ```
+
+The output above summarizes the `SpatialData` object, showing the number of 
+elements in each layer (images, labels, points, shapes, and tables), as well 
+as the coordinate systems defined in the dataset.
+
+## Exploring the Object
+
+The `SpatialData` object behaves like a named list of layers. We can inspect 
+the names of elements in a given layer:
+
+```{r explore}
+imageNames(sd)
+shapeNames(sd)
+```
+
+We can retrieve a specific element using its name or index:
+
+```{r explore-element}
+# Retrieve the first label element
+lbl <- label(sd, 1)
+lbl
+
+# Check the class of the retrieved element
+class(lbl)
+
+# Access the underlying data of a point element
+pts <- point(sd, 1)
+class(data(pts))
+head(as.data.frame(data(pts)))
+```
+
+Elements are S4 objects composed of two key slots:
+
+- `data`: a `list` of `ZarrArray`s for images and labels (representing different 
+  multiscale resolutions), or a `duckspatial` data frame for shapes and points.
+- `meta`: a `Zattrs` object containing the OME-NGFF metadata retrieved from 
+  the `.zattrs` file.
 
 ## AnnData Integration with `anndataR`
 
