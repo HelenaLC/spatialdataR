@@ -169,8 +169,18 @@ setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
 #' @rdname crop
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
-    .lapplyElement(x, \(z) {
+    # crop elements that share coordinate space 'j'
+    z <- .lapplyElement(x, \(z) {
         if (j %in% CTname(z))
-            crop(z, y, j=j) else z
+            crop(z, y, j=j)
     })
+    # filter tables by remaining element(s)
+    ok <- unlist(colnames(z))
+    ts <- lapply(tables(z), \(t) {
+        t <- t[, regions(t) %in% ok]
+        region(t) <- intersect(region(t), ok)
+        return(t)
+    })
+    tables(z) <- ts
+    return(z)
 })

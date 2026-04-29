@@ -5,4 +5,4 @@
 - [CosMx](cosmx.qmd) todo
 - [Xenium](xenium.qmd) Lung cancer (1 section, 313 genes x 167780 cells)
 - [Visium](visium.qmd) Mouse brain (2 sections, 31053 genes x 6384 spots)
-- [VisiumHD](cosmx.qmd) todo
+- [VisiumHD](visiumhd.qmd) todo

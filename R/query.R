@@ -45,7 +45,7 @@ setMethod("query", "SpatialData", \(x, i, ...) {
     t <- t[, df$.i]
     colData(t) <- droplevels(colData(t))
     int_colData(t) <- droplevels(int_colData(t))
-    region(t) <- levels(int_colData(t)[[region_key(t)]])
+    region(t) <- levels(regions(t))
     for (l in setdiff(.LAYERS, "tables")) {
         j <- !names(x[[l]]) %in% region(t)
         if (sum(j)) x[[l]] <- x[[l]][-which(j)]
