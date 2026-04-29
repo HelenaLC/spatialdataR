@@ -1,4 +1,4 @@
-
+# Scripts from Vincent Carey: 14 Nov 2024
 # Note as of 14 Nov 2024 this code requires use of spatialdata python version https://github.com/scverse/spatialdata/tree/fix/transform_to_data_extent
 # Signature:
 #<function transform_to_data_extent at 0x170633370>
@@ -11,7 +11,6 @@
 #   target_height: 'float | None' = None, 
 #   target_depth: 'float | None' = None
 #) -> 'SpatialData'
-
 
 #' Use Python's 'spatialdata' 'transform_to_data_extent' on a spatialdata zarr store
 #' @param srcdir character(1) path to folder holding a zarr store
