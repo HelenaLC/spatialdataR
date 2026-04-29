@@ -84,7 +84,8 @@ setGeneric("instance_key", \(x, ...) standardGeneric("instance_key"))
 # uts ----
 
 setGeneric("layer", \(x, i, ...) standardGeneric("layer"))
-setGeneric("element", \(x, i, j, ...) standardGeneric("element"))
+setGeneric("element", \(x, i, ...) standardGeneric("element"))
+setGeneric("elements", \(x, i, ...) standardGeneric("elements"))
 
 setGeneric("data", \(x, ...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
