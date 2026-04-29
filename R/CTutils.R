@@ -58,22 +58,18 @@ NULL
 #' @rdname CTutils
 #' @export
 setMethod("axes", "Zattrs", \(x, ...) {
-    ms <- multiscales(x)
+    ms <- .ms(x)
     if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
     return(x)
 })
-
-#' @rdname CTutils
-#' @export
-setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x)))
 
 # CTlist/data/type/name() ----
 
 #' @rdname CTutils
 #' @export
 setMethod("CTlist", "Zattrs", \(x, ...) {
-    ms <- multiscales(x)
+    ms <- .ms(x)
     ct <- "coordinateTransformations"
     if (is.null(ms)) return(x[[ct]])
     ms[[1]][[ct]]
@@ -111,21 +107,17 @@ setMethod("CTname", "Zattrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$output$name, character(1))
 })
 
-#' @rdname CTutils
-#' @export
-setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x)))
+# SpatialDataElement ----
+
+.SDE_METS <- c("axes", "CTlist", "CTtype", "CTname")
+for (. in .SDE_METS) {
+    setMethod(., "SpatialDataElement", 
+        eval(parse(text=sprintf("\\(x, ...) %s(meta(x), ...)", .))))
+}
 
 #' @rdname CTutils
 #' @export
-setMethod("CTdata", "SpatialDataElement", \(x, i=1, ...) CTdata(meta(x), i))
-
-#' @rdname CTutils
-#' @export
-setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x)))
-
-#' @rdname CTutils
-#' @export
-setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x)))
+setMethod("CTdata", "SpatialDataElement", \(x, i=1, ...) CTdata(meta(x), i, ...))
 
 #' @rdname CTutils
 #' @export

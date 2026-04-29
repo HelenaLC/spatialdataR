@@ -1,0 +1,25 @@
+## CosMx
+
+### preamble
+
+```{r load-libs}
+
+```
+
+```{r load-data}
+
+```
+
+Todo.
+
+### appendix
+
+::: {.callout-note icon=false, collapse=true}
+
+### session
+
+```{r sess-info}
+sessionInfo()
+```
+
+:::

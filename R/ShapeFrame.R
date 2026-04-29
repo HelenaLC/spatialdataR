@@ -29,11 +29,12 @@
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
+#' @importFrom sf st_sf st_sfc st_polygon
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
 #' @importFrom duckspatial as_duckspatial_df
 #' @export
-ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
+ShapeFrame <- function(data=data.frame(), meta=Zattrs(type="frame"), metadata=list(), ...) {
     if (is.data.frame(data)) {
         if (ncol(data) == 3L &&
             all(c("x", "y", "id") %in% colnames(data))) {
@@ -54,109 +55,3 @@ ShapeFrame <- function(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
     metadata(x) <- metadata
     return(x)
 }
-
-# TODO: it's really annoying that this doesn't just inherit
-# data.frame() operations, cuz data are in an extra slot...
-# but else not sure how to assure validity, stash .zattrs etc.
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("dim", "ShapeFrame", \(x) c(length(x),
-                                      ncol(data(x))))
-
-#' @rdname ShapeFrame
-#' @export
-#' @importFrom dplyr tally pull
-setMethod("length", "ShapeFrame", \(x) {
-    # suppress warning caused by the 'geometry' column being dropped
-    # duckspatial::ddbs_drop_geometry() is an alternative, but fails if
-    # 'geometry' is the only column
-    suppressWarnings({
-        data(x) |> tally() |> pull(n)
-    })
-})
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("names", "ShapeFrame", \(x) colnames(data(x)))
-
-#' @rdname ShapeFrame
-#' @importFrom dplyr collect select
-#' @exportMethod [[
-setMethod("[[", "ShapeFrame", \(x, i, ...) {
-    collect(select(data(x), all_of(i)))[[1]]
-})
-
-#' @export
-#' @rdname ShapeFrame
-#' @importFrom utils .DollarNames
-.DollarNames.ShapeFrame <- \(x, pattern="")
-    grep(pattern, names(x), value=TRUE)
-
-#' @rdname ShapeFrame
-#' @exportMethod $
-setMethod("$", "ShapeFrame", \(x, name) do.call(`[[`, list(x, name)))
-
-#' @export
-#' @rdname ShapeFrame
-#' @importFrom sf st_as_sf st_geometry_type
-#' @importFrom dplyr slice
-setMethod("geom_type", "ShapeFrame", \(x) {
-    y <- st_as_sf(data(x) |> head(1))
-    z <- st_geometry_type(y)
-    return(as.character(z))
-})
-
-# sub ----
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("[", c("sdFrame", "missing", "missing"),
-    \(x, i, j, ...) x[TRUE, TRUE])
-
-#' @rdname ShapeFrame    
-#' @export
-setMethod("[", c("sdFrame", "missing", "ANY"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), j])
-    
-#' @rdname ShapeFrame
-#' @export
-setMethod("[", c("sdFrame", "ANY", "missing"),
-    \(x, i, j, ...) x[i, seq_len(ncol(x))])
-
-#' @export
-#' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "logical", "ANY"), \(x, i, j, ...) {
-    if (isTRUE(i)) return(x[, j])
-    if (isFALSE(i)) return(x[0, j])
-    stopifnot(length(i) != nrow(x))
-    x[seq_len(nrow(x))[i], j]
-})
-    
-#' @export
-#' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "ANY", "logical"), \(x, i, j, ...) {
-    if (isTRUE(j)) return(x[i, ])
-    if (isFALSE(j)) return(x[i, 0])
-    stopifnot(length(j) != ncol(x))
-    x[i, seq_len(nrow(x))[j]]
-})
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("[", c("sdFrame", "ANY", "character"), \(x, i, j, ...) {
-    stopifnot(all(j %in% names(x)))
-    x[i, match(j, names(x))]
-})
-    
-#' @rdname ShapeFrame
-#' @importFrom dplyr row_number select all_of 
-#' @export
-setMethod("[", c("sdFrame", "numeric", "numeric"), \(x, i, j, ...) {
-    if (any(i < 0)) stop("negative row-subsetting not supported")
-    x@data <- x@data |> 
-        filter(row_number() %in% i) |>
-        select(all_of(j))
-    return(x)
-})
-

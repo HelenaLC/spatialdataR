@@ -1,0 +1,73 @@
+## MERFISH
+
+### preamble
+
+```{r load-libs}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(SpatialData)
+library(SpatialData.data)
+library(SpatialData.plot)
+```
+
+```{r load-data}
+(sd <- MouseBrainMERFISH())
+```
+
+### analysis
+
+```{r}
+feature_key(p <- point(sd))
+data(p) |>
+    distinct(cell_type) |>
+    pull(cell_type)
+filter(p, cell_type == "VISp_V")
+```
+
+```{r fig.width=10, fig.height=5}
+a <- plotSpatialData() + plotImage(sd)
+b <- a + plotPoint(sd, n=2e3, col="cell_type")
+c <- a + plotPoint(sd, n=200, key="VISp_V", col="red")
+b + c
+```
+
+```{r fig.width=6, fig.height=5}
+plotSpatialData() +
+    plotImage(sd) + 
+    plotShape(sd, linewidth=1, fill=NA, col="white") +   # regions
+    plotPoint(sd, size=0.2, n=4e3, colour="cell_type") + # transcripts
+    guides(col=guide_legend(override.aes=list(size=2)))
+```
+
+```{r fig.width=12, fig.height=9}
+# downsample transcripts for speed
+sp <- sd
+p <- point(sp)
+p <- p[sample(length(p), 2e4)]
+point(sp) <- p
+# query polygonal region + 10% expansion
+s <- shape(sd, "anatomical")
+ps <- lapply(seq_along(s), \(.) {
+    roi <- st_buffer(st_as_sf(data(s[., ])), 0.1)
+    sp <- crop(sp, roi)
+    plotSpatialData() +
+        plotImage(sp) + ggtitle(paste0("ROI", .)) +
+        plotShape(sp, fill=NA, col="gold", size=0.8) +
+        plotPoint(sp, i=1, n=2e3, col="turquoise", size=0.2) 
+})
+wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5))
+```
+
+### appendix
+
+::: {.callout-note icon=false, collapse=true}
+
+### session
+
+```{r sess-info}
+sessionInfo()
+```
+
+:::

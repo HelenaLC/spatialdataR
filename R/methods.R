@@ -96,8 +96,7 @@ setMethod("colnames", "SpatialData", \(x) {
 #' @rdname SpatialData
 #' @export
 setMethod("layer", c("SpatialData", "character"), \(x, i) {
-    j <- vapply(.LAYERS, \(.) i %in% names(x[[.]]), logical(1))
-    return(names(which(j)))
+    names(Filter(\(.) i %in% ., colnames(x)))
 })
 
 #' @rdname SpatialData
@@ -107,50 +106,39 @@ setMethod("layer", c("SpatialData", "ANY"), \(x, i)
 
 # element ----
 
-.err_j <- c(
-    "invalid 'j'; should be a scalar integer or ",
-    "a string specifying an element in layer 'i'") 
+#' @rdname SpatialData
+#' @export
+setMethod("element", c("SpatialData", "character"), 
+    \(x, i) x[[layer(x, i)]][[i]])
 
 #' @rdname SpatialData
 #' @export
-setMethod("element", c("SpatialData", "ANY", "character"), \(x, i, j) {
-    y <- x[[i]]
-    j <- match.arg(j, names(y))
-    y[[j]]
-})
+setMethod("element", c("SpatialData", "numeric"), 
+    \(x, i) element(x, unlist(colnames(x))[i]))
 
 #' @rdname SpatialData
 #' @export
-setMethod("element", c("SpatialData", "ANY", "numeric"), \(x, i, j) {
-    n <- length(y <- x[[i]])
-    if (n == 0) stop("there aren't any ", dQuote(i))
-    if (is.infinite(j)) j <- n
-    ok <- length(j) == 1 && (j > 0 & j <= n & j == round(j))
-    if (!ok) stop(.err_j)
-    j <- names(y)[j]
-    element(x, i, j)
-})
+setMethod("element", c("SpatialData", "missing"), \(x, i) element(x, 1))
 
 #' @rdname SpatialData
 #' @export
-setMethod("element", c("SpatialData", "ANY", "missing"), \(x, i, j) element(x, i, 1))
-
-#' @rdname SpatialData
-#' @export
-setMethod("element", c("SpatialData", "ANY", "ANY"), \(x, i, j) stop(.err_j))
+setMethod("element", c("SpatialData", "ANY"), \(x, i) 
+    stop("invalid 'i'; should be a string specifying an element in 'x'"))
 
 # get all ----
 
-all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
-
 #' @name SpatialData
 #' @exportMethod images labels points shapes tables
-NULL
-
-f <- \(.) setMethod(., "SpatialData", \(x) x[[.]])
-for (. in all) eval(f(.), parent.env(environment()))
+setMethod("images", "SpatialData", \(x) x$images)
+setMethod("labels", "SpatialData", \(x) x$labels)
+setMethod("points", "SpatialData", \(x) x$points)
+setMethod("shapes", "SpatialData", \(x) x$shapes)
+setMethod("tables", "SpatialData", \(x) x$tables)
 
 # get nms ----
+
+one <- c("image", "label", "point", "shape", "table")
+all <- paste0(one, "s")
 
 #' @name SpatialData
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
@@ -187,7 +175,22 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod image label point shape table
 NULL
 
-f <- \(.) setMethod(., "SpatialData", \(x, i=1) element(x, paste0(., "s"), i))
+f <- \(.) setMethod(., "SpatialData", \(x, i=1) {
+    y <- x[[paste0(., "s")]]
+    if (is.numeric(i)) {
+        if (i < 1 || !is.finite(i)) stop(
+            "invalid 'i'; should be a ",
+            "positive integer or string")
+        if (i > length(y)) stop(
+            "invalid 'i'; only ", length(y), 
+            " ", ., " element(s) available")
+        i <- names(y)[i]
+    }
+    if (!i %in% names(y)) stop(
+        "invalid 'i'; should be one of: ",
+        paste(names(y), collapse=", "))
+    y[[i]]
+})
 for (. in one) eval(f(.), parent.env(environment()))
 
 # set all ----

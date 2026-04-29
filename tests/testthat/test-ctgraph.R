@@ -28,7 +28,7 @@ test_that("CTgraph", {
 
 test_that("CTpath", {
     i <- "blobs_image"
-    y <- element(x, "images", i)
+    y <- element(x, i)
     z <- CTpath(y, j <- CTname(y))
     expect_identical(CTpath(x, i, j), z)
     expect_is(z, "list")

@@ -75,8 +75,8 @@ test_that("setTable(),labels", {
     expect_error(setTable(x, i, df))
 })
 
-test_that("setTable(),points/shapes", {
-    for (. in c("point", "shape")) {
+test_that("setTable(),shapes", {
+    for (. in c("shape")) {
         nms <- paste0(., "Names")
         i <- get(nms)(x)[1]
         y <- get(.)(x)

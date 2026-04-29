@@ -59,29 +59,9 @@
 #' y <- setTable(y, i <- "blobs_labels")
 #' head(colData(sce <- getTable(y, i)))
 #'
-#' # points
-#' y <- setTable(x, i <- "blobs_points")
-#' head(colData(sce <- getTable(y, i)))
-#'
-#' # labels
+#' # shapes
 #' y <- setTable(x, i <- "blobs_circles")
 #' head(colData(sce <- getTable(y, i)))
-#'
-#' # list of data generating functions
-#' f <- list(
-#'   numbers=\(n) runif(n),
-#'   letters=\(n) sample(letters, n, TRUE))
-#'
-#' args <- c(list(x, i <- "blobs_points"), f)
-#' y <- do.call(setTable, args)
-#' head(colData(getTable(y, i)))
-#'
-#' # passing a preconstructed 'data.frame'
-#' id <- unique(point(x, i)$instance_id)
-#' df <- data.frame(n=runif(length(id)))
-#'
-#' y <- setTable(x, i, df)
-#' head(colData(getTable(y, i)))
 NULL
 
 #' @rdname table-utils
@@ -125,10 +105,11 @@ setMethod("hasTable", c("SpatialData", "character"), \(x, i, name=FALSE) {
 #' @export
 setMethod("getTable", c("SpatialData", "ANY"), \(x, i, j, assay=1, drop=TRUE) .invalid_i())
 
+#' @export
 #' @rdname table-utils
+#' @importFrom dplyr pull
 #' @importFrom SummarizedExperiment assay
 #' @importFrom SingleCellExperiment int_colData
-#' @export
 setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TRUE) {
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
@@ -141,6 +122,14 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
         cd <- int_colData(t)
         cd <- if (rk %in% names(cd)) cd[[rk]] else t[[rk]]
         t <- t[, cd == i]
+        l <- names(which(vapply(colnames(x), \(.) i %in% ., logical(1))))
+        y <- x[[l]][[i]]
+        i <- if (is(y, "LabelArray")) {
+            instances(y)
+        } else if (is(y, "ShapeFrame")) {
+            if (ik %in% names(y)) pull(y, !!ik) else seq(0, length(y)-1)
+        } else stop ("Only labels and shapes can have tables.")
+        t <- t[, instances(t) %in% i]
     }
     if (missing(j)) return(t)
     rs <- j %in% rownames(t)
