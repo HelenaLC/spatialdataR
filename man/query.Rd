@@ -29,7 +29,7 @@ For spatial cropping, see \code{\link{crop}}.
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
-sd <- readSpatialData(zs, anndataR=TRUE)
+sd <- readSpatialData(zs)
 
 # filter by 'region' and propagate to shapes/points
 t <- table(sd)
