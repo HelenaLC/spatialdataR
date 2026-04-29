@@ -5,6 +5,7 @@ changes in version 0.99.31
   keeping table queries as query()
 - added object-wide spatial crop()
 - added .zattrs contructor
+- revised vignette
 
 changes in version 0.99.30
 
