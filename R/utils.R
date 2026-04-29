@@ -4,6 +4,7 @@
 #' @aliases centroids extent
 #'
 #' @param x a \code{SpatialData} element (any but image).
+#' @param i scalar integer or string; target coordinate space.
 #' @param as character string; how results should be returned.
 #' @param ... optional arguments passed to and from other methods.
 #'
@@ -106,32 +107,36 @@ setMethod("centroids", "PointFrame", \(x,
 
 # extent ----
 
-# TODO: this needs more work to consider transformations
-
 #' @export
 #' @rdname utils
-setMethod("extent", "SpatialData", \(x) {
+setMethod("extent", "SpatialData", \(x, i=1) {
     ls <- setdiff(.LAYERS, "tables")
-    ex <- lapply(ls, \(.) lapply(x[[.]], extent))
-    ex <- Reduce(c, ex)
-    names(xy) <- xy <- c("x", "y")
-    lapply(xy, \(z) {
-        d <- vapply(ex, \(.) .[[z]], numeric(2))
-        c(min(d[1, ]), max(d[2, ]))
-    })
+    ex <- Reduce(c, lapply(ls, \(.) lapply(x[[.]], extent, i=i)))
+    xy <- do.call(rbind, lapply(ex, do.call, what=cbind))
+    list(x=range(xy[, 1]), y=range(xy[, 2]))
 })
 
 #' @export
 #' @rdname utils
-setMethod("extent", "SpatialDataElement", \(x) {
-    if (is(x, "sdArray")) {
-        nm <- vapply(ax <- axes(x), \(.) .$name, character(1))
-        xy <- vapply(ax, \(.) .$type == "space", logical(1))
-        d <- dim(x); names(d) <- nm
-        lapply(d[xy], \(.) c(0, .))
-    } else {
-        ax <- unlist(axes(x))
-        xy <- centroids(x)[ax]
-        apply(xy, 2, range, simplify=FALSE)
-    }
+setMethod("extent", "sdArray", \(x, i=1) {
+    x <- transform(x, i)
+    wh <- metadata(x)$wh
+    if (!is.null(wh)) return(wh)
+    n <- length(d <- dim(x))
+    if (n == 3) d <- d[-1]
+    d <- rev(d)
+    names(d) <- c("x", "y")
+    lapply(d, \(.) c(0, .))
+})
+
+#' @export
+#' @rdname utils
+#' @importFrom duckspatial ddbs_bbox
+setMethod("extent", "sdFrame", \(x, i=1) {
+    x <- transform(x, i)
+    v <- ddbs_bbox(data(x))
+    l <- list(
+        x=c(v$xmin, v$xmax), 
+        y=c(v$ymin, v$ymax))
+    lapply(l, unname)
 })

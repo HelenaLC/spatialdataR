@@ -56,9 +56,8 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
     nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
         "Invalid 'name'; should be a function or a ",
         "character string not yet in 'tableNames(x)'")
-    f <- \(i) names(which(rapply(colnames(x), \(.) i %in% ., "character")))
-    .i <- element(x, f(i), i)
-    .j <- element(x, f(j), j)
+    .i <- element(x, i)
+    .j <- element(x, j)
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
     se <- .mask(.i, .j, how=how, table=t, ...)
     ik <- if (is.null(t)) "instance" else instance_key(t)

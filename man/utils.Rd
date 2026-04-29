@@ -9,7 +9,8 @@
 \alias{centroids,ShapeFrame-method}
 \alias{centroids,PointFrame-method}
 \alias{extent,SpatialData-method}
-\alias{extent,SpatialDataElement-method}
+\alias{extent,sdArray-method}
+\alias{extent,sdFrame-method}
 \title{Utilities}
 \usage{
 \S4method{centroids}{ANY}(x, ...)
@@ -20,9 +21,11 @@
 
 \S4method{centroids}{PointFrame}(x, as = c("data.frame", "list"))
 
-\S4method{extent}{SpatialData}(x)
+\S4method{extent}{SpatialData}(x, i = 1)
 
-\S4method{extent}{SpatialDataElement}(x)
+\S4method{extent}{sdArray}(x, i = 1)
+
+\S4method{extent}{sdFrame}(x, i = 1)
 }
 \arguments{
 \item{x}{a \code{SpatialData} element (any but image).}
@@ -30,6 +33,8 @@
 \item{...}{optional arguments passed to and from other methods.}
 
 \item{as}{character string; how results should be returned.}
+
+\item{i}{scalar integer or string; target coordinate space.}
 }
 \value{
 For \code{centroids}, a table (\code{data.frame} or \code{matrix})

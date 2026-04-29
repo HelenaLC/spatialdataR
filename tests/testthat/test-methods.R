@@ -3,11 +3,6 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, anndataR=TRUE)
 
-# # skirt base::table ambiguity
-# sdtable <- SpatialData::table
-# `sdtable<-` <- `SpatialData::table<-`
-# sdtables <- SpatialData::tables
-
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
 typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
@@ -32,16 +27,14 @@ typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExpe
 
 test_that("element()", {
     # invalid
-    expect_error(element(x, 1, 0))
-    expect_error(element(x, 1, 9))
-    expect_error(element(x, 1, "."))
-    expect_error(element(x, 1, TRUE))
-    expect_error(element(x, 1, colnames(x)[[2]]))
-    expect_silent(element(x, 1)) # missing
+    expect_error(element(x, 99))
+    expect_error(element(x, "."))
+    expect_error(element(x, TRUE))
     # valid
+    expect_silent(element(x, 1))
     i <- sample(SpatialData:::.LAYERS, 1)
     j <- sample(names(attr(x, i)), 1)
-    expect_silent(element(x, i, j))
+    expect_identical(x[[i]][[j]], element(x, j))
 })
 
 test_that("get all", {
@@ -50,21 +43,21 @@ test_that("get all", {
 })
 
 test_that("get one", {
+    env <- asNamespace("SpatialData")
     # i=numeric
     mapply(f=fun, t=typ, \(f, t)
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, i=1), t))
+        expect_is(get(f, envir=env)(x, i=1), t))
     # i=character
     mapply(f=fun, t=typ, n=nms, \(f, t, n)
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, i=n), t))
+        expect_is(get(f, envir=env)(x, i=n), t))
     # i=invalid
     for (f in fun) {
-        expect_error(get(f, envir=asNamespace("SpatialData"))(x, 0))
-        expect_error(get(f, envir=asNamespace("SpatialData"))(x, "."))
-        expect_error(get(f, envir=asNamespace("SpatialData"))(x, c(1,1)))
-        expect_silent(y <- get(f, envir=asNamespace("SpatialData"))(x, Inf))
+        expect_error(get(f, envir=env)(x, 0))
+        expect_error(get(f, envir=env)(x, "."))
+        expect_error(get(f, envir=env)(x, c(1,1)))
         set <- get(paste0(f, "s<-"))
         y <- set(x, list())
-        expect_error(get(f, envir=asNamespace("SpatialData"))(y, 1))
+        expect_error(get(f, envir=env)(y, 1))
     }
 })
 
@@ -274,7 +267,4 @@ test_that("[,SpatialData", {
     expect_equal(n, .n(x)-1)
     # infinite 'j'
     expect_silent(y <- x[1, Inf])
-    expect_identical(
-        element(y, 1, 1),
-        element(x, 1, .n(x)[1]))
 })

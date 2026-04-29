@@ -51,10 +51,12 @@
 \alias{colnames,SpatialData-method}
 \alias{layer,SpatialData,character-method}
 \alias{layer,SpatialData,ANY-method}
-\alias{element,SpatialData,ANY,character-method}
-\alias{element,SpatialData,ANY,numeric-method}
-\alias{element,SpatialData,ANY,missing-method}
-\alias{element,SpatialData,ANY,ANY-method}
+\alias{element,SpatialData,character-method}
+\alias{element,SpatialData,numeric-method}
+\alias{element,SpatialData,missing-method}
+\alias{element,SpatialData,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY,ANY-method}
+\alias{[[<-,SpatialData,character,ANY,ANY-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
@@ -79,17 +81,17 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{layer}{SpatialData,ANY}(x, i)
 
-\S4method{element}{SpatialData,ANY,character}(x, i, j)
+\S4method{element}{SpatialData,character}(x, i)
 
-\S4method{element}{SpatialData,ANY,numeric}(x, i, j)
+\S4method{element}{SpatialData,numeric}(x, i)
 
-\S4method{element}{SpatialData,ANY,missing}(x, i, j)
+\S4method{element}{SpatialData,missing}(x, i)
 
-\S4method{element}{SpatialData,ANY,ANY}(x, i, j)
+\S4method{element}{SpatialData,ANY}(x, i)
 
-\S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
-\S4method{[[}{SpatialData,character,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}
