@@ -1,7 +1,7 @@
 require(sf, quietly=TRUE)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+x <- readSpatialData(x)
 
 test_that("crop,SpatialData", {
     y <- list(xmin=10, xmax=50, ymin=10, ymax=50)
