@@ -2,8 +2,6 @@
 % Please edit documentation in R/sdFrame.R
 \name{sdFrame}
 \alias{sdFrame}
-\alias{PointFrame}
-\alias{length,sdFrame-method}
 \alias{dim,sdFrame-method}
 \alias{names,sdFrame-method}
 \alias{[[,sdFrame,ANY,ANY-method}
@@ -16,8 +14,6 @@
 \alias{filter.sdFrame}
 \title{The `sdFrame` class}
 \usage{
-PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
-
 \S4method{length}{sdFrame}(x)
 
 \S4method{dim}{sdFrame}(x)
@@ -41,6 +37,14 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 \method{filter}{sdFrame}(.data, ...)
 }
 \arguments{
+\item{x}{\code{PointFrame}}
+
+\item{i, j}{indices for subsetting (see \code{?base::Extract}).}
+
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
+
 \item{data}{\code{arrow}-derived table for on-disk,
 \code{data.frame} for in-memory representation.}
 
@@ -48,14 +52,6 @@ PointFrame(data = data.frame(), meta = Zattrs(), metadata = list(), ...)
 
 \item{metadata}{optional list of arbitrary
 content describing the overall object.}
-
-\item{...}{optional arguments passed to and from other methods.}
-
-\item{x}{\code{PointFrame}}
-
-\item{i, j}{indices for subsetting (see \code{?base::Extract}).}
-
-\item{name}{character string for extraction (see \code{?base::`$`}).}
 
 \item{drop}{ignored.}
 }

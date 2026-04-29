@@ -209,22 +209,24 @@ readSpatialData <- function(x,
     if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
-    sd <- lapply(.LAYERS[!skip], \(i) {
-        j <- list.dirs(
-            file.path(x, i),
-            recursive=FALSE,
-            full.names=TRUE)
+    
+    # helper for layer reading
+    .readLayer <- \(l) {
+        j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
         names(j) <- basename(j)
-        if (!isTRUE(opt <- args[[i]])) {
+        opt <- args[[l]]
+        if (!isTRUE(opt)) {
             if (is.numeric(opt) && opt > (. <- length(j)))
-                stop("'", i, "=", opt, "', but only ", ., " elements found")
+                stop("'", l, "=", opt, "', but only ", ., " elements found")
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
-                stop("couldn't find ", i, " of name", .)
+                stop("couldn't find ", l, " of name", .)
             j <- j[opt]
         }
-        f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
+        f <- get(paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1)))
         lapply(j, \(.) do.call(f, list(.)))
-    })
+    }
+    
+    sd <- lapply(setNames(nm=.LAYERS[!skip]), .readLayer)
     if (!anndataR && !isFALSE(tables)) sd$tables <- .readTables_basilisk(x)
     do.call(SpatialData, sd)
 }

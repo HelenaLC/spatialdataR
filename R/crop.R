@@ -144,7 +144,6 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry st_geometry<-
 setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
-    x <- transform(x, j)
     if (is(y, "sf")) {
         polygon <- y
         st_geometry(polygon) <- "geometry"
@@ -160,24 +159,18 @@ setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
         .check_box(y)
         polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
+    df <- data(transform(x, j))
+    ok <- ddbs_intersects(df, polygon, sparse=TRUE)
     id_x <- NULL # R CMD check
-    ok <- ddbs_intersects(data(x), polygon, sparse=TRUE)
-    x <- x[pull(ok, id_x), ]
-    return(x)
+    x[pull(ok, id_x), ]
 })
 
 #' @export
 #' @rdname crop
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
-    ls <- setdiff(.LAYERS, "tables")
-    for (l in ls) {
-        for (e in names(x[[l]])) {
-            z <- x[[l]][[e]]
-            z <- if (j %in% CTname(z))
-                crop(z, y, j=j)
-            x[[l]][[e]] <- z
-        }
-    }
-    return(x)
+    .lapplyElement(x, \(z) {
+        if (j %in% CTname(z))
+            crop(z, y, j=j) else z
+    })
 })

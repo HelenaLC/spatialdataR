@@ -2,16 +2,13 @@
 % Please edit documentation in R/ImageArray.R
 \name{ImageArray}
 \alias{ImageArray}
-\alias{channels,Zattrs-method}
-\alias{channels}
 \alias{channels,ImageArray-method}
+\alias{channels}
 \alias{channels,ANY-method}
 \alias{[,ImageArray,ANY,ANY,ANY-method}
 \title{The `ImageArray` class}
 \usage{
 ImageArray(data = list(), meta = Zattrs(), metadata = list(), ...)
-
-\S4method{channels}{Zattrs}(x, ...)
 
 \S4method{channels}{ImageArray}(x, ...)
 

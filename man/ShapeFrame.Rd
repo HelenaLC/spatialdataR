@@ -4,13 +4,7 @@
 \alias{ShapeFrame}
 \alias{geom_type}
 \alias{geom_type,ShapeFrame-method}
-\alias{[,sdFrame,missing,missing,ANY-method}
-\alias{[,sdFrame,missing,ANY,ANY-method}
-\alias{[,sdFrame,ANY,missing,ANY-method}
-\alias{[,sdFrame,logical,ANY,ANY-method}
-\alias{[,sdFrame,ANY,logical,ANY-method}
-\alias{[,sdFrame,ANY,character,ANY-method}
-\alias{[,sdFrame,numeric,numeric,ANY-method}
+\alias{[,sdFrame,ANY,ANY,ANY-method}
 \title{The `ShapeFrame` class}
 \usage{
 ShapeFrame(
@@ -22,19 +16,7 @@ ShapeFrame(
 
 \S4method{geom_type}{ShapeFrame}(x)
 
-\S4method{[}{sdFrame,missing,missing,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,missing,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,ANY,missing,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,logical,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,ANY,logical,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,ANY,character,ANY}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{sdFrame,numeric,numeric,ANY}(x, i, j, ..., drop = TRUE)
+\S4method{[}{sdFrame,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
 \item{data}{\code{duckspatial_df} for on-disk representation,
