@@ -78,12 +78,10 @@ Suggests:
     paws,
     Rgraphviz,
     SpatialData.data,
-    SpatialData.plot,
     testthat
 Remotes:
     keller-mark/anndataR@spatialdata,
-    HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.data
 biocViews: 
     DataImport, 
     DataRepresentation, 
