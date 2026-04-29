@@ -3,6 +3,8 @@
 \name{SDattrs}
 \alias{SDattrs}
 \alias{region}
+\alias{regions}
+\alias{instances}
 \alias{region_key}
 \alias{feature_key}
 \alias{instance_key}
@@ -10,7 +12,9 @@
 \alias{feature_key,PointFrame-method}
 \alias{region_key,SingleCellExperiment-method}
 \alias{region,SingleCellExperiment-method}
+\alias{regions,SingleCellExperiment-method}
 \alias{region<-,SingleCellExperiment,character-method}
+\alias{regions<-,SingleCellExperiment,character-method}
 \alias{instance_key,list-method}
 \alias{instance_key,LabelArray-method}
 \alias{instance_key,PointFrame-method}
@@ -30,7 +34,11 @@
 
 \S4method{region}{SingleCellExperiment}(x)
 
+\S4method{regions}{SingleCellExperiment}(x)
+
 \S4method{region}{SingleCellExperiment,character}(x) <- value
+
+\S4method{regions}{SingleCellExperiment,character}(x) <- value
 
 \S4method{instance_key}{list}(x)
 

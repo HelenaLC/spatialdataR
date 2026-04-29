@@ -175,6 +175,8 @@ setMethod("show", "Zattrs", .showZattrs)
 #' 
 #' @aliases
 #' region
+#' regions
+#' instances
 #' region_key
 #' feature_key
 #' instance_key
@@ -217,11 +219,22 @@ setMethod("region", "SingleCellExperiment", \(x) meta(x)$region)
 
 #' @export
 #' @rdname SDattrs
-#' @importFrom SingleCellExperiment int_colData<- int_metadata<-
+#' @importFrom SingleCellExperiment int_colData
+setMethod("regions", "SingleCellExperiment", \(x) int_colData(x)[[region_key(x)]])
+
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
-    stopifnot(length(value) == 1)
-    int_colData(x)[[region_key(x)]] <- value
     int_metadata(x)$spatialdata_attrs$region <- value
+    return(x)
+})
+
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_colData<-
+setReplaceMethod("regions", c("SingleCellExperiment", "character"), \(x, value) {
+    int_colData(x)[[region_key(x)]] <- value
     return(x)
 })
 
