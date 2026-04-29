@@ -73,8 +73,8 @@ setValidity2("LabelArray", .validateLabelArray)
 .validatePointFrame <- \(object) {
     msg <- c()
     if (!length(object)) return(msg)
-    if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
-    if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
+    # if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
+    # if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2

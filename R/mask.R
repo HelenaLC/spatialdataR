@@ -52,22 +52,21 @@ NULL
 setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
-    #if (!is.null(how)) how <- match.arg(how, c("sum", "mean"))
     ok <- is.character(name) && length(name) == 1 && !name %in% tableNames(x)
     nm <- if (is.function(name)) name(i, j) else if (ok) name else stop(
         "Invalid 'name'; should be a function or a ",
         "character string not yet in 'tableNames(x)'")
-    f <- \(i) names(which(rapply(colnames(x), \(.) i %in% ., "character")))
-    .i <- element(x, f(i), i)
-    .j <- element(x, f(j), j)
+    .i <- element(x, i)
+    .j <- element(x, j)
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
     se <- .mask(.i, .j, how=how, table=t, ...)
-    md <- list(region=j, region_key="region", instance_key="instance")
+    ik <- if (is.null(t)) "instance" else instance_key(t)
+    md <- list(region=j, region_key="region", instance_key=ik)
     int_metadata(se)$spatialdata_attrs <- md
     assay(se) <- as(assay(se), "dgCMatrix")
     cd <- int_colData(se)
     cd$region <- j
-    cd$instance <- colnames(se)
+    cd[[ik]] <- colnames(se)
     int_colData(se) <- cd
     `table<-`(x, nm, value=se)
 })
@@ -103,7 +102,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 #' @importFrom rlang .data
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
-    geometry <- radius <- id_x <- id_y <- NULL # R CMD check
+    ST_Scale <- ST_Buffer <- geometry <- radius <- id_x <- id_y <- NULL # R CMD check
     jdata <- switch(
         geom_type(j), 
         "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
@@ -113,12 +112,12 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
         select(all_of(c("id_x", feature_key(i)))) |>
         count(id_x, .data[[feature_key(i)]]) |>
         collect() |>
-        mutate(genes=factor(.data[[feature_key(i)]]))
+        mutate(key=factor(.data[[feature_key(i)]]))
     nms <- list(
-        levels(res$genes),
-        seq_along(unique(res$id_x)))
+        levels(res$key),
+        seq_along(unique(res$id_x))-1)
     ns <- sparseMatrix(
-        i=res$genes, j=res$id_x,
+        i=res$key, j=res$id_x,
         x=res$n, dimnames=nms)
     SingleCellExperiment(list(counts=ns))
 })

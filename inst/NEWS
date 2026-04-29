@@ -1,3 +1,12 @@
+changes in version 0.99.31
+
+- refactored point/shape transformations
+- rebrand spatial queries as crop();
+  keeping table queries as query()
+- added object-wide spatial crop()
+- added .zattrs contructor
+- revised vignette
+
 changes in version 0.99.30
 
 - query() by table method draft

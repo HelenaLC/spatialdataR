@@ -5,20 +5,41 @@
 \alias{$,Zattrs-method}
 \title{The `Zattrs` class}
 \usage{
-Zattrs(x = list())
+Zattrs(
+  x,
+  type = c("array", "frame"),
+  label = FALSE,
+  trans = NULL,
+  ver = "0.4",
+  n = 3,
+  ...
+)
 
 \S4method{$}{Zattrs}(x, name)
 }
 \arguments{
 \item{x}{list extracted from a OME-NGFF compliant .zattrs file.}
 
+\item{type}{character string; either "array" (image/label) or "frame" (point/shape).}
+
+\item{...}{additional attributes (e.g., version, feature_key).}
+
 \item{name}{character string for extraction (see ?base::`$`).}
+
+\item{axes}{list of axes; if NULL, defaults to cyx (array) or xy (frame).}
+
+\item{transformations}{list of transformations; if NULL, defaults to global identity.}
 }
 \value{
 \code{Zattrs}
 }
 \description{
 The `Zattrs` class
+}
+\details{
+When missing \code{x}, \code{Zattrs} will generate a valid object with
+default axes (array: cyx, frame: xy) and transformations (identify) 
+according to the specified type.
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
@@ -32,5 +53,11 @@ CTtype(z)
 CTdata(z, "scale")
 
 feature_key(point(x))
+
+# constructor
+Zattrs(type="frame")
+Zattrs(type="array")
+Zattrs(type="array", n=7)
+Zattrs(type="array", label=TRUE)
 
 }

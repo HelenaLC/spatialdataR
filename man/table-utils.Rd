@@ -96,27 +96,7 @@ y <- x; tables(y) <- list()
 y <- setTable(y, i <- "blobs_labels")
 head(colData(sce <- getTable(y, i)))
 
-# points
-y <- setTable(x, i <- "blobs_points")
-head(colData(sce <- getTable(y, i)))
-
-# labels
+# shapes
 y <- setTable(x, i <- "blobs_circles")
 head(colData(sce <- getTable(y, i)))
-
-# list of data generating functions
-f <- list(
-  numbers=\(n) runif(n),
-  letters=\(n) sample(letters, n, TRUE))
-
-args <- c(list(x, i <- "blobs_points"), f)
-y <- do.call(setTable, args)
-head(colData(getTable(y, i)))
-
-# passing a preconstructed 'data.frame'
-id <- unique(point(x, i)$instance_id)
-df <- data.frame(n=runif(length(id)))
-
-y <- setTable(x, i, df)
-head(colData(getTable(y, i)))
 }
