@@ -47,12 +47,6 @@
 #' CTname(rmvCT(z, "global")) # identity is protected
 NULL
 
-# TODO: currently applying transformations only on 'data.frame's for plotting,
-# not the actual data (e.g., image)... but this might be necessary for queries?
-
-# TODO: for all layers, implement all transformations 
-# (translate, scale, rotate, affine, and sequential)
-
 # axes() ----
 
 #' @rdname CTutils
