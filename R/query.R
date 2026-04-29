@@ -1,58 +1,28 @@
 #' @name query
-#' @title spatial queries
+#' @title queries
 #'
-#' @description Spatial queries serve to subset \code{SpatialData} elements
-#' according to a rectangular bounding box or arbitrary polygonal shapes.
-#' Queries rely on lesser-/greater-equal and \code{sf::st_intersects} for
-#' spatial operations (i.e., instances that intersect the query region
-#' in any way are kept). For circle shapes, radii are currently ignored
-#' (i.e., a circle is kept if its centroid intersects the query region).
+#' @description \code{query} provides a interface for table-based 
+#' subsetting of \code{SpatialData} objects. It filters a specified 
+#' table using \code{dplyr::filter} logic and propagates the result 
+#' to all associated spatial elements (i.e., only instances 
+#' present in the filtered table are kept).
+#' 
+#' For spatial cropping, see \code{\link{crop}}.
 #'
-#' @param x \code{SpatialData} element.
-#' @param y query specification;
-#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
-#' polygon: numeric matrix with at least 3 rows and exactly 2 columns.
-#' @param i for \code{SpatialData}, index or name of table to query.
-#' @param ... optional arguments passed to and from other methods.
+#' @param x \code{SpatialData} object.
+#' @param i index or name of table to query.
+#' @param ... logic passed to \code{dplyr::filter}.
 #'
-#' @return same as input
+#' @return \code{SpatialData} object
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
-#' sd <- readSpatialData(zs, tables=FALSE)
-#'
-#' # helper for visualizing point coordinates
-#' .xy <- \(.) as.data.frame(.)[c("x", "y")]
-#'
-#' # bounding box
-#' y <- list(xmin=11, xmax=44, ymin=22, ymax=55)
-#' q <- query(p <- point(sd), y)
-#'
-#' plot(.xy(p), asp=1)
-#' points(.xy(q), col="red")
-#' rect(y$xmin, y$ymin, y$xmax, y$ymax, border="blue")
-#'
-#' # polygon
-#' y <- rbind(c(20,10), c(50,30), c(20,50), c(30,30))
-#' q <- query(p <- point(sd), y)
-#'
-#' plot(.xy(p), asp=1)
-#' points(.xy(q), col="red")
-#' lines(rbind(y, y[1, ]), col="blue")
-#'
-#' # shapes that intersect the query region are kept
-#' y <- rbind(c(30,45), c(40,45), c(35,50))
-#' t <- query(s <- shape(sd, 3), y)
-#'
-#' require(sf, quietly=TRUE)
-#' df <- st_coordinates(st_as_sf(data(s)))
-#' fd <- st_coordinates(st_as_sf(data(t)))
-#' plot(
-#'   asp=1, xlim=c(15, 60), ylim=c(15, 60),
-#'   rbind(y, y[1, ]), type="l", col="blue")
-#' foo <- by(df, df[, "L2"], \(x) points(x, type="b", col="black"))
-#' foo <- by(fd, fd[, "L2"], \(x) points(x, type="b", col="red"))
+#' sd <- readSpatialData(zs, anndataR=TRUE)
+#' 
+#' # filter by 'region' and propagate to shapes/points
+#' t <- table(sd)
+#' query(sd, i=1, region == region(t))
 NULL
 
 #' @export
@@ -60,10 +30,7 @@ NULL
 #' @importFrom dplyr filter pull
 #' @importFrom SummarizedExperiment colData
 #' @importFrom SingleCellExperiment int_colData
-setMethod("query", "SpatialData", \(x, ..., i) {
-    if (missing(i)) { 
-    } else {
-    # spatial query
+setMethod("query", "SpatialData", \(x, i, ...) {
     if (!length(tables(x)))
         stop("There aren't any tables")
     if (is.numeric(i)) {
@@ -93,98 +60,5 @@ setMethod("query", "SpatialData", \(x, ..., i) {
         x[[l]][[r]] <- e[which(j), ]
     }
     table(x, i) <- t
-    return(x)
-    }
-})
-
-.check_box <- \(bb) {
-    xy <- c("xmin", "xmax", "ymin", "ymax")
-    ok <- c(is.list(bb),
-        length(bb) == 4, setequal(names(bb), xy),
-        bb$xmin <= bb$xmax, bb$ymin <= bb$ymax,
-        is.numeric(bb <- unlist(bb)), !is.na(bb))
-    if (!all(ok)) stop(
-        "Invalid bounding box query; should be length-4 ",
-        "numeric list with names 'xmin/xmax/ymin/ymax'")
-}
-
-.check_pol <- \(mx) {
-    ok <- c(
-        is.matrix(mx), is.numeric(mx),
-        nrow(mx) >= 3, ncol(mx) == 2,
-        !is.na(mx), is.finite(mx))
-    if (!all(ok)) stop(
-        "Invalid polygon query; should be numeric matrix with at ",
-        "least 3 rows and exactly 2 columns (= xy-coordinates)")
-    # ensure polygon is closed
-    top <- mx[1, ]
-    bot <- mx[nrow(mx), ]
-    if (!all(top == bot))
-        mx <- rbind(mx, top)
-    dup <- duplicated(as.data.frame(mx[-1, , drop=FALSE]))
-    if (any(dup)) stop("Invalid polygon query; found duplicated vertices")
-    return(mx)
-}
-
-#' @export
-#' @rdname query
-setMethod("query", "sdArray", \(x, y) {
-    if (is.matrix(y)) stop(
-        "Polygon query not supported for ",
-        "element of type 'image/labelArray'")
-    .check_box(y)
-    # protect image channels (i.e.,
-    # only query spatial dimensions)
-    n <- length(d <- dim(x))
-    if (n == 3) d <- d[-1]
-    # assure query is within bounds
-    y$xmin <- max(y$xmin, 0)
-    y$ymin <- max(y$ymin, 0)
-    y$ymax <- min(y$ymax, d[1])
-    y$xmax <- min(y$xmax, d[2])
-    # subset spatial dimensions
-    i <- seq(y$ymin, y$ymax)
-    j <- seq(y$xmin, y$xmax)
-    wh <- list(
-        y[c("xmin", "xmax")],
-        y[c("ymin", "ymax")])
-    wh <- lapply(wh, unlist)
-    metadata(x)$wh <- wh
-    if (n == 3) {
-        return(x[, i, j])
-    } else {
-        return(x[i, j])
-    }
-})
-
-#' @export
-#' @rdname query
-#' @importFrom dplyr pull
-#' @importFrom methods is
-#' @importFrom duckspatial ddbs_intersects
-#' @importFrom sf st_sf st_sfc st_as_sfc st_geometry st_bbox st_polygon 
-setMethod("query", "sdFrame", \(x, y) {
-    # TODO: this will drop geometries where any coordinate
-    # is out of bounds; keep but crop to boundary region?
-    if (is(y, "sf")) {
-        polygon <- y
-        st_geometry(polygon) <- "geometry"
-    } else if (is(y, "sfc")) {
-        polygon <- st_sf(geometry=y)
-    } else if (is(y, "sfg")) {
-        polygon <- st_sf(geometry=st_sfc(y))
-    } else if (is.matrix(y)) {
-        # TODO: currently ignoring 'radius' for circles (i.e.,
-        # query based on centroids only); what does Python do?
-        mx <- .check_pol(y)
-        polygon <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
-    } else {
-        # bounding box
-        .check_box(y)
-        polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
-    }
-    # sf <- st_as_sf(data(x))
-    ok <- ddbs_intersects(data(x), polygon, sparse=TRUE)
-    x <- x[ok |> pull(id_x), ]
     return(x)
 })

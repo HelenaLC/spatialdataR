@@ -112,13 +112,14 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    dat <- ddbs_open_dataset(pq) |>
-        mutate(geometry=dplyr::sql(paste0("ST_Point(", 
-            md$axes[[1]], ", ", md$axes[[2]], ")"))) |>
-        as_duckspatial_df(crs = NA_character_)
-    PointFrame(data=dat, meta=Zattrs(md))
+    md <- read_zarr_attributes(x)
+    ax <- unlist(md$axes)
+    df <- ddbs_open_dataset(pq) |>
+        mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
+        as_duckspatial_df(crs=NA_character_) |>
+        select(-all_of(ax))
+    PointFrame(data=df, meta=Zattrs(md))
 }
 
 #' @rdname readSpatialData
@@ -208,22 +209,24 @@ readSpatialData <- function(x,
     if (!anndataR) tables <- FALSE # will do manually below
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
-    sd <- lapply(.LAYERS[!skip], \(i) {
-        j <- list.dirs(
-            file.path(x, i),
-            recursive=FALSE,
-            full.names=TRUE)
+    
+    # helper for layer reading
+    .readLayer <- \(l) {
+        j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
         names(j) <- basename(j)
-        if (!isTRUE(opt <- args[[i]])) {
+        opt <- args[[l]]
+        if (!isTRUE(opt)) {
             if (is.numeric(opt) && opt > (. <- length(j)))
-                stop("'", i, "=", opt, "', but only ", ., " elements found")
+                stop("'", l, "=", opt, "', but only ", ., " elements found")
             if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
-                stop("couldn't find ", i, " of name", .)
+                stop("couldn't find ", l, " of name", .)
             j <- j[opt]
         }
-        f <- get(paste0("read", toupper(substr(i, 1, 1)), substr(i, 2, nchar(i)-1)))
+        f <- get(paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1)))
         lapply(j, \(.) do.call(f, list(.)))
-    })
+    }
+    
+    sd <- lapply(setNames(nm=.LAYERS[!skip]), .readLayer)
     if (!anndataR && !isFALSE(tables)) sd$tables <- .readTables_basilisk(x)
     do.call(SpatialData, sd)
 }

@@ -17,24 +17,21 @@
 \alias{mirror,sdArray-method}
 \alias{flip,sdArray-method}
 \alias{flop,sdArray-method}
-\alias{scale,sdArray,numeric-method}
 \alias{rotate,sdArray,numeric-method}
+\alias{scale,sdArray,numeric-method}
 \alias{translation,sdArray,numeric-method}
-\alias{scale,PointFrame,numeric-method}
-\alias{rotate,PointFrame,numeric-method}
-\alias{translation,PointFrame,numeric-method}
-\alias{scale,ShapeFrame,numeric-method}
-\alias{rotate,ShapeFrame,numeric-method}
-\alias{translation,ShapeFrame,numeric-method}
+\alias{rotate,sdFrame,numeric-method}
+\alias{scale,sdFrame,numeric-method}
+\alias{translation,sdFrame,numeric-method}
 \title{Transformations}
 \usage{
-\S4method{transform}{SpatialDataElement,missing}(x, i)
+\S4method{transform}{SpatialDataElement,missing}(x, i, ...)
 
-\S4method{transform}{SpatialDataElement,numeric}(x, i)
+\S4method{transform}{SpatialDataElement,numeric}(x, i, ...)
 
-\S4method{transform}{SpatialDataElement,character}(x, i)
+\S4method{transform}{SpatialDataElement,character}(x, i, ...)
 
-\S4method{sequence}{SpatialDataElement,list}(x, t, ...)
+\S4method{sequence}{SpatialDataElement,list}(x, t, ..., rev = FALSE)
 
 \S4method{mirror}{sdArray}(x, t = c("v", "h"), k = 1, ...)
 
@@ -42,32 +39,26 @@
 
 \S4method{flop}{sdArray}(x, k = 1, ...)
 
-\S4method{scale}{sdArray,numeric}(x, t, k = 1, ...)
+\S4method{rotate}{sdArray,numeric}(x, t, k = 1, ..., rev = FALSE)
 
-\S4method{rotate}{sdArray,numeric}(x, t, k = 1, ...)
+\S4method{scale}{sdArray,numeric}(x, t, ...)
 
-\S4method{translation}{sdArray,numeric}(x, t, k = 1, ...)
+\S4method{translation}{sdArray,numeric}(x, t, ...)
 
-\S4method{scale}{PointFrame,numeric}(x, t, ...)
+\S4method{rotate}{sdFrame,numeric}(x, t, ...)
 
-\S4method{rotate}{PointFrame,numeric}(x, t, ...)
+\S4method{scale}{sdFrame,numeric}(x, t, ...)
 
-\S4method{translation}{PointFrame,numeric}(x, t, ...)
-
-\S4method{scale}{ShapeFrame,numeric}(x, t, ...)
-
-\S4method{rotate}{ShapeFrame,numeric}(x, t, ...)
-
-\S4method{translation}{ShapeFrame,numeric}(x, t, ...)
+\S4method{translation}{sdFrame,numeric}(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
 
+\item{...}{option arguments passed to and from other methods.}
+
 \item{t}{transformation data; exceptions: for \code{mirror}, controls
 whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
 no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
-
-\item{...}{option arguments passed to and from other methods.}
 
 \item{k}{scalar index specifying which scale to use; 
 \code{Inf} to use lowest available resolution;
@@ -95,9 +86,9 @@ y <- x
 point(y, "rot") <- rotate(point(y), 20)
 point(y, "wide") <- scale(point(y), c(1.2, 1))
 
-xy0 <- as.data.frame(point(y))
-xy1 <- as.data.frame(point(y, "rot"))
-xy2 <- as.data.frame(point(y, "wide"))
+xy0 <- centroids(point(y))
+xy1 <- centroids(point(y, "rot"))
+xy2 <- centroids(point(y, "wide"))
 
 plot(xy0[, c(1, 2)], asp=1)
 points(xy1[, c(1, 2)], col=2)

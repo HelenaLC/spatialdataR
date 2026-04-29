@@ -1,0 +1,31 @@
+execute: 
+  cache: false
+  message: false
+  warning: false
+
+project:
+  type: website
+  output-dir: docs
+  execute-dir: project
+  render: 
+    - demo/index.qmd
+    - demo/*.qmd
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    standalone: true
+    embed-resources: true
+
+website:
+  title: "SpatialData"
+  navbar:
+    left:
+      - demo/merfish.qmd
+      - demo/mibitof.qmd
+      - demo/cosmx.qmd
+      - demo/xenium.qmd
+      - demo/visium.qmd
+      - demo/visiumhd.qmd

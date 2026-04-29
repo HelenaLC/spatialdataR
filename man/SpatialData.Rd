@@ -9,33 +9,38 @@
 \alias{meta}
 \alias{layer}
 \alias{element}
+\alias{[[<-,SpatialData,numeric,ANY-method}
+\alias{[[<-,SpatialData,character,ANY-method}
 \alias{image}
 \alias{images}
 \alias{image<-}
 \alias{images<-}
 \alias{imageNames}
+\alias{imageNames<-}
 \alias{label}
 \alias{labels}
 \alias{label<-}
 \alias{labels<-}
 \alias{labelNames}
+\alias{labelNames<-}
 \alias{point}
 \alias{points}
 \alias{point<-}
 \alias{points<-}
 \alias{pointNames}
+\alias{pointNames<-}
 \alias{shape}
 \alias{shapes}
 \alias{shape<-}
 \alias{shapes<-}
 \alias{shapeNames}
+\alias{shapeNames<-}
 \alias{table}
 \alias{tables}
 \alias{table<-}
 \alias{tables<-}
 \alias{tableNames}
-\alias{[[<-,SpatialData,character,ANY-method}
-\alias{[[<-,SpatialData,numeric,ANY-method}
+\alias{tableNames<-}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
@@ -46,10 +51,10 @@
 \alias{colnames,SpatialData-method}
 \alias{layer,SpatialData,character-method}
 \alias{layer,SpatialData,ANY-method}
-\alias{element,SpatialData,ANY,character-method}
-\alias{element,SpatialData,ANY,numeric-method}
-\alias{element,SpatialData,ANY,missing-method}
-\alias{element,SpatialData,ANY,ANY-method}
+\alias{element,SpatialData,character-method}
+\alias{element,SpatialData,numeric-method}
+\alias{element,SpatialData,missing-method}
+\alias{element,SpatialData,ANY-method}
 \alias{[[<-,SpatialData,numeric,ANY,ANY-method}
 \alias{[[<-,SpatialData,character,ANY,ANY-method}
 \title{The `SpatialData` class}
@@ -76,13 +81,15 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{layer}{SpatialData,ANY}(x, i)
 
-\S4method{element}{SpatialData,ANY,character}(x, i, j)
+\S4method{element}{SpatialData,character}(x, i)
 
-\S4method{element}{SpatialData,ANY,numeric}(x, i, j)
+\S4method{element}{SpatialData,numeric}(x, i)
 
-\S4method{element}{SpatialData,ANY,missing}(x, i, j)
+\S4method{element}{SpatialData,missing}(x, i)
 
-\S4method{element}{SpatialData,ANY,ANY}(x, i, j)
+\S4method{element}{SpatialData,ANY}(x, i)
+
+\S4method{images}{SpatialData}(x)
 
 \S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 

@@ -4,6 +4,8 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x, tables=FALSE)
 
+# centroids ----
+
 test_that("centroids,LabelArray", {
     y <- label(x)
     z <- centroids(y, "data.frame")
@@ -20,7 +22,7 @@ test_that("centroids,PointFrame", {
     i <- feature_key(y <- point(x))
     z <- centroids(y, "data.frame")
     expect_is(z, "data.frame")
-    expect_identical(names(z), c(xy, i, "geometry"))
+    expect_identical(names(z), c(xy, i))
     expect_is(z[[i]], "character")
     expect_is(unlist(z[xy]), "numeric")
     .z <- centroids(y, "list")
@@ -63,19 +65,21 @@ test_that("centroids,ShapeFrame", {
     expect_identical(.z, as.matrix(z))
 })
 
+# extent ----
+
 test_that("extent,ImageArray", {
     z <- extent(y <- image(x)[,-1,-c(1,2)])
     expect_is(z, "list")
     expect_is(unlist(z), "numeric")
-    expect_identical(names(z), rev(xy))
-    expect_identical(z$y, c(0, dim(y)[2]))
+    expect_identical(names(z), c("x", "y"))
     expect_identical(z$x, c(0, dim(y)[3]))
+    expect_identical(z$y, c(0, dim(y)[2]))
 })
 test_that("extent,LabelArray", {
     z <- extent(y <- label(x)[,-1,-c(1,2)])
     expect_is(z, "list")
     expect_is(unlist(z), "numeric")
-    expect_identical(names(z), rev(xy))
+    expect_identical(names(z), c("x", "y"))
     expect_identical(z$y, c(0, dim(y)[1]))
     expect_identical(z$x, c(0, dim(y)[2]))
 })
@@ -84,8 +88,9 @@ test_that("extent,PointFrame", {
     expect_is(z, "list")
     expect_identical(names(z), xy)
     expect_is(unlist(z), "numeric")
-    expect_identical(z$x, range(y$x))
-    expect_identical(z$y, range(y$y))
+    xy <- st_coordinates(st_as_sf(data(y)))
+    expect_identical(z$x, range(xy[, 1]))
+    expect_identical(z$y, range(xy[, 2]))
 })
 test_that("extent,ShapeFrame", {
     z <- extent(y <- shape(x))
