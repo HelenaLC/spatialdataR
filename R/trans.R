@@ -83,7 +83,7 @@ setMethod("sequence", c("SpatialDataElement", "list"), \(x, t, ..., rev=FALSE) {
 .mirror <- \(x, t, k=1) {
     d <- length(dim(x)) == 3
     i <- if (d) c(1, 3, 2) else c(2, 1)
-    x@data <- list(aperm(data(x, k), i))
+    data(x) <- list(aperm(data(x, k), i))
     rotate(x, t, k=1)
 }
 
@@ -105,7 +105,7 @@ setMethod("flop", "sdArray", \(x, k=1, ...) .mirror(x, 90, k))
 .trans_a. <- \(x, f, k=1) {
     a <- f(aperm(as.array(data(x, k))))
     metadata(x)$data_type <- data_type(x)
-    x@data <- list(as(aperm(a), "SparseArray"))
+    data(x) <- list(as(aperm(a), "SparseArray"))
     return(x)
 }
 
@@ -191,11 +191,11 @@ setMethod("translation", c("sdArray", "numeric"), \(x, t, ...) .trans_a(x, t, "t
     
     # edge case: rescale radii
     if (f == "scale" && "radius" %in% names(x))
-        x@data <- mutate(x@data, radius=!!t[1]*radius)
+        data(x) <- mutate(data(x), radius=!!t[1]*radius)
     
     # dynamic injection 'ST_*(geo, v1, v2, ...)'
     v <- switch(f, rotate=t*pi/180, t) # radians
-    x@data <- mutate(x@data, geometry=!!call2(map$fns[f], quote(geometry), !!!v))
+    data(x) <- mutate(data(x), geometry=!!call2(map$fns[f], quote(geometry), !!!v))
     return(x)
 }
 

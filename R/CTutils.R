@@ -126,7 +126,7 @@ setMethod("CTname", "SpatialData", \(x, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("rmvCT", "SpatialDataElement", 
-    \(x, i) { x@meta <- rmvCT(meta(x), i); x })
+    \(x, i) { meta(x) <- rmvCT(meta(x), i); x })
 
 #' @rdname CTutils
 #' @export
@@ -166,7 +166,7 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
 #' @rdname CTutils
 #' @export
 setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
-    x@meta <- addCT(meta(x), name, type, data); x })
+    meta(x) <- addCT(meta(x), name, type, data); x })
 
 .check_ct <- \(x, type, data) {
     d <- length(axes(x))
