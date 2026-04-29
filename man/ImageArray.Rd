@@ -2,8 +2,8 @@
 % Please edit documentation in R/ImageArray.R
 \name{ImageArray}
 \alias{ImageArray}
-\alias{channels,ImageArray-method}
 \alias{channels}
+\alias{channels,ImageArray-method}
 \alias{channels,ANY-method}
 \alias{[,ImageArray,ANY,ANY,ANY-method}
 \title{The `ImageArray` class}

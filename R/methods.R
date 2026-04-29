@@ -20,6 +20,30 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
     attr(x, grep(i, names(attributes(x)), value=TRUE))
 })
 
+# data/meta ----
+
+#' @export
+#' @rdname SpatialData
+setMethod("data", "SpatialDataElement", \(x) x@data)
+
+#' @export
+#' @rdname SpatialData
+setMethod("meta", "SpatialDataElement", \(x) x@meta)
+
+# internal use only!
+#' @noRd
+setReplaceMethod("data", c("SpatialDataElement", "ANY"), 
+    \(x, value) { x@data <- value; x })
+
+#' @noRd
+setReplaceMethod("meta", c("SpatialDataElement", "Zattrs"), 
+    \(x, value) { x@meta <- value; x })
+
+#' @noRd
+setReplaceMethod("meta", c("SpatialDataElement", "list"), 
+    \(x, value) `meta<-`(x, value=Zattrs(value)))
+# TODO: validity check that .zattrs are valid for 'x'
+
 # sub ----
 
 .sub_i <- \(x, i) {
@@ -63,16 +87,6 @@ setMethod("[", "SpatialData", \(x, i, j, ..., drop=FALSE) {
     if (missing(j)) j <- TRUE
     .sub_j(.sub_i(x, i), j)
 })
-
-# data/meta ----
-
-#' @rdname SpatialData
-#' @export
-setMethod("data", "SpatialDataElement", \(x) x@data)
-
-#' @rdname SpatialData
-#' @export
-setMethod("meta", "SpatialDataElement", \(x) x@meta)
 
 # row/colnms ----
 

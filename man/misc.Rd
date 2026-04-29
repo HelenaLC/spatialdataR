@@ -42,6 +42,3 @@ shape(sd)
 meta(label(sd))
 meta(image(sd, 2))
 }
-\author{
-Helena L. Crowell
-}
