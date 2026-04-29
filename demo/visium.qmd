@@ -54,14 +54,12 @@ plot_layout(nrow=1) & scale_colour_viridis_c()
 # - log-library size normalization
 # - highly variable gene selection
 # - principal component analysis
+# - shared-nearest neighbor graph construction
+# - community detection using Leiden algorithm
 assayNames(se) <- "counts"
 se <- normalizeRnaCounts.se(se)
 se <- chooseRnaHvgs.se(se)
 se <- runPca.se(se, rowData(se)$hvg)
-
-# perform standard clustering:
-# - shared-nearest neighbor graph construction
-# - community detection using Leiden algorithm
 se <- clusterGraph.se(se, method="leiden", resolution=0.5)
 base::table(se$clusters)
 ```
