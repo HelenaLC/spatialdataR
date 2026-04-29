@@ -32,12 +32,15 @@ NULL
 #' @rdname sdArray
 #' @export
 setMethod("data", "sdArray", \(x, k=1) {
-  if (is.null(k)) return(x@data)
-  stopifnot(length(k) == 1, is.numeric(k), k > 0)
-  n <- length(x@data) # get number of available scales
-  if (is.infinite(k)) k <- n # input of Inf uses lowest
-  if (k <= n) return(x@data[[k]]) # return specified scale
-  stop("'k=", k, "' but only ", n, " resolution(s) available")
+    # direct accession needed here
+    # to get at available scales
+    x <- x@data 
+    if (is.null(k)) return(x)
+    stopifnot(length(k) == 1, is.numeric(k), k > 0)
+    n <- length(x) # get number of available scales
+    if (is.infinite(k)) k <- n # input of Inf uses lowest
+    if (k <= n) return(x[[k]]) # return specified scale
+    stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
 #' @rdname sdArray

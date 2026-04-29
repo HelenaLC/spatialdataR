@@ -33,19 +33,14 @@ NULL
 setMethod("query", "SpatialData", \(x, i, ...) {
     if (!length(tables(x)))
         stop("There aren't any tables")
-    if (is.numeric(i)) {
-        i <- tableNames(x)[i]
-    } else if (is.character(i)) {
-        i <- match.arg(i, tableNames(x))
-    }
-    t <- x$tables[[i]]
+    t <- SpatialData::table(x, i)
     df <- data.frame(.i=seq_len(ncol(t)), colData(t), int_colData(t))
     df <- filter(df, ...)
     if (!nrow(df)) stop("Nothing left after query")
     t <- t[, df$.i]
     colData(t) <- droplevels(colData(t))
     int_colData(t) <- droplevels(int_colData(t))
-    region(t) <- levels(int_colData(t)[[region_key(t)]])
+    region(t) <- levels(regions(t))
     for (l in setdiff(.LAYERS, "tables")) {
         j <- !names(x[[l]]) %in% region(t)
         if (sum(j)) x[[l]] <- x[[l]][-which(j)]
@@ -54,8 +49,7 @@ setMethod("query", "SpatialData", \(x, i, ...) {
         l <- layer(x, r)
         if (l == "labels") next
         e <- x[[l]][[r]]
-        ik <- instance_key(t)
-        j <- pull(data(e), ik)
+        j <- instances(e)
         j <- j %in% instances(t)
         x[[l]][[r]] <- e[which(j), ]
     }

@@ -18,16 +18,50 @@ library(SpatialData.plot)
 
 ### analysis
 
-```{r fig.width=9, fig.height=3}
-cl <- rep(list(c(0, 1/3)), 3) # contrasts
-ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(sd, i, cl=cl))
+```{r fig.width=9, fig.height=3.5}
+cl <- rep(list(c(0, 1/3)), 3) # contrast limits
+ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(sd, i, cl=cl) + ggtitle(i))
 wrap_plots(ps, nrow=1) & theme(legend.position="none")
 ```
 
 ```{r fig.width=8, fig.height=3}
 bb <- list(xmin=0, xmax=800, ymin=200, ymax=500)
-(sp <- crop(sd, bb, j="point23")) # TODO: crop() should filter tables
+(sp <- crop(sd, bb, j="point23"))
 plotSpatialData() + plotImage(sp, cl=cl) # TODO: auto-drop legend?
+```
+
+```{r}
+(se <- element(sd, "table"))
+base::table(ks <- se$Cluster)
+```
+
+```{r fig.width=10, fig.height=3.5}
+# TODO: y-axis not reversed; fix in plotLabel?
+is <- labelNames(sd)
+ps <- lapply(is, \(i) 
+    plotSpatialData() + 
+        ggtitle(i) + 
+        plotLabel(sd, i, a=2/3,
+            c="Cluster", na="black", 
+            pal=rainbow(nlevels(ks))))
+wrap_plots(ps, nrow=1, guides="collect")
+```
+
+```{r}
+sp <- query(sd, "table", grepl("Tc", Cluster))
+base::table(table(sp)$Cluster)
+```
+
+```{r fig.width=10, fig.height=3.5}
+# TODO: this is wrong?
+is <- labelNames(sd)
+ps <- lapply(is, \(i) 
+    plotSpatialData() + 
+        ggtitle(i) + 
+        plotLabel(sp, i, a=2/3,
+            c="Cluster", na="black", 
+            pal=c("gold", "blue")))
+wrap_plots(ps, nrow=1, guides="collect")
 ```
 
 ### appendix

@@ -3,9 +3,8 @@
 ### preamble
 
 ```{r load-libs}
-library(sf)
-library(dplyr)
 library(ggplot2)
+library(scrapper)
 library(patchwork)
 library(SpatialData)
 library(SpatialData.data)
@@ -48,6 +47,49 @@ plotSpatialData() +
 plotSpatialData() + plotShape(sd, colour="array_col") +
 plotSpatialData() + plotShape(sd, colour="Map2") +
 plot_layout(nrow=1) & scale_colour_viridis_c()
+```
+
+```{r}
+# perform standard processing:
+# - log-library size normalization
+# - highly variable gene selection
+# - principal component analysis
+# - shared-nearest neighbor graph construction
+# - community detection using Leiden algorithm
+assayNames(se) <- "counts"
+se <- normalizeRnaCounts.se(se)
+se <- chooseRnaHvgs.se(se)
+se <- runPca.se(se, rowData(se)$hvg)
+se <- clusterGraph.se(se, method="leiden", resolution=0.5)
+base::table(se$clusters)
+```
+
+```{r}
+# TODO: make 'getTable' search 'reducedDims' as well
+pc <- reducedDim(se, "PCA")
+colnames(pc) <- paste0("PC", seq_len(ncol(pc)))
+colData(se) <- cbind(colData(se), pc)
+
+# overwrite table in copy
+sp <- sd; table(sp) <- se
+```
+
+```{r fig.width=9, fig.height=3.5}
+# visualize PCs 1-3 spatially
+lapply(head(colnames(pc), 3), \(.) {
+    plotSpatialData() + 
+        plotShape(sp, col=NA, fill=.) + ggtitle(.) +
+        scale_fill_gradient2(low="blue", high="red")
+    }) |> 
+    wrap_plots(nrow=1) &
+    theme(legend.position="none")
+```
+
+```{r fig.width=4, fig.height=3.5, fig.align="center"}
+i <- "ST8059050"
+plotSpatialData() + 
+    plotShape(sp, i, col=NA, fill="clusters") + ggtitle(i) +
+    scale_fill_manual(values=rainbow(nlevels(se$clusters)))
 ```
 
 ### appendix
