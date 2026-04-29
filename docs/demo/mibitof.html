@@ -4944,14 +4944,15 @@ Tcell_CD4 Tcell_CD8
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>is <span class="ot">&lt;-</span> <span class="fu">labelNames</span>(sd)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">lapply</span>(is, \(i) </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotSpatialData</span>() <span class="sc">+</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(i) <span class="sc">+</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotLabel</span>(sp, i, <span class="at">a=</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">c=</span><span class="st">&quot;Cluster&quot;</span>, <span class="at">na=</span><span class="st">&quot;black&quot;</span>, </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">pal=</span><span class="fu">c</span>(<span class="st">&quot;gold&quot;</span>, <span class="st">&quot;blue&quot;</span>)))</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(ps, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">guides=</span><span class="st">&quot;collect&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: this is wrong?</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>is <span class="ot">&lt;-</span> <span class="fu">labelNames</span>(sd)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">lapply</span>(is, \(i) </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotSpatialData</span>() <span class="sc">+</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(i) <span class="sc">+</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotLabel</span>(sp, i, <span class="at">a=</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">c=</span><span class="st">&quot;Cluster&quot;</span>, <span class="at">na=</span><span class="st">&quot;black&quot;</span>, </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">pal=</span><span class="fu">c</span>(<span class="st">&quot;gold&quot;</span>, <span class="st">&quot;blue&quot;</span>)))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(ps, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">guides=</span><span class="st">&quot;collect&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

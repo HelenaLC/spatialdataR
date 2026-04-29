@@ -53,6 +53,7 @@ base::table(table(sp)$Cluster)
 ```
 
 ```{r fig.width=10, fig.height=3.5}
+# TODO: this is wrong?
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
