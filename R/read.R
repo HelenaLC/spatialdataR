@@ -91,26 +91,18 @@ readShape <- function(x, ...) {
     ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
 }
 
-.readTable_anndataR <- function(x) {
-    if (!requireNamespace('anndataR', quietly=TRUE)) {
-        message("To make sure 'anndataR' package works as intended, ",
-                "install the development version via\n",
-                "`BiocManager::install(\"keller-mark/anndataR\", ref=\"spatialdata\")`")
-    }
-    suppressWarnings({ # suppress warnings related to hidden files
-        anndataR::read_zarr(x, as="SingleCellExperiment")
-    })
-}
-
 #' @rdname readSpatialData
 #' @importFrom S4Vectors metadata metadata<-
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom SingleCellExperiment
 #'   int_metadata int_metadata<-
 #'   int_colData int_colData<-
+#' @importFrom anndataR read_zarr
 #' @export
 readTable <- function(x) {
-    sce <- .readTable_anndataR(x)
+    suppressWarnings({ # suppress warnings related to hidden files
+      sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
+    })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
