@@ -20,6 +20,22 @@ vignette: |
   %\VignetteIndexEntry{Introduction to SpatialData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+references:
+- id: marconato2024spatialdata
+  title: "SpatialData: an open and universal data framework for spatial omics"
+  author:
+  - family: Marconato
+    given: Luca
+  - family: Palla
+    given: Giovanni
+  - family: Yamauchi
+    given: Kevin A.
+  container-title: Nature Methods
+  volume: 22
+  number: 1
+  pages: 58-62
+  year: 2024
+  doi: 10.1038/s41592-024-02212-x
 ---
 
 ```{r setup, include=FALSE}
@@ -30,11 +46,15 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 
 The `r BiocStyle::Biocpkg("SpatialData")` package provides an R interface to the 
 [SpatialData](https://spatialdata.scverse.org) framework, a unified ecosystem 
-for handling spatial omics data. Developed as part of the `scverse` community, 
-`SpatialData` aims to solve the challenges of integrating diverse spatial 
-datasets—including imaging, spatial transcriptomics, and proteomics—by 
-employing the [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
-standard.
+for handling spatial omics data. Developed as part of the 
+[scverse](https://scverse.org) community, `SpatialData` aims to solve the 
+challenges of integrating diverse spatial datasets—including imaging, spatial 
+transcriptomics, and proteomics—by employing the 
+[OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
+standard [see @marconato2024spatialdata].
+
+The Python implementation and core specifications can be found at the 
+[official SpatialData website](https://spatialdata.scverse.org).
 
 ## Data Representation in R
 
@@ -45,11 +65,7 @@ for multiple layers of spatial information:
 - **Labels**: Segmentation masks (e.g., cell or nuclei boundaries), also stored as `ZarrArray`s.
 - **Points**: High-resolution coordinates (e.g., individual transcript molecules), handled as `r BiocStyle::CRANpkg("arrow")` tables or `r BiocStyle::CRANpkg("duckdb")`-backed data frames for efficient out-of-memory processing.
 - **Shapes**: Polygonal regions of interest or circular markers, represented similarly to points but with geometric metadata.
-- **Tables**: Functional annotations (e.g., gene expression counts), stored as `r BiocStyle::Biocpkg("SingleCellExperiment")` objects, which link to the spatial elements via `instance_key` and `region` identifiers.
-
-This architecture ensures that `SpatialData` remains scalable, allowing users to 
-interact with datasets that exceed available RAM by leveraging on-disk storage 
-and lazy loading.
+- **Tables**: Functional annotations (e.g., gene expression counts), stored as `r BiocStyle::Biocpkg("SingleCellExperiment")` objects.
 
 # Getting Started
 
@@ -64,8 +80,7 @@ library(ZarrArray)
 ## Reading Data
 
 `SpatialData` objects are typically read from `.zarr` stores. The package provides 
-the `readSpatialData()` function to ingest an entire store, as well as specific 
-readers for individual elements.
+the `readSpatialData()` function to ingest an entire store.
 
 ```{r read-data}
 # Path to a toy dataset included in the package
@@ -76,23 +91,16 @@ sd <- readSpatialData(path)
 sd
 ```
 
-## Accessing Elements
+## AnnData Integration with `anndataR`
 
-The `SpatialData` object behaves like a named list of layers. You can use standard 
-R accessors to retrieve layers and elements:
+For spatial omics datasets, functional annotations are often stored as 
+[AnnData](https://anndata.readthedocs.io) objects in Python. The 
+`r BiocStyle::Githubpkg("keller-mark/anndataR")` package is used by 
+`SpatialData` to seamlessly read these `.zarr`-backed `AnnData` objects into 
+R as `SingleCellExperiment` objects.
 
-```{r accessors}
-# List names of all image elements
-imageNames(sd)
-
-# Retrieve the first label element
-lbl <- label(sd, 1)
-lbl
-
-# Access the underlying data of a point element
-pts <- point(sd, 1)
-head(as.data.frame(data(pts)))
-```
+By default, `readSpatialData(..., anndataR=TRUE)` will use this package to 
+ingest any tables found in the Zarr store.
 
 # Coordinate Systems and Transformations
 
@@ -100,31 +108,41 @@ A key feature of the `SpatialData` framework is its robust handling of
 coordinate systems. Each element can exist in multiple coordinate spaces 
 simultaneously, defined by transformations in its metadata.
 
-## Metadata Access
+## Coordinate Transformation Graph
 
-The `meta()` function retrieves the `Zattrs` object, which contains OME-NGFF 
-compliant metadata:
+The relationships between different elements and their respective coordinate 
+spaces can be complex. `SpatialData` provides the `CTgraph()` function to 
+visualize these relationships as a directed graph.
 
-```{r metadata}
-z <- meta(lbl)
-axes(z)
-CTname(z)
+```{r ct-graph, fig.cap="Coordinate transformation graph for the 'blobs' dataset."}
+if (requireNamespace("Rgraphviz", quietly = TRUE)) {
+    g <- CTgraph(sd)
+    CTplot(g)
+}
 ```
+
+In this graph:
+- **Element nodes** (prefixed with `_`) represent the individual data layers (images, labels, etc.).
+- **Space nodes** represent the coordinate systems (e.g., `global`, `sequence`).
+- **Edges** represent the transformations (scale, translation, etc.) required to map an element into a specific space.
 
 ## Applying Transformations
 
-Elements can be transformed between spaces. The `transform()` function resolves 
-the necessary steps to project an element into a target coordinate system:
+The `transform()` function resolves the necessary steps to project an element 
+into a target coordinate system by traversing this graph:
 
 ```{r transform}
-# Apply a transformation to a point element
+# Retrieve a point element
+pts <- point(sd, 1)
+
+# Project it into the 'global' coordinate space
 pts_transformed <- transform(pts, "global")
 ```
 
 # Spatial Queries
 
-`SpatialData` supports sophisticated spatial operations such as cropping and 
-querying, which are propagated across all layers:
+`SpatialData` supports sophisticated spatial operations such as cropping, 
+which are propagated across all layers:
 
 ```{r crop}
 # Define a bounding box for cropping
@@ -137,8 +155,9 @@ sd_cropped
 
 # Integration with Tables
 
-Tables (SCE objects) are used to annotate spatial elements. They link to specific 
-labels or shapes using identifiers:
+Tables (SCE objects) link to specific labels or shapes using `region` and 
+`instance_key` identifiers, allowing for seamless integration of spatial and 
+feature-level information.
 
 ```{r tables}
 # Access the table layer
@@ -146,10 +165,10 @@ if (length(tables(sd)) > 0) {
     sce <- table(sd, 1)
     
     # Check which region this table annotates
-    region(sce)
+    print(region(sce))
     
-    # Check the instance key (linking to specific labels/shapes)
-    instance_key(sce)
+    # Check the instance key
+    print(instance_key(sce))
 }
 ```
 
@@ -158,8 +177,12 @@ if (length(tables(sd)) > 0) {
 The `SpatialData` package brings the power of the `scverse` spatial ecosystem to 
 R, providing a scalable and interoperable foundation for spatial omics analysis. 
 By adhering to the OME-NGFF standard and integrating with established 
-Bioconductor objects like `SingleCellExperiment`, it enables seamless 
-workflows for the modern biologist.
+Bioconductor objects, it enables seamless cross-platform workflows.
+
+# References
+
+::: {#refs}
+:::
 
 # Session Info
 
