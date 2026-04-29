@@ -20,13 +20,15 @@
             ok <- all(lengths(intersect(md, nm[-1])) == 1)
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table's 'region/instance_key' is not length 1"))
-            ok <- !is.null(int_colData(se)[[md$region_key]])
-            if (!ok) msg <- c(msg, paste0(
-                i, "-th table missing 'region_key' column in 'int_colData'"))
             ok <- !is.null(int_colData(se)[[md$instance_key]])
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'instance_key' column in 'int_colData'"))
-
+            ok <- !is.null(rs <- int_colData(se)[[rk <- md$region_key]])
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table missing 'region_key' column in 'int_colData'"))
+            ok <- all(md[[rk]] %in% rs)
+            if (!ok) msg <- c(msg, paste0)(
+                i, "-th table's 'region_key' values not found in 'int_colData'")
         }
     }
     na <- setdiff(

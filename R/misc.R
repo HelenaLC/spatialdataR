@@ -12,8 +12,6 @@
 #'
 #' @return \code{NULL}
 #'
-#' @author Helena L. Crowell
-#'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
@@ -118,3 +116,55 @@ setMethod("show", "PointFrame", .showPointFrame)
 
 #' @rdname misc
 setMethod("show", "ShapeFrame", .showShapeFrame)
+
+#' @importFrom S4Vectors coolcat
+.showZattrs <- function(object) {
+    cat("class: Zattrs\n")
+    # axes
+    ax <- axes(object)
+    cat(sprintf("axes(%d):\n", length(ax)))
+    if (is.character(ax[[1]])) {
+        cat("- name:", unlist(ax), "\n")
+    } else {
+        cat("- name:", vapply(ax, \(.) .$name, character(1)), "\n")
+        cat("- type:", vapply(ax, \(.) .$type, character(1)), "\n")
+    }
+    # coordinate transformations
+    CTshow <- \(l) {
+        f <- \(.) {
+            . <- paste(unlist(.), collapse=",")
+            ifelse(grepl(",", .), sprintf("[%s]", .), .)
+        }
+        g <- \(.) {
+            na <- is.null(.) || !length(unlist(.))
+            ifelse(na, "", paste0(":", f(lapply(., f))))
+        }
+        h <- \(.) sprintf("(%s%s)", .$type, g(.[[.$type]]))
+        if (l$type == "sequence") {
+            l$transformations |>
+                vapply(\(.) h(.), character(1)) |>
+                paste(collapse=", ")
+        } else {
+            h(l)
+        }
+    }
+    ct <- CTlist(object)
+    cat(sprintf("coordTrans(%d):\n", length(ct)))
+    for (l in ct) {
+        cat(sprintf("- %s: %s\n", l$output$name, CTshow(l)))
+    }
+    # datasets (multiscales)
+    if (!is.null(ms <- multiscales(object)[[1]])) {
+        ps <- vapply(ms$datasets, \(.) .$path, character(1))
+        coolcat("datasets(%d): %s\n", ps)
+        for (d in ms$datasets) {
+            l <- d$coordinateTransformations[[1]]
+            cat(sprintf("- %s: %s\n", d$path, CTshow(l)))
+        }
+    }
+    # channels
+    if (!is.null(cs <- unlist(channels(object))))
+        coolcat("channels(%d): %s\n", cs)
+}
+
+setMethod("show", "Zattrs", .showZattrs)

@@ -1,5 +1,5 @@
 #' @name mask
-#' @title Masking
+#' @title Aggregate data across layers
 #'
 #' @description
 #' Masking operations serve to aggregate data across layers, e.g.,
@@ -38,8 +38,6 @@
 #' # sum table counts by shapes
 #' y <- mask(x, "cells", "anatomical")
 #' tail(tables(y), 1)
-#'
-#' @export
 NULL
 
 .check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))

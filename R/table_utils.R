@@ -208,7 +208,7 @@ setMethod("setTable",
                 df <- st_as_sf(data(y))
                 is <- seq_len(nrow(df))
                 df[[ik]] <- is
-                y@data <- df
+                data(y) <- df
                 shape(x, i) <- y
             }
         }, stop("can't add 'table' for elements in '", typ, "' layer"))

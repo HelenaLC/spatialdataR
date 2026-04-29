@@ -1,5 +1,6 @@
 #' @name ImageArray
 #' @title The `ImageArray` class
+#' @aliases channels
 #' 
 #' @param x \code{ImageArray}
 #' @param data list of \code{\link[ZarrArray]{ZarrArray}}s
@@ -28,13 +29,12 @@ ImageArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
     return(x)
 }
 
-#' @rdname ImageArray
-#' @aliases channels
 #' @export
+#' @rdname ImageArray
 setMethod("channels", "ImageArray", \(x, ...) channels(meta(x)))
 
-#' @rdname ImageArray
 #' @export
+#' @rdname ImageArray
 setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
@@ -87,9 +87,9 @@ setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
     )
 }
 
+#' @exportMethod [
 #' @rdname ImageArray
 #' @importFrom utils head tail
-#' @exportMethod [
 setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
@@ -97,7 +97,7 @@ setMethod("[", "ImageArray", \(x, i, j, k, ..., drop=FALSE) {
     ijk <- list(i, j, k)
     n <- length(data(x, NULL))
     d <- dim(data(x))
-    x@data <- lapply(seq_len(n), \(.) {
+    data(x) <- lapply(seq_len(n), \(.) {
         j <- if (isTRUE(j)) seq_len(d[2]) else j
         k <- if (isTRUE(k)) seq_len(d[3]) else k
         jk <- lapply(list(j, k), \(jk) {

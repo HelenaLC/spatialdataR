@@ -35,9 +35,11 @@ setMethod("combine",
             }
             # update tables accordingly
             for (t in tableNames(z)) {
-                r <- region(se <- table(z, t))
-                j <- match(r, old[[i]])
+                se <- table(z, t)
+                j <- match(region(se), old[[i]])
                 region(se) <- new[[i]][j]
+                j <- match(regions(se), old[[i]])
+                regions(se) <- new[[i]][j]
                 table(z, t) <- se
             }
             assign(c("x", "y")[i], z)

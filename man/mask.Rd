@@ -3,7 +3,7 @@
 \name{mask}
 \alias{mask}
 \alias{mask,SpatialData-method}
-\title{Masking}
+\title{Aggregate data across layers}
 \usage{
 \S4method{mask}{SpatialData}(
   x,
@@ -57,5 +57,4 @@ x <- readSpatialData(x)
 # sum table counts by shapes
 y <- mask(x, "cells", "anatomical")
 tail(tables(y), 1)
-
 }

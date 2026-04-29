@@ -106,31 +106,31 @@ pull.sdFrame <- \(.data, ...) pull(data(.data), ...)
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr select
-select.sdFrame <- \(.data, ...) { .data@data <- select(data(.data), ...); .data }
+select.sdFrame <- \(.data, ...) { data(.data) <- select(data(.data), ...); .data }
 
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr mutate
-mutate.sdFrame <- \(.data, ...) { .data@data <- mutate(data(.data), ...); .data }
+mutate.sdFrame <- \(.data, ...) { data(.data) <- mutate(data(.data), ...); .data }
 
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr filter
-filter.sdFrame <- \(.data, ...) { .data@data <- filter(data(.data), ...); .data }
+filter.sdFrame <- \(.data, ...) { data(.data) <- filter(data(.data), ...); .data }
 
 # sub ----
 
 .sub_sdFrame <- \(x, i, j) {
     if (missing(i) || isTRUE(i)) {
         if (missing(j) || isTRUE(j)) return(x)
-        x@data <- select(data(x), all_of(j))
+        data(x) <- select(data(x), all_of(j))
     } else {
         if (is.numeric(i) && any(i < 0)) 
             stop("negative row-subsetting not supported")
         if (is.logical(i)) i <- seq_len(nrow(x))[i]
         if (is.character(j)) j <- match(j, names(x))
         if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
-        x@data <- x@data |> 
+        data(x) <- data(x) |> 
             filter(row_number() %in% i) |>
             select(all_of(j))
     }

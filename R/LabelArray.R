@@ -46,19 +46,19 @@ LabelArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
 #' @importFrom utils head tail
 #' @exportMethod [
 setMethod("[", "LabelArray", \(x, i, j, ..., drop=FALSE) {
-  if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
-  if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-  n <- length(data(x, NULL))
-  d <- dim(data(x, 1))
-  x@data <- lapply(seq_len(n), \(.) {
-    i <- if (isTRUE(i)) seq_len(d[1]) else i
-    j <- if (isTRUE(j)) seq_len(d[2]) else j
-    ij <- lapply(list(i, j), \(ij) {
-      fac <- 2^(.-1)
-      seq(floor(head(ij, 1)/fac), 
-          ceiling(tail(ij, 1)/fac))
+    if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    n <- length(data(x, NULL))
+    d <- dim(data(x, 1))
+    data(x) <- lapply(seq_len(n), \(.) {
+        i <- if (isTRUE(i)) seq_len(d[1]) else i
+        j <- if (isTRUE(j)) seq_len(d[2]) else j
+        ij <- lapply(list(i, j), \(ij) {
+            fac <- 2^(.-1)
+            seq(floor(head(ij, 1)/fac), 
+                ceiling(tail(ij, 1)/fac))
+        })
+        data(x, .)[ij[[1]], ij[[2]], drop=FALSE]
     })
-    data(x, .)[ij[[1]], ij[[2]], drop=FALSE]
-  })
-  x
+    x
 })
