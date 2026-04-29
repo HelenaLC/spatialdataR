@@ -35,7 +35,7 @@
 #' library(SingleCellExperiment)
 #' x <- file.path("extdata", "blobs.zarr")
 #' x <- system.file(x, package="SpatialData")
-#' x <- readSpatialData(x, anndataR=TRUE)
+#' x <- readSpatialData(x)
 #'
 #' # check if element has a 'table'
 #' hasTable(x, "blobs_points")
