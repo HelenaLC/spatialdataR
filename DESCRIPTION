@@ -72,9 +72,7 @@ Imports:
     SummarizedExperiment
 Suggests:
     BiocStyle,
-    ggnewscale,
     knitr,
-    patchwork,
     paws,
     Rgraphviz,
     SpatialData.data,
