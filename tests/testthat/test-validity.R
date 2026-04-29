@@ -16,6 +16,7 @@ test_that("validity,ImageArray", {
 })
 
 test_that("validity,LabelArray", {
+    
     # all resolutions should be of type integer
     for (v in list(logical(1), character(1), numeric(1))) {
         expect_error(LabelArray(list(v)))
@@ -38,14 +39,14 @@ test_that("validity,LabelArray", {
 
 test_that("validity,ShapeFrame", {
     x <- shape(sd,1)
-    x@data <- select(data(x), -radius)
+    data(x) <- select(data(x), -radius)
     expect_silent(validObject(x))
     x <- shape(sd,1)
-    x@data <- filter(data(x), radius == 1e7)
+    data(x) <- filter(data(x), radius == 1e7)
     expect_silent(validObject(x))
     x <- shape(sd,1)
-    # x@data <- select(data(x), -geometry)
-    x@data <- x@data |> duckspatial::ddbs_drop_geometry()
+    # data(x) <- select(data(x), -geometry)
+    data(x) <- data(x) |> duckspatial::ddbs_drop_geometry()
     # currently the validation method does not check anything
     # expect_error(validObject(x))
 })

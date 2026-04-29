@@ -1,3 +1,13 @@
+changes in version 0.99.32
+
+- added unit tests for query()
+- improved 'table' element validation
+- split centroids/extent() code & docs
+- revised 'coordTrans' show method of Zattrs
+  (refactored code, fixed 'sequence' display)
+- implemented internal data/meta() get & set
+  to avoid @-accessiong throughout code base
+
 changes in version 0.99.31
 
 - refactored point/shape transformations
