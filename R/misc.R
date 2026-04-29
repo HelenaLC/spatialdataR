@@ -130,21 +130,23 @@ setMethod("show", "ShapeFrame", .showShapeFrame)
     }
     # TODO: more detailed 'sequence' display
     cat(sprintf("coordTrans(%d):\n", n <- length(CTname(object))))
-    g <- \(.) {
+    f <- \(.) {
         . <- paste(unlist(.), collapse=",")
         if (!grepl(",", ., fixed = TRUE)) return(.)
         sprintf("[%s]", .)
     }
-    f <- \(.) {
+    g <- \(.) {
         if (is.null(.)) return("")
-        paste0(":", g(lapply(., g)))
+        f(lapply(., f))
     }
-    for (i in seq_len(n))
-        cat(sprintf("- %s: (%s%s)\n",
-            CTname(object)[i],
-            CTtype(object)[i],
-            f(CTlist(object)[[i]][[CTtype(object)[i]]])))
-    ms <- object$multiscales[[1]]
+    for (i in seq_len(n)) {
+        l <- CTlist(object)[[i]]
+        name <- l$output$name
+        l <- switch(l$type, sequence=l$transformations, list(l))
+        msg <- vapply(l, \(.) sprintf("(%s:%s)", .$type, g(.[[.$type]])), character(1))
+        cat(sprintf("- %s: %s\n", name, paste(msg, collapse=", ")))
+    }
+    ms <- multiscales(object)[[1]]
     if (!is.null(ms)) {
         ds <- ms$datasets
         ps <- vapply(ds, \(.) .$path, character(1))
