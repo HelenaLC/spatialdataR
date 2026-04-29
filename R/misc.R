@@ -12,8 +12,6 @@
 #'
 #' @return \code{NULL}
 #'
-#' @author Helena L. Crowell
-#'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
