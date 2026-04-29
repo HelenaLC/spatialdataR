@@ -20,23 +20,14 @@ vignette: |
   %\VignetteIndexEntry{Introduction to SpatialData}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-references:
-- id: marconato2024spatialdata
-  title: "SpatialData: an open and universal data framework for spatial omics"
-  author:
-  - family: Marconato
-    given: Luca
-  - family: Palla
-    given: Giovanni
-  - family: Yamauchi
-    given: Kevin A.
-  container-title: Nature Methods
-  volume: 22
-  number: 1
-  pages: 58-62
-  year: 2024
-  doi: 10.1038/s41592-024-02212-x
+bibliography: "refs.bib"
 ---
+
+<style type="text/css">
+.smaller {
+  font-size: 10px
+}
+</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
@@ -47,11 +38,11 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 The `r BiocStyle::Biocpkg("SpatialData")` package provides an R interface to the 
 [SpatialData](https://spatialdata.scverse.org) framework, a unified ecosystem 
 for handling spatial omics data. Developed as part of the 
-[scverse](https://scverse.org) community, `SpatialData` aims to solve the 
+[scverse](https://scverse.org) project [@Virshup2023-scverse], `SpatialData` aims to solve the 
 challenges of integrating diverse spatial datasets—including imaging, spatial 
 transcriptomics, and proteomics—by employing the 
 [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
-standard [see @marconato2024spatialdata].
+standard [@Marconato2024-SpatialData].
 
 The Python implementation and core specifications can be found at the 
 [official SpatialData website](https://spatialdata.scverse.org).
@@ -74,7 +65,6 @@ First, we load the necessary libraries:
 ```{r load-libs}
 library(SpatialData)
 library(SingleCellExperiment)
-library(ZarrArray)
 ```
 
 ## Reading Data
@@ -95,7 +85,7 @@ sd
 
 For spatial omics datasets, functional annotations are often stored as 
 [AnnData](https://anndata.readthedocs.io) objects in Python. The 
-`r BiocStyle::Githubpkg("keller-mark/anndataR")` package is used by 
+`r BiocStyle::Biocpkg("anndataR")` package [@Deconinck2025-anndataR] is used by 
 `SpatialData` to seamlessly read these `.zarr`-backed `AnnData` objects into 
 R as `SingleCellExperiment` objects.
 
@@ -122,9 +112,10 @@ if (requireNamespace("Rgraphviz", quietly = TRUE)) {
 ```
 
 In this graph:
-- **Element nodes** (prefixed with `_`) represent the individual data layers (images, labels, etc.).
-- **Space nodes** represent the coordinate systems (e.g., `global`, `sequence`).
-- **Edges** represent the transformations (scale, translation, etc.) required to map an element into a specific space.
+
+- **source nodes** (prefixed with `_`) represent the individual data layers (images, labels, etc.).
+- **target nodes** represent the coordinate systems (e.g., `global`, `sequence`).
+- **edges** represent the transformations (scale, translation, etc.) required to map an element into a specific space.
 
 ## Applying Transformations
 
@@ -133,10 +124,10 @@ into a target coordinate system by traversing this graph:
 
 ```{r transform}
 # Retrieve a point element
-pts <- point(sd, 1)
+p <- point(sd, 1)
 
 # Project it into the 'global' coordinate space
-pts_transformed <- transform(pts, "global")
+q <- SpatialData::transform(p, "global")
 ```
 
 # Spatial Queries
@@ -146,11 +137,10 @@ which are propagated across all layers:
 
 ```{r crop}
 # Define a bounding box for cropping
-box <- list(xmin=10, xmax=50, ymin=10, ymax=50)
+bb <- list(xmin=10, xmax=50, ymin=10, ymax=50)
 
-# Crop the entire SpatialData object
-sd_cropped <- crop(sd, box, j="global")
-sd_cropped
+# Crop the entire object
+(sp <- crop(sd, bb, j="global"))
 ```
 
 # Integration with Tables
@@ -160,32 +150,26 @@ Tables (SCE objects) link to specific labels or shapes using `region` and
 feature-level information.
 
 ```{r tables}
-# Access the table layer
-if (length(tables(sd)) > 0) {
-    sce <- table(sd, 1)
+(sce <- SpatialData::table(sd))
+
+# Check which region this table annotates
+region(sce)
     
-    # Check which region this table annotates
-    print(region(sce))
-    
-    # Check the instance key
-    print(instance_key(sce))
-}
+# Check which instances are being annotated
+instances(sce)
 ```
 
 # Conclusion
 
-The `SpatialData` package brings the power of the `scverse` spatial ecosystem to 
+The `SpatialData` package brings the power of the scverse spatial ecosystem to 
 R, providing a scalable and interoperable foundation for spatial omics analysis. 
 By adhering to the OME-NGFF standard and integrating with established 
 Bioconductor objects, it enables seamless cross-platform workflows.
 
-# References
-
-::: {#refs}
-:::
-
-# Session Info
+# Session Info {- .smaller}
 
 ```{r sessionInfo}
 sessionInfo()
 ```
+
+# References
