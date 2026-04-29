@@ -89,6 +89,8 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{element}{SpatialData,ANY}(x, i)
 
+\S4method{images}{SpatialData}(x)
+
 \S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
 \S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value

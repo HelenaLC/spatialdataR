@@ -39,15 +39,6 @@
 #' head(as.data.frame(data(p)))
 #' (q <- dplyr::filter(p, cell_type == "VISp_wm"))
 #'
-#' @importFrom S4Vectors metadata<-
-#' @importFrom methods new
-#' @export
-PointFrame <- \(data=data.frame(), meta=Zattrs(), metadata=list(), ...) {
-    x <- .PointFrame(data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
-}
-
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr tally pull
@@ -129,53 +120,28 @@ filter.sdFrame <- \(.data, ...) { .data@data <- filter(data(.data), ...); .data 
 
 # sub ----
 
-#' @export
-#' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "missing", "missing"),
-    \(x, i, j, ...) x[TRUE, TRUE])
-
-#' @rdname ShapeFrame    
-#' @export
-setMethod("[", c("sdFrame", "missing", "ANY"),
-    \(x, i, j, ...) x[seq_len(nrow(x)), j])
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("[", c("sdFrame", "ANY", "missing"),
-    \(x, i, j, ...) x[i, seq_len(ncol(x))])
-
-#' @export
-#' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "logical", "ANY"), \(x, i, j, ...) {
-    if (isTRUE(i)) return(x[, j])
-    if (isFALSE(i)) return(x[0, j])
-    stopifnot(length(i) != nrow(x))
-    x[seq_len(nrow(x))[i], j]
-})
-
-#' @export
-#' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "ANY", "logical"), \(x, i, j, ...) {
-    if (isTRUE(j)) return(x[i, ])
-    if (isFALSE(j)) return(x[i, 0])
-    stopifnot(length(j) != ncol(x))
-    x[i, seq_len(nrow(x))[j]]
-})
-
-#' @rdname ShapeFrame
-#' @export
-setMethod("[", c("sdFrame", "ANY", "character"), \(x, i, j, ...) {
-    stopifnot(all(j %in% names(x)))
-    x[i, match(j, names(x))]
-})
-
-#' @rdname ShapeFrame
-#' @importFrom dplyr row_number select all_of 
-#' @export
-setMethod("[", c("sdFrame", "numeric", "numeric"), \(x, i, j, ...) {
-    if (any(i < 0)) stop("negative row-subsetting not supported")
-    x@data <- x@data |> 
-        filter(row_number() %in% i) |>
-        select(all_of(j))
+.sub_sdFrame <- \(x, i, j) {
+    if (missing(i) || isTRUE(i)) {
+        if (missing(j) || isTRUE(j)) return(x)
+        x@data <- select(data(x), all_of(j))
+    } else {
+        if (is.numeric(i) && any(i < 0)) 
+            stop("negative row-subsetting not supported")
+        if (is.logical(i)) i <- seq_len(nrow(x))[i]
+        if (is.character(j)) j <- match(j, names(x))
+        if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
+        x@data <- x@data |> 
+            filter(row_number() %in% i) |>
+            select(all_of(j))
+    }
     return(x)
-})
+}
+
+#' @export
+#' @rdname ShapeFrame
+setMethod("[", c("sdFrame", "ANY", "ANY"), 
+    \(x, i, j, ...) {
+        if (missing(i)) i <- TRUE
+        if (missing(j)) j <- TRUE
+        .sub_sdFrame(x, i, j)
+    })

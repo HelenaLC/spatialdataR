@@ -37,6 +37,23 @@
 #' extent(shape(x))
 NULL
 
+# internal helpers for SpatialData iteration ----
+
+.lapplyLayer <- \(x, FUN, ...) {
+    ls <- setdiff(.LAYERS, "tables")
+    lapply(ls, \(l) lapply(x[[l]], FUN, ...))
+}
+
+.lapplyElement <- \(x, FUN, ...) {
+    ls <- setdiff(.LAYERS, "tables")
+    for (l in ls) {
+        for (e in names(x[[l]])) {
+            x[[l]][[e]] <- FUN(x[[l]][[e]], ...)
+        }
+    }
+    return(x)
+}
+
 # centroids ----
 
 # Internal helper for null-coalescing
@@ -110,8 +127,8 @@ setMethod("centroids", "PointFrame", \(x,
 #' @export
 #' @rdname utils
 setMethod("extent", "SpatialData", \(x, i=1) {
-    ls <- setdiff(.LAYERS, "tables")
-    ex <- Reduce(c, lapply(ls, \(.) lapply(x[[.]], extent, i=i)))
+    ex <- .lapplyLayer(x, extent, i=i)
+    ex <- unlist(ex, recursive=FALSE)
     xy <- do.call(rbind, lapply(ex, do.call, what=cbind))
     list(x=range(xy[, 1]), y=range(xy[, 2]))
 })

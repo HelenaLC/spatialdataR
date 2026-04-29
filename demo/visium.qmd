@@ -34,13 +34,13 @@ plotSpatialData() +
     plotShape(sd, "spots", col="red")
 ```
 
-```{r fig.width=8, fig.height=3}
-# TODO: shapes are fine on their own but not overlaid
-bb <- list(xmin=600, xmax=1800, ymin=1200, ymax=1600)
+```{r fig.width=6, fig.height=3}
+bb <- list(xmin=800, xmax=1600, ymin=500, ymax=900)
+image(sd, "roi") <- crop(image(sd), bb)
 shape(sd, "box") <- crop(shape(sd), bb)
 plotSpatialData() +
-    #plotImage(sd, cl=cl) +
-    plotShape(sd, "box", col="red")
+    plotImage(sd, "roi", cl=cl) +
+    plotShape(sd, "box", col="white", fill=NA)
 ```
 
 ```{r fig.width=12, fig.height=5}

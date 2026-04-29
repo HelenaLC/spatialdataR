@@ -127,16 +127,18 @@ setMethod("element", c("SpatialData", "ANY"), \(x, i)
 
 # get all ----
 
-all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
-
 #' @name SpatialData
 #' @exportMethod images labels points shapes tables
-NULL
-
-f <- \(.) setMethod(., "SpatialData", \(x) x[[.]])
-for (. in all) eval(f(.), parent.env(environment()))
+setMethod("images", "SpatialData", \(x) x$images)
+setMethod("labels", "SpatialData", \(x) x$labels)
+setMethod("points", "SpatialData", \(x) x$points)
+setMethod("shapes", "SpatialData", \(x) x$shapes)
+setMethod("tables", "SpatialData", \(x) x$tables)
 
 # get nms ----
+
+one <- c("image", "label", "point", "shape", "table")
+all <- paste0(one, "s")
 
 #' @name SpatialData
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
