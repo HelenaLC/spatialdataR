@@ -46,11 +46,10 @@ specifies which \code{assay} to use when \code{j} is a row name.}
 \item{drop}{logical; should observations (columns)
 that don't belong to \code{i} be filtered out?}
 
-\item{...}{\code{data.frame} or list of data generation function(s)
-that accept an argument for the number of observations; see examples.}
-
 \item{rk, ik}{character string; region and instance key (the latter will be
 ignored if an instance key is already specified within element \code{i}).}
+
+\item{y}{\code{SingleCellExperiment} containing annotations for \code{i}.}
 }
 \value{
 \itemize{
@@ -89,14 +88,18 @@ getTable(x,
   j="channel_0_sum")
 
 # add 'table' annotating an element 'i'
-# (w/ or w/o supplying additional data)
 
 # labels
 y <- x; tables(y) <- list()
-y <- setTable(y, i <- "blobs_labels")
+sce <- SingleCellExperiment(
+  assays=list(counts=matrix(0, 1, length(instances(label(y, 1))))))
+y <- setTable(y, i <- "blobs_labels", sce)
 head(colData(sce <- getTable(y, i)))
 
 # shapes
-y <- setTable(x, i <- "blobs_circles")
+i <- "blobs_circles"
+sce <- SingleCellExperiment(
+  assays=list(counts=matrix(0, 1, nrow(shape(x, i)))))
+y <- setTable(x, i, sce)
 head(colData(sce <- getTable(y, i)))
 }

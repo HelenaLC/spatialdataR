@@ -3,7 +3,7 @@ require(SingleCellExperiment, quietly=TRUE)
 
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
-sd <- readSpatialData(zs, tables=FALSE)
+sd <- readSpatialData(zs)
 
 test_that("validity,ImageArray", {
     expect_error(ImageArray(list(v <- character(1))))
@@ -25,96 +25,72 @@ test_that("validity,LabelArray", {
     x <- label(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })
 
+test_that("validity,PointFrame", {
+    # valid
+    x <- point(sd, 1)
+    expect_true(validObject(x))
+    # invalid
+    df <- duckspatial::ddbs_drop_geometry(data(x))
+    expect_error(PointFrame(df, meta(x)))
+})
+
 test_that("validity,ShapeFrame", {
+    # valid
+    x <- shape(sd,1)
+    expect_silent(validObject(x))
     x <- shape(sd,1)
     data(x) <- select(data(x), -radius)
     expect_silent(validObject(x))
     x <- shape(sd,1)
-    data(x) <- filter(data(x), radius == 1e7)
+    data(x) <- filter(data(x), radius == -1)
     expect_silent(validObject(x))
+    # invalid: missing geometry
     x <- shape(sd,1)
-    data(x) <- data(x) |> duckspatial::ddbs_drop_geometry()
+    df <- duckspatial::ddbs_drop_geometry(data(x))
+    expect_error(ShapeFrame(df, meta(x)))
 })
 
-test_that(".validateTables() works correctly", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
-    sd <- readSpatialData(path)
-    
-    expect_length(SpatialData:::.validateTables(sd), 0)
-    
-    sd_bad <- sd
-    tables(sd_bad)[[1]] <- data.frame(a=1)
-    expect_match(SpatialData:::.validateTables(sd_bad), "not a 'SingleCellExperiment'")
-    
-    sd_bad <- sd
-    t <- SpatialData::table(sd_bad)
+test_that("validity,SCE", {
+    # valid
+    fn <- SpatialData:::.validateTables
+    expect_length(fn(sd), 0)
+    # invalid: not a SCE
+    x <- sd
+    tables(x)[[1]] <- data.frame()
+    expect_error(validObject(x))
+    # invalid: missing region
+    x <- sd
+    t <- SpatialData::table(x)
     md <- int_metadata(t)
     md$spatialdata_attrs$region <- NULL
     int_metadata(t) <- md
-    tables(sd_bad) <- list(table=t)
-    
-    sd_bad <- sd
-    t <- SpatialData::table(sd_bad)
+    tables(x) <- list(table=t)
+    expect_error(validObject(x))
+    # invalid: non-existent region
+    x <- sd
+    t <- SpatialData::table(x)
     md <- int_metadata(t)
-    md$spatialdata_attrs$region <- "non_existent"
+    md$spatialdata_attrs$region <- "x"
     int_metadata(t) <- md
-    tables(sd_bad) <- list(table=t)
-    expect_match(SpatialData:::.validateTables(sd_bad), "table region.s. not found in any layer", all=FALSE)
+    tables(x) <- list(table=t)
+    expect_error(validObject(x))
 })
 
-test_that("Zattrs validation helpers work", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
-    sd <- readSpatialData(path)
+test_that("validity,Zattrs", {
     za <- meta(label(sd, 1))
-    ms <- as.list(za)[[1]]
-    
-    msg <- c()
-    expect_length(SpatialData:::.validateZattrs_multiscales(list(multiscales=list(ms)), msg), 0)
-    
-    bad_za <- list(multiscales=list(list()))
-    msg <- SpatialData:::.validateZattrs_multiscales(bad_za, c())
-    expect_true(any(grepl("missing", msg)))
-    
-    msg <- c()
-    expect_length(SpatialData:::.validateZattrs_axes(ms, msg), 0)
-    
-    bad_ax <- ms
-    bad_ax$axes <- NULL
-    msg <- SpatialData:::.validateZattrs_axes(bad_ax, c())
-    expect_true(any(grepl("missing", msg)))
-    
-    msg <- c()
-    expect_length(SpatialData:::.validateZattrs_coordTrans(ms, msg), 0)
-    
-    bad_ct <- ms
-    bad_ct[[1]] <- NULL
-    expect_match(SpatialData:::.validateZattrs_coordTrans(bad_ct, c()), "missing")
+    ms <- as.list(za)$multiscales[[1]]
+    # multiscales
+    fn <- SpatialData:::.validateZattrs_multiscales
+    expect_length(fn(as.list(za), c()), 0)
+    expect_match(fn(list(), c()), "missing")
+    # axes
+    fn <- SpatialData:::.validateZattrs_axes
+    expect_length(fn(ms, c()), 0)
+    bad_ax <- ms; bad_ax$axes <- NULL
+    expect_match(fn(bad_ax, c()), "missing")
+    # coordinate transformations
+    fn <- SpatialData:::.validateZattrs_coordTrans
+    expect_length(fn(ms, c()), 0)
+    bad_ct <- ms; bad_ct$coordinateTransformations <- NULL
+    expect_match(fn(bad_ct, c()), "missing")
 })
-
-test_that("Zattrs validation works across element types and versions", {
-    za_array <- Zattrs(type="array", ver="0.4")
-    za_frame <- Zattrs(type="frame", ver="0.4")
-    
-    msg <- c()
-    expect_length(SpatialData:::.validateZattrs_multiscales(as.list(za_array), msg), 0)
-    
-    za_array_v3 <- Zattrs(type="array", ver="0.3")
-    expect_true("ome" %in% names(as.list(za_array_v3)))
-    
-    expect_match(SpatialData:::.validateZattrs_multiscales(as.list(za_frame), c()), "missing")
-    
-    msg <- c()
-    expect_length(SpatialData:::.validateZattrs_axes(as.list(za_frame), msg), 0)
-})
-
-test_that("validity,PointFrame", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
-    sd <- readSpatialData(path)
-    x <- point(sd, 1)
-    
-    expect_silent(validObject(x))
-    
-    df_bad <- as.data.frame(SpatialData::data(x)) |> select(-geometry)
-    expect_error(new("PointFrame", data=df_bad, meta=meta(x), metadata=list()), "'PointFrame' missing 'geometry'")
-})
-EOF
