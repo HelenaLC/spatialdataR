@@ -40,26 +40,23 @@ test_that(".validateTables() works correctly", {
     path <- system.file("extdata", "blobs.zarr", package="SpatialData")
     sd <- readSpatialData(path)
     
-    # Valid
     expect_length(SpatialData:::.validateTables(sd), 0)
     
-    # Invalid: Not an SCE
     sd_bad <- sd
     tables(sd_bad)[[1]] <- data.frame(a=1)
     expect_match(SpatialData:::.validateTables(sd_bad), "not a 'SingleCellExperiment'")
     
-    # Invalid: Missing metadata
     sd_bad <- sd
     t <- SpatialData::table(sd_bad)
     md <- int_metadata(t)
-    md <- NULL
+    md$spatialdata_attrs$region <- NULL
     int_metadata(t) <- md
     tables(sd_bad) <- list(table=t)
-    # Invalid: Non-existent region
+    
     sd_bad <- sd
     t <- SpatialData::table(sd_bad)
     md <- int_metadata(t)
-    md <- "non_existent"
+    md$spatialdata_attrs$region <- "non_existent"
     int_metadata(t) <- md
     tables(sd_bad) <- list(table=t)
     expect_match(SpatialData:::.validateTables(sd_bad), "table region.s. not found in any layer", all=FALSE)
@@ -71,7 +68,6 @@ test_that("Zattrs validation helpers work", {
     za <- meta(label(sd, 1))
     ms <- as.list(za)[[1]]
     
-    # 1. Multiscales
     msg <- c()
     expect_length(SpatialData:::.validateZattrs_multiscales(list(multiscales=list(ms)), msg), 0)
     
@@ -79,16 +75,14 @@ test_that("Zattrs validation helpers work", {
     msg <- SpatialData:::.validateZattrs_multiscales(bad_za, c())
     expect_true(any(grepl("missing", msg)))
     
-    # 2. Axes
     msg <- c()
     expect_length(SpatialData:::.validateZattrs_axes(ms, msg), 0)
     
     bad_ax <- ms
-    bad_ax <- NULL
+    bad_ax$axes <- NULL
     msg <- SpatialData:::.validateZattrs_axes(bad_ax, c())
     expect_true(any(grepl("missing", msg)))
     
-    # 3. Coordinate Transformations
     msg <- c()
     expect_length(SpatialData:::.validateZattrs_coordTrans(ms, msg), 0)
     
@@ -118,13 +112,9 @@ test_that("validity,PointFrame", {
     sd <- readSpatialData(path)
     x <- point(sd, 1)
     
-    # Valid
     expect_silent(validObject(x))
     
-    # Invalid: missing geometry
     df_bad <- as.data.frame(SpatialData::data(x)) |> select(-geometry)
-    x_bad <- PointFrame(data=df_bad, meta=meta(x))
-    
-    # This should now fail validity
-    expect_error(validObject(x_bad), "'PointFrame' missing 'geometry'")
+    expect_error(new("PointFrame", data=df_bad, meta=meta(x), metadata=list()), "'PointFrame' missing 'geometry'")
 })
+EOF
