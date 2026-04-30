@@ -1,6 +1,4 @@
 require(SingleCellExperiment, quietly=TRUE)
-oo <- options()$arrow.pull_as_vector
-options(arrow.pull_as_vector=TRUE)
 
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
@@ -55,58 +53,6 @@ test_that("getTable()", {
     expect_identical(t2, s[, -.])
 })
 
-test_that("setTable(),labels", {
-    # invalid 'i'
-    expect_error(setTable(x, 123))
-    expect_error(setTable(x, "."))
-    expect_error(setTable(x, character(2)))
-    # 'name' that already exists fails
-    expect_error(setTable(x, i, name=tableNames(x)))
-    # valid w/o dots
-    y <- setTable(x, i)
-    expect_length(tables(y), 2)
-    expect_equal(nrow(SpatialData::table(y, 2)), 0)
-    # invalid dots
-    . <- list(1, \(n) runif(n))
-    expect_error(setTable(x, i, .))
-    expect_error(setTable(x, i, 1))
-    # invalid 'data.frame'
-    df <- data.frame(foo=runif(37))
-    expect_error(setTable(x, i, df))
-})
-
-test_that("setTable(),shapes", {
-    for (. in c("shape")) {
-        nms <- paste0(., "Names")
-        i <- get(nms)(x)[1]
-        y <- get(.)(x)
-        # dots = valid 'data.frame'
-        n <- switch(.,
-            shape=length(y),
-            point={
-                ik <- instance_key(y)
-                n <- length(unique(pull(data(y), ik)))
-            })
-        df <- data.frame(foo=runif(n))
-        expect_silent(y <- setTable(x, i, df))
-        expect_length(tables(y), 2)
-        expect_true(hasTable(y, i))
-        t <- getTable(y, i)
-        expect_identical(t$foo, df$foo)
-        #expect_identical(region(t), i)
-        # dots = list of functions
-        f <- list(
-            numbers=\(n) runif(n),
-            letters=\(n) sample(letters, n, TRUE))
-        expect_silent(y <- setTable(x, i, f))
-        expect_length(tables(y), 2)
-        expect_true(hasTable(y, i))
-        t <- getTable(y, i)
-        expect_true(all(names(f) %in% names(colData(t))))
-        #expect_identical(region(t), i)
-    }
-})
-
 test_that("valTable()", {
     n <- ncol(t <- getTable(x, i))
     # invalid
@@ -132,4 +78,96 @@ test_that("valTable()", {
     expect_error(getTable(x, i, rownames(t)[1], assay=".."))
 })
 
-options(arrow.pull_as_vector=oo) # reset
+test_that("setTable(),labels", {
+    # invalid 'i'
+    expect_error(setTable(x, 123, SingleCellExperiment()))
+    expect_error(setTable(x, ".", SingleCellExperiment()))
+    expect_error(setTable(x, character(2), SingleCellExperiment()))
+    # 'name' that already exists fails
+    expect_error(setTable(x, i, SingleCellExperiment(), name=tableNames(x)))
+    # valid w/o name
+    e <- element(x, i)
+    sce <- SingleCellExperiment(matrix(0, 0, length(instances(e))))
+    # set instances manually
+    int_colData(sce)$instance_id <- instances(e)
+    y <- setTable(x, i, sce)
+    expect_length(tables(y), 2)
+    expect_true(hasTable(y, i))
+})
+
+test_that("setTable(),shapes", {
+    for (. in c("shape")) {
+        nms <- paste0(., "Names")
+        i <- get(nms)(x)[1]
+        e <- element(x, i)
+        # ncol must match nrow(e)
+        sce <- SingleCellExperiment(matrix(0, 0, nrow(e)))
+        
+        # valid
+        expect_silent(y <- setTable(x, i, sce))
+        expect_length(tables(y), 2)
+        expect_true(hasTable(y, i))
+        t <- getTable(y, i)
+        expect_identical(region(t), i)
+    }
+})
+
+test_that("setTable() correctly associates a SingleCellExperiment with an element", {
+    tables(x) <- list() # clear existing tables
+    
+    # 1. Basic association with a label element
+    i <- "blobs_labels"
+    e <- element(x, i)
+    sce <- SingleCellExperiment(matrix(0, 0, length(instances(e))))
+    
+    # Manually inject metadata and required colData columns
+    int_metadata(sce)$spatialdata_attrs <- list(
+        region = i,
+        region_key = "region",
+        instance_key = "instance_id"
+    )
+    int_colData(sce)$region <- factor(rep(i, ncol(sce)))
+    int_colData(sce)$instance_id <- instances(e)
+    
+    sd_new <- setTable(x, i, sce)
+    
+    expect_true(paste0(i, "_table") %in% tableNames(sd_new))
+    t <- getTable(sd_new, i)
+    expect_equal(region(t), i)
+})
+
+test_that("setTable() handles custom name and keys", {
+    tables(x) <- list() # clear existing tables
+    
+    i <- "blobs_circles"
+    e <- element(x, i)
+    sce <- SingleCellExperiment(matrix(0, 0, nrow(e)))
+    
+    # Manually inject metadata
+    md <- list(region=i, region_key="my_rk", instance_key="my_ik")
+    int_metadata(sce)$spatialdata_attrs <- md
+    int_colData(sce)$my_rk <- factor(rep(i, ncol(sce)))
+    int_colData(sce)$my_ik <- seq_len(nrow(e))
+    
+    sd_new <- setTable(x, i, sce, name="my_custom_table", rk="my_rk", ik="my_ik")
+    
+    expect_true("my_custom_table" %in% tableNames(sd_new))
+    t <- SpatialData::table(sd_new, "my_custom_table")
+    expect_equal(region_key(t), "my_rk")
+    expect_equal(instance_key(t), "my_ik")
+})
+
+test_that("setTable() fails with invalid inputs", {
+    e <- element(x, i <- "blobs_labels")
+    
+    # Not an SCE
+    expect_error(setTable(x, i, data.frame(a=1)))
+    
+    # Mismatched dimensions (if instances are not set)
+    # The current implementation checks ncol(y) vs nrow(e) if instances(y) is NULL
+    sce_wrong <- SingleCellExperiment(matrix(0, 0, length(instances(e)) + 1))
+    expect_error(setTable(x, i, sce_wrong), "ncol\\(y\\)' must match 'nrow\\(element\\(x, i\\)\\)'")
+    
+    # Non-existent element
+    expect_error(setTable(x, "non_existent", SingleCellExperiment()), "is not an element of 'x'")
+})

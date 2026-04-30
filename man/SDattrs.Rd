@@ -11,6 +11,7 @@
 \alias{feature_key,list-method}
 \alias{feature_key,PointFrame-method}
 \alias{region_key,SingleCellExperiment-method}
+\alias{region_key<-,SingleCellExperiment,character-method}
 \alias{region,SingleCellExperiment-method}
 \alias{regions,SingleCellExperiment-method}
 \alias{region<-,SingleCellExperiment,character-method}
@@ -20,10 +21,12 @@
 \alias{instance_key,PointFrame-method}
 \alias{instance_key,ShapeFrame-method}
 \alias{instance_key,SingleCellExperiment-method}
+\alias{instance_key<-,SingleCellExperiment,character-method}
 \alias{instances,LabelArray-method}
 \alias{instances,PointFrame-method}
 \alias{instances,ShapeFrame-method}
 \alias{instances,SingleCellExperiment-method}
+\alias{instances<-,SingleCellExperiment-method}
 \title{\code{SpatialData} attributes}
 \usage{
 \S4method{feature_key}{list}(x)
@@ -31,6 +34,8 @@
 \S4method{feature_key}{PointFrame}(x)
 
 \S4method{region_key}{SingleCellExperiment}(x)
+
+\S4method{region_key}{SingleCellExperiment,character}(x) <- value
 
 \S4method{region}{SingleCellExperiment}(x)
 
@@ -50,6 +55,8 @@
 
 \S4method{instance_key}{SingleCellExperiment}(x)
 
+\S4method{instance_key}{SingleCellExperiment,character}(x) <- value
+
 \S4method{instances}{LabelArray}(x)
 
 \S4method{instances}{PointFrame}(x)
@@ -57,6 +64,8 @@
 \S4method{instances}{ShapeFrame}(x)
 
 \S4method{instances}{SingleCellExperiment}(x)
+
+\S4method{instances}{SingleCellExperiment}(x) <- value
 }
 \arguments{
 \item{x}{depends on which attributes are available; 
