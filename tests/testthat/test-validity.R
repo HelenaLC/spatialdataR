@@ -50,3 +50,49 @@ test_that("validity,ShapeFrame", {
     # currently the validation method does not check anything
     # expect_error(validObject(x))
 })
+library(testthat)
+library(SpatialData)
+library(SingleCellExperiment)
+
+test_that(".validateTables() works correctly", {
+    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    sd <- readSpatialData(path)
+    
+    # Valid
+    expect_length(SpatialData:::.validateTables(sd), 0)
+    
+    # Invalid: Not an SCE
+    sd_bad <- sd
+    tables(sd_bad)[[1]] <- data.frame(a=1)
+    expect_match(SpatialData:::.validateTables(sd_bad), "not a 'SingleCellExperiment'")
+    
+    # Invalid: Missing metadata
+    sd_bad <- sd
+    t <- SpatialData::table(sd_bad)
+    md <- int_metadata(t)$spatialdata_attrs
+    md$region <- NULL
+    
+    # Update metadata correctly
+    new_md <- int_metadata(t)
+    new_md$spatialdata_attrs <- md
+    int_metadata(t) <- new_md
+    
+    tables(sd_bad) <- list(table=t)
+    # Invalid: Missing instance key in colData
+    sd_bad <- sd
+    t <- SpatialData::table(sd_bad)
+    int_colData(t)$instance_id <- NULL
+    tables(sd_bad) <- list(table=t)
+    expect_match(SpatialData:::.validateTables(sd_bad), "missing 'instance_key' column in 'int_colData'")
+    
+    # Invalid: Non-existent region
+    sd_bad <- sd
+    t <- SpatialData::table(sd_bad)
+    md <- int_metadata(t)$spatialdata_attrs
+    md$region <- "non_existent"
+    new_md <- int_metadata(t)
+    new_md$spatialdata_attrs <- md
+    int_metadata(t) <- new_md
+    tables(sd_bad) <- list(table=t)
+    expect_match(SpatialData:::.validateTables(sd_bad), "table region\\(s\\) not found in any layer: 'non_existent'", all=FALSE)
+})
