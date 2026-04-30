@@ -133,3 +133,32 @@ test_that("Zattrs validation helpers work", {
     bad_ct$coordinateTransformations[[1]]$output <- NULL
     expect_match(SpatialData:::.validateZattrs_coordTrans(bad_ct, c()), "'coordTrans' 1 missing 'output'")
 })
+library(testthat)
+library(SpatialData)
+
+test_that("Zattrs validation works across element types and versions", {
+    # 1. Setup mock Zattrs for different types
+    # Array (Image/Label)
+    za_array <- Zattrs(type="array", ver="0.4")
+    # Frame (Point/Shape)
+    za_frame <- Zattrs(type="frame", ver="0.4")
+    
+    # 2. Test Array (Image)
+    # Multiscales validation
+    msg <- c()
+    expect_length(SpatialData:::.validateZattrs_multiscales(as.list(za_array), msg), 0)
+    
+    # Version 0.3
+    za_array_v3 <- Zattrs(type="array", ver="0.3")
+    # This should be wrapped in "ome"
+    expect_true("ome" %in% names(as.list(za_array_v3)))
+    
+    # 3. Test Frame (Point/Shape)
+    # Frame Zattrs do not have multiscales, so validators should skip or handle gracefully
+    # .validateZattrs_multiscales checks for multiscales, it should fail for frames
+    expect_match(SpatialData:::.validateZattrs_multiscales(as.list(za_frame), c()), "missing 'multiscales'")
+    
+    # Validate axes for frame
+    msg <- c()
+    expect_length(SpatialData:::.validateZattrs_axes(as.list(za_frame), msg), 0)
+})
