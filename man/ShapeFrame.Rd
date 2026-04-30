@@ -7,12 +7,7 @@
 \alias{[,sdFrame,ANY,ANY,ANY-method}
 \title{The `ShapeFrame` class}
 \usage{
-ShapeFrame(
-  data = data.frame(),
-  meta = Zattrs(type = "frame"),
-  metadata = list(),
-  ...
-)
+ShapeFrame(data = NULL, meta = Zattrs(type = "frame"), metadata = list(), ...)
 
 \S4method{geom_type}{ShapeFrame}(x)
 
