@@ -15,8 +15,7 @@
 #'   specifies which \code{assay} to use when \code{j} is a row name.
 #' @param rk,ik character string; region and instance key (the latter will be
 #'   ignored if an instance key is already specified within element \code{i}).
-#' @param ... \code{data.frame} or list of data generation function(s)
-#'   that accept an argument for the number of observations; see examples.
+#' @param y \code{SingleCellExperiment} containing annotations for \code{i}.
 #'
 #' @returns
 #' \itemize{
@@ -52,15 +51,19 @@
 #'   j="channel_0_sum")
 #'
 #' # add 'table' annotating an element 'i'
-#' # (w/ or w/o supplying additional data)
 #'
 #' # labels
 #' y <- x; tables(y) <- list()
-#' y <- setTable(y, i <- "blobs_labels")
+#' sce <- SingleCellExperiment(
+#'   assays=list(counts=matrix(0, 1, length(instances(label(y, 1))))))
+#' y <- setTable(y, i <- "blobs_labels", sce)
 #' head(colData(sce <- getTable(y, i)))
 #'
 #' # shapes
-#' y <- setTable(x, i <- "blobs_circles")
+#' i <- "blobs_circles"
+#' sce <- SingleCellExperiment(
+#'   assays=list(counts=matrix(0, 1, nrow(shape(x, i)))))
+#' y <- setTable(x, i, sce)
 #' head(colData(sce <- getTable(y, i)))
 NULL
 
@@ -154,77 +157,50 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #'   int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("setTable",
-    c("SpatialData", "character"),
-    # TODO: 'assay' data argument
-    \(x, i, ..., name=NULL, rk="rk", ik="ik") {
-    dots <- list(...)
-    if (length(dots) && !is.function(dots[[1]])) dots <- dots[[1]]
+setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
+    name=NULL, rk="region", ik="instance_id") {
+    
+    # x <- sd; i <- "blobs_circles"; name <- NULL; rk <- "region"; ik <- "instance_id"
+    # y <- SingleCellExperiment(matrix(nrow=10, ncol=nrow(element(x, i))))
+    
+    # validity
     stopifnot(
+        is(y, "SingleCellExperiment"),
         length(i) == 1, is.character(i),
         length(rk) == 1, is.character(rk),
         length(ik) == 1, is.character(ik))
     if (!i %in% unlist(colnames(x)))
         stop(dQuote(i), " is not an element of 'x'")
-    if (length(dots)) stopifnot(is.data.frame(dots) ||
-        all(vapply(dots, is.function, logical(1))))
-    # make up 'name' if not provided
     if (is.null(name)) {
-        nt <- length(tables(x))
-        name <- paste0("table", nt+1)
-    } else if (name %in% tableNames(x))
-        stop("'table' with name ", dQuote(name),
-            " exists; use 'table<-' to replace it.")
-    # get element type
-    for (l in rownames(x))
-        for (e in colnames(x)[[l]])
-            if (i == e) typ <- l
-    sda <- "spatialdata_attrs"
-    sce <- switch(typ,
-        labels={
-            y <- label(x, i)
-            md <- meta(y)[[sda]]
-            ki <- md$instance_key
-            z <- as(data(y), "DelayedMatrix")
-            is <- setdiff(unique(c(z)), 0)
-            n <- length(is <- sort(is))
-            if (!is.null(ki)) ik <- ki
-        },
-        points={
-            y <- point(x, i)
-            md <- meta(y)[[sda]]
-            ik <- md$instance_key
-            is <- pull(data(y), ik)  # needed to scotch new warning
-            n <- length(is <- unique(is))
-        },
-        shapes={
-            n <- nrow(y <- shape(x, i))
-            ex <- c("geometry", "radius")
-            ki <- setdiff(names(y), ex)
-            if (length(ki)) {
-                is <- pull(data(y), ik <- ki)
-            } else {
-                # in case of missing 'instance_key', make one
-                df <- st_as_sf(data(y))
-                is <- seq_len(nrow(df))
-                df[[ik]] <- is
-                data(y) <- df
-                shape(x, i) <- y
-            }
-        }, stop("can't add 'table' for elements in '", typ, "' layer"))
-    icd <- cd <- make_zero_col_DFrame(n)
-    icd[[rk]] <- i; icd[[ik]] <- is
-    # additional data generation (optional)
-    if (length(dots) && is.data.frame(dots)) {
-        stopifnot(nrow(dots) == nrow(cd))
-        cd <- cbind(cd, dots)
-    } else for (. in names(dots)) {
-        cd[[.]] <- dots[[.]](n)
+        # make up 'name' if not provided
+        name <- paste0(i, "_table")
+    } else {
+        stopifnot(is.character(name), length(name) == 1)
+        if (name %in% tableNames(x))
+            stop("'table' with name ", dQuote(name),
+                " exists; use 'table<-' to replace it.")
     }
-    # stash 'spatialdata_attrs'
-    sce <- SingleCellExperiment(colData=cd)
-    int_colData(sce) <- cbind(int_colData(sce), icd)
-    md <- list(region=i, region_key=rk, instance_key=ik)
-    int_metadata(sce)[[sda]] <- md
-    SpatialData::`table<-`(x, i=name, value=sce)
+    . <- layer(x, i)
+    if (!. %in% c("labels", "shapes"))
+        stop("can't add 'table' for", .)
+    
+    if (is.null(region_key(y))) region_key(y) <- rk
+    if (is.null(instance_key(y))) instance_key(y) <- ik
+    
+    if (is.null(region(y))) {
+        region(y) <- regions(y) <- i
+    } else {
+        
+    }
+    
+    e <- element(x, i)
+    if (is.null(instances(y))) {
+        if (ncol(y) != nrow(e)) stop(
+            "'instances<-' have not been set on 'y'; ",
+            "'ncol(y)' must match 'nrow(element(x, i))'")
+        instances(y) <- seq_len(nrow(e))
+    } else {
+        
+    }
+    SpatialData::`table<-`(x, i=name, value=y)
 })
