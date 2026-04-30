@@ -4,7 +4,7 @@ for (v in names(z)) {
 
     x <- file.path("extdata", z[[v]])
     x <- system.file(x, package="SpatialData")
-    x <- readSpatialData(x, anndataR=TRUE)
+    x <- readSpatialData(x)
 
     test_that(paste0(v, "-multiscales"), {
         y <- meta(image(x))
