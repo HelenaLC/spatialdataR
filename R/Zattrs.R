@@ -165,14 +165,21 @@ setMethod("feature_key", "list", \(x) x$spatialdata_attrs$feature_key)
 #' @rdname SDattrs
 setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 
-# TODO: only tables can have this?
 #' @export
 #' @rdname SDattrs
 setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 
 #' @export
 #' @rdname SDattrs
-setMethod("region", "SingleCellExperiment", \(x) meta(x)$region)
+#' @importFrom SingleCellExperiment int_metadata<-
+setReplaceMethod("region_key", c("SingleCellExperiment", "character"), \(x, value) {
+    int_metadata(x)$spatialdata_attrs$region_key <- value
+    return(x)
+})
+
+#' @export
+#' @rdname SDattrs
+setMethod("region", "SingleCellExperiment", \(x) meta(x)[[region_key(x)]])
 
 #' @export
 #' @rdname SDattrs
@@ -208,9 +215,17 @@ setMethod("instance_key", "PointFrame", \(x) instance_key(meta(x)$spatialdata_at
 #' @export
 #' @rdname SDattrs
 setMethod("instance_key", "ShapeFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
+
 #' @export
 #' @rdname SDattrs
 setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
+
+#' @export
+#' @rdname SDattrs
+setReplaceMethod("instance_key", c("SingleCellExperiment", "character"), \(x, value) {
+    int_metadata(x)$spatialdata_attrs$instance_key <- value
+    return(x)
+})
 
 #' @export
 #' @rdname SDattrs
@@ -234,3 +249,10 @@ setMethod("instances", "ShapeFrame", \(x) {
 #' @rdname SDattrs
 #' @importFrom SingleCellExperiment int_colData
 setMethod("instances", "SingleCellExperiment", \(x) int_colData(x)[[instance_key(x)]])
+#' @export
+#' @rdname SDattrs
+#' @importFrom SingleCellExperiment int_colData<-
+setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
+    int_colData(x)[[instance_key(x)]] <- value
+    return(x)
+})
