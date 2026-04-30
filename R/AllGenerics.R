@@ -76,9 +76,12 @@ setGeneric("regions", \(x, ...) standardGeneric("regions"))
 setGeneric("region<-", \(x, value) standardGeneric("region<-"))
 setGeneric("regions<-", \(x, value) standardGeneric("regions<-"))
 setGeneric("instances", \(x, ...) standardGeneric("instances"))
+setGeneric("instances<-", \(x, value) standardGeneric("instances<-"))
 setGeneric("region_key", \(x, ...) standardGeneric("region_key"))
+setGeneric("region_key<-", \(x, value) standardGeneric("region_key<-"))
 setGeneric("feature_key", \(x, ...) standardGeneric("feature_key"))
 setGeneric("instance_key", \(x, ...) standardGeneric("instance_key"))
+setGeneric("instance_key<-", \(x, value) standardGeneric("instance_key<-"))
 
 # uts ----
 
