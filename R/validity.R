@@ -120,10 +120,12 @@ setValidity2("SpatialData", .validateSpatialData)
 .validateZattrs_multiscales <- \(x, msg) {
     if (is.null(ms <- x$multiscales[[1]]))
         msg <- c(msg, "missing 'multiscales'")
-    # MUST contain
-    for (. in c("axes", "datasets"))
-        if (is.null(ms[[.]]))
-            msg <- c(msg, sprintf("missing 'multiscales$%s'", .))
+    else {
+        # MUST contain
+        for (. in c("axes", "datasets"))
+            if (is.null(ms[[.]]))
+                msg <- c(msg, sprintf("missing 'multiscales$%s'", .))
+    }
     return(msg)
 }
 .validateZattrs_axes <- \(x, msg) {
