@@ -1,5 +1,5 @@
 zs <- system.file("extdata", "blobs.zarr", package="SpatialData")
-sd <- readSpatialData(zs, anndataR=TRUE)
+sd <- readSpatialData(zs)
 
 test_that("query() correctly filters SpatialData elements based on table annotations", {
     # 1. Basic query: filter the main table (annotating blobs_labels)
