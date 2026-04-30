@@ -50,7 +50,6 @@ Authors@R: c(
         comment=c(ORCID="0000-0001-8100-6823")))
 Imports:
     anndataR (>= 1.1.3),
-    basilisk,
     BiocGenerics,
     DelayedArray,
     dplyr,
@@ -63,7 +62,6 @@ Imports:
     ZarrArray,
     Rarr,
     RBGL,
-    reticulate,
     rlang,
     sf,
     S4Arrays,
@@ -72,17 +70,14 @@ Imports:
     SummarizedExperiment
 Suggests:
     BiocStyle,
-    ggnewscale,
     knitr,
     patchwork,
     paws,
     Rgraphviz,
     SpatialData.data,
-    SpatialData.plot,
     testthat
 Remotes:
-    HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.data
 biocViews: 
     DataImport, 
     DataRepresentation, 

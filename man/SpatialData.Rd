@@ -55,6 +55,8 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY,ANY-method}
+\alias{[[<-,SpatialData,character,ANY,ANY-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
@@ -89,9 +91,9 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{images}{SpatialData}(x)
 
-\S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
-\S4method{[[}{SpatialData,character,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}
@@ -127,7 +129,7 @@ or NULL/\code{list()} to remove an element/layer completely.}
 \examples{
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-(x <- readSpatialData(x, anndataR=TRUE))
+(x <- readSpatialData(x))
 
 # subsetting
 # layers are taken in order of appearance
