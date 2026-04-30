@@ -96,3 +96,40 @@ test_that(".validateTables() works correctly", {
     tables(sd_bad) <- list(table=t)
     expect_match(SpatialData:::.validateTables(sd_bad), "table region\\(s\\) not found in any layer: 'non_existent'", all=FALSE)
 })
+library(testthat)
+library(SpatialData)
+
+test_that("Zattrs validation helpers work", {
+    # Valid metadata (blobs)
+    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    sd <- readSpatialData(path)
+    za <- meta(label(sd, 1))
+    ms <- as.list(za)$multiscales[[1]]
+    
+    # 1. Multiscales
+    msg <- c()
+    expect_length(SpatialData:::.validateZattrs_multiscales(list(multiscales=list(ms)), msg), 0)
+    
+    bad_za <- list(multiscales=list(list()))
+    msg <- SpatialData:::.validateZattrs_multiscales(bad_za, c())
+    expect_true(any(grepl("missing 'multiscales.axes'", msg)))
+    expect_true(any(grepl("missing 'multiscales.datasets'", msg)))
+    
+    # 2. Axes
+    msg <- c()
+    expect_length(SpatialData:::.validateZattrs_axes(ms, msg), 0)
+    
+    bad_ax <- ms
+    bad_ax$axes <- NULL
+    msg <- SpatialData:::.validateZattrs_axes(bad_ax, c())
+    expect_true(any(grepl("missing or non-list 'axes'", msg)))
+    expect_true(any(grepl("missing 'axes.name'", msg)))
+    
+    # 3. Coordinate Transformations
+    msg <- c()
+    expect_length(SpatialData:::.validateZattrs_coordTrans(ms, msg), 0)
+    
+    bad_ct <- ms
+    bad_ct$coordinateTransformations[[1]]$output <- NULL
+    expect_match(SpatialData:::.validateZattrs_coordTrans(bad_ct, c()), "'coordTrans' 1 missing 'output'")
+})
