@@ -27,8 +27,8 @@
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'region_key' column in 'int_colData'"))
             ok <- all(md[[rk]] %in% rs)
-            if (!ok) msg <- c(msg, paste0)(
-                i, "-th table's 'region_key' values not found in 'int_colData'")
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table's 'region_key' values not found in 'int_colData'"))
         }
     }
     na <- setdiff(
