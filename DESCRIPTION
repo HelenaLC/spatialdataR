@@ -70,17 +70,14 @@ Imports:
     SummarizedExperiment
 Suggests:
     BiocStyle,
-    ggnewscale,
     knitr,
     patchwork,
     paws,
     Rgraphviz,
     SpatialData.data,
-    SpatialData.plot,
     testthat
 Remotes:
-    HelenaLC/SpatialData.data,
-    HelenaLC/SpatialData.plot
+    HelenaLC/SpatialData.data
 biocViews: 
     DataImport, 
     DataRepresentation, 
