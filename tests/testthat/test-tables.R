@@ -4,7 +4,7 @@ options(arrow.pull_as_vector=TRUE)
 
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+x <- readSpatialData(x)
 
 se <- SpatialData::table(x)
 md <- int_metadata(se)

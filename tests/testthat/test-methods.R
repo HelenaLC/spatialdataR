@@ -1,7 +1,7 @@
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+x <- readSpatialData(x)
 
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")

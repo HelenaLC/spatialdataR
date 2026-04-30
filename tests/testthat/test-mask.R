@@ -1,7 +1,7 @@
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+x <- readSpatialData(x)
 
 test_that("mask,unsupported", {
     nm <- list(

@@ -81,7 +81,7 @@ character string
 \examples{
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
-x <- readSpatialData(x, anndataR=TRUE)
+x <- readSpatialData(x)
 
 region(table(x))
 region_key(table(x))
