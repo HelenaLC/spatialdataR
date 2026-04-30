@@ -74,9 +74,10 @@ setValidity2("LabelArray", .validateLabelArray)
 
 .validatePointFrame <- \(object) {
     msg <- c()
-    if (!length(object)) return(msg)
-    # if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
-    # if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
+    # Explicitly call SpatialData::data to avoid utils::data masking
+    cnt <- tryCatch(as.integer(SpatialData::data(object) |> count() |> pull(n)), error=\(.) 0)
+    if (!cnt) return(msg)
+    if (!"geometry" %in% colnames(SpatialData::data(object))) msg <- c(msg, "'PointFrame' missing 'geometry'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2
