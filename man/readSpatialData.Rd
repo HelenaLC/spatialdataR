@@ -25,8 +25,7 @@ readSpatialData(
   labels = TRUE,
   points = TRUE,
   shapes = TRUE,
-  tables = TRUE,
-  anndataR = TRUE
+  tables = TRUE
 )
 }
 \arguments{
@@ -60,7 +59,7 @@ library(SpatialData.data)
 zs <- get_demo_SDdata("merfish")
 
 # read complete Zarr store
-(sd <- readSpatialData(zs, anndataR=TRUE))
+(sd <- readSpatialData(zs))
 
 # helper that gets path to first element in layer 'l'
 fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
