@@ -18,7 +18,7 @@ sd <- MouseIntestineVisHD()
 ### analysis
 
 ```{r}
-# low-resolution image & shape identifiers
+# low-resolution image & shape
 i <- grepv("lowres", imageNames(sd))
 s <- grepv("_016um", shapeNames(sd))
 ```
@@ -50,20 +50,21 @@ plotSpatialData() + # TODO: legend!
     scale_fill_gradientn(colors=rev(hcl.colors(9, "RdPu")))
 ```
 
-```{r echo=-1, fig.height=3}
+```{r echo=-1, fig.height=4}
 par(mar=c(0,0,0,0))
 # rasterization
-ex <- rbind(c(100,200), c(200,200), c(200,300), c(100,200))
+ex <- rbind(c(0,200), c(200,200), c(200,300), c(100,200))
+ex <- rbind(c(0,0), c(600,0), c(600,558), c(600,558), c(0,0))
 ex <- st_sfc(st_polygon(list(ex)))
-plot(grid <- st_make_grid(ex, cellsize=5, square=FALSE))
+plot(grid <- st_make_grid(ex, cellsize=10, square=FALSE))
 ```
 
 ```{r}
 # aggregate gene counts by bin
 t <- ShapeFrame(st_sf(geometry=grid))
 t <- addCT(t, name=ct, type="identity", data=NULL)
-shape(sp, "grid") <- t
-sq <- mask(sp, 
+shape(sd, "grid") <- t
+sq <- mask(sd, 
     i=s, j="grid", k=ct, 
     how="sum", name="grid_sum")
 (sf <- table(sq, "grid_sum"))
@@ -72,8 +73,10 @@ sq <- mask(sp,
 ```{r}
 # visualize binned counts spatially
 plotSpatialData() +
-    plotShape(sq, i="grid", j=ct, fill="Cd74", col=NA) +
-    scale_fill_gradientn(colors=rev(hcl.colors(9, "RdPu")))
+    plotShape(sq, i="grid", j=ct, fill="Fabp2", col=NA) +
+    scale_fill_gradientn(
+        trans="log10", na.value="white",
+        colors=rev(hcl.colors(9, "RdPu")))
 ```
 
 ### appendix
