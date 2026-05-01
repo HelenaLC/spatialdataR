@@ -3,14 +3,36 @@
 ### preamble
 
 ```{r load-libs}
-
+library(ggplot2)
+library(patchwork)
+library(SpatialData)
+library(SpatialData.data)
+library(SpatialData.plot)
 ```
 
 ```{r load-data}
-
+sd <- MouseIntestineVisHD()
 ```
 
-Todo.
+```{r}
+# simplify lengthly element names
+sp <- sd
+ex <- "Visium_HD_Mouse_Small_Intestine_"
+for (. in c("images", "shapes", "tables")) {
+    old <- names(sp[[.]])
+    new <- gsub(ex, "", old)
+    names(sp[[.]]) <- new
+}
+show(sp)
+```
+
+### analysis
+
+```{r}
+lr <- grep("lowres", imageNames(sd))
+cl <- rep(list(c(0, 1/3)), 3) # contrasts
+plotSpatialData() + plotImage(sd, lr, cl=cl)
+```
 
 ### appendix
 
