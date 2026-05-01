@@ -99,7 +99,7 @@ test_that("addCT", {
     .check_data <- \(z, x) {
         expect_true("." %in% CTname(z))
         ct <- CTlist(z)[[which(CTname(z) == ".")]]
-        expect_identical(ct[[t]][[1]], x)
+        expect_identical(ct[[t]], x)
     }
     for (y in es) {
         t <- "identity"

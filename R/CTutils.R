@@ -176,7 +176,7 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
         identity=is.null(data),
         translation=length(data) == d & is.numeric(data),
         rotate=length(data) == 1 & is.numeric(data) & data > 0,
-        scale=length(data) == d & is.numeric(data) & all(data > 0),
+        scale=length(data) == d & is.numeric(unlist(data)) & all(unlist(data) > 0),
         TRUE)
     if (!.) f(t)
 }
@@ -193,7 +193,7 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
     new <- old[[1]][c("input", "output", "type")]
     new$type <- type
     new$output$name <- name
-    new[[new$type]] <- list(data)
+    new[[new$type]] <- data
     # append/overwrite & stash
     ms <- "multiscales"
     ct <- "coordinateTransformations"
