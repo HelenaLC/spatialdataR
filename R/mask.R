@@ -11,6 +11,8 @@
 #' @param i,j character string; names of elements to mask,
 #'   specifically, \code{i} will be masked by \code{j},
 #'   adding a \code{table} for \code{j} in \code{x}.
+#' @param k string or scalar integer; specifies target coordinate space
+#'   (defaults to first common coordinate space between \code{i} and \code{j})
 #' @param how character string; statistic to use for masking.
 #' @param name function use to generate the new \code{table}'s name.
 #' @param ... optional arguments passed to and from other methods.
@@ -47,7 +49,7 @@ NULL
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
-setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
+setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
     ok <- is.character(name) && length(name) == 1 && !name %in% tableNames(x)
@@ -57,7 +59,22 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
     .i <- element(x, i)
     .j <- element(x, j)
     ct <- intersect(CTname(.i), CTname(.j))
-    if (!length(ct)) stop("can't mask; no common coordinates between 'i' and 'j'")
+    if (!length(ct)) stop(
+        "can't mask; found no common ",
+        "coordinates between 'i' and 'j'")
+    # TODO: let user specify target coordinate system?
+    if (missing(k)) {
+        k <- 1
+    } else {
+        if (is.character(k)) {
+            k <- match.arg(k, ct)
+            k <- match(k, ct)
+        } else if (is.numeric(k)) {
+            stopifnot(k > 0, k <= length(ct))
+        }
+    }
+    .i <- transform(.i, ct[k])
+    .j <- transform(.j, ct[k])
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
     se <- .mask(.i, .j, how=how, table=t, ...)
     ik <- if (is.null(t)) "instance" else instance_key(t)
