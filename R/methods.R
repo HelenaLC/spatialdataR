@@ -85,7 +85,9 @@ setReplaceMethod("meta", c("SpatialDataElement", "list"),
 setMethod("[", "SpatialData", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
-    .sub_j(.sub_i(x, i), j)
+    x <- .sub_j(.sub_i(x, i), j)
+    x <- .sync_tables_on_drop(x)
+    x
 })
 
 # row/colnms ----
@@ -226,6 +228,8 @@ setReplaceMethod("[[", c("SpatialData", "character"),
                 x <- .sync_tables(x, old, new)
         }
         attr(x, l) <- value
+        if (l != "tables")
+            x <- .sync_tables_on_drop(x)
         return(x)
     })
 
@@ -245,6 +249,8 @@ f <- \(.) setReplaceMethod(.,
                 x <- .sync_tables(x, old, new)
         }
         attr(x, .) <- value
+        if (. != "tables")
+            x <- .sync_tables_on_drop(x)
         x
     })
 for (. in all) eval(f(.), parent.env(environment()))
@@ -314,11 +320,14 @@ f <- \(.) setReplaceMethod(.,
     c("SpatialData", "ANY", "NULL"), 
     \(x, i, value) {
         if (missing(i)) i <- 1
-        y <- attr(x, .)
+        l <- paste0(., "s")
+        y <- attr(x, l)
         if (is.numeric(i))
             i <- names(y)[i]
         y <- y[setdiff(names(y), i)]
-        x[[.]] <- y
+        x[[l]] <- y
+        if (. != "table")
+            x <- .sync_tables_on_drop(x)
         x
     })
 for (. in one) eval(f(.), parent.env(environment()))

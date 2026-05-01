@@ -90,9 +90,10 @@ test_that("set all", {
 test_that("set one", {
     # value=NULL
     for (f in fun) {
-        n <- length(get(paste0(f, "s"))(x))
-        x <- get(paste0(f, "<-"))(x, i=1, value=NULL)
-        m <- length(get(paste0(f, "s"))(x))
+        y <- x
+        n <- length(get(paste0(f, "s"))(y))
+        y <- get(paste0(f, "<-"))(y, i=1, value=NULL)
+        m <- length(get(paste0(f, "s"))(y))
         expect_true(m == (n-1))
     }
     # value=in/valid
