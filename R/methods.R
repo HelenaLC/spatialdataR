@@ -110,6 +110,7 @@ setMethod("colnames", "SpatialData", \(x) {
 #' @rdname SpatialData
 #' @export
 setMethod("layer", c("SpatialData", "character"), \(x, i) {
+    stopifnot(i %in% unlist(colnames(x)), length(i) == 1)
     names(Filter(\(.) i %in% ., colnames(x)))
 })
 
@@ -176,8 +177,10 @@ f <- \(.) setReplaceMethod(
         new <- names(x[[paste0(., "s")]]) <- value
         if (. == "table" || !length(tables(x))) return(x)
         for (i in seq_along(tables(x))) {
-            j <- match(region(table(x, i)), old)
-            region(table(x, i)) <- new[j]
+            if (any(region(table(x, i)) %in% old)) {
+                j <- match(regions(table(x, i)), old)
+                regions(table(x, i)) <- new[j]
+            }
         }
         return(x)
     })
