@@ -54,17 +54,17 @@
 #'
 #' # labels
 #' y <- x; tables(y) <- list()
-#' sce <- SingleCellExperiment(
-#'   assays=list(counts=matrix(0, 1, length(instances(label(y, 1))))))
+#' mtx <- matrix(0, 1, length(instances(label(y))))
+#' sce <- SingleCellExperiment(list(counts=mtx))
 #' y <- setTable(y, i <- "blobs_labels", sce)
-#' head(colData(sce <- getTable(y, i)))
+#' getTable(y, i)
 #'
 #' # shapes
 #' i <- "blobs_circles"
-#' sce <- SingleCellExperiment(
-#'   assays=list(counts=matrix(0, 1, nrow(shape(x, i)))))
+#' mtx <- matrix(0, 1, nrow(shape(x, i)))
+#' sce <- SingleCellExperiment(list(counts=mtx))
 #' y <- setTable(x, i, sce)
-#' head(colData(sce <- getTable(y, i)))
+#' getTable(y, i)
 NULL
 
 #' @rdname table-utils
@@ -160,9 +160,6 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     name=NULL, rk="region", ik="instance_id") {
     
-    # x <- sd; i <- "blobs_circles"; name <- NULL; rk <- "region"; ik <- "instance_id"
-    # y <- SingleCellExperiment(matrix(nrow=10, ncol=nrow(element(x, i))))
-    
     # validity
     stopifnot(
         is(y, "SingleCellExperiment"),
@@ -188,19 +185,16 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     if (is.null(instance_key(y))) instance_key(y) <- ik
     
     if (is.null(region(y))) {
-        region(y) <- regions(y) <- i
+        regions(y) <- i
     } else {
-        
+        stopifnot(region(y) == i)
     }
     
     e <- element(x, i)
-    if (is.null(instances(y))) {
-        if (ncol(y) != nrow(e)) stop(
-            "'instances<-' have not been set on 'y'; ",
-            "'ncol(y)' must match 'nrow(element(x, i))'")
-        instances(y) <- seq_len(nrow(e))
-    } else {
-        
-    }
+    n <- length(instances(e))
+    if (ncol(y) != n) stop(
+        "'instances<-' have not been set on 'y'; ",
+        "'ncol(y)' must match 'nrow(element(x, i))'")
+    instances(y) <- instances(e)
     SpatialData::`table<-`(x, i=name, value=y)
 })
