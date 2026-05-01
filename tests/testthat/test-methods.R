@@ -9,21 +9,23 @@ typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExpe
 
 # get ----
 
-# test_that("layer()", {
-#     # invalid
-#     expect_error(layer(x, 0))
-#     expect_error(layer(x, 9))
-#     expect_error(layer(x, "."))
-#     expect_error(layer(x, TRUE))
-#     expect_error(layer(x, SpatialData:::.LAYERS))
-#     expect_silent(layer(x)) # missing
-#     # valid
-#     i <- sample(SpatialData:::.LAYERS, 1)
-#     n <- length(attr(x, i))
-#     y <- layer(x, i)
-#     expect_is(y, "list")
-#     expect_length(y, n)
-# })
+test_that("layer()", {
+    ok <- unlist(colnames(x))
+    # invalid
+    expect_error(layer(x, 0))
+    expect_error(layer(x, 9))
+    expect_error(layer(x, "."))
+    expect_error(layer(x, TRUE))
+    expect_error(layer(x, sample(ok, 2)))
+    # valid
+    replicate(5, {
+        i <- sample(ok, 1)
+        y <- layer(x, i)
+        expect_length(y, 1)
+        expect_is(y, "character")
+        expect_in(y, rownames(x))
+    })
+})
 
 test_that("element()", {
     # invalid
@@ -32,9 +34,11 @@ test_that("element()", {
     expect_error(element(x, TRUE))
     # valid
     expect_silent(element(x, 1))
-    i <- sample(SpatialData:::.LAYERS, 1)
-    j <- sample(names(attr(x, i)), 1)
-    expect_identical(x[[i]][[j]], element(x, j))
+    replicate(5, {
+        i <- sample(SpatialData:::.LAYERS, 1)
+        j <- sample(names(attr(x, i)), 1)
+        expect_identical(x[[i]][[j]], element(x, j))
+    })
 })
 
 test_that("get all", {

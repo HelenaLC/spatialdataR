@@ -5,14 +5,14 @@
 \alias{query,SpatialData-method}
 \title{queries}
 \usage{
-\S4method{query}{SpatialData}(x, i, ...)
+\S4method{query}{SpatialData}(x, ..., i = 1)
 }
 \arguments{
 \item{x}{\code{SpatialData} object.}
 
-\item{i}{index or name of table to query.}
-
 \item{...}{logic passed to \code{dplyr::filter}.}
+
+\item{i}{index or name of table to query.}
 }
 \value{
 \code{SpatialData} object
