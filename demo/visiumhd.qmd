@@ -29,9 +29,58 @@ show(sp)
 ### analysis
 
 ```{r}
-lr <- grep("lowres", imageNames(sd))
+# low-resolution image & shape identifiers
+i <- grepv("lowres", imageNames(sd))
+s <- grepv("_016um", shapeNames(sd))
+```
+
+```{r}
 cl <- rep(list(c(0, 1/3)), 3) # contrasts
-plotSpatialData() + plotImage(sd, lr, cl=cl)
+plotSpatialData() + plotImage(sd, i, cl=cl)
+```
+
+```{r}
+(se <- table(sd))
+```
+
+```{r}
+# target coordinate space
+ct <- "downscaled_lowres" 
+# bounding box query
+bb <- list(xmin=0, xmax=100, ymin=200, ymax=300)
+# apply crop
+sp <- crop(sd, bb, j=ct)
+```
+
+```{r}
+# visualize gene counts spatially
+um16 <- grep("16um", shapeNames(sp))
+plotSpatialData() + # TODO: legend!
+    plotImage(sp, i=i, j=ct, cl=cl) + 
+    plotShape(sp, i=s, j=ct, fill="Cd74", col=NA) +
+    scale_fill_gradientn(colors=rev(hcl.colors(9, "RdPu")))
+```
+
+```{r}
+# rasterization
+ex <- extent(image(sp))
+ex <- rbind(c(0,200), c(100,200), c(100,300), c(0,200))
+ex <- st_sfc(st_polygon(list(ex)))
+plot(grid <- st_make_grid(ex, cellsize=10))
+```
+
+```{r}
+# aggregate data counts by bin
+shape(sp, "grid") <- ShapeFrame(st_sf(geometry=grid))
+se <- mask(sp, i=s, j="grid", how="sum", name="grid_sum")
+table(se, "grid_sum")
+```
+
+```{r}
+# visualize aggregated counts spatially
+plotSpatialData() +
+    plotShape(sq, i="grid", fill="Cd74", col="red") +
+    scale_fill_gradientn(colors=rev(hcl.colors(9, "RdPu")))
 ```
 
 ### appendix
