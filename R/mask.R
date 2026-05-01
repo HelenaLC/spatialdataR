@@ -56,6 +56,8 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j,
         "character string not yet in 'tableNames(x)'")
     .i <- element(x, i)
     .j <- element(x, j)
+    ct <- intersect(CTname(.i), CTname(.j))
+    if (!length(ct)) stop("can't mask; no common coordinates between 'i' and 'j'")
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
     se <- .mask(.i, .j, how=how, table=t, ...)
     ik <- if (is.null(t)) "instance" else instance_key(t)
