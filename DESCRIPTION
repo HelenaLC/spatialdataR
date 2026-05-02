@@ -1,12 +1,15 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.6)
-Version: 0.99.32
-Description: Interface to Python's 'SpatialData', currently including:
-    reticulate-based use of 'spatialdata-io' for reading of manufacturer
-    data and writing to .zarr, on-disk representation of images/labels as
-    'ZarrArray's ('Rarr') and shapes/points as 'arrow' objects, and method 
-    drafts for computation, visualization and coordinate system handling.
+Version: 0.99.33
+Description: R interface to Python/scverse's 'spatialdata' framework for 
+    unified spatial omics data handling. Adheres to OME-NGFF standards, 
+    providing lazy, on-disk representations for multiscale images and 
+    labels (ZarrArray), as well as points and shapes (DuckDB-backed 
+    tables). Includes handling of coordinate transformation systems and 
+    spatial utilities for cropping, masking, and querying. Integrates 
+    tabular annotations as 'SingleCellExperiment's (via 'anndataR'), 
+    enabling interoperable spatial omics workflows across R and Python.
 Authors@R: c(
 	person("Helena L.", "Crowell", 
 	    role=c("aut", "cre"),
@@ -59,7 +62,6 @@ Imports:
     graph,
     Matrix,
     methods,
-    ZarrArray,
     Rarr,
     RBGL,
     rlang,
@@ -67,11 +69,12 @@ Imports:
     S4Arrays,
     S4Vectors,
     SingleCellExperiment,
-    SummarizedExperiment
+    SummarizedExperiment,
+    SparseArray,
+    ZarrArray
 Suggests:
     BiocStyle,
     knitr,
-    patchwork,
     paws,
     Rgraphviz,
     SpatialData.data,

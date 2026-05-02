@@ -30,7 +30,7 @@ NULL
 #' @importFrom dplyr filter pull
 #' @importFrom SummarizedExperiment colData
 #' @importFrom SingleCellExperiment int_colData
-setMethod("query", "SpatialData", \(x, i, ...) {
+setMethod("query", "SpatialData", \(x, ..., i=1) {
     if (!length(tables(x)))
         stop("There aren't any tables")
     t <- SpatialData::table(x, i)
@@ -40,7 +40,7 @@ setMethod("query", "SpatialData", \(x, i, ...) {
     t <- t[, df$.i]
     colData(t) <- droplevels(colData(t))
     int_colData(t) <- droplevels(int_colData(t))
-    region(t) <- levels(regions(t))
+    region(t) <- as.character(unique(regions(t)))
     for (l in setdiff(.LAYERS, "tables")) {
         j <- !names(x[[l]]) %in% region(t)
         if (sum(j)) x[[l]] <- x[[l]][-which(j)]
