@@ -142,9 +142,10 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseMatrix
+#' @importFrom SparseArray colSums
 #' @importFrom SummarizedExperiment assay
+#' @importFrom duckspatial ddbs_intersects
 #' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom sf st_intersects
 setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
@@ -152,27 +153,30 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
-    # grouping
-    js <- st_intersects(st_as_sf(data(j)), st_as_sf(data(i)))
-    is <- factor(integer(nrow(i)), seq(0, nrow(j)))
-    is[unlist(js)] <- rep(seq_along(js), lengths(js))
-    ns <- tabulate(is, ni <- nlevels(is))
+    # mapping of 'i' to 'j'
+    ij <- ddbs_intersects(data(i), data(j), sparse=TRUE)
+    is <- pull(ij, id_x)
+    js <- pull(ij, id_y)
+    na <- setdiff(seq_len(nrow(i)), is)
     # aggregation
     mx <- assay(table, assay)
     if (endsWith(how, "detected")) mx <- mx > 0
+    # auxilary matrix to aggregate 'i's by 'j's; 
+    # add dummy 'j' for 'i's without any'j's
     my <- sparseMatrix(
-        x=rep(1, length(is)),
-        i=seq_along(is), j=is,
-        dims=c(ncol(table), ni))
+        x=1, 
+        i=c(na, is), 
+        j=c(rep(1, length(na)), 1+js),
+        dims=c(ncol(table), 1+nrow(j)))
     mx <- mx %*% my
+    ns <- colSums(my > 0) # number of 'i's per 'j'
     if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
     # wrangling
     mx <- as(mx, "dgCMatrix")
-    colnames(mx) <- levels(is)
+    colnames(mx) <- c("0", instances(j))
     mx <- list(mx); names(mx) <- how
     se <- SingleCellExperiment(mx)
-    nm <- paste0("n_", meta(table)$region)
-    se[[nm]] <- ns
+    se$n_instances <- ns
     return(se)
 })
 
