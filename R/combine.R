@@ -29,19 +29,24 @@ setMethod("combine",
         new <- split(make.unique(unlist(old)), idx)
         for (i in c(1, 2)) {
             z <- get(c("x", "y")[i])
-            for (l in rownames(z)) {
+            layer_nms <- setdiff(rownames(z), "tables")
+            old_nms <- unlist(colnames(z)[layer_nms])
+            # find new names for these elements
+            j <- match(old_nms, old[[i]])
+            new_nms <- new[[i]][j]
+            
+            # rename elements
+            for (l in layer_nms) {
                 j <- match(names(z[[l]]), old[[i]])
                 names(z[[l]]) <- new[[i]][j]
             }
-            # update tables accordingly
-            for (t in tableNames(z)) {
-                se <- table(z, t)
-                j <- match(region(se), old[[i]])
-                region(se) <- new[[i]][j]
-                j <- match(regions(se), old[[i]])
-                regions(se) <- new[[i]][j]
-                table(z, t) <- se
-            }
+            # sync tables
+            z <- .sync_tables(z, old_nms, new_nms)
+            
+            # rename tables themselves
+            j <- match(tableNames(z), old[[i]])
+            tableNames(z) <- new[[i]][j]
+            
             assign(c("x", "y")[i], z)
         }
         SpatialData(

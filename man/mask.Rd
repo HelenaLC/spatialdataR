@@ -9,6 +9,7 @@
   x,
   i,
   j,
+  k,
   how = NULL,
   name = function(i, j) sprintf("\%s_by_\%s", i, j),
   ...
@@ -20,6 +21,9 @@
 \item{i, j}{character string; names of elements to mask,
 specifically, \code{i} will be masked by \code{j},
 adding a \code{table} for \code{j} in \code{x}.}
+
+\item{k}{string or scalar integer; specifies target coordinate space
+(defaults to first common coordinate space between \code{i} and \code{j})}
 
 \item{how}{character string; statistic to use for masking.}
 
