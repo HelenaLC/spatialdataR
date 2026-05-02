@@ -59,7 +59,6 @@ Imports:
     graph,
     Matrix,
     methods,
-    ZarrArray,
     Rarr,
     RBGL,
     rlang,
@@ -67,7 +66,9 @@ Imports:
     S4Arrays,
     S4Vectors,
     SingleCellExperiment,
-    SummarizedExperiment
+    SummarizedExperiment,
+    SparseArray,
+    ZarrArray
 Suggests:
     BiocStyle,
     knitr,
