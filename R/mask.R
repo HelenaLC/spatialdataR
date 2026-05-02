@@ -120,32 +120,31 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 })
 
 #' @noRd
+#' @importFrom rlang .data
 #' @importFrom Matrix sparseMatrix
 #' @importFrom SparseArray colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
-#' @importFrom duckspatial ddbs_intersects
-#' @importFrom dplyr mutate inner_join left_join coalesce join_by select count collect row_number
-#' @importFrom rlang .data
+#' @importFrom dplyr mutate left_join coalesce join_by select count collect row_number
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     id_x <- id_y <- n <- NULL # R CMD check
     ij <- .mask_map(i, j)
-    res <- mutate(i@data, id_y=row_number()) |>
-        dplyr::left_join(ij, by=join_by(id_y)) |>
-        mutate(id_x = dplyr::coalesce(id_x, 0L)) |>
-        select(all_of(c("id_x", feature_key(i)))) |>
-        count(id_x, .data[[feature_key(i)]]) |>
+    fk <- feature_key(i)
+    res <- i@data |>
+        mutate(id_y=row_number()) |>
+        left_join(ij, by=join_by(id_y)) |>
+        mutate(id_x=coalesce(id_x, 0L)) |>
+        select(all_of(c("id_x", fk))) |>
+        count(id_x, .data[[fk]]) |>
         collect() |>
-        mutate(key=factor(.data[[feature_key(i)]]))
-    nms <- list(
-        levels(res$key),
-        c("0", instances(j)))
+        mutate(key=factor(.data[[fk]]))
+    ks <- levels(res$key)
     ns <- sparseMatrix(
+        x=res$n, 
         i=as.integer(res$key), 
         j=res$id_x + 1,
-        x=res$n, 
-        dims=c(length(levels(res$key)), 1+nrow(j)),
-        dimnames=nms)
+        dims=c(length(ks), 1 + nrow(j)), 
+        dimnames=list(ks, c("0", instances(j))))
     se <- SingleCellExperiment(list(counts=ns))
     se$n_instances <- colSums(ns)
     return(se)
