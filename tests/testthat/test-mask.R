@@ -56,7 +56,7 @@ test_that("mask,ShapeFrame,ShapeFrame", {
     old <- getTable(y, i)
     new <- getTable(y, j, drop=FALSE)
     expect_equal(dim(new), c(nrow(old), length(shape(x, j))+1))
-    expect_equal(sum(sum(new$n_cells)), ncol(old))
+    expect_equal(sum(sum(new$n_instances)), ncol(old))
     expect_equal(sum(assay(new)), sum(assay(old)))
     expect_identical(rownames(new), rownames(old))
     expect_identical(meta(new)$region, j)
