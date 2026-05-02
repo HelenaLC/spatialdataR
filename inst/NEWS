@@ -1,3 +1,13 @@
+changes in version 0.99.33
+
+- added validity checks and tests for Zattrs
+- improved handling of 'spatialdata_attrs'
+- synchronize tables when subsetting/renaming
+- more memory efficient mask(), keeping 
+  an observation of unmapped instances
+- revised package 'Description:' field
+  to align with current capabilities
+
 changes in version 0.99.32
 
 - added unit tests for query()
