@@ -27,8 +27,8 @@
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table missing 'region_key' column in 'int_colData'"))
             ok <- all(md[[rk]] %in% rs)
-            if (!ok) msg <- c(msg, paste0)(
-                i, "-th table's 'region_key' values not found in 'int_colData'")
+            if (!ok) msg <- c(msg, paste0(
+                i, "-th table's 'region_key' values not found in 'int_colData'"))
         }
     }
     na <- setdiff(
@@ -74,9 +74,11 @@ setValidity2("LabelArray", .validateLabelArray)
 
 .validatePointFrame <- \(object) {
     msg <- c()
-    if (!length(object)) return(msg)
-    # if (!"x" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'x'.")
-    # if (!"y" %in% names(object)) msg <- c(msg, "'PointFrame' missing 'y'.")
+    # Explicitly call SpatialData::data to avoid utils::data masking
+    cnt <- tryCatch(as.integer(SpatialData::data(object) |> count() |> pull(n)), error=\(.) 0)
+    if (!cnt) return(msg)
+    if (!"geometry" %in% names(object)) 
+        msg <- c(msg, "'PointFrame' missing 'geometry'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2
@@ -85,7 +87,8 @@ setValidity2("PointFrame", .validatePointFrame)
 .validateShapeFrame <- \(object) {
     msg <- c()
     #if (!nrow(object)) return(msg)
-    #if (!"geometry" %in% names(object)) msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
+    if (!"geometry" %in% names(object)) 
+        msg <- c(msg, "'ShapeFrame' missing 'geometry'.")
     return(msg)
 }
 #' @importFrom S4Vectors setValidity2
@@ -120,10 +123,12 @@ setValidity2("SpatialData", .validateSpatialData)
 .validateZattrs_multiscales <- \(x, msg) {
     if (is.null(ms <- x$multiscales[[1]]))
         msg <- c(msg, "missing 'multiscales'")
-    # MUST contain
-    for (. in c("axes", "datasets"))
-        if (is.null(ms[[.]]))
-            msg <- c(msg, sprintf("missing 'multiscales$%s'", .))
+    else {
+        # MUST contain
+        for (. in c("axes", "datasets"))
+            if (is.null(ms[[.]]))
+                msg <- c(msg, sprintf("missing 'multiscales$%s'", .))
+    }
     return(msg)
 }
 .validateZattrs_axes <- \(x, msg) {

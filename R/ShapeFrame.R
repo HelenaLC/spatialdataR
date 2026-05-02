@@ -29,27 +29,36 @@
 #' (s <- readShape(y))
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 #'
+#' @importFrom duckspatial as_duckspatial_df
 #' @importFrom sf st_sf st_sfc st_polygon
 #' @importFrom S4Vectors metadata<-
-#' @importFrom methods new
-#' @importFrom duckspatial as_duckspatial_df
+#' @importFrom dplyr filter select
 #' @export
-ShapeFrame <- function(data=data.frame(), meta=Zattrs(type="frame"), metadata=list(), ...) {
-    if (is.data.frame(data)) {
-        if (ncol(data) == 3L &&
-            all(c("x", "y", "id") %in% colnames(data))) {
-            # create sf polygons from vertices
-            mxL <- lapply(split(data, data$id), function(df) {
-                as.matrix(df[, c("x", "y")]) + 0.0
-            })
-            data <- st_sf(geometry = st_sfc(lapply(mxL, function(x) st_polygon(list(x)))))
-            rownames(data) <- names(mxL)
-            data <- as_duckspatial_df(data)
+ShapeFrame <- \(
+    data=NULL, 
+    meta=Zattrs(type="frame"), 
+    metadata=list(), ...) {
+    if (is.null(data)) {
+        # mock geometry for empty data
+        geom <- st_sfc(st_polygon())
+        data <- st_sf(data.frame(x=1), geometry=geom)
+        data <- as_duckspatial_df(data, crs=NA)
+        data <- data |> filter(x == 0) |> select(-x)
+    } else if (is.data.frame(data)) {
+        if (ncol(data) == 3L && 
+            all(c("x", "y", "id") %in% names(data))) {
+            # create polygons from vertices
+            fn <- \(df) 0.0+as.matrix(df[, c("x", "y")])
+            mx <- lapply(split(data, data$id), fn)
+            data <- lapply(mx, \(x) st_polygon(list(x)))
+            data <- st_sf(geometry=st_sfc(data))
+            rownames(data) <- names(mx)
+            data <- as_duckspatial_df(data, crs=NA)
         } else if (nrow(data) > 0L) {
-            data <- as_duckspatial_df(data)
+            data <- as_duckspatial_df(data, crs=NA)
         }
     } else {
-        data <- as_duckspatial_df(data)
+        data <- as_duckspatial_df(data, crs=NA)
     }
     x <- .ShapeFrame(data=data, meta=meta, ...)
     metadata(x) <- metadata
