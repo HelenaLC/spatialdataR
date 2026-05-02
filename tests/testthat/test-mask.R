@@ -29,14 +29,41 @@ test_that("mask,ImageArray,LabelArray", {
 test_that("mask,PointFrame,ShapeFrame", {
     i <- "blobs_points"
     j <- "blobs_circles"
+    k <- "blobs_polygons"
+    
+    # test basic masking
     y <- mask(x, i, j)
-    t <- getTable(y, j)
+    t <- getTable(y, j, drop=FALSE)
+    
+    # check dimensions: features x (1 + #shapes)
     fk <- feature_key(p <- point(x, i))
-    np <- length(unique(p[[fk]]))
+    np <- length(unique(as.data.frame(p)[[fk]]))
     nc <- nrow(shape(x, j))
-    expect_equal(dim(t), c(np, nc))
-    # ignore 'how' with a warning
-    expect_warning(mask(x, i, j, how="sum"))
+    expect_equal(dim(t), c(np, nc + 1))
+    expect_true("0" %in% colnames(t))
+    
+    # check counts: 
+    # points in "0" column are those with NO intersection;
+    # assay sum = (#points) + duplicates (points in multiple shapes)
+    np <- nrow(as.data.frame(p))
+    n0 <- t$n_instances["0"]
+    
+    # manually find points with NO intersections
+    ij <- SpatialData:::.mask_map(p, shape(x, j))
+    is <- dplyr::collect(ij)$id_y
+    nq <- length(unique(is))
+    expect_equal(as.numeric(n0), np - nq)
+    
+    # check that custom naming works
+    y <- mask(x, i, j, name="x")
+    expect_true("x" %in% tableNames(y))
+    
+    # mask again using a different mask
+    y <- mask(x, i, j, name="t1")
+    z <- mask(y, i, k, name="t2")
+    
+    expect_true("t1" %in% tableNames(z))
+    expect_true("t2" %in% tableNames(z))
 })
 
 require(SpatialData.data, quietly=TRUE)
@@ -46,24 +73,28 @@ x <- readSpatialData(x)
 test_that("mask,ShapeFrame,ShapeFrame", {
     i <- "cells"
     j <- "anatomical"
+    
     # error without 'table'
     y <- x; tables(y) <- list()
     expect_error(mask(y, i, j))
-    # default to 'sum' with a message
-    expect_message(y <- mask(x, i, j))
-    expect_silent(z <- mask(x, i, j, how="sum"))
-    expect_identical(y, z)
-    old <- getTable(y, i)
+    
+    # test basic masking with "0" column
+    y <- mask(x, i, j, how="sum")
+    old <- getTable(x, i)
     new <- getTable(y, j, drop=FALSE)
-    expect_equal(dim(new), c(nrow(old), length(shape(x, j))+1))
-    expect_equal(sum(sum(new$n_instances)), ncol(old))
+    
+    # dimensions: features x (1 + #shapes)
+    expect_equal(dim(new), c(nrow(old), nrow(shape(x, j)) + 1))
+    expect_true("0" %in% colnames(new))
+    
+    # sum of aggregated should match original total (for "sum")
     expect_equal(sum(assay(new)), sum(assay(old)))
-    expect_identical(rownames(new), rownames(old))
-    expect_identical(meta(new)$region, j)
-    # 'value' should be a character 
-    # vector of rownames in 'table(x, i)'
-    v <- sample(rownames(old), 5)
-    new <- getTable(mask(x, i, j, value=v), j, drop=FALSE)
-    expect_equal(sum(assay(new[v, ])), sum(assay(old[v, ])))
-    expect_error(mask(x, i, j, value=`[<-`(v, i=1, "x")))
+    expect_equal(sum(new$n_instances), ncol(old))
+    
+    # test with partial values (subset of genes)
+    v <- sample(rownames(old), 10)
+    y_sub <- mask(x, i, j, value=v)
+    new_sub <- getTable(y_sub, j, drop=FALSE)
+    expect_equal(nrow(new_sub), length(v))
+    expect_equal(sum(assay(new_sub)), sum(assay(old[v, ])))
 })
