@@ -62,7 +62,6 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     if (!length(ct)) stop(
         "can't mask; found no common ",
         "coordinates between 'i' and 'j'")
-    # TODO: let user specify target coordinate system?
     if (missing(k)) {
         k <- 1
     } else {
@@ -90,6 +89,15 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
 
 setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 
+.mask_map <- \(i, j) {
+    ST_Buffer <- geometry <- radius <- NULL # R CMD check
+    jdata <- switch(
+        geom_type(j), 
+        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
+        j@data)
+    ddbs_intersects(jdata, i@data, sparse=TRUE)
+}
+
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector
@@ -113,30 +121,34 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 
 #' @noRd
 #' @importFrom Matrix sparseMatrix
+#' @importFrom SparseArray colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom duckspatial ddbs_intersects
-#' @importFrom dplyr mutate inner_join join_by select count collect
+#' @importFrom dplyr mutate inner_join left_join coalesce join_by select count collect row_number
 #' @importFrom rlang .data
 setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
-    ST_Scale <- ST_Buffer <- geometry <- radius <- id_x <- id_y <- NULL # R CMD check
-    jdata <- switch(
-        geom_type(j), 
-        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
-        j@data)
-    res <- ddbs_intersects(jdata, i@data) |>
-        inner_join(mutate(i@data, id_y=row_number()), by=join_by(id_y)) |>
+    id_x <- id_y <- n <- NULL # R CMD check
+    ij <- .mask_map(i, j)
+    res <- mutate(i@data, id_y=row_number()) |>
+        dplyr::left_join(ij, by=join_by(id_y)) |>
+        mutate(id_x = dplyr::coalesce(id_x, 0L)) |>
         select(all_of(c("id_x", feature_key(i)))) |>
         count(id_x, .data[[feature_key(i)]]) |>
         collect() |>
         mutate(key=factor(.data[[feature_key(i)]]))
     nms <- list(
         levels(res$key),
-        seq_along(unique(res$id_x))-1)
+        c("0", instances(j)))
     ns <- sparseMatrix(
-        i=res$key, j=res$id_x,
-        x=res$n, dimnames=nms)
-    SingleCellExperiment(list(counts=ns))
+        i=as.integer(res$key), 
+        j=res$id_x + 1,
+        x=res$n, 
+        dims=c(length(levels(res$key)), 1+nrow(j)),
+        dimnames=nms)
+    se <- SingleCellExperiment(list(counts=ns))
+    se$n_instances <- colSums(ns)
+    return(se)
 })
 
 #' @noRd
@@ -154,20 +166,21 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # mapping of 'i' to 'j'
-    ij <- ddbs_intersects(data(i), data(j), sparse=TRUE)
-    is <- pull(ij, id_x)
-    js <- pull(ij, id_y)
+    ij <- .mask_map(i, j)
+    is <- pull(ij, id_y) # elements in i
+    js <- pull(ij, id_x) # masks in j
     na <- setdiff(seq_len(nrow(i)), is)
     # aggregation
     mx <- assay(table, assay)
+    if (!is.null(value)) mx <- mx[value, , drop=FALSE]
     if (endsWith(how, "detected")) mx <- mx > 0
-    # auxilary matrix to aggregate 'i's by 'j's; 
-    # add dummy 'j' for 'i's without any'j's
+    # auxiliary matrix to aggregate 'i's by 'j's; 
+    # add dummy 'j' for 'i's without any 'j's
     my <- sparseMatrix(
         x=1, 
         i=c(na, is), 
         j=c(rep(1, length(na)), 1+js),
-        dims=c(ncol(table), 1+nrow(j)))
+        dims=c(nrow(i), 1+nrow(j)))
     mx <- mx %*% my
     ns <- colSums(my > 0) # number of 'i's per 'j'
     if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
