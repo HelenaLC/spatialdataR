@@ -33,33 +33,16 @@
 #' y <- mask(x, "blobs_image", "blobs_labels")
 #' tail(tables(y), 1)
 #'
-#' library(SingleCellExperiment)
-#' mx <- replicate(2, runif(n <- 100))
-#' df <- as.data.frame(mx)
-#' PointFrame(df)
-#' ps <- apply(mx, 1, st_point, simplify=FALSE)
-#' df <- st_sf(geometry=st_sfc(ps))
-#' df <- as_duckspatial_df(df)
-#' ShapeFrame(df)
-#' 
-#' i <- "blobs_circles"
-#' s <- shape(x, i)
-#' n <- length(s)
-#' y <- matrix(runif(10*n), 10, n)
-#' t <- SingleCellExperiment(list(counts=y))
-#' region(t) <- i
-#' instances(t) <- seq_len(n)
-#' y <- setTable(x, i, t)
-#' mask(y, i, "blobs_polygons")
+#' # TODO: shape,shape example
 NULL
 
 .check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))
 
+#' @export
 #' @rdname mask
 #' @importFrom methods as
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
-#' @export
 setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
@@ -208,4 +191,4 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
 
 #' @noRd
 setMethod(".mask", c("ANY", "ANY"), \(i, j, ...)
-    stop("'mask'ing between these element types not yet supported"))
+    stop("'mask'ing between these element types not supported"))

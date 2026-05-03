@@ -54,11 +54,5 @@ tail(tables(y), 1)
 y <- mask(x, "blobs_image", "blobs_labels")
 tail(tables(y), 1)
 
-library(SpatialData.data)
-x <- get_demo_SDdata("merfish")
-x <- readSpatialData(x)
-
-# sum table counts by shapes
-y <- mask(x, "cells", "anatomical")
-tail(tables(y), 1)
+# TODO: shape,shape example
 }
