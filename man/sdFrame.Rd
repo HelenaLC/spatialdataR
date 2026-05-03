@@ -4,6 +4,10 @@
 \alias{sdFrame}
 \alias{PointFrame}
 \alias{ShapeFrame}
+\alias{pull.sdFrame}
+\alias{select.sdFrame}
+\alias{mutate.sdFrame}
+\alias{filter.sdFrame}
 \alias{[[,sdFrame,ANY,ANY-method}
 \alias{$,PointFrame-method}
 \alias{.DollarNames.ShapeFrame}
@@ -12,14 +16,18 @@
 \alias{dim,sdFrame-method}
 \alias{names,sdFrame-method}
 \alias{as.data.frame,sdFrame-method}
-\alias{pull.sdFrame}
-\alias{select.sdFrame}
-\alias{mutate.sdFrame}
-\alias{filter.sdFrame}
 \alias{geom_type,ShapeFrame-method}
 \alias{[,sdFrame,ANY,ANY,ANY-method}
 \title{The `sdFrame` class}
 \usage{
+\method{pull}{sdFrame}(.data, ...)
+
+\method{select}{sdFrame}(.data, ...)
+
+\method{mutate}{sdFrame}(.data, ...)
+
+\method{filter}{sdFrame}(.data, ...)
+
 \S4method{[[}{sdFrame,ANY,ANY}(x, i, j, ...)
 
 \S4method{$}{PointFrame}(x, name)
@@ -35,14 +43,6 @@
 \S4method{names}{sdFrame}(x)
 
 \S4method{as.data.frame}{sdFrame}(x)
-
-\method{pull}{sdFrame}(.data, ...)
-
-\method{select}{sdFrame}(.data, ...)
-
-\method{mutate}{sdFrame}(.data, ...)
-
-\method{filter}{sdFrame}(.data, ...)
 
 \S4method{geom_type}{ShapeFrame}(x)
 
@@ -60,11 +60,11 @@ PointFrame(
 ShapeFrame(data = NULL, meta = Zattrs(type = "frame"), metadata = list(), ...)
 }
 \arguments{
+\item{...}{optional arguments passed to and from other methods.}
+
 \item{x}{an \code{sdFrame}}
 
 \item{i, j}{indices for subsetting (see \code{?base::Extract}).}
-
-\item{...}{optional arguments passed to and from other methods.}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
