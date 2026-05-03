@@ -154,8 +154,7 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @importFrom dplyr pull
 #' @importFrom sf st_as_sf
 #' @importFrom S4Vectors make_zero_col_DFrame
-#' @importFrom SingleCellExperiment SingleCellExperiment
-#'   int_colData int_colData<- int_metadata<-
+#' @importFrom SingleCellExperiment SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
 setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     name=NULL, rk="region", ik="instance_id") {

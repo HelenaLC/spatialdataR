@@ -15,10 +15,28 @@
 #' @return \code{ImageArray}
 #'
 #' @examples
-#' library(SpatialData.data)
-#' zs <- get_demo_SDdata("merfish")
-#' pa <- file.path(zs, "images", "rasterized")
-#' (ia <- readImage(pa))
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="SpatialData")
+#' 
+#' pa <- list.dirs(
+#'   file.path(zs, "images"), 
+#'   recursive=FALSE, full.names=TRUE)
+#' 
+#' # simple
+#' readImage(pa[1])
+#' 
+#' # multi-scale
+#' (x <- readImage(pa[2]))
+#' 
+#' dim(data(x, 1))   # highest res.
+#' dim(data(x, Inf)) # lowest res.
+#' 
+#' rgb <- apply(
+#'   data(x, 1), c(2, 3), 
+#'   \(.) rgb(.[1], .[2], .[3]))
+#' plot(
+#'   row(rgb), col(rgb), col=rgb, 
+#'   pch=15, asp=1, ylim=c(ncol(rgb), 0))
 #'
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new

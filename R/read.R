@@ -91,14 +91,12 @@ readShape <- function(x, ...) {
     ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
 }
 
+#' @export
 #' @rdname readSpatialData
+#' @importFrom anndataR read_zarr
 #' @importFrom S4Vectors metadata metadata<-
 #' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom SingleCellExperiment
-#'   int_metadata int_metadata<-
-#'   int_colData int_colData<-
-#' @importFrom anndataR read_zarr
-#' @export
+#' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
 readTable <- function(x) {
     suppressWarnings({ # suppress warnings related to hidden files
       sce <- anndataR::read_zarr(x, as="SingleCellExperiment")

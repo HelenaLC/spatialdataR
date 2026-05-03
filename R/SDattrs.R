@@ -1,14 +1,6 @@
 #' @name SDattrs
 #' @title \code{SpatialData} attributes
 #' 
-#' @aliases
-#' region
-#' regions
-#' instances
-#' region_key
-#' feature_key
-#' instance_key
-#' 
 #' @param x depends on which attributes are available; 
 #'   specifically, \code{PointFrame} (\code{feature/instance_key}), or
 #'   \code{SingleCellExperiment} (\code{region}, \code{region/instance_key}),
@@ -172,6 +164,9 @@ setMethod("instances", "SingleCellExperiment", \(x) {
 #' @rdname SDattrs
 #' @importFrom SingleCellExperiment int_colData<-
 setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
-    int_colData(x)[[instance_key(x)]] <- value
+    ik <- instance_key(x)
+    if (is.null(ik)) 
+        ik <- "instance_id"
+    int_colData(x)[[ik]] <- value
     return(x)
 })
