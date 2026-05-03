@@ -33,13 +33,24 @@
 #' y <- mask(x, "blobs_image", "blobs_labels")
 #' tail(tables(y), 1)
 #'
-#' library(SpatialData.data)
-#' x <- get_demo_SDdata("merfish")
-#' x <- readSpatialData(x)
-#'
-#' # sum table counts by shapes
-#' y <- mask(x, "cells", "anatomical")
-#' tail(tables(y), 1)
+#' library(SingleCellExperiment)
+#' mx <- replicate(2, runif(n <- 100))
+#' df <- as.data.frame(mx)
+#' PointFrame(df)
+#' ps <- apply(mx, 1, st_point, simplify=FALSE)
+#' df <- st_sf(geometry=st_sfc(ps))
+#' df <- as_duckspatial_df(df)
+#' ShapeFrame(df)
+#' 
+#' i <- "blobs_circles"
+#' s <- shape(x, i)
+#' n <- length(s)
+#' y <- matrix(runif(10*n), 10, n)
+#' t <- SingleCellExperiment(list(counts=y))
+#' region(t) <- i
+#' instances(t) <- seq_len(n)
+#' y <- setTable(x, i, t)
+#' mask(y, i, "blobs_polygons")
 NULL
 
 .check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))
@@ -166,6 +177,9 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # mapping of 'i' to 'j'
     ij <- .mask_map(i, j)
+    if (nrow(collect(head(ij, 1))) == 0)
+        stop("found no intersections",
+            " between shapes 'i' and 'j'")
     is <- pull(ij, id_y) # elements in i
     js <- pull(ij, id_x) # masks in j
     na <- setdiff(seq_len(nrow(i)), is)

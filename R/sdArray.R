@@ -1,29 +1,32 @@
 #' @name sdArray
 #' @title Methods for `ImageArray` and `LabelArray` class
 #' 
-#' @aliases 
-#' data_type
-#' data,ImageArray-method
-#' data,LabelArray-method
-#' dim,ImageArray-method
-#' dim,LabelArray-method
-#' length,ImageArray-method
-#' length,LabelArray-method
-#' 
 #' @param x \code{ImageArray} or  \code{LabelArray}
 #' @param k scalar index specifying which scale to extract.
 #' 
 #' @return \code{ImageArray}
 #'
 #' @examples
-#' library(SpatialData.data)
-#' zs <- get_demo_SDdata("merfish")
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="SpatialData")
 #' 
-#' # helper that gets path to first element in layer 'l' 
-#' fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
-#'   
-#' # read individual element  
-#' (ia <- readImage(fn("images")))
+#' pa <- list.dirs(
+#'   file.path(zs, "images"), 
+#'   recursive=FALSE, full.names=TRUE)
+#' 
+#' (x <- readImage(pa[2]))  
+#' 
+#' channels(x)
+#' data_type(x)
+#' dim(data(x, 1))   # highest res.
+#' dim(data(x, Inf)) # lowest res.
+#' 
+#' rgb <- apply(
+#'   data(x, 1), c(2, 3), 
+#'   \(.) rgb(.[1], .[2], .[3]))
+#' plot(
+#'   row(rgb), col(rgb), col=rgb, 
+#'   pch=15, asp=1, ylim=c(ncol(rgb), 0))
 #' 
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new

@@ -41,15 +41,28 @@ content describing the overall object.}
 The `ShapeFrame` class
 }
 \examples{
-library(SpatialData.data)
-zs <- get_demo_SDdata("merfish")
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
 
-y <- file.path(zs, "shapes", "cells")
-(s <- readShape(y))
-plot(sf::st_as_sf(data(s)), cex=0.2)
+pa <- list.dirs(
+  file.path(zs, "shapes"), 
+  recursive=FALSE, full.names=TRUE)
 
-y <- file.path(zs, "shapes", "anatomical")
-(s <- readShape(y))
-plot(sf::st_as_sf(data(s)), cex=0.2)
+# circles
+(x <- readShape(grepv("circ", pa)))
+names(x)
+x$radius
+
+# polygons
+(y <- readShape(grepv("_pol", pa)))
+plot(
+  df <- sf::st_as_sf(data(y)), 
+  col=seq(nrow(df)), cex=0.2)
+
+# multi-polygons
+(z <- readShape(grepv("mult", pa)))
+plot(
+  df <- sf::st_as_sf(data(z)), 
+  col=seq(nrow(df)), cex=0.2)
 
 }

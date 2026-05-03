@@ -2,12 +2,6 @@
 % Please edit documentation in R/SDattrs.R
 \name{SDattrs}
 \alias{SDattrs}
-\alias{region}
-\alias{regions}
-\alias{instances}
-\alias{region_key}
-\alias{feature_key}
-\alias{instance_key}
 \alias{feature_key,list-method}
 \alias{feature_key,PointFrame-method}
 \alias{region_key,SingleCellExperiment-method}
