@@ -1,10 +1,6 @@
-library(testthat)
-library(SpatialData)
-library(sf)
+require(sf, quietly=TRUE)
 
-context("sdFrame robust constructors")
-
-test_that("PointFrame robust construction", {
+test_that("new,PointFrame", {
     # 1. Empty construction
     expect_silent(p0 <- PointFrame())
     expect_s4_class(p0, "PointFrame")
@@ -28,7 +24,7 @@ test_that("PointFrame robust construction", {
     expect_error(PointFrame(df_poly), "only 'POINT' geometries supported")
 })
 
-test_that("ShapeFrame robust construction", {
+test_that("new,ShapeFrame", {
     # 1. Empty construction
     expect_silent(s0 <- ShapeFrame())
     expect_s4_class(s0, "ShapeFrame")
