@@ -75,12 +75,20 @@ Currently defined methods (here, \code{x} is a \code{PointFrame}):
 }
 }
 \examples{
-library(SpatialData.data)
-zs <- get_demo_SDdata("merfish")
-x <- file.path(zs, "points", "single_molecule")
-(p <- readPoint(x))
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
 
-head(as.data.frame(data(p)))
-(q <- dplyr::filter(p, cell_type == "VISp_wm"))
+pa <- list.dirs(
+  file.path(zs, "points"), 
+  recursive=FALSE, full.names=TRUE)
+
+(x <- readPoint(pa))
+
+feature_key(x)
+instance_key(x)
+
+x[sample(length(x), 7)]
+filter(x, instance_id == 0)
+filter(x, genes == "gene_b")
 
 }

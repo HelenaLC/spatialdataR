@@ -2,12 +2,14 @@
 #' @title The `sdFrame` class
 #'
 #' @description
-#' The \code{PointFrame} class stores \code{SpatialData} elements from its
-#' \code{"points"} layers. These are represented as \code{\link[arrow]{Table}}
-#' (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}}
-#' (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
+#' The \code{PointFrame} and \code{ShapeFrame} classes store 
+#' \code{SpatialData} elements from its \code{"points"} and 
+#' \code{"shapes"} layers, respectively. These are represented 
+#' as \code{duckspatial_df} (\code{data} slot) associated with 
+#' .zattrs stored as \code{\link{Zattrs}} (\code{meta} slot); 
+#' a list of \code{metadata} stores other arbitrary info.
 #'
-#' Currently defined methods (here, \code{x} is a \code{PointFrame}):
+#' Currently defined methods (here, \code{x} is an \code{sdFrame}):
 #' \itemize{
 #' \item \code{data/meta(x)} to access underlying \code{Table/Zattrs}
 #' \item \code{names(x)} returns the underlying table's column names
@@ -17,9 +19,9 @@
 #' \item \code{as.data.frame} to coerce \code{x} to a \code{data.frame}
 #' }
 #'
-#' @param x \code{PointFrame}
-#' @param data \code{arrow}-derived table for on-disk,
-#'   \code{data.frame} for in-memory representation.
+#' @param x an \code{sdFrame}
+#' @param data \code{duckspatial_df} for on-disk representation,
+#'   or a \code{data.frame} to be converted.
 #' @param meta \code{\link{Zattrs}}
 #' @param metadata optional list of arbitrary
 #'   content describing the overall object.
@@ -28,9 +30,10 @@
 #' @param drop ignored.
 #' @param ... optional arguments passed to and from other methods.
 #'
-#' @return \code{PointFrame}
+#' @return an \code{sdFrame}
 #'
 #' @examples
+#' # PointFrame ----
 #' library(SpatialData.data)
 #' zs <- get_demo_SDdata("merfish")
 #' x <- file.path(zs, "points", "single_molecule")
@@ -38,110 +41,62 @@
 #'
 #' head(as.data.frame(data(p)))
 #' (q <- dplyr::filter(p, cell_type == "VISp_wm"))
+#' 
+#' # ShapeFrame ----
+#' zs <- get_demo_SDdata("merfish")
 #'
-#' @export
+#' y <- file.path(zs, "shapes", "cells")
+#' (s <- readShape(y))
+#' plot(sf::st_as_sf(data(s)), cex=0.2)
+#'
+#' y <- file.path(zs, "shapes", "anatomical")
+#' (s <- readShape(y))
+#' plot(sf::st_as_sf(data(s)), cex=0.2)
+NULL
+
 #' @rdname sdFrame
-#' @importFrom dplyr tally pull
-setMethod("length", "sdFrame", \(x) { 
-    n <- NULL # R CMD check
-    suppressWarnings(pull(tally(data(x)), n))
-})
-
 #' @export
-#' @rdname sdFrame
-setMethod("dim", "sdFrame", \(x) c(length(x), ncol(data(x))))
-
-#' @export
-#' @rdname sdFrame
-setMethod("names", "sdFrame", \(x) colnames(data(x)))
-
-# get ----
-
-#' @exportMethod [[
-#' @rdname sdFrame
-#' @importFrom dplyr pull
-setMethod("[[", "sdFrame", \(x, i, ...) pull(data(x), i))
-
-#' @export
-#' @importFrom utils .DollarNames
-.DollarNames.PointFrame <- \(x, pattern="") grepv(pattern, names(x))
-
-#' @exportMethod $
-#' @rdname PointFrame
-#' @importFrom dplyr select all_of collect
-setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom utils .DollarNames
-.DollarNames.ShapeFrame <- \(x, pattern="") grepv(pattern, names(x))
-
-#' @exportMethod $
-#' @rdname sdFrame
-setMethod("$", "ShapeFrame", \(x, name) do.call(`[[`, list(x, name)))
-
-# uts ----
-
-#' @export
-#' @rdname ShapeFrame
-#' @importFrom sf st_as_sf st_geometry_type
-#' @importFrom dplyr slice
-setMethod("geom_type", "ShapeFrame", \(x) {
-    y <- st_as_sf(data(x) |> head(1))
-    z <- st_geometry_type(y)
-    return(as.character(z))
-})
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom BiocGenerics as.data.frame
-setMethod("as.data.frame", "sdFrame", \(x) as.data.frame(data(x)))
-setAs(from="sdFrame", to="data.frame", \(from) as.data.frame(from))
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr pull
-pull.sdFrame <- \(.data, ...) pull(data(.data), ...)
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr select
-select.sdFrame <- \(.data, ...) { data(.data) <- select(data(.data), ...); .data }
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr mutate
-mutate.sdFrame <- \(.data, ...) { data(.data) <- mutate(data(.data), ...); .data }
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr filter
-filter.sdFrame <- \(.data, ...) { data(.data) <- filter(data(.data), ...); .data }
-
-# sub ----
-
-.sub_sdFrame <- \(x, i, j) {
-    if (missing(i) || isTRUE(i)) {
-        if (missing(j) || isTRUE(j)) return(x)
-        data(x) <- select(data(x), all_of(j))
-    } else {
-        if (is.numeric(i) && any(i < 0)) 
-            stop("negative row-subsetting not supported")
-        if (is.logical(i)) i <- seq_len(nrow(x))[i]
-        if (is.character(j)) j <- match(j, names(x))
-        if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
-        data(x) <- data(x) |> 
-            filter(row_number() %in% i) |>
-            select(all_of(j))
+PointFrame <- \(data=NULL, meta=Zattrs(type="frame"), metadata=list(), ik=NULL, fk=NULL, ...) {
+    data <- .df_to_sf(data, "POINT")
+    # validate geometry type (must be points)
+    if (isTRUE(nrow(data) > 0L)) {
+        gt <- tryCatch(unique(st_geometry_type(data)), error=\(.) "n/a")
+        if (!all(gt == "POINT")) stop(
+            "only 'POINT' geometries supported; ",
+            "found: ", paste(gt, collapse=", "))
+        # always ensure internal data is duckspatial_df
+        if (!is(data, "duckspatial_df"))
+            data <- as_duckspatial_df(data, crs=NA)
     }
+    # update 'spatialdata_attrs' if keys are provided
+    za <- as.list(meta)
+    if (is.null(za$spatialdata_attrs))
+        za$spatialdata_attrs <- list()
+    if (!is.null(ik)) {
+        stopifnot(ik %in% colnames(data))
+        za$spatialdata_attrs$instance_key <- ik
+    }
+    if (!is.null(fk)) {
+        stopifnot(fk %in% colnames(data))
+        za$spatialdata_attrs$feature_key <- fk
+    }
+    # construct S4 object
+    x <- .PointFrame(data=data, meta=Zattrs(za), ...)
+    metadata(x) <- metadata
     return(x)
 }
 
-#' @export
 #' @rdname ShapeFrame
-setMethod("[", c("sdFrame", "ANY", "ANY"), 
-    \(x, i, j, ...) {
-        if (missing(i)) i <- TRUE
-        if (missing(j)) j <- TRUE
-        .sub_sdFrame(x, i, j)
-    })
+#' @importFrom sf st_geometry_type
+#' @importFrom duckspatial as_duckspatial_df
+#' @importFrom S4Vectors metadata<-
+#' @export
+ShapeFrame <- \(data=NULL, meta=Zattrs(type="frame"), metadata=list(), ...) {
+    data <- .df_to_sf(data, "POLYGON")
+    # always ensure internal data is duckspatial_df
+    if (isTRUE(nrow(data) > 0L) && !is(data, "duckspatial_df"))
+        data <- as_duckspatial_df(data, crs=NA)
+    x <- .ShapeFrame(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
