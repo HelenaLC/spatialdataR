@@ -55,22 +55,6 @@
 #' plot(sf::st_as_sf(data(s)), cex=0.2)
 NULL
 
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr tally pull
-setMethod("length", "sdFrame", \(x) { 
-    n <- NULL # R CMD check
-    suppressWarnings(pull(tally(data(x)), n))
-})
-
-#' @export
-#' @rdname sdFrame
-setMethod("dim", "sdFrame", \(x) c(length(x), ncol(data(x))))
-
-#' @export
-#' @rdname sdFrame
-setMethod("names", "sdFrame", \(x) colnames(data(x)))
-
 # get ----
 
 #' @exportMethod [[
@@ -83,7 +67,7 @@ setMethod("[[", "sdFrame", \(x, i, ...) pull(data(x), i))
 .DollarNames.PointFrame <- \(x, pattern="") grepv(pattern, names(x))
 
 #' @exportMethod $
-#' @rdname PointFrame
+#' @rdname sdFrame
 #' @importFrom dplyr select all_of collect
 setMethod("$", "PointFrame", \(x, name) do.call(`[[`, list(x, name)))
 
@@ -99,14 +83,20 @@ setMethod("$", "ShapeFrame", \(x, name) do.call(`[[`, list(x, name)))
 # uts ----
 
 #' @export
-#' @rdname ShapeFrame
-#' @importFrom sf st_as_sf st_geometry_type
-#' @importFrom dplyr slice
-setMethod("geom_type", "ShapeFrame", \(x) {
-    y <- st_as_sf(data(x) |> head(1))
-    z <- st_geometry_type(y)
-    return(as.character(z))
+#' @rdname sdFrame
+#' @importFrom dplyr tally pull
+setMethod("length", "sdFrame", \(x) { 
+    n <- NULL # R CMD check
+    suppressWarnings(dplyr::pull(dplyr::tally(data(x)), n))
 })
+
+#' @export
+#' @rdname sdFrame
+setMethod("dim", "sdFrame", \(x) c(length(x), ncol(data(x))))
+
+#' @export
+#' @rdname sdFrame
+setMethod("names", "sdFrame", \(x) colnames(data(x)))
 
 #' @export
 #' @rdname sdFrame
@@ -122,24 +112,34 @@ pull.sdFrame <- \(.data, ...) pull(data(.data), ...)
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr select
-select.sdFrame <- \(.data, ...) { data(.data) <- select(data(.data), ...); .data }
+select.sdFrame <- \(.data, ...) `data<-`(.data, value=select(data(.data), ...))
 
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr mutate
-mutate.sdFrame <- \(.data, ...) { data(.data) <- mutate(data(.data), ...); .data }
+mutate.sdFrame <- \(.data, ...) `data<-`(.data, value=mutate(data(.data), ...))
 
 #' @export
 #' @rdname sdFrame
 #' @importFrom dplyr filter
-filter.sdFrame <- \(.data, ...) { data(.data) <- filter(data(.data), ...); .data }
+filter.sdFrame <- \(.data, ...) `data<-`(.data, value=filter(data(.data), ...))
+
+#' @export
+#' @rdname sdFrame
+#' @importFrom sf st_as_sf st_geometry_type
+#' @importFrom dplyr slice
+setMethod("geom_type", "ShapeFrame", \(x) {
+    y <- st_as_sf(head(data(x), 1))
+    z <- st_geometry_type(y)
+    return(as.character(z))
+})
 
 # sub ----
 
 .sub_sdFrame <- \(x, i, j) {
     if (missing(i) || isTRUE(i)) {
         if (missing(j) || isTRUE(j)) return(x)
-        data(x) <- select(data(x), all_of(j))
+        data(x) <- dplyr::select(data(x), dplyr::all_of(j))
     } else {
         if (is.numeric(i) && any(i < 0)) 
             stop("negative row-subsetting not supported")
@@ -147,14 +147,14 @@ filter.sdFrame <- \(.data, ...) { data(.data) <- filter(data(.data), ...); .data
         if (is.character(j)) j <- match(j, names(x))
         if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
         data(x) <- data(x) |> 
-            filter(row_number() %in% i) |>
-            select(all_of(j))
+            dplyr::filter(dplyr::row_number() %in% i) |>
+            dplyr::select(dplyr::all_of(j))
     }
     return(x)
 }
 
 #' @export
-#' @rdname ShapeFrame
+#' @rdname sdFrame
 setMethod("[", c("sdFrame", "ANY", "ANY"), 
     \(x, i, j, ...) {
         if (missing(i)) i <- TRUE
@@ -162,8 +162,9 @@ setMethod("[", c("sdFrame", "ANY", "ANY"),
         .sub_sdFrame(x, i, j)
     })
 
-# constructors ----
+# new ----
 
+#' @importFrom sf st_sf st_sfc st_as_sf st_polygon
 .df_to_sf <- \(data, type=c("POINT", "POLYGON")) {
     type <- match.arg(type)
     if (is.null(data) || isTRUE(nrow(data) == 0)) {
@@ -187,11 +188,11 @@ setMethod("[", c("sdFrame", "ANY", "ANY"),
     return(data)
 }
 
+#' @export
 #' @rdname sdFrame
 #' @importFrom sf st_geometry_type
-#' @importFrom duckspatial as_duckspatial_df
 #' @importFrom S4Vectors metadata<-
-#' @export
+#' @importFrom duckspatial as_duckspatial_df
 PointFrame <- \(data=NULL, meta=Zattrs(type="frame"), metadata=list(), ik=NULL, fk=NULL, ...) {
     data <- .df_to_sf(data, "POINT")
     # validate geometry type (must be points)
@@ -222,11 +223,10 @@ PointFrame <- \(data=NULL, meta=Zattrs(type="frame"), metadata=list(), ik=NULL, 
     return(x)
 }
 
-#' @rdname sdFrame
-#' @importFrom sf st_geometry_type
-#' @importFrom duckspatial as_duckspatial_df
-#' @importFrom S4Vectors metadata<-
 #' @export
+#' @rdname sdFrame
+#' @importFrom S4Vectors metadata<-
+#' @importFrom duckspatial as_duckspatial_df
 ShapeFrame <- \(data=NULL, meta=Zattrs(type="frame"), metadata=list(), ...) {
     data <- .df_to_sf(data, "POLYGON")
     # always ensure internal data is duckspatial_df
