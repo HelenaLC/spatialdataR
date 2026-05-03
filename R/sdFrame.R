@@ -69,6 +69,36 @@
 #' plot(df, col=seq(nrow(df)))
 NULL
 
+# dplyr ----
+
+#' @export
+dplyr::pull
+#' @export
+#' @rdname sdFrame
+#' @importFrom dplyr pull
+pull.sdFrame <- \(.data, ...) pull(data(.data), ...)
+
+#' @export
+dplyr::select
+#' @export
+#' @rdname sdFrame
+#' @importFrom dplyr select
+select.sdFrame <- \(.data, ...) `data<-`(.data, value=select(data(.data), ...))
+
+#' @export
+dplyr::mutate
+#' @export
+#' @rdname sdFrame
+#' @importFrom dplyr mutate
+mutate.sdFrame <- \(.data, ...) `data<-`(.data, value=mutate(data(.data), ...))
+
+#' @export
+dplyr::filter
+#' @export
+#' @rdname sdFrame
+#' @importFrom dplyr filter
+filter.sdFrame <- \(.data, ...) `data<-`(.data, value=filter(data(.data), ...))
+
 # get ----
 
 #' @exportMethod [[
@@ -120,28 +150,8 @@ setAs(from="sdFrame", to="data.frame", \(from) as.data.frame(from))
 
 #' @export
 #' @rdname sdFrame
-#' @importFrom dplyr pull
-pull.sdFrame <- \(.data, ...) pull(data(.data), ...)
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr select
-select.sdFrame <- \(.data, ...) `data<-`(.data, value=select(data(.data), ...))
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr mutate
-mutate.sdFrame <- \(.data, ...) `data<-`(.data, value=mutate(data(.data), ...))
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom dplyr filter
-filter.sdFrame <- \(.data, ...) `data<-`(.data, value=filter(data(.data), ...))
-
-#' @export
-#' @rdname sdFrame
-#' @importFrom sf st_as_sf st_geometry_type
 #' @importFrom dplyr slice
+#' @importFrom sf st_as_sf st_geometry_type
 setMethod("geom_type", "ShapeFrame", \(x) {
     y <- st_as_sf(head(data(x), 1))
     z <- st_geometry_type(y)
