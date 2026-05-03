@@ -52,6 +52,16 @@ pa <- list.dirs(
 readImage(pa[1])
 
 # multi-scale
-readImage(pa[2])
+(x <- readImage(pa[2]))
+
+dim(data(x, 1))   # highest res.
+dim(data(x, Inf)) # lowest res.
+
+rgb <- apply(
+  data(x, 1), c(2, 3), 
+  \(.) rgb(.[1], .[2], .[3]))
+plot(
+  row(rgb), col(rgb), col=rgb, 
+  pch=15, asp=1, ylim=c(ncol(rgb), 0))
 
 }

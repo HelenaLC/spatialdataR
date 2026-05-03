@@ -34,25 +34,39 @@
 #' @return an \code{sdFrame}
 #'
 #' @examples
-#' # PointFrame ----
-#' library(SpatialData.data)
-#' zs <- get_demo_SDdata("merfish")
-#' x <- file.path(zs, "points", "single_molecule")
-#' (p <- readPoint(x))
-#'
-#' head(as.data.frame(data(p)))
-#' (q <- dplyr::filter(p, cell_type == "VISp_wm"))
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="SpatialData")
 #' 
-#' # ShapeFrame ----
-#' zs <- get_demo_SDdata("merfish")
-#'
-#' y <- file.path(zs, "shapes", "cells")
-#' (s <- readShape(y))
-#' plot(sf::st_as_sf(data(s)), cex=0.2)
-#'
-#' y <- file.path(zs, "shapes", "anatomical")
-#' (s <- readShape(y))
-#' plot(sf::st_as_sf(data(s)), cex=0.2)
+#' # points
+#' pa <- list.dirs(
+#'   file.path(zs, "points"), 
+#'   recursive=FALSE, full.names=TRUE)
+#' (x <- readPoint(pa))
+#' 
+#' y <- filter(x,
+#'   genes == "gene_b",
+#'   instance_id == 7) 
+#' head(as.data.frame(y))
+#' 
+#' # shapes
+#' pa <- list.dirs(
+#'   file.path(zs, "shapes"), 
+#'   recursive=FALSE, full.names=TRUE)
+#' 
+#' # circles
+#' (x <- readShape(pa[1]))
+#' length(x)
+#' x$radius
+#' 
+#' # polygons
+#' (y <- readShape(pa[2]))
+#' df <- as.data.frame(y)
+#' plot(df, col=seq(nrow(df)))
+#' 
+#' # multi-polygons
+#' (z <- readShape(pa[3]))
+#' df <- as.data.frame(z)
+#' plot(df, col=seq(nrow(df)))
 NULL
 
 # get ----
