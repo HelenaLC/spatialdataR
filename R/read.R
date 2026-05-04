@@ -25,19 +25,24 @@
 #' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
 #'
 #' @examples
-#' library(SpatialData.data)
-#' zs <- get_demo_SDdata("merfish")
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="SpatialData")
 #'
 #' # read complete Zarr store
 #' (sd <- readSpatialData(zs))
 #'
-#' # helper that gets path to first element in layer 'l'
-#' fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
+#' # helper that gets path to last element in layer 'l'
+#' fn <- \(.) tail(list.files(file.path(zs, .), full.names=TRUE), 1)
 #'
-#' # read individual element
-#' readImage(fn("images"))
-#' readShape(fn("shapes"))
-#' readPoint(fn("points"))
+#' # read individual elements
+#' (i <- readImage(fn("images")))
+#' channels(i)
+#' 
+#' (p <- readPoint(fn("points")))
+#' as.data.frame(head(p))
+#' 
+#' (s <- readShape(fn("shapes")))
+#' data(s)
 NULL
 
 #' @importFrom Rarr read_zarr_attributes
@@ -91,14 +96,12 @@ readShape <- function(x, ...) {
     ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
 }
 
+#' @export
 #' @rdname readSpatialData
+#' @importFrom anndataR read_zarr
 #' @importFrom S4Vectors metadata metadata<-
 #' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom SingleCellExperiment
-#'   int_metadata int_metadata<-
-#'   int_colData int_colData<-
-#' @importFrom anndataR read_zarr
-#' @export
+#' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
 readTable <- function(x) {
     suppressWarnings({ # suppress warnings related to hidden files
       sce <- anndataR::read_zarr(x, as="SingleCellExperiment")

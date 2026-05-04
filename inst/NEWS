@@ -1,3 +1,9 @@
+changes in version 0.99.34
+
+- omit SpatialData.data everywhere
+- improved Point/ShapeFrame constructor
+- consolidated sdFrame code, docs, methods
+
 changes in version 0.99.33
 
 - added validity checks and tests for Zattrs
