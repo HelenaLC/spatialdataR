@@ -8,15 +8,15 @@
 \alias{select.sdFrame}
 \alias{mutate.sdFrame}
 \alias{filter.sdFrame}
-\alias{[[,sdFrame,ANY,ANY-method}
-\alias{$,PointFrame-method}
-\alias{.DollarNames.ShapeFrame}
-\alias{$,ShapeFrame-method}
 \alias{length,sdFrame-method}
 \alias{dim,sdFrame-method}
 \alias{names,sdFrame-method}
 \alias{as.data.frame,sdFrame-method}
 \alias{geom_type,ShapeFrame-method}
+\alias{[[,sdFrame,ANY,ANY-method}
+\alias{$,PointFrame-method}
+\alias{.DollarNames.ShapeFrame}
+\alias{$,ShapeFrame-method}
 \alias{[,sdFrame,ANY,ANY,ANY-method}
 \title{The `sdFrame` class}
 \usage{
@@ -28,14 +28,6 @@
 
 \method{filter}{sdFrame}(.data, ...)
 
-\S4method{[[}{sdFrame,ANY,ANY}(x, i, j, ...)
-
-\S4method{$}{PointFrame}(x, name)
-
-\method{.DollarNames}{ShapeFrame}(x, pattern = "")
-
-\S4method{$}{ShapeFrame}(x, name)
-
 \S4method{length}{sdFrame}(x)
 
 \S4method{dim}{sdFrame}(x)
@@ -45,6 +37,14 @@
 \S4method{as.data.frame}{sdFrame}(x)
 
 \S4method{geom_type}{ShapeFrame}(x)
+
+\S4method{[[}{sdFrame,ANY,ANY}(x, i, j, ...)
+
+\S4method{$}{PointFrame}(x, name)
+
+\method{.DollarNames}{ShapeFrame}(x, pattern = "")
+
+\S4method{$}{ShapeFrame}(x, name)
 
 \S4method{[}{sdFrame,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 

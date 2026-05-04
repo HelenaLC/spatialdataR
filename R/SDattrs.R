@@ -22,10 +22,14 @@ NULL
 
 #' @export
 #' @rdname SDattrs
-setMethod("feature_key", "list", \(x) x$spatialdata_attrs$feature_key)
+setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
 #' @export
 #' @rdname SDattrs
-setMethod("feature_key", "PointFrame", \(x) feature_key(meta(x)))
+setMethod("feature_key", "Zattrs", \(x) x$spatialdata_attrs$feature_key)
+#' @export
+#' @rdname SDattrs
+setReplaceMethod("feature_key", c("Zattrs", "character"), 
+    \(x, value) { x$spatialdata_attrs$feature_key <- value; x })
 
 # region(s) ----
 
@@ -119,13 +123,19 @@ setReplaceMethod("regions", c("SingleCellExperiment", "NULL"), \(x, value) {
 setMethod("instance_key", "list", \(x) x$instance_key)
 #' @export
 #' @rdname SDattrs
+setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
+#' @export
+#' @rdname SDattrs
 setMethod("instance_key", "sdFrame", \(x) instance_key(meta(x)$spatialdata_attrs))
 #' @export
 #' @rdname SDattrs
 setMethod("instance_key", "LabelArray", \(x) instance_key(meta(x)$spatialdata_attrs))
 #' @export
 #' @rdname SDattrs
-setMethod("instance_key", "SingleCellExperiment", \(x) instance_key(meta(x)))
+setReplaceMethod("instance_key", c("Zattrs", "character"), \(x, value) {
+    x$spatialdata_attrs$instance_key <- value
+    return(x)
+})
 #' @export
 #' @rdname SDattrs
 setReplaceMethod("instance_key", c("SingleCellExperiment", "character"), \(x, value) {
