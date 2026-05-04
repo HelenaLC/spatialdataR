@@ -33,22 +33,16 @@
 #' y <- mask(x, "blobs_image", "blobs_labels")
 #' tail(tables(y), 1)
 #'
-#' library(SpatialData.data)
-#' x <- get_demo_SDdata("merfish")
-#' x <- readSpatialData(x)
-#'
-#' # sum table counts by shapes
-#' y <- mask(x, "cells", "anatomical")
-#' tail(tables(y), 1)
+#' # TODO: shape,shape example
 NULL
 
 .check_ij <- \(x, .) stopifnot(length(.) == 1, is.character(.), . %in% unlist(colnames(x)))
 
+#' @export
 #' @rdname mask
 #' @importFrom methods as
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata<-
-#' @export
 setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     how=NULL, name=\(i, j) sprintf("%s_by_%s", i, j), ...) {
     .check_ij(x, i); .check_ij(x, j)
@@ -166,6 +160,9 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # mapping of 'i' to 'j'
     ij <- .mask_map(i, j)
+    if (nrow(collect(head(ij, 1))) == 0)
+        stop("found no intersections",
+            " between shapes 'i' and 'j'")
     is <- pull(ij, id_y) # elements in i
     js <- pull(ij, id_x) # masks in j
     na <- setdiff(seq_len(nrow(i)), is)
@@ -194,4 +191,4 @@ setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, 
 
 #' @noRd
 setMethod(".mask", c("ANY", "ANY"), \(i, j, ...)
-    stop("'mask'ing between these element types not yet supported"))
+    stop("'mask'ing between these element types not supported"))

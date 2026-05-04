@@ -5,42 +5,6 @@
 \alias{SpatialData-class}
 \alias{.SpatialData}
 \alias{SpatialData}
-\alias{data}
-\alias{meta}
-\alias{layer}
-\alias{element}
-\alias{[[<-,SpatialData,numeric,ANY-method}
-\alias{[[<-,SpatialData,character,ANY-method}
-\alias{image}
-\alias{images}
-\alias{image<-}
-\alias{images<-}
-\alias{imageNames}
-\alias{imageNames<-}
-\alias{label}
-\alias{labels}
-\alias{label<-}
-\alias{labels<-}
-\alias{labelNames}
-\alias{labelNames<-}
-\alias{point}
-\alias{points}
-\alias{point<-}
-\alias{points<-}
-\alias{pointNames}
-\alias{pointNames<-}
-\alias{shape}
-\alias{shapes}
-\alias{shape<-}
-\alias{shapes<-}
-\alias{shapeNames}
-\alias{shapeNames<-}
-\alias{table}
-\alias{tables}
-\alias{table<-}
-\alias{tables<-}
-\alias{tableNames}
-\alias{tableNames<-}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
@@ -55,8 +19,8 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
-\alias{[[<-,SpatialData,numeric,ANY,ANY-method}
-\alias{[[<-,SpatialData,character,ANY,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY-method}
+\alias{[[<-,SpatialData,character,ANY-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(images, labels, points, shapes, tables)
@@ -91,9 +55,9 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{images}{SpatialData}(x)
 
-\S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
-\S4method{[[}{SpatialData,character,ANY,ANY}(x, i) <- value
+\S4method{[[}{SpatialData,character,ANY}(x, i) <- value
 }
 \arguments{
 \item{images}{list of \code{\link{ImageArray}}s}

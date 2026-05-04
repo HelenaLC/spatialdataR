@@ -2,13 +2,6 @@
 % Please edit documentation in R/sdArray.R
 \name{sdArray}
 \alias{sdArray}
-\alias{data_type}
-\alias{data,ImageArray-method}
-\alias{data,LabelArray-method}
-\alias{dim,ImageArray-method}
-\alias{dim,LabelArray-method}
-\alias{length,ImageArray-method}
-\alias{length,LabelArray-method}
 \alias{data,sdArray-method}
 \alias{dim,sdArray-method}
 \alias{length,sdArray-method}
@@ -38,13 +31,25 @@
 Methods for `ImageArray` and `LabelArray` class
 }
 \examples{
-library(SpatialData.data)
-zs <- get_demo_SDdata("merfish")
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
 
-# helper that gets path to first element in layer 'l' 
-fn <- \(l) list.files(file.path(zs, l), full.names=TRUE)[1]
-  
-# read individual element  
-(ia <- readImage(fn("images")))
+pa <- list.dirs(
+  file.path(zs, "images"), 
+  recursive=FALSE, full.names=TRUE)
+
+(x <- readImage(pa[2]))  
+
+channels(x)
+data_type(x)
+dim(data(x, 1))   # highest res.
+dim(data(x, Inf)) # lowest res.
+
+rgb <- apply(
+  data(x, 1), c(2, 3), 
+  \(.) rgb(.[1], .[2], .[3]))
+plot(
+  row(rgb), col(rgb), col=rgb, 
+  pch=15, asp=1, ylim=c(ncol(rgb), 0))
 
 }

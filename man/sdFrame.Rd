@@ -2,32 +2,24 @@
 % Please edit documentation in R/sdFrame.R
 \name{sdFrame}
 \alias{sdFrame}
-\alias{dim,sdFrame-method}
-\alias{names,sdFrame-method}
-\alias{[[,sdFrame,ANY,ANY-method}
-\alias{.DollarNames.ShapeFrame}
-\alias{$,ShapeFrame-method}
-\alias{as.data.frame,sdFrame-method}
+\alias{PointFrame}
+\alias{ShapeFrame}
 \alias{pull.sdFrame}
 \alias{select.sdFrame}
 \alias{mutate.sdFrame}
 \alias{filter.sdFrame}
+\alias{length,sdFrame-method}
+\alias{dim,sdFrame-method}
+\alias{names,sdFrame-method}
+\alias{as.data.frame,sdFrame-method}
+\alias{geom_type,ShapeFrame-method}
+\alias{[[,sdFrame,ANY,ANY-method}
+\alias{$,PointFrame-method}
+\alias{.DollarNames.ShapeFrame}
+\alias{$,ShapeFrame-method}
+\alias{[,sdFrame,ANY,ANY,ANY-method}
 \title{The `sdFrame` class}
 \usage{
-\S4method{length}{sdFrame}(x)
-
-\S4method{dim}{sdFrame}(x)
-
-\S4method{names}{sdFrame}(x)
-
-\S4method{[[}{sdFrame,ANY,ANY}(x, i, j, ...)
-
-\method{.DollarNames}{ShapeFrame}(x, pattern = "")
-
-\S4method{$}{ShapeFrame}(x, name)
-
-\S4method{as.data.frame}{sdFrame}(x)
-
 \method{pull}{sdFrame}(.data, ...)
 
 \method{select}{sdFrame}(.data, ...)
@@ -35,36 +27,69 @@
 \method{mutate}{sdFrame}(.data, ...)
 
 \method{filter}{sdFrame}(.data, ...)
+
+\S4method{length}{sdFrame}(x)
+
+\S4method{dim}{sdFrame}(x)
+
+\S4method{names}{sdFrame}(x)
+
+\S4method{as.data.frame}{sdFrame}(x)
+
+\S4method{geom_type}{ShapeFrame}(x)
+
+\S4method{[[}{sdFrame,ANY,ANY}(x, i, j, ...)
+
+\S4method{$}{PointFrame}(x, name)
+
+\method{.DollarNames}{ShapeFrame}(x, pattern = "")
+
+\S4method{$}{ShapeFrame}(x, name)
+
+\S4method{[}{sdFrame,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+PointFrame(
+  data = NULL,
+  meta = Zattrs(type = "frame"),
+  metadata = list(),
+  ik = NULL,
+  fk = NULL,
+  ...
+)
+
+ShapeFrame(data = NULL, meta = Zattrs(type = "frame"), metadata = list(), ...)
 }
 \arguments{
-\item{x}{\code{PointFrame}}
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{x}{an \code{sdFrame}}
 
 \item{i, j}{indices for subsetting (see \code{?base::Extract}).}
 
-\item{...}{optional arguments passed to and from other methods.}
-
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
-\item{data}{\code{arrow}-derived table for on-disk,
-\code{data.frame} for in-memory representation.}
+\item{drop}{ignored.}
+
+\item{data}{\code{duckspatial_df} for on-disk representation,
+or a \code{data.frame} to be converted.}
 
 \item{meta}{\code{\link{Zattrs}}}
 
 \item{metadata}{optional list of arbitrary
 content describing the overall object.}
-
-\item{drop}{ignored.}
 }
 \value{
-\code{PointFrame}
+an \code{sdFrame}
 }
 \description{
-The \code{PointFrame} class stores \code{SpatialData} elements from its
-\code{"points"} layers. These are represented as \code{\link[arrow]{Table}}
-(\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}}
-(\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
+The \code{PointFrame} and \code{ShapeFrame} classes store 
+\code{SpatialData} elements from its \code{"points"} and 
+\code{"shapes"} layers, respectively. These are represented 
+as \code{duckspatial_df} (\code{data} slot) associated with 
+.zattrs stored as \code{\link{Zattrs}} (\code{meta} slot); 
+a list of \code{metadata} stores other arbitrary info.
 
-Currently defined methods (here, \code{x} is a \code{PointFrame}):
+Currently defined methods (here, \code{x} is an \code{sdFrame}):
 \itemize{
 \item \code{data/meta(x)} to access underlying \code{Table/Zattrs}
 \item \code{names(x)} returns the underlying table's column names
@@ -75,12 +100,37 @@ Currently defined methods (here, \code{x} is a \code{PointFrame}):
 }
 }
 \examples{
-library(SpatialData.data)
-zs <- get_demo_SDdata("merfish")
-x <- file.path(zs, "points", "single_molecule")
-(p <- readPoint(x))
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
 
-head(as.data.frame(data(p)))
-(q <- dplyr::filter(p, cell_type == "VISp_wm"))
+# points
+pa <- list.dirs(
+  file.path(zs, "points"), 
+  recursive=FALSE, full.names=TRUE)
+(x <- readPoint(pa))
 
+y <- filter(x,
+  genes == "gene_b",
+  instance_id == 7) 
+head(as.data.frame(y))
+
+# shapes
+pa <- list.dirs(
+  file.path(zs, "shapes"), 
+  recursive=FALSE, full.names=TRUE)
+
+# circles
+(x <- readShape(pa[1]))
+length(x)
+x$radius
+
+# polygons
+(y <- readShape(pa[2]))
+df <- as.data.frame(y)
+plot(df, col=seq(nrow(df)))
+
+# multi-polygons
+(z <- readShape(pa[3]))
+df <- as.data.frame(z)
+plot(df, col=seq(nrow(df)))
 }
