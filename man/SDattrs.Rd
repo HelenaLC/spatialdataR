@@ -2,17 +2,19 @@
 % Please edit documentation in R/SDattrs.R
 \name{SDattrs}
 \alias{SDattrs}
-\alias{feature_key,list-method}
 \alias{feature_key,PointFrame-method}
+\alias{feature_key,Zattrs-method}
+\alias{feature_key<-,Zattrs,character-method}
 \alias{region_key,SingleCellExperiment-method}
 \alias{region,SingleCellExperiment-method}
 \alias{regions,SingleCellExperiment-method}
 \alias{regions<-,SingleCellExperiment,character-method}
 \alias{regions<-,SingleCellExperiment,NULL-method}
 \alias{instance_key,list-method}
+\alias{instance_key,SingleCellExperiment-method}
 \alias{instance_key,sdFrame-method}
 \alias{instance_key,LabelArray-method}
-\alias{instance_key,SingleCellExperiment-method}
+\alias{instance_key<-,Zattrs,character-method}
 \alias{instance_key<-,SingleCellExperiment,character-method}
 \alias{instances,LabelArray-method}
 \alias{instances,PointFrame-method}
@@ -21,9 +23,11 @@
 \alias{instances<-,SingleCellExperiment-method}
 \title{\code{SpatialData} attributes}
 \usage{
-\S4method{feature_key}{list}(x)
-
 \S4method{feature_key}{PointFrame}(x)
+
+\S4method{feature_key}{Zattrs}(x)
+
+\S4method{feature_key}{Zattrs,character}(x) <- value
 
 \S4method{region_key}{SingleCellExperiment}(x)
 
@@ -37,11 +41,13 @@
 
 \S4method{instance_key}{list}(x)
 
+\S4method{instance_key}{SingleCellExperiment}(x)
+
 \S4method{instance_key}{sdFrame}(x)
 
 \S4method{instance_key}{LabelArray}(x)
 
-\S4method{instance_key}{SingleCellExperiment}(x)
+\S4method{instance_key}{Zattrs,character}(x) <- value
 
 \S4method{instance_key}{SingleCellExperiment,character}(x) <- value
 
