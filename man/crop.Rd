@@ -17,8 +17,10 @@
 \item{x}{\code{SpatialData} object or element.}
 
 \item{y}{query specification;
-bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
-polygon: numeric matrix with at least 3 rows and exactly 2 columns.}
+bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax',
+or an \code{st_bbox};
+polygon: numeric matrix with 2 columns (= xy-coordinates), 
+or an \code{st_polygon} (\code{sfg}) or \code{sfc}/\code{sf} object.}
 
 \item{j}{character string specifying a coordinate system.}
 
@@ -56,5 +58,13 @@ y <- list(xmin=10, xmax=50, ymin=10, ymax=50)
 crop(sd, y, j="global")
 
 # cropping individual elements
-q <- crop(p <- point(sd), y)
+a <- sf::st_bbox(c(xmin=10, xmax=50, ymin=10, ymax=50))
+b <- matrix(c(10,10, 25,50, 40,10, 10,10), ncol=2, byrow=TRUE)
+p <- crop(point(sd), a)
+q <- crop(point(sd), b)
+
+plot(p$geometry, col="blue")
+plot(q$geometry, col="red", add=TRUE)
+plot(sf::st_as_sfc(a), add=TRUE)
+lines(b, type="l")
 }

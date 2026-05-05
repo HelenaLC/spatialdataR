@@ -19,9 +19,19 @@ library(SingleCellExperiment)
 
 ### analysis
 
+```{r fig.width=12, fig.height=5}
+sp <- crop(sd, list(xmin=17e3, xmax=20e3, ymin=13e3, ymax=14e3))
+point(sp) <- mutate(point(sp) , nuc=as.logical(overlaps_nucleus))
+plotSpatialData() + 
+    plotImage(sp) +
+    plotPoint(sp, size=0.2, n=2e4, col="nuc") +
+    scale_color_manual(values=c("blue", "deeppink")) +
+    plotShape(sp, col="cyan", fill=NA)
+```
+
 ```{r}
 # make table annotate boundaries
-regions(table(sd)) <- "cell_boundaries"
+regions(tables(sd)[[1]]) <- "cell_boundaries"
 ```
 
 ```{r}

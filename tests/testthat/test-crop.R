@@ -32,13 +32,14 @@ test_that("query,.check_pol", {
     # valid
     q <- list(
         m <- matrix(seq_len(8), 4, 2),
+        matrix(seq_len(2), 1, 2), # 1 row
+        matrix(seq_len(4), 2, 2), # 2 rows
         rbind(c(1,1), c(2,2), c(3,3)), # open
         rbind(c(1,1), c(2,2), c(3,3), c(1,1)))
     for (. in q) expect_silent(SpatialData:::.check_pol(.))
     # invalid
     q <- list(
         matrix(seq_len(6), 2, 3), # wrong dim.
-        matrix(numeric(6), 3, 2), # duplicates
         `[<-`(m, i=1, j=1, value=Inf), # not finite
         `[<-`(m, i=1, j=1, value=NA))  # missing value
     for (. in q) expect_error(SpatialData:::.check_pol(.))
@@ -46,10 +47,14 @@ test_that("query,.check_pol", {
 
 test_that("crop,ImageArray", {
     d <- dim(i <- image(x))
-    # unsupported query
-    y <- matrix(seq_len(8), 4, 2)
-    expect_error(crop(i, y))
-    # query equals dimensions
+    # polygon query (should use bounding box)
+    y <- matrix(c(10, 10, 20, 10, 20, 20, 10, 20), ncol=2, byrow=TRUE)
+    expect_silent(z <- crop(i, y))
+    expect_equal(dim(z), c(3, 10, 10))
+    # bbox query
+    y <- st_bbox(c(xmin=10, ymin=10, xmax=20, ymax=20))
+    expect_silent(z <- crop(i, y))
+    expect_equal(dim(z), c(3, 10, 10))
     y <- list(xmin=0, xmax=d[3], ymin=0, ymax=d[2])
     # allow for metadata difference in 'wh'
     expect_equal(dim(crop(i, y)), dim(i))
@@ -77,6 +82,15 @@ test_that("crop-box,PointFrame", {
     # this should drop everything
     q <- crop(p, list(xmin=0, xmax=1e-3, ymin=0, ymax=1e-3))
     expect_equal(nrow(collect(data(q))), 0)
+    # st_bbox
+    y <- st_bbox(c(xmin=10, xmax=50, ymin=10, ymax=50))
+    expect_silent(z <- crop(p, y))
+    expect_true(nrow(z) < nrow(p))
+    # st_polygon
+    y <- c(10,10, 50,10, 50,50, 10,50, 10,10)
+    y <- st_polygon(list(matrix(y, ncol=2, byrow=TRUE)))
+    expect_silent(z <- crop(p, y))
+    expect_true(nrow(z) < nrow(p))
 })
 
 test_that("crop-pol,PointFrame", {

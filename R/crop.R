@@ -21,8 +21,10 @@
 #'
 #' @param x \code{SpatialData} object or element.
 #' @param y query specification;
-#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax';
-#' polygon: numeric matrix with at least 3 rows and exactly 2 columns.
+#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax',
+#' or an \code{st_bbox};
+#' polygon: numeric matrix with 2 columns (= xy-coordinates), 
+#' or an \code{st_polygon} (\code{sfg}) or \code{sfc}/\code{sf} object.
 #' @param j character string specifying a coordinate system.
 #' @param ... optional arguments passed to and from other methods.
 #'
@@ -38,35 +40,61 @@
 #' crop(sd, y, j="global")
 #'
 #' # cropping individual elements
-#' q <- crop(p <- point(sd), y)
+#' a <- sf::st_bbox(c(xmin=10, xmax=50, ymin=10, ymax=50))
+#' b <- matrix(c(10,10, 25,50, 40,10, 10,10), ncol=2, byrow=TRUE)
+#' p <- crop(point(sd), a)
+#' q <- crop(point(sd), b)
+#' 
+#' plot(p$geometry, col="blue")
+#' plot(q$geometry, col="red", add=TRUE)
+#' plot(sf::st_as_sfc(a), add=TRUE)
+#' lines(b, type="l")
 NULL
 
 .check_box <- \(bb) {
     xy <- c("xmin", "xmax", "ymin", "ymax")
-    ok <- c(is.list(bb),
-        length(bb) == 4, setequal(names(bb), xy),
-        bb$xmin <= bb$xmax, bb$ymin <= bb$ymax,
-        is.numeric(bb <- unlist(bb)), !is.na(bb))
+    ok <- c(
+        is.list(bb), 
+        length(bb) == 4, 
+        setequal(names(bb), xy))
     if (!all(ok)) stop(
-        "Invalid bounding box; should be length-4 ",
+        "Invalid bounding box structure; should be length-4 ",
+        "numeric list with names 'xmin/xmax/ymin/ymax'")
+    # check values
+    v <- unlist(bb)
+    ok <- c(
+        !is.na(v),
+        is.numeric(v), 
+        v["xmin"] <= v["xmax"], 
+        v["ymin"] <= v["ymax"])
+    if (!all(ok)) stop(
+        "Invalid bounding box values; should be length-4 ",
         "numeric list with names 'xmin/xmax/ymin/ymax'")
 }
 
 .check_pol <- \(mx) {
     ok <- c(
         is.matrix(mx), is.numeric(mx),
-        nrow(mx) >= 3, ncol(mx) == 2,
-        !is.na(mx), is.finite(mx))
+        ncol(mx) == 2, !is.na(mx), is.finite(mx))
     if (!all(ok)) stop(
-        "Invalid polygon; should be numeric matrix with at ",
-        "least 3 rows and exactly 2 columns (= xy-coordinates)")
+        "Invalid polygon; should be numeric matrix with ",
+        "exactly 2 columns (= xy-coordinates)")
+    if (nrow(mx) < 3) {
+        bb <- st_bbox(mx)
+        mx <- matrix(c(
+            bb$xmin, bb$ymin,
+            bb$xmax, bb$ymin,
+            bb$xmax, bb$ymax,
+            bb$xmin, bb$ymax,
+            bb$xmin, bb$ymin), 
+            ncol=2, byrow=TRUE)
+        return(mx)
+    }
     # ensure polygon is closed
     top <- mx[1, ]
     bot <- mx[nrow(mx), ]
     if (!all(top == bot))
         mx <- rbind(mx, top)
-    dup <- duplicated(as.data.frame(mx[-1, , drop=FALSE]))
-    if (any(dup)) stop("Invalid polygon; found duplicated vertices")
     return(mx)
 }
 
@@ -100,8 +128,12 @@ NULL
 #' @importFrom methods is
 #' @importFrom sf st_bbox
 setMethod("crop", "sdArray", \(x, y, j=1, ...) {
-    if (is.matrix(y)) stop("Polygon cropping not supported for 'sdArray'")
-    if (is(y, "sf")) y <- as.list(st_bbox(y))
+    if (is.matrix(y)) {
+        y <- .check_pol(y)
+        y <- st_bbox(st_polygon(list(y)))
+    }
+    if (inherits(y, c("sf", "sfc", "sfg", "bbox")))
+        y <- as.list(y)
     # coordinate space alignment
     .check_box(y)
     z <- .box2rev(x, y)
@@ -140,27 +172,28 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
 #' @export
 #' @rdname crop
 #' @importFrom dplyr pull
-#' @importFrom methods is
 #' @importFrom duckspatial ddbs_intersects
-#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry st_geometry<-
+#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
-    if (is(y, "sf")) {
-        polygon <- y
-        st_geometry(polygon) <- "geometry"
-    } else if (is(y, "sfc")) {
-        polygon <- st_sf(geometry=y)
-    } else if (is(y, "sfg")) {
-        polygon <- st_sf(geometry=st_sfc(y))
+    if (inherits(y, "sf")) {
+        fd <- y
+        st_geometry(fd) <- "geometry"
+    } else if (inherits(y, "sfc")) {
+        fd <- st_sf(geometry=y)
+    } else if (inherits(y, "sfg")) {
+        fd <- st_sf(geometry=st_sfc(y))
+    } else if (inherits(y, "bbox")) {
+        fd <- st_sf(geometry=st_as_sfc(y))
     } else if (is.matrix(y)) {
         mx <- .check_pol(y)
-        polygon <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
+        fd <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
     } else {
         # bounding box
         .check_box(y)
-        polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
+        fd <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
     df <- data(transform(x, j))
-    ok <- ddbs_intersects(df, polygon, sparse=TRUE)
+    ok <- ddbs_intersects(df, fd, sparse=TRUE)
     id_x <- NULL # R CMD check
     x[pull(ok, id_x), ]
 })
