@@ -53,15 +53,20 @@ NULL
 
 .check_box <- \(bb) {
     xy <- c("xmin", "xmax", "ymin", "ymax")
-    ok <- c(is.list(bb),
-        length(bb) == 4, setequal(names(bb), xy))
+    ok <- c(
+        is.list(bb), 
+        length(bb) == 4, 
+        setequal(names(bb), xy))
     if (!all(ok)) stop(
         "Invalid bounding box structure; should be length-4 ",
         "numeric list with names 'xmin/xmax/ymin/ymax'")
     # check values
     v <- unlist(bb)
-    ok <- c(v["xmin"] <= v["xmax"], v["ymin"] <= v["ymax"],
-        is.numeric(v), !is.na(v))
+    ok <- c(
+        !is.na(v),
+        is.numeric(v), 
+        v["xmin"] <= v["xmax"], 
+        v["ymin"] <= v["ymax"])
     if (!all(ok)) stop(
         "Invalid bounding box values; should be length-4 ",
         "numeric list with names 'xmin/xmax/ymin/ymax'")
@@ -81,7 +86,8 @@ NULL
             bb$xmax, bb$ymin,
             bb$xmax, bb$ymax,
             bb$xmin, bb$ymax,
-            bb$xmin, bb$ymin), ncol=2, byrow=TRUE)
+            bb$xmin, bb$ymin), 
+            ncol=2, byrow=TRUE)
         return(mx)
     }
     # ensure polygon is closed
@@ -170,24 +176,24 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
 #' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
     if (inherits(y, "sf")) {
-        polygon <- y
-        st_geometry(polygon) <- "geometry"
+        fd <- y
+        st_geometry(fd) <- "geometry"
     } else if (inherits(y, "sfc")) {
-        polygon <- st_sf(geometry=y)
+        fd <- st_sf(geometry=y)
     } else if (inherits(y, "sfg")) {
-        polygon <- st_sf(geometry=st_sfc(y))
+        fd <- st_sf(geometry=st_sfc(y))
     } else if (inherits(y, "bbox")) {
-        polygon <- st_sf(geometry=st_as_sfc(y))
+        fd <- st_sf(geometry=st_as_sfc(y))
     } else if (is.matrix(y)) {
         mx <- .check_pol(y)
-        polygon <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
+        fd <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
     } else {
         # bounding box
         .check_box(y)
-        polygon <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
+        fd <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
     df <- data(transform(x, j))
-    ok <- ddbs_intersects(df, polygon, sparse=TRUE)
+    ok <- ddbs_intersects(df, fd, sparse=TRUE)
     id_x <- NULL # R CMD check
     x[pull(ok, id_x), ]
 })
