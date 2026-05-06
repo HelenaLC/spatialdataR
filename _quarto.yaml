@@ -18,6 +18,7 @@ format:
     code-fold: false
     standalone: true
     embed-resources: true
+    bibliography: demo/_.bib
 
 website:
   title: "SpatialData"
@@ -25,6 +26,7 @@ website:
     left:
       - demo/merfish.qmd
       - demo/mibitof.qmd
+      - demo/mcmicro.qmd
       - demo/cosmx.qmd
       - demo/xenium.qmd
       - demo/visium.qmd

@@ -99,24 +99,56 @@ NULL
 }
 
 #' @importFrom sf st_as_sf st_coordinates
-.box2rev <- \(x, y) {
-    # assure x coordinates come first for 
-    # correct boundary retrieval at the end
+.box2rev <- \(x, y, j=1) {
+    # align query bounding box
     y <- y[c("xmin", "xmax", "ymin", "ymax")]
     df <- data.frame(
         x=c(y$xmin, y$xmax, y$xmax, y$xmin, y$xmin),
         y=c(y$ymin, y$ymin, y$ymax, y$ymax, y$ymin),
-        id=seq_len(length(y)+1))
-    names(df) <- c("x", "y", "id")
-    # TODO: utils for transformations from 
-    # array to frame with optional reverse
-    ct <- CTlist(x)
-    ts <- ct[[1]]$transformations
-    for (. in seq_along(ts))
-        ct[[1]]$transformations[[.]][[names(CTdata(x))[.]]] <- rev(CTdata(x)[[.]][-1])
-    md <- Zattrs(type="frame", trans=ct)
+        id=seq_len(5))
+    # get transformation for space j
+    if (is.numeric(j)) j <- CTname(x)[j]
+    ct <- CTlist(x)[[match(j, CTname(x))]]
+    # identify spatial axes
+    axs <- axes(x)
+    nms <- vapply(axs, \(.) .$name, character(1))
+    ix <- match("x", nms)
+    iy <- match("y", nms)
+    if (is.na(ix) || is.na(iy)) {
+        # default to last two (YX)
+        n <- length(nms)
+        ix <- n; iy <- n-1
+    }
+    # helper to adapt transformation data to spatial (XY) dims
+    .adapt <- \(t, type) {
+        if (is.null(t)) return(NULL)
+        if (type %in% c("scale", "translation"))
+            return(c(t[ix], t[iy]))
+        if (type == "rotate") 
+            return(t[1])
+        return(t)
+    }
+    # adapt transformation
+    if (ct$type == "sequence") {
+        for (i in seq_along(ct$transformations)) {
+            type <- ct$transformations[[i]]$type
+            data <- ct$transformations[[i]][[type]]
+            ct$transformations[[i]][[type]] <- .adapt(data, type)
+        }
+    } else {
+        type <- ct$type
+        data <- ct[[type]]
+        ct[[type]] <- .adapt(data, type)
+    }
+    # update input axes to spatial (XY)
+    ct$input$axes <- list(
+        list(name="x", type="space"),
+        list(name="y", type="space"))
+    # create temporary shape & transform back
+    md <- Zattrs(type="frame", trans=list(ct))
     z <- ShapeFrame(df, meta=md)
     z <- transform(z, 1, rev=TRUE)
+    # extract coordinates & return range
     z <- st_coordinates(st_as_sf(data(z)))
     z <- as.list(c(range(z[, 1]), range(z[, 2])))
     names(z) <- names(y)
@@ -136,7 +168,7 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
         y <- as.list(y)
     # coordinate space alignment
     .check_box(y)
-    z <- .box2rev(x, y)
+    z <- .box2rev(x, y, j)
     # offset current origin
     wh <- metadata(x)$wh
     if (!is.null(wh)) {
