@@ -40,7 +40,7 @@
 
 \S4method{rmvCT}{Zattrs}(x, i)
 
-\S4method{addCT}{SpatialDataElement}(x, name, type, data)
+\S4method{addCT}{SpatialDataElement}(x, name, type = "identity", data = NULL)
 
 \S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL)
 }
