@@ -165,7 +165,8 @@ setMethod("rmvCT", "Zattrs", \(x, i) {
 
 #' @rdname CTutils
 #' @export
-setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
+setMethod("addCT", "SpatialDataElement", 
+    \(x, name, type="identity", data=NULL) {
     meta(x) <- addCT(meta(x), name, type, data); x })
 
 .check_ct <- \(x, type, data) {
@@ -184,19 +185,18 @@ setMethod("addCT", "SpatialDataElement", \(x, name, type, data) {
 #' @rdname CTutils
 #' @export
 setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
+    #x <- meta(image(sd, 2)); name <- "lowres"; type="identity"; data=NULL
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
     .check_ct(x, type, data)
     # use existing as skeleton
-    old <- CTlist(x)
-    new <- old[[1]][c("input", "output", "type")]
+    new <- .default_ct(axes(x))[[1]]
     new$type <- type
     new$output$name <- name
     new[[new$type]] <- data
-    # append/overwrite & stash
-    ms <- "multiscales"
-    ct <- "coordinateTransformations"
+    # append/overwrite
+    old <- CTlist(x)
     i <- match(name, CTname(x))
     if (is.na(i)) {
         new <- c(old, list(new))
@@ -204,10 +204,15 @@ setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
         old[[i]] <- new
         new <- old
     }
-    if (is.null(x[[ms]])) {
+    # update .zattrs
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (is.null(multiscales(x))) {
         x[[ct]] <- new
     } else {
-        x[[ms]][[1]][[ct]] <- new
+        switch(.zv(x), 
+            "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
+            x[[ms]][[1]][[ct]] <- new)
     }
     return(x)
 })
