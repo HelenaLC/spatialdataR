@@ -7,6 +7,7 @@ library(sf)
 library(dplyr)
 library(ggplot2)
 library(anndataR)
+library(scrapper)
 library(patchwork)
 library(reticulate)
 library(SpatialData)
@@ -41,7 +42,11 @@ url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zi
 dir <- dirname(zip <- tempfile("sd", fileext=".zarr.zip"))
 download.file(url, zip, quiet=TRUE)
 fnm <- unzip(zip, exdir=dir)
-(sd <- SpatialData::readSpatialData(dirname(fnm[1])))
+(sd <- readSpatialData(dirname(fnm[1])))
+```
+
+```{r}
+
 ```
 
 ### analysis
@@ -56,7 +61,39 @@ We'll start out in Python and load the data into a `spatialdata` object:
 
 ### processing
 
+The `SpatialData` object contains a single `table` element, represented as a
+`r BiocStyle::Biocpkg("SingleCellExperiment")`, annotating `cell_boundaries`:
+
+```{r get-tbl}
+(se <- tables(sd)[[1]])
+```
+
+We can perform standard processing tasks using tools already 
+available in R/Bioc, e.g., `r BiocStyle::Biocpkg("scrapper")`:
+
+```{r pro}
+# standard 'scrapper' processing:
+# - log-library size normalization
+# - highly variable gene selection
+# - principal component analysis
+# - shared-nearest neighbor graph construction
+# - community detection using Leiden algorithm
+assayNames(se) <- "counts"
+se <- normalizeRnaCounts.se(se)
+se <- chooseRnaHvgs.se(se, top=2e3)
+se <- runPca.se(se, features=rowData(se)$hvg)
+se <- clusterGraph.se(se, method="leiden", resolution=0.5)
+```
+
 ### downstream
+
+Let's start out by visualization the histopathology image, 
+i.e., the hematoxylin and eosin (H\&E) staining:
+
+```{r plt-hne}
+cl <- rep(list(c(0, 1/3)), 3) # contrast
+plotSpatialData() + plotImage(sd, cl=cl) 
+```
 
 ### appendix
 
