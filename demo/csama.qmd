@@ -36,6 +36,14 @@ virtualenv_create(envname=env <- "SegTraQ", python=ver, packages=req)
 use_virtualenv(env, required=TRUE)
 ```
 
+```{r load-zarr}
+url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
+dir <- dirname(zip <- tempfile("sd", fileext=".zarr.zip"))
+download.file(url, zip, quiet=TRUE)
+fnm <- unzip(zip, exdir=dir)
+(sd <- SpatialData::readSpatialData(dirname(fnm[1])))
+```
+
 ### analysis
 
 We'll start out in Python and load the data into a `spatialdata` object:
