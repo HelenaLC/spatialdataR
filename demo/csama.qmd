@@ -27,7 +27,7 @@ cat(basename(zs))
 
 ```{r show-zarr, echo=FALSE}
 htmltools::pre(
-    style="max-height:350px; overflow-y:auto;",
+    style="max-height:333px; overflow-y:auto;",
     paste(capture.output(fs::dir_tree(zs, recurse=2))[-1], collapse="\n"))
 ```
 
@@ -64,7 +64,7 @@ pip install segtraq
 :::
 
 ```{r py-env}
-# path to Conda binary
+# path to conda binary
 bin <- "~/software/mambaforge/bin/conda" 
 options(reticulate.conda_binary=bin)
 # activate environment
@@ -216,7 +216,7 @@ align with the immunofluorescence signals used to infer them:
 The `SpatialData` object contains a single `table` element -- represented as a
 `r BiocStyle::Biocpkg("SingleCellExperiment")` -- annotating `cell_boundaries`.
 This `table` contains the single-cell level data: a gene $\times$ cell count 
-matrix (`assay` slot `X`), gene/cell metadata (`row/colData`), as well as
+matrix (`assay` slot `"X"`), gene/cell metadata (`row/colData`), as well as
 spatial coordinates (`reducedDim` slot `"spatial"`).
 
 ```{r get-tbl}
@@ -263,6 +263,31 @@ table(sd) <- se
 ```
 
 ### downstream
+
+#### structures
+
+```{r message=FALSE, warning=FALSE}
+library(sosta)
+library(spatstat.geom)
+```
+
+```{r sosta-ppp, warning=FALSE}
+cs <- match(shape(sd)[[2]], instances(se), nomatch=0)
+xy <- centroids(SpatialData::transform(shape(sd)))[cs, ]
+ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
+pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
+```
+
+For now the sosta output is not yet stored in the object. We will plot it 
+using `geom_sf()`. For illustration we'll select for the largest polygons.
+
+```{r sosta-roi, message=FALSE}
+roi <- reconstructShapeDensity(pp, markSelect=6, dim=200)
+roj <- roi[head(order(st_area(roi), decreasing=TRUE)), ]
+plotSpatialData() + 
+    plotShape(sd, col="grey") + 
+    geom_sf(data=roj, fill=NA, col="red", linewidth=1)
+```
 
 ### appendix
 
