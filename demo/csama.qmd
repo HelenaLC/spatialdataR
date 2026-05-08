@@ -22,12 +22,13 @@ download.file(url, zip, quiet=TRUE)
 # decompress, stash & view contents
 nm <- unzip(zip, exdir=dirname(zip))
 zs <- grepv("zarr$", dirname(nm))
+cat(basename(zs))
 ```
 
 ```{r show-zarr, echo=FALSE}
 htmltools::pre(
-    style="max-height:400px; overflow-y:auto;",
-    paste(capture.output(fs::dir_tree(zs, recurse = 2)), collapse="\n"))
+    style="max-height:350px; overflow-y:auto;",
+    paste(capture.output(fs::dir_tree(zs, recurse=2))[-1], collapse="\n"))
 ```
 
 ### dependencies
@@ -162,13 +163,16 @@ plotSpatialData() + plotImage(sp)
 
 #### immunofluorescence
 
-In addition to the H\&E, the dataset also includes four immunofluorescence (IF)
-images that capture DAPI (nuclei), E-Cadherin (membrane), 18S (cytoplasm), and
-Vimentin (stromal):
+In addition to the H\&E, the dataset includes 4 immunofluorescence (IF) markers:
+
+* DAPI (nuclei) marks all cell nuclei and is used for cell segmentation
+* ATP1A1/CD45/E-Cadherin (membrane) marks cell boundaries and major lineages
+* 18S (cytoplasm) marks the cell body/cytoplasmic RNA and overall cell extent
+* αSMA/Vimentin (stroma) marks mesenchymal/stromal tissue, including fibroblasts
 
 ```{r if-chs}
 img <- image(sd, 2)
-cat(channels(img))
+as.vector(channels(img))
 ```
 
 The underlying image is thus a 3D array where the first dimension are channels, 
