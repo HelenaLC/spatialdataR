@@ -1,6 +1,36 @@
 ## CSAMA
 
-### preamble
+In this demo, we'll be analyzing 5K-plex Xenium (10x Genomics) 
+data on a tissue section from a human breast cancer biopsy, 
+derived from [here](https://www.10xgenomics.com/datasets/xenium-prime-ffpe-human-breast-cancer).
+These include the following elements:
+
+- two `image`s (histology and immunofluorescence)
+- two `shape`s (nuclei and membrane boundaries)
+- one `table` (gene $\times$ cell data)
+- one `point` (RNA transcripts)
+
+A size-reduced example dataset has been deposited on Zenodo. 
+We'll first retrieve the compressed *.zarr* store programatically, 
+decompress it, and stash the data's on-disk file path for later:
+
+```{r load-zarr}
+# retrieve .zarr store from the web
+url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
+zip <- tempfile("sd", fileext=".zarr.zip")
+download.file(url, zip, quiet=TRUE)
+# decompress, stash & view contents
+nm <- unzip(zip, exdir=dirname(zip))
+zs <- grepv("zarr$", dirname(nm))
+```
+
+```{r show-zarr, echo=FALSE}
+htmltools::pre(
+    style="max-height:400px; overflow-y:auto;",
+    paste(capture.output(fs::dir_tree(zs, recurse = 2)), collapse="\n"))
+```
+
+### dependencies
 
 ```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
@@ -14,21 +44,6 @@ library(SpatialData)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
-```
-
-### data
-
-A size-reduced example dataset has been deposited on Zenodo. 
-We'll first retrieve the compressed *.zarr* store programatically, 
-decompress it, and stash the data's on-disk file path for later:
-
-```{r load-zarr}
-url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
-zip <- tempfile("sd", fileext=".zarr.zip")
-download.file(url, zip, quiet=TRUE)
-nm <- unzip(zip, exdir=dirname(zip))
-zs <- grepv("zarr$", dirname(nm))
-basename(zs)
 ```
 
 ### setup
