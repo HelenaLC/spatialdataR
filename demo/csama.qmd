@@ -62,7 +62,7 @@ We'll start out in Python and load the data into a `spatialdata` object:
 Let's start out by visualization the histopathology image, 
 i.e., the hematoxylin and eosin (H\&E) staining:
 
-```{r plt-hne}
+```{r plt-he}
 cl <- rep(list(c(0, 1/3)), 3) # contrast
 plotSpatialData() + plotImage(sd, cl=cl) 
 ```
@@ -71,7 +71,7 @@ We can also zoom into a particular region by specifying a bounding box and
 using `crop()` to subset the data accordingly; to do this more efficiently,
 we subset the object to contain only images before cropping:
 
-```{r plt-hne-box}
+```{r plt-he-box}
 bb <- list(xmin=2000, xmax=4000, ymin=2000, ymax=3000)
 sp <- crop(sd["images", ], bb)
 plotSpatialData() + plotImage(sp, cl=cl) 
@@ -80,62 +80,99 @@ plotSpatialData() + plotImage(sp, cl=cl)
 #### immunofluorescence
 
 In addition to the H\&E, the dataset also includes four immunofluorescence (IF)
-images capturing DAPI (nuclei), E-Cadhering (epithelia), 18S (cytoplasm), and
-Vimentin (stromal); the underlying image is thus a 3D array where the first
-dimension are channels, the second and third dimensions are height and width.
+images that capture DAPI (nuclei), E-Cadhering (membrane), 18S (cytoplasm), and
+Vimentin (stromal):
 
-```{r chs}
+```{r if-chs}
 img <- image(sd, 2)
 cat(channels(img))
+```
+
+The underlying image is thus a 3D array where the first dimension are channels, 
+and the second and third dimensions are height and width; we can verify this
+by viewing the `axes()` specified in the *.zattrs* associated with the image:
+
+```{r if-dim}
+do.call(rbind, axes(img))
 cat(dim(img))
 ```
 
-For consistent visualization, we'll first specify colors to use for each channel:
+Let's visualize the four-plex composite image overlaying these markers;
+for consistent visualization, we also specify colors to use for each channel:
 
-```{r}
+```{r plt-if-all}
 pal <- c("blue", "green", "cyan", "magenta")
 chs <- names(pal) <- channels(img)
+plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
 ```
 
-Let's first visualize each channel separately (using the previously defined region):
+Alternatively, we can visualize each channel separately; 
+here, using the previously smaller region:
 
-```{r}
+```{r plt-if-one}
 ps <- lapply(chs, \(.) plotSpatialData() + plotImage(sp, 2, ch=., c=pal[.]) + ggtitle(.))
 wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5), legend.position="none")
 ```
 
-Alternatively, we can visualize a four-plex composite image (using the full tissue):
+We can also zoom in further to inspect how well cell segmentation boundaries 
+align with the immunofluorescence signals used to infer them:
 
 ```{r}
-plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
+# sq <- crop(sd, list(xmin=2500, xmax=3000, ymin=2000, ymax=2500))
+# plotSpatialData() + 
+#     plotImage(sq, 2, ch=chs, c=pal[chs]) +
+#     plotShape(sq, fill=NA, col="white", linewidth=1)
 ```
 
 ### processing
 
-The `SpatialData` object contains a single `table` element, represented as a
-`r BiocStyle::Biocpkg("SingleCellExperiment")`, annotating `cell_boundaries`:
+The `SpatialData` object contains a single `table` element -- represented as a
+`r BiocStyle::Biocpkg("SingleCellExperiment")` -- annotating `cell_boundaries`.
+This `table` contains the single-cell level data: a gene $\times$ cell count 
+matrix (`assay` slot `X`), gene/cell metadata (`row/colData`), as well as
+spatial coordinates (`reducedDim` slot `"spatial"`).
 
 ```{r get-tbl}
 (se <- tables(sd)[[1]])
 ```
 
-We can perform standard processing tasks using tools already 
-available in R/Bioc, e.g., `r BiocStyle::Biocpkg("scrapper")`:
+Note that these data originally stem from a Python `anndata` object written 
+to `.zarr`, which were read into R using `r BiocStyle::Biocpkg("anndataR")`.
+We can therefore perform standard processing tasks using tools available 
+in R/Bioconductor, e.g., `r BiocStyle::Biocpkg("scrapper")`, including:
+
+- log-library size normalization
+- highly variable gene selection
+- principal component analysis
+- shared-nearest neighbor graph construction
+- community detection using Leiden algorithm
 
 ```{r pro}
-# standard 'scrapper' processing:
-# - log-library size normalization
-# - highly variable gene selection
-# - principal component analysis
-# - shared-nearest neighbor graph construction
-# - community detection using Leiden algorithm
 assayNames(se) <- "counts"
 se <- normalizeRnaCounts.se(se)
 se <- se[, se$sizeFactor > 0]
 se <- chooseRnaHvgs.se(se)
 se <- runPca.se(se, features=rowData(se)$hvg)
 se <- clusterGraph.se(se, method="leiden", resolution=0.5)
+```
+
+For convenience, we'll add a few principal components (PCs) as cell metadata:
+
+```{r}
+npc <- seq_len(3)
+pcs <- reducedDim(se, "PCA")[, npc]
+colnames(pcs) <- paste0("PC", npc)
+colData(se) <- cbind(colData(se), pcs)
+```
+
+Lastly, we'll overwrite the object's original `table` with the processed one:
+
+```{r}
 table(sd) <- se
+```
+
+```{r}
+#plotSpatialData() + plotShape(sd, fill="PC1")
 ```
 
 ### downstream
