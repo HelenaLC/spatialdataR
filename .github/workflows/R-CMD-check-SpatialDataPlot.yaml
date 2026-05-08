@@ -40,6 +40,14 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
+      # This step can be removed once SpatialData is on Bioconductor, and is removed from Remotes: in SpatialData.plot's DESCRIPTION.
+      - name: Avoid SpatialData version conflict
+        run: |
+          desc <- read.dcf("DESCRIPTION")
+          desc[, "Remotes"] <- sub("HelenaLC/SpatialData,\\s*", "", desc[, "Remotes"])
+          write.dcf(desc, "DESCRIPTION")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           # Install SpatialData from the commit that triggered the workflow
