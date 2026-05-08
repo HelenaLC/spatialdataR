@@ -15,13 +15,40 @@ library(SpatialData.plot)
 library(SingleCellExperiment)
 ```
 
-```{r load-data}
+### setup
 
+An existing environment that includes Python dependencies can be used via:
+
+```{r eval=FALSE}
+# path to Conda binary
+bin <- ".../bin/conda" 
+options(reticulate.conda_binary=bin)
+# activate environment
+use_condaenv("<name>")
+```
+
+Alternatively, a virtual environment can be created directly from R via:
+
+```{r eval=FALSE}
+req <- c("access==1.1.9", ...)
+install_python(version=ver <- "3.8.18")
+virtualenv_create(envname=env <- "SegTraQ", python=ver, packages=req)
+use_virtualenv(env, required=TRUE)
 ```
 
 ### analysis
 
+We'll start out in Python and load the data into a `spatialdata` object:
 
+```{python load-data}
+
+```
+
+### quality control
+
+### processing
+
+### downstream
 
 ### appendix
 
