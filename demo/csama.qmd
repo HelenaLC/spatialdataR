@@ -256,10 +256,17 @@ Lastly, we'll overwrite the object's original `table` with the processed one:
 
 ```{r}
 table(sd) <- se
+
+# TODO: temporary fix
+shape(sd) <- shape(sd) |> mutate(cell_id=`__index_level_0__`)
+shape(sd)@meta$spatialdata_attrs$instance_key <- "cell_id"
+shape(sd) <- shape(sd)[match(shape(sd)[[2]], instances(se), nomatch=0)] 
 ```
 
-```{r}
-#plotSpatialData() + plotShape(sd, fill="PC1")
+```{r plt-xy-pc, message=FALSE}
+plotSpatialData() + 
+    plotShape(sd, col=NA, fill="PC1") +
+    scale_fill_gradient2(low="blue", mid="lightgrey", high="red")
 ```
 
 ### downstream
@@ -272,8 +279,7 @@ library(spatstat.geom)
 ```
 
 ```{r sosta-ppp, warning=FALSE}
-cs <- match(shape(sd)[[2]], instances(se), nomatch=0)
-xy <- centroids(SpatialData::transform(shape(sd)))[cs, ]
+xy <- centroids(SpatialData::transform(shape(sd)))
 ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
 pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
 ```
@@ -282,11 +288,13 @@ For now the sosta output is not yet stored in the object. We will plot it
 using `geom_sf()`. For illustration we'll select for the largest polygons.
 
 ```{r sosta-roi, message=FALSE}
-roi <- reconstructShapeDensity(pp, markSelect=6, dim=200)
+roi <- reconstructShapeDensity(pp, markSelect=6, dim=400)
 roj <- roi[head(order(st_area(roi), decreasing=TRUE)), ]
+
 plotSpatialData() + 
-    plotShape(sd, col="grey") + 
-    geom_sf(data=roj, fill=NA, col="red", linewidth=1)
+    plotShape(sd, col=NA, fill="clusters") + 
+    geom_sf(data=roj, fill=NA, linewidth=1) +
+    scale_fill_manual(values=hcl.colors(7, "Spectral")) 
 ```
 
 ### appendix
