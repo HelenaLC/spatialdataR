@@ -24,6 +24,7 @@ website:
   title: "SpatialData"
   navbar:
     left:
+      - demo/csama.qmd
       - demo/merfish.qmd
       - demo/mibitof.qmd
       - demo/mcmicro.qmd
