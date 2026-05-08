@@ -20,7 +20,7 @@ library(SingleCellExperiment)
 
 An existing environment that includes Python dependencies can be used via:
 
-```{r eval=FALSE}
+```{r setup-python}
 library(reticulate)
 
 venv_path <- file.path(getwd(), ".venv", "bin", "python")
@@ -28,10 +28,12 @@ venv_path <- file.path(getwd(), ".venv", "bin", "python")
 use_python(venv_path, required = TRUE)
 ```
 
-```{python, echo=TRUE}
+```{python run-segtraq, echo=TRUE}
 import spatialdata as sd
 import segtraq
 import anndata as ad
+import spatialdata_plot
+import matplotlib.pyplot as plt
 
 sdata = sd.read_zarr("/Users/lazic/Downloads/BC_xenium_sdata_lowres_aligned.zarr")
 adata_ref = ad.read_h5ad
@@ -47,6 +49,30 @@ st = segtraq.SegTraQ(
 st.run_baseline()
 
 st.sdata.tables["table"].obs["mean_transcripts_per_gene"].mean()
+```
+
+```{python spatialdata-plot, echo=TRUE}
+
+axes = plt.subplots(1, 3, figsize=(14, 5), constrained_layout=True)[1].flatten()
+
+# Plot DAPI image
+st.sdata.pl.render_images("morphology_focus", channel="DAPI").pl.show(
+    ax=axes[0], title="DAPI image", coordinate_systems="global"
+)
+
+# Plot HE image
+st.sdata.pl.render_images("he_image").pl.show(
+    ax=axes[1], title="HE image", coordinate_systems="global"
+)
+
+# Plot overlay of nuclei and cell boundaries colored by cell area
+st.sdata.pl.render_shapes(
+    element="nucleus_boundaries",
+    outline_color="black",
+).pl.render_shapes(
+    element="cell_boundaries",
+    outline_color="black",
+).pl.show(ax=axes[2], title="Overlay of nuclei and cell masks colored by cell area", colorbar=True)
 ```
 
 ### session
