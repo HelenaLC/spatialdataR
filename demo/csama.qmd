@@ -1,0 +1,36 @@
+## CSAMA
+
+### preamble
+
+```{r load-libs}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(anndataR)
+library(patchwork)
+library(reticulate)
+library(SpatialData)
+library(SpatialData.data)
+library(SpatialData.plot)
+library(SingleCellExperiment)
+```
+
+```{r load-data}
+
+```
+
+### analysis
+
+
+
+### appendix
+
+::: {.callout-note icon=false, collapse=true}
+
+### session
+
+```{r sess-info}
+sessionInfo()
+```
+
+:::
