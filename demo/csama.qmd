@@ -2,7 +2,7 @@
 
 ### preamble
 
-```{r load-libs}
+```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
@@ -16,55 +16,121 @@ library(SpatialData.plot)
 library(SingleCellExperiment)
 ```
 
-### setup
+### data
 
-An existing environment that includes Python dependencies can be used via:
-
-```{r eval=FALSE}
-# path to Conda binary
-bin <- ".../bin/conda" 
-options(reticulate.conda_binary=bin)
-# activate environment
-use_condaenv("<name>")
-```
-
-Alternatively, a virtual environment can be created directly from R via:
-
-```{r eval=FALSE}
-req <- c("access==1.1.9", ...)
-install_python(version=ver <- "3.8.18")
-virtualenv_create(envname=env <- "SegTraQ", python=ver, packages=req)
-use_virtualenv(env, required=TRUE)
-```
+A size-reduced example dataset has been deposited on Zenodo. 
+We'll first retrieve the compressed *.zarr* store programatically, 
+decompress it, and stash the data's on-disk file path for later:
 
 ```{r load-zarr}
 url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
-dir <- dirname(zip <- tempfile("sd", fileext=".zarr.zip"))
+zip <- tempfile("sd", fileext=".zarr.zip")
 download.file(url, zip, quiet=TRUE)
-fnm <- unzip(zip, exdir=dir)
-(sd <- readSpatialData(dirname(fnm[1])))
+nm <- unzip(zip, exdir=dirname(zip))
+zs <- grepv("zarr$", dirname(nm))
+basename(zs)
 ```
 
-### analysis
+### setup
 
-We'll start out in Python and load the data into a `spatialdata` object:
+We can instruct our session to use an existing environment with our Python 
+dependencies (here, `SegTraQ`) as follows. Note that `reticulate` provides 
+similar commands to, e.g., use a virtual (not conda) environemnt instead:
 
-```{python load-data}
+::: {.column-margin}
+The environment used here has been set up previously outside of R, 
+from the command line, using these commands:
+```
+conda create -n segtraq python=3.11
+conda activate segtraq
+pip install segtraq
+```
+:::
 
+```{r py-env}
+# path to Conda binary
+bin <- "~/software/mambaforge/bin/conda" 
+options(reticulate.conda_binary=bin)
+# activate environment
+use_condaenv("segtraq")
 ```
 
 ### quality control
 
+```{python, eval=FALSE}
+import warnings
+warnings.filterwarnings(action="ignore")
+
+import anndata as ad
+import matplotlib.pyplot as plt
+import segtraq
+import spatialdata as sd
+import spatialdata_plot
+
+sdata = sd.read_zarr(r.zs)
+
+sdata.shapes["cell_boundaries"].index.name = "cell_id"
+sdata.shapes["nucleus_boundaries"].index.name = "cell_id"
+
+st = segtraq.SegTraQ(sdata,
+    images_key="morphology_focus", 
+    tables_centroid_x_key=None, 
+    tables_centroid_y_key=None)
+    
+st.run_baseline()
+
+adata = st.sdata.tables["table"]
+adata
+```
+
+```{python, eval=FALSE}
+axes = plt.subplots(1, 3, figsize=(14, 5), constrained_layout=True)[1].flatten()
+
+# plot DAPI image
+a = st.sdata.pl.render_images("morphology_focus", channel="DAPI")
+a.pl.show(ax=axes[0], title="DAPI", coordinate_systems="global")
+
+# plot histology
+b = st.sdata.pl.render_images("he_image")
+b.pl.show(ax=axes[1], title="H&E", coordinate_systems="global")
+
+# plot overlay of nuclei & cell boundaries colored by cell area
+c = st.sdata.pl.render_shapes(
+    element="nucleus_boundaries",
+    outline_color="black")
+c = c.pl.render_shapes(
+    element="cell_boundaries",
+    outline_color="black")
+c.pl.show(ax=axes[2], title="overlay", colorbar=True)
+
+plt.show()
+```
+
 ### exploratory
+
+Let's load up the data in R, skipping the `table` layer. We then retrieve the 
+`table`, including `SegTraQ` results, from Python, and set it to annotate cell
+segmentation boundaries using `setTable()`; `ik` specifies the `spatialdata`'s
+`instance_key` used to link observations between `table` and spatial element.
+
+```{r}
+sd <- readSpatialData(zs)#, tables=FALSE)
+# sd <- setTable(sd, 
+#     i="cell_boundaries", ik="cell_id",
+#     y=py$adata$as_SingleCellExperiment())
+sd
+```
 
 #### histopathology
 
-Let's start out by visualization the histopathology image, 
-i.e., the hematoxylin and eosin (H\&E) staining:
+Let's start out by visualization the hematoxylin and eosin (H&E) staining.
+H\&E provides a high-contrast visualization of tissue microarchitecture and 
+cellular morphology through differential staining of nuclear and cytoplasmic 
+components. To date, whole-slide H\&E images (WSIs) remain the clinical gold 
+standard for cancer diagnosis, including tumor grading, staging, and prognosis.
 
 ```{r plt-he}
-cl <- rep(list(c(0, 1/3)), 3) # contrast
-plotSpatialData() + plotImage(sd, cl=cl) 
+plotSpatialData() + plotImage(sd)
 ```
 
 We can also zoom into a particular region by specifying a bounding box and
@@ -72,15 +138,17 @@ using `crop()` to subset the data accordingly; to do this more efficiently,
 we subset the object to contain only images before cropping:
 
 ```{r plt-he-box}
-bb <- list(xmin=2000, xmax=4000, ymin=2000, ymax=3000)
+bb <- list(
+    xmin=2000, xmax=4000, 
+    ymin=2000, ymax=3000)
 sp <- crop(sd["images", ], bb)
-plotSpatialData() + plotImage(sp, cl=cl) 
+plotSpatialData() + plotImage(sp) 
 ```
 
 #### immunofluorescence
 
 In addition to the H\&E, the dataset also includes four immunofluorescence (IF)
-images that capture DAPI (nuclei), E-Cadhering (membrane), 18S (cytoplasm), and
+images that capture DAPI (nuclei), E-Cadherin (membrane), 18S (cytoplasm), and
 Vimentin (stromal):
 
 ```{r if-chs}
@@ -142,10 +210,10 @@ We can therefore perform standard processing tasks using tools available
 in R/Bioconductor, e.g., `r BiocStyle::Biocpkg("scrapper")`, including:
 
 - log-library size normalization
-- highly variable gene selection
-- principal component analysis
-- shared-nearest neighbor graph construction
-- community detection using Leiden algorithm
+- highly variable gene (HVG) selection
+- principal component analysis (PCA)
+- shared-nearest neighbor (SNN) graph construction
+- community detection using the Leiden algorithm
 
 ```{r pro}
 assayNames(se) <- "counts"
