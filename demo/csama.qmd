@@ -21,83 +21,33 @@ library(SingleCellExperiment)
 An existing environment that includes Python dependencies can be used via:
 
 ```{r eval=FALSE}
-# path to Conda binary
-bin <- ".../bin/conda" 
-options(reticulate.conda_binary=bin)
-# activate environment
-use_condaenv("<name>")
+library(reticulate)
+
+venv_path <- file.path(getwd(), ".venv", "bin", "python")
+
+use_python(venv_path, required = TRUE)
 ```
 
-Alternatively, a virtual environment can be created directly from R via:
+```{python, echo=TRUE}
+import spatialdata as sd
+import segtraq
+import anndata as ad
 
-```{r eval=FALSE}
-req <- c("access==1.1.9", ...)
-install_python(version=ver <- "3.8.18")
-virtualenv_create(envname=env <- "SegTraQ", python=ver, packages=req)
-use_virtualenv(env, required=TRUE)
+sdata = sd.read_zarr("/Users/lazic/Downloads/BC_xenium_sdata_lowres_aligned.zarr")
+adata_ref = ad.read_h5ad
+
+st = segtraq.SegTraQ(
+    sdata, images_key="morphology_focus", 
+    shapes_cell_id_key=None,
+    nucleus_shapes_cell_id_key=None,
+    tables_centroid_x_key=None, 
+    tables_centroid_y_key=None
+)
+
+st.run_baseline()
+
+st.sdata.tables["table"].obs["mean_transcripts_per_gene"].mean()
 ```
-
-```{r load-zarr}
-url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
-dir <- dirname(zip <- tempfile("sd", fileext=".zarr.zip"))
-download.file(url, zip, quiet=TRUE)
-fnm <- unzip(zip, exdir=dir)
-(sd <- readSpatialData(dirname(fnm[1])))
-```
-
-```{r}
-
-```
-
-### analysis
-
-We'll start out in Python and load the data into a `spatialdata` object:
-
-```{python load-data}
-
-```
-
-### quality control
-
-### processing
-
-The `SpatialData` object contains a single `table` element, represented as a
-`r BiocStyle::Biocpkg("SingleCellExperiment")`, annotating `cell_boundaries`:
-
-```{r get-tbl}
-(se <- tables(sd)[[1]])
-```
-
-We can perform standard processing tasks using tools already 
-available in R/Bioc, e.g., `r BiocStyle::Biocpkg("scrapper")`:
-
-```{r pro}
-# standard 'scrapper' processing:
-# - log-library size normalization
-# - highly variable gene selection
-# - principal component analysis
-# - shared-nearest neighbor graph construction
-# - community detection using Leiden algorithm
-assayNames(se) <- "counts"
-se <- normalizeRnaCounts.se(se)
-se <- chooseRnaHvgs.se(se, top=2e3)
-se <- runPca.se(se, features=rowData(se)$hvg)
-se <- clusterGraph.se(se, method="leiden", resolution=0.5)
-```
-
-### downstream
-
-Let's start out by visualization the histopathology image, 
-i.e., the hematoxylin and eosin (H\&E) staining:
-
-```{r plt-hne}
-cl <- rep(list(c(0, 1/3)), 3) # contrast
-plotSpatialData() + plotImage(sd, cl=cl) 
-```
-
-### appendix
-
-::: {.callout-note icon=false, collapse=true}
 
 ### session
 
@@ -105,4 +55,4 @@ plotSpatialData() + plotImage(sd, cl=cl)
 sessionInfo()
 ```
 
-:::
+
