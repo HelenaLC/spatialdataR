@@ -53,12 +53,14 @@ setMethod("centroids", "LabelArray", \(x,
 
 #' @export
 #' @rdname centroids
-#' @importFrom sf st_as_sf st_geometry_type st_coordinates
+#' @importFrom sf st_as_sf st_geometry_type st_centroid st_coordinates
 setMethod("centroids", "ShapeFrame", \(x,
     as=c("data.frame", "matrix", "list")) {
     as <- match.arg(as)
-    y <- st_as_sf(data(x))
-    xy <- st_coordinates(y)
+    xy <- data(x) |>
+        st_as_sf() |>
+        st_centroid() |>
+        st_coordinates()
     colnames(xy)[c(1, 2)] <- c("x", "y")
     if (as == "matrix") return(xy)
     xy <- as.data.frame(xy)
