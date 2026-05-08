@@ -1,6 +1,10 @@
 .DS_Store
 .Rhistory
 .Rproj.user
+.Rprofile
+renv/
+renv.lock
+docs/site_libs
 vignettes/*html
 vignettes/*cache
 vignettes/*files
