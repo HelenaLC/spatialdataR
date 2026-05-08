@@ -45,10 +45,6 @@ fnm <- unzip(zip, exdir=dir)
 (sd <- readSpatialData(dirname(fnm[1])))
 ```
 
-```{r}
-
-```
-
 ### analysis
 
 We'll start out in Python and load the data into a `spatialdata` object:
@@ -58,6 +54,61 @@ We'll start out in Python and load the data into a `spatialdata` object:
 ```
 
 ### quality control
+
+### exploratory
+
+#### histopathology
+
+Let's start out by visualization the histopathology image, 
+i.e., the hematoxylin and eosin (H\&E) staining:
+
+```{r plt-hne}
+cl <- rep(list(c(0, 1/3)), 3) # contrast
+plotSpatialData() + plotImage(sd, cl=cl) 
+```
+
+We can also zoom into a particular region by specifying a bounding box and
+using `crop()` to subset the data accordingly; to do this more efficiently,
+we subset the object to contain only images before cropping:
+
+```{r plt-hne-box}
+bb <- list(xmin=2000, xmax=4000, ymin=2000, ymax=3000)
+sp <- crop(sd["images", ], bb)
+plotSpatialData() + plotImage(sp, cl=cl) 
+```
+
+#### immunofluorescence
+
+In addition to the H\&E, the dataset also includes four immunofluorescence (IF)
+images capturing DAPI (nuclei), E-Cadhering (epithelia), 18S (cytoplasm), and
+Vimentin (stromal); the underlying image is thus a 3D array where the first
+dimension are channels, the second and third dimensions are height and width.
+
+```{r chs}
+img <- image(sd, 2)
+cat(channels(img))
+cat(dim(img))
+```
+
+For consistent visualization, we'll first specify colors to use for each channel:
+
+```{r}
+pal <- c("blue", "green", "cyan", "magenta")
+chs <- names(pal) <- channels(img)
+```
+
+Let's first visualize each channel separately (using the previously defined region):
+
+```{r}
+ps <- lapply(chs, \(.) plotSpatialData() + plotImage(sp, 2, ch=., c=pal[.]) + ggtitle(.))
+wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5), legend.position="none")
+```
+
+Alternatively, we can visualize a four-plex composite image (using the full tissue):
+
+```{r}
+plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
+```
 
 ### processing
 
@@ -80,20 +131,14 @@ available in R/Bioc, e.g., `r BiocStyle::Biocpkg("scrapper")`:
 # - community detection using Leiden algorithm
 assayNames(se) <- "counts"
 se <- normalizeRnaCounts.se(se)
-se <- chooseRnaHvgs.se(se, top=2e3)
+se <- se[, se$sizeFactor > 0]
+se <- chooseRnaHvgs.se(se)
 se <- runPca.se(se, features=rowData(se)$hvg)
 se <- clusterGraph.se(se, method="leiden", resolution=0.5)
+table(sd) <- se
 ```
 
 ### downstream
-
-Let's start out by visualization the histopathology image, 
-i.e., the hematoxylin and eosin (H\&E) staining:
-
-```{r plt-hne}
-cl <- rep(list(c(0, 1/3)), 3) # contrast
-plotSpatialData() + plotImage(sd, cl=cl) 
-```
 
 ### appendix
 
