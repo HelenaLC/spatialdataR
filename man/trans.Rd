@@ -54,11 +54,15 @@
 \arguments{
 \item{x}{\code{SpatialData} element.}
 
+\item{i}{scalar integer or string; target coordinate space.}
+
 \item{...}{option arguments passed to and from other methods.}
 
 \item{t}{transformation data; exceptions: for \code{mirror}, controls
 whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
 no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
+
+\item{rev}{flag; should transformation(s) be reversed?}
 
 \item{k}{scalar index specifying which scale to use; 
 \code{Inf} to use lowest available resolution;

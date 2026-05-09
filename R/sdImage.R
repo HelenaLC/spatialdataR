@@ -28,6 +28,7 @@
 #' # multi-scale
 #' (x <- readImage(pa[2]))
 #' 
+#' channels(x)
 #' dim(data(x, 1))   # highest res.
 #' dim(data(x, Inf)) # lowest res.
 #' 
@@ -37,15 +38,28 @@
 #' plot(
 #'   row(rgb), col(rgb), col=rgb, 
 #'   pch=15, asp=1, ylim=c(ncol(rgb), 0))
-#'
-#' @importFrom S4Vectors metadata<-
-#' @importFrom methods new
+NULL
+
 #' @export
+#' @rdname SpatialDataImage
+#' @importFrom methods new
+#' @importFrom S4Vectors metadata<-
 SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
     x <- .SpatialDataImage(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
+
+# internal use only!
+#' @noRd 
+.ch <- \(x) {
+    if (.zv(x) == "0.3") x <- x$ome
+    unlist(x$omero$channels)
+}
+
+#' @export
+#' @rdname SpatialDataImage
+setMethod("channels", "SpatialDataAttrs", \(x, ...) .ch(x))
 
 #' @export
 #' @rdname SpatialDataImage
@@ -53,7 +67,7 @@ setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
 
 #' @export
 #' @rdname SpatialDataImage
-setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
+setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
 .get_multiscales_paths <- function(x) {

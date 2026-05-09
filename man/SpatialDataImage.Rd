@@ -3,8 +3,9 @@
 \name{SpatialDataImage}
 \alias{SpatialDataImage}
 \alias{channels}
+\alias{channels,SpatialDataAttrs-method}
 \alias{channels,SpatialDataImage-method}
-\alias{channels,ANY-method}
+\alias{channels,SpatialDataElement-method}
 \alias{[,SpatialDataImage,ANY,ANY,ANY-method}
 \title{The `SpatialDataImage` class}
 \usage{
@@ -15,9 +16,11 @@ SpatialDataImage(
   ...
 )
 
+\S4method{channels}{SpatialDataAttrs}(x, ...)
+
 \S4method{channels}{SpatialDataImage}(x, ...)
 
-\S4method{channels}{ANY}(x, ...)
+\S4method{channels}{SpatialDataElement}(x, ...)
 
 \S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 }
@@ -59,6 +62,7 @@ readImage(pa[1])
 # multi-scale
 (x <- readImage(pa[2]))
 
+channels(x)
 dim(data(x, 1))   # highest res.
 dim(data(x, Inf)) # lowest res.
 
@@ -68,5 +72,4 @@ rgb <- apply(
 plot(
   row(rgb), col(rgb), col=rgb, 
   pch=15, asp=1, ylim=c(ncol(rgb), 0))
-
 }

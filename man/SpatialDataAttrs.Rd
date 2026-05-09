@@ -30,7 +30,7 @@ SpatialDataAttrs(
   label = FALSE,
   trans = NULL,
   ver = "0.4",
-  n = 3,
+  nch = 3,
   ...
 )
 
@@ -79,13 +79,21 @@ SpatialDataAttrs(
 
 \item{type}{character string; either "array" (image/label) or "frame" (point/shape).}
 
+\item{label}{flag; when \code{type="frame"}, should attributes be for a label?}
+
+\item{trans}{list of coordinate transformations; defaults to identity only.}
+
+\item{ver}{character string; specified the .zarr version to comply with.}
+
+\item{nch}{scalar integer; how many channels should there be?
+(ignored unless \code{type="frame"} and \code{label=FALSE}).}
+
 \item{...}{additional attributes (e.g., version, feature_key).}
 
 \item{name}{character string for extraction (see ?base::`$`).}
 
-\item{axes}{list of axes; if NULL, defaults to cyx (array) or xy (frame).}
-
-\item{transformations}{list of transformations; if NULL, defaults to global identity.}
+\item{value}{character string (for one \code{region} and \code{_key}s), 
+or vector (for many \code{region}s, \code{instances} and \code{regions}).}
 }
 \value{
 character string
@@ -125,7 +133,7 @@ CTdata(z, "scale")
 # constructor
 SpatialDataAttrs(type="frame")
 SpatialDataAttrs(type="array")
-SpatialDataAttrs(type="array", n=7)
+SpatialDataAttrs(type="array", nch=7)
 SpatialDataAttrs(type="array", label=TRUE)
 
 }

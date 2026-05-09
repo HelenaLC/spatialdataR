@@ -144,12 +144,24 @@ setMethod("element", c("SpatialData", "ANY"), \(x, i)
 
 # get all ----
 
-#' @name SpatialData
-#' @exportMethod images labels points shapes tables
+#' @export
+#' @rdname SpatialData
 setMethod("images", "SpatialData", \(x) x$images)
+
+#' @export
+#' @rdname SpatialData
 setMethod("labels", "SpatialData", \(x) x$labels)
+
+#' @export
+#' @rdname SpatialData
 setMethod("points", "SpatialData", \(x) x$points)
+
+#' @export
+#' @rdname SpatialData
 setMethod("shapes", "SpatialData", \(x) x$shapes)
+
+#' @export
+#' @rdname SpatialData
 setMethod("tables", "SpatialData", \(x) x$tables)
 
 # get nms ----
