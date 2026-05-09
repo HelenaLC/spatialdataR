@@ -1,5 +1,6 @@
 #' @name SpatialDataArray
 #' @title Methods for `SpatialDataArray`s
+#' @aliases data_type
 #' 
 #' @param x \code{SpatialDataImage} or \code{SpatialDataLabel}.
 #' @param k scalar index specifying which scale to extract.

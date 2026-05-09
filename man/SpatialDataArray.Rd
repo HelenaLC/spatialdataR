@@ -2,6 +2,7 @@
 % Please edit documentation in R/sdArray.R
 \name{SpatialDataArray}
 \alias{SpatialDataArray}
+\alias{data_type}
 \alias{data,SpatialDataArray-method}
 \alias{dim,SpatialDataArray-method}
 \alias{length,SpatialDataArray-method}

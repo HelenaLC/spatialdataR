@@ -5,6 +5,42 @@
 \alias{SpatialData-class}
 \alias{.SpatialData}
 \alias{SpatialData}
+\alias{data}
+\alias{meta}
+\alias{layer}
+\alias{element}
+\alias{image}
+\alias{label}
+\alias{point}
+\alias{shape}
+\alias{table}
+\alias{images}
+\alias{labels}
+\alias{points}
+\alias{shapes}
+\alias{tables}
+\alias{image<-}
+\alias{label<-}
+\alias{point<-}
+\alias{shape<-}
+\alias{table<-}
+\alias{images<-}
+\alias{labels<-}
+\alias{points<-}
+\alias{shapes<-}
+\alias{tables<-}
+\alias{imageNames}
+\alias{labelNames}
+\alias{pointNames}
+\alias{shapeNames}
+\alias{tableNames}
+\alias{imageNames<-}
+\alias{labelNames<-}
+\alias{pointNames<-}
+\alias{shapeNames<-}
+\alias{tableNames<-}
+\alias{[[,SpatialData,character,ANY}
+\alias{[[,SpatialData,numeric,ANY}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
@@ -101,7 +137,13 @@ or NULL/\code{list()} to remove an element/layer completely.}
 \code{SpatialData}
 }
 \description{
-...
+\code{SpatialData} provides an R interface to Python's \code{spatialdata},
+which enables the representation of diverse spatial omics datasets using 
+the OME-NGFF (Next Generation File Format) standard. In R, 
+\itemize{
+\item images and labels are \code{ZarrArray}s (\code{Rarr} package).
+\item points and shapes are managed using \code{duckspatial} tables.
+\item tables are \code{SingleCellExperiment}s (read with \code{anndataR}).}
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")

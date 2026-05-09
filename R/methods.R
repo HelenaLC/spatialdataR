@@ -1,14 +1,14 @@
-#' @importFrom utils .DollarNames
 #' @export
+#' @importFrom utils .DollarNames
 .DollarNames.SpatialData <- \(x, pattern="") grep(pattern, .LAYERS, value=TRUE)
 
-#' @rdname SpatialData
 #' @exportMethod $
+#' @rdname SpatialData
 setMethod("$", "SpatialData", \(x, name) attr(x, name))
 
+#' @export
 #' @rdname SpatialData
 #' @importFrom methods callNextMethod
-#' @export
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
