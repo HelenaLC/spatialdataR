@@ -1,5 +1,5 @@
 #' @name SpatialDataArray
-#' @title Methods for `SpatialDataArray`s
+#' @title \code{SpatialDataArray}
 #' @aliases data_type
 #' 
 #' @param x \code{SpatialDataImage} or \code{SpatialDataLabel}.

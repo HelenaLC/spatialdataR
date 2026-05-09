@@ -1,5 +1,5 @@
 #' @name SpatialDataImage
-#' @title The `SpatialDataImage` class
+#' @title \code{SpatialDataImage}
 #' @aliases channels
 #' 
 #' @param x \code{SpatialDataImage}
