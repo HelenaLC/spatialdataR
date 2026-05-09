@@ -180,11 +180,7 @@ setReplaceMethod("region_key", c("SingleCellExperiment", "NULL"), \(x, value) {
 
 #' @export
 #' @rdname SpatialDataAttrs
-setMethod("region", "SingleCellExperiment", \(x) {
-    rk <- region_key(x)
-    if (is.null(rk)) return(NULL)
-    meta(x)[[rk]]
-})
+setMethod("region", "SingleCellExperiment", \(x) meta(x)[["region"]])
 
 #' @export
 #' @rdname SpatialDataAttrs
