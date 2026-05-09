@@ -50,7 +50,7 @@ NULL
 #' @importFrom ZarrArray ZarrArray
 .readArray <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    ps <- .get_multiscales_dataset_paths(md)
+    ps <- .get_multiscales_paths(x)
     ps <- file.path(x, as.character(ps))
     as <- lapply(ps, ZarrArray)
     list(array=as, md=md)
