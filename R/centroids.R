@@ -16,7 +16,6 @@
 #'
 #' centroids(label(x))
 #' centroids(shape(x))
-#' centroids(shape(x, 3), "list")
 #'
 #' head(centroids(point(x)))
 #' xy <- centroids(point(x), "list")
