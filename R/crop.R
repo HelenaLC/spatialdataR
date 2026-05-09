@@ -232,7 +232,7 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
-#' @importFrom dplyr anti_join
+#' @importFrom dplyr right_join
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
@@ -240,6 +240,13 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
         if (j %in% CTname(z))
             crop(z, y, j=j)
     })
+    # drop elements without content
+    n <- lapply(.lapplyLayer(z, length), unlist)
+    n <- lapply(n, \(.) if (any(i <- . > 0)) .[i])
+    names(ts) <- ts <- tableNames(z)
+    n <- c(n, list(tables=ts))
+    z <- z[names(n), lapply(n, names)]
+    # filter tables for remaining region(s)/instance(s)
     rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
         # filter for remaining element(s)
@@ -257,7 +264,8 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
             e <- element(z, r)
             if (is(e, "SpatialDataShape")) {
                 # element's regions-instances
-                i <- e[[instance_key(t)]]
+                ik <- instance_key(t)
+                i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
                 fd <- data.frame(r, i)
                 # return table indices in element
                 right_join(df, fd, names(fd))$keep
