@@ -159,7 +159,7 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @export
 setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     name=NULL, rk="region", ik="instance_id") {
-    
+
     # validity
     stopifnot(
         is(y, "SingleCellExperiment"),
