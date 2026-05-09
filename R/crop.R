@@ -165,7 +165,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
         y <- st_bbox(st_polygon(list(y)))
     }
     if (inherits(y, c("sf", "sfc", "sfg", "bbox")))
-        y <- as.list(y)
+        y <- as.list(st_bbox(y))
     # coordinate space alignment
     .check_box(y)
     z <- .box2rev(x, y, j)
