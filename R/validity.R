@@ -72,10 +72,11 @@ setValidity2("SpatialDataImage", .validateImage)
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataLabel", .validateLabel)
 
+#' @importFrom dplyr count pull
 .validatePoint <- \(object) {
     msg <- c()
-    # Explicitly call SpatialData::data to avoid utils::data masking
-    cnt <- tryCatch(as.integer(SpatialData::data(object) |> count() |> pull(n)), error=\(.) 0)
+    cnt <- tryCatch(error=\(.) 0, as.integer(
+        pull(count(SpatialData::data(object)), "n")))
     if (!cnt) return(msg)
     if (!"geometry" %in% names(object)) 
         msg <- c(msg, "'SpatialDataPoint' missing 'geometry'.")
