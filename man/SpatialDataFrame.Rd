@@ -67,13 +67,13 @@ SpatialDataShape(
 \arguments{
 \item{...}{optional arguments passed to and from other methods.}
 
-\item{x}{an \code{SpatialDataFrame}}
+\item{x, .data}{\code{SpatialDataFrame}}
 
 \item{i, j}{indices for subsetting (see \code{?base::Extract}).}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
-\item{drop}{ignored.}
+\item{drop, pattern}{ignored.}
 
 \item{data}{\code{duckspatial_df} for on-disk representation,
 or a \code{data.frame} to be converted.}
@@ -82,6 +82,9 @@ or a \code{data.frame} to be converted.}
 
 \item{metadata}{optional list of arbitrary
 content describing the overall object.}
+
+\item{ik, fk}{character string specifying "instance_/feature_key" 
+of the spatialdata_attrs; used to match observations/features.}
 }
 \value{
 an \code{SpatialDataFrame}

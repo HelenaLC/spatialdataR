@@ -12,10 +12,6 @@
 #'   Control which elements should be read for each layer.
 #'   The default, NULL, reads all elements; alternatively, may be FALSE
 #'   to skip a layer, or a integer vector specifying which elements to read.
-#' @param anndataR logical specifying whether
-#'   to use \code{anndataR} to read tables;
-#'   defaults to FALSE in `readSpatialData`, and `readTable`,
-#'   so that pythonic \code{anndata} are used.
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return
@@ -146,6 +142,7 @@ readSpatialData <- function(x,
         lapply(j, \(.) do.call(f, list(.)))
     }
     
-    sd <- lapply(setNames(nm=.LAYERS[!skip]), .readLayer)
+    names(ls) <- ls <- .LAYERS[!skip]
+    sd <- lapply(ls, .readLayer)
     do.call(SpatialData, sd)
 }
