@@ -7,13 +7,13 @@
 #' For \code{SpatialData} objects, \code{crop} propagates the operation 
 #' across all layers that share the coordinate space \code{j}.
 #' 
-#' For \code{sdFrame}s (points and shapes), cropping relies on 
+#' For \code{SpatialDataFrame}s (points and shapes), cropping relies on 
 #' \code{sf::st_intersects} (i.e., instances that intersect the 
 #' query region in any way are kept). For circle shapes, radii 
 #' are currently ignored (i.e., a circle is kept if its centroid 
 #' intersects the query region).
 #' 
-#' For \code{sdArray}s (images and labels), only bounding box 
+#' For \code{SpatialDataArray}s (images and labels), only bounding box 
 #' cropping is supported. The requested spatial bounding box is 
 #' projected into pixel coordinates, and the underlying array is 
 #' sliced accordingly. The \code{wh} metadata is updated to 
@@ -145,8 +145,8 @@ NULL
         list(name="x", type="space"),
         list(name="y", type="space"))
     # create temporary shape & transform back
-    md <- Zattrs(type="frame", trans=list(ct))
-    z <- ShapeFrame(df, meta=md)
+    md <- SpatialDataAttrs(type="frame", trans=list(ct))
+    z <- SpatialDataShape(df, meta=md)
     z <- transform(z, 1, rev=TRUE)
     # extract coordinates & return range
     z <- st_coordinates(st_as_sf(data(z)))
@@ -159,7 +159,7 @@ NULL
 #' @rdname crop
 #' @importFrom methods is
 #' @importFrom sf st_bbox
-setMethod("crop", "sdArray", \(x, y, j=1, ...) {
+setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     if (is.matrix(y)) {
         y <- .check_pol(y)
         y <- st_bbox(st_polygon(list(y)))
@@ -206,7 +206,7 @@ setMethod("crop", "sdArray", \(x, y, j=1, ...) {
 #' @importFrom dplyr pull
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
-setMethod("crop", "sdFrame", \(x, y, j=1, ...) {
+setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
     if (inherits(y, "sf")) {
         fd <- y
         st_geometry(fd) <- "geometry"

@@ -5,36 +5,36 @@ zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 sd <- readSpatialData(zs)
 
-test_that("validity,ImageArray", {
-    expect_error(ImageArray(list(v <- character(1))))
+test_that("validity,SpatialDataImage", {
+    expect_error(SpatialDataImage(list(v <- character(1))))
     x <- image(sd,1); x@data[[1]][1,1,1] <- v; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]][1,1,1] <- v; expect_error(validObject(x))
-    expect_error(ImageArray(list(a <- array(numeric(1), c(1,1)))))
+    expect_error(SpatialDataImage(list(a <- array(numeric(1), c(1,1)))))
     x <- image(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })
 
-test_that("validity,LabelArray", {
+test_that("validity,SpatialDataLabel", {
     for (v in list(logical(1), character(1), numeric(1))) {
-        expect_error(LabelArray(list(v)))
+        expect_error(SpatialDataLabel(list(v)))
         x <- label(sd,1); x@data[[1]][1,1] <- v; expect_error(validObject(x))
         x <- label(sd,2); x@data[[2]][1,1] <- v; expect_error(validObject(x))
     }
-    expect_error(LabelArray(list(a <- array(integer(1), c(1,1,1)))))
+    expect_error(SpatialDataLabel(list(a <- array(integer(1), c(1,1,1)))))
     x <- label(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- label(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })
 
-test_that("validity,PointFrame", {
+test_that("validity,sdPoint", {
     # valid
     x <- point(sd, 1)
     expect_true(validObject(x))
     # invalid
     df <- duckspatial::ddbs_drop_geometry(data(x))
-    expect_error(PointFrame(df, meta(x)))
+    expect_error(SpatialDataPoint(df, meta(x)))
 })
 
-test_that("validity,ShapeFrame", {
+test_that("validity,sdShape", {
     # valid
     x <- shape(sd,1)
     expect_silent(validObject(x))
@@ -47,7 +47,7 @@ test_that("validity,ShapeFrame", {
     # invalid: missing geometry
     x <- shape(sd,1)
     df <- duckspatial::ddbs_drop_geometry(data(x))
-    expect_error(ShapeFrame(df, meta(x)))
+    expect_error(SpatialDataShape(df, meta(x)))
 })
 
 test_that("validity,SCE", {
@@ -76,20 +76,20 @@ test_that("validity,SCE", {
     expect_error(validObject(x))
 })
 
-test_that("validity,Zattrs", {
+test_that("validity,SpatialDataAttrs", {
     za <- meta(label(sd, 1))
     ms <- as.list(za)$multiscales[[1]]
     # multiscales
-    fn <- SpatialData:::.validateZattrs_multiscales
+    fn <- SpatialData:::.validateAttrs_multiscales
     expect_length(fn(as.list(za), c()), 0)
     expect_match(fn(list(), c()), "missing")
     # axes
-    fn <- SpatialData:::.validateZattrs_axes
+    fn <- SpatialData:::.validateAttrs_axes
     expect_length(fn(ms, c()), 0)
     bad_ax <- ms; bad_ax$axes <- NULL
     expect_match(fn(bad_ax, c()), "missing")
     # coordinate transformations
-    fn <- SpatialData:::.validateZattrs_coordTrans
+    fn <- SpatialData:::.validateAttrs_coordTrans
     expect_length(fn(ms, c()), 0)
     bad_ct <- ms; bad_ct$coordinateTransformations <- NULL
     expect_match(fn(bad_ct, c()), "missing")

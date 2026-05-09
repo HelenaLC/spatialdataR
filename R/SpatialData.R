@@ -3,10 +3,10 @@
 #' 
 #' @description ...
 #' 
-#' @param images list of \code{\link{ImageArray}}s
-#' @param labels list of \code{\link{LabelArray}}s
-#' @param points list of \code{\link{PointFrame}}s
-#' @param shapes list of \code{\link{ShapeFrame}}s
+#' @param images list of \code{\link{SpatialDataImage}}s
+#' @param labels list of \code{\link{SpatialDataLabel}}s
+#' @param points list of \code{\link{SpatialDataPoint}}s
+#' @param shapes list of \code{\link{SpatialDataShape}}s
 #' @param tables list of \code{SingleCellExperiment}s
 #' @param x \code{SpatialData}
 #' @param i,j character string, scalar or vector of indices

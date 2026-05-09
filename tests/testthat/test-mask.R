@@ -12,7 +12,7 @@ test_that("mask,unsupported", {
     for (ij in nm) expect_error(mask(x, ij[1], ij[2]))
 })
 
-test_that("mask,ImageArray,LabelArray", {
+test_that("mask,sdImage,sdLabel", {
     i <- "blobs_image"
     j <- "blobs_labels"
     # reproduce example data
@@ -26,7 +26,7 @@ test_that("mask,ImageArray,LabelArray", {
     expect_identical(y, z)
 })
 
-test_that("mask,PointFrame,ShapeFrame", {
+test_that("mask,sdPoint,sdShape", {
     i <- "blobs_points"
     j <- "blobs_circles"
     k <- "blobs_polygons"
@@ -68,7 +68,7 @@ test_that("mask,PointFrame,ShapeFrame", {
 
 # TODO: omit SpatialData.data
 
-test_that("mask,ShapeFrame,ShapeFrame", {
+test_that("mask,sdShape,sdShape", {
     testthat::skip()
     
     i <- "cells"

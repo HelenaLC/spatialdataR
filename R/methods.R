@@ -36,12 +36,12 @@ setReplaceMethod("data", c("SpatialDataElement", "ANY"),
     \(x, value) { x@data <- value; x })
 
 #' @noRd
-setReplaceMethod("meta", c("SpatialDataElement", "Zattrs"), 
+setReplaceMethod("meta", c("SpatialDataElement", "SpatialDataAttrs"), 
     \(x, value) { x@meta <- value; x })
 
 #' @noRd
 setReplaceMethod("meta", c("SpatialDataElement", "list"), 
-    \(x, value) `meta<-`(x, value=Zattrs(value)))
+    \(x, value) `meta<-`(x, value=SpatialDataAttrs(value)))
 # TODO: validity check that .zattrs are valid for 'x'
 
 # sub ----
@@ -258,8 +258,10 @@ for (. in all) eval(f(.), parent.env(environment()))
 # set one ----
 
 typ <- c(
-    image="ImageArray", label="LabelArray", 
-    point="PointFrame", shape="ShapeFrame", 
+    image="SpatialDataImage", 
+    label="SpatialDataLabel", 
+    point="SpatialDataPoint", 
+    shape="SpatialDataShape", 
     table="SingleCellExperiment")
 
 #' @name SpatialData

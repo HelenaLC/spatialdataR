@@ -2,7 +2,7 @@
 #' @title Coord. trans. utilities
 #' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
 #' 
-#' @param x \code{SpatialData}, an element, or \code{Zattrs}.
+#' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
 #' @param i for \code{CTpath}, source node label; else, string or 
 #'   scalar integer giving the name or index of a coordinate space.
 #' @param name character(1); name of coordinate space
@@ -22,7 +22,7 @@
 #' \item \code{CTlist}: list;
 #'   list of transformation specifications per OME-NGFF spec
 #' \item \code{add/rmvCT}: 
-#'   \code{SpatialDataElement} or \code{Zattrs} 
+#'   \code{SpatialDataElement} or \code{SpatialDataAttrs} 
 #'   with transformation(s) added/removed
 #' \item \code{axes}: list; 
 #'   each element is a character string (name), or list 
@@ -51,7 +51,7 @@ NULL
 
 #' @rdname CTutils
 #' @export
-setMethod("axes", "Zattrs", \(x, ...) {
+setMethod("axes", "SpatialDataAttrs", \(x, ...) {
     ms <- .ms(x)
     if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
@@ -62,7 +62,7 @@ setMethod("axes", "Zattrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTlist", "Zattrs", \(x, ...) {
+setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
     ms <- .ms(x)
     ct <- "coordinateTransformations"
     if (is.null(ms)) return(x[[ct]])
@@ -71,7 +71,7 @@ setMethod("CTlist", "Zattrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
+setMethod("CTdata", "SpatialDataAttrs", \(x, i=1, ...) {
     stopifnot(length(i) == 1)
     if (is.character(i)) {
         match.arg(i, CTname(x))
@@ -91,13 +91,13 @@ setMethod("CTdata", "Zattrs", \(x, i=1, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("CTtype", "Zattrs", \(x, ...) {
+setMethod("CTtype", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$type, character(1))
 })
 
 #' @rdname CTutils
 #' @export
-setMethod("CTname", "Zattrs", \(x, ...) {
+setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$output$name, character(1))
 })
 
@@ -130,7 +130,7 @@ setMethod("rmvCT", "SpatialDataElement",
 
 #' @rdname CTutils
 #' @export
-setMethod("rmvCT", "Zattrs", \(x, i) {
+setMethod("rmvCT", "SpatialDataAttrs", \(x, i) {
     nms <- CTname(x)
     if (is.numeric(i)) {
         if (any(i > length(nms)))
@@ -184,7 +184,7 @@ setMethod("addCT", "SpatialDataElement",
 
 #' @rdname CTutils
 #' @export
-setMethod("addCT", "Zattrs", \(x, name, type="identity", data=NULL) {
+setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
     #x <- meta(image(sd, 2)); name <- "lowres"; type="identity"; data=NULL
     stopifnot(
         is.character(name), length(name) == 1,
