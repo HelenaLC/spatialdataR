@@ -1,14 +1,8 @@
+R/_*
+*.Rproj
 .DS_Store
 .Rhistory
 .Rproj.user
 vignettes/*html
 vignettes/*cache
 vignettes/*files
-inst/extdata/visium.zarr
-inst/extdata/mibitof.zarr
-inst/extdata/xenium1.zarr
-inst/extdata/visiumhd.zarr
-*.Rproj
-R/_*
-
-/.quarto/
