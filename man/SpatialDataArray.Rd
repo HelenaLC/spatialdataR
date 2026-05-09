@@ -4,20 +4,34 @@
 \alias{SpatialDataArray}
 \alias{data_type}
 \alias{channels}
+\alias{SpatialDataImage}
+\alias{SpatialDataLabel}
 \alias{data,SpatialDataArray-method}
 \alias{dim,SpatialDataArray-method}
 \alias{length,SpatialDataArray-method}
 \alias{data_type,SpatialDataArray-method}
 \alias{data_type,DelayedArray-method}
-\alias{SpatialDataImage}
 \alias{channels,SpatialDataAttrs-method}
 \alias{channels,SpatialDataImage-method}
 \alias{channels,SpatialDataElement-method}
 \alias{[,SpatialDataImage,ANY,ANY,ANY-method}
-\alias{SpatialDataLabel}
 \alias{[,SpatialDataLabel,ANY,ANY,ANY-method}
 \title{\code{SpatialDataArray}}
 \usage{
+SpatialDataImage(
+  data = list(),
+  meta = SpatialDataAttrs(),
+  metadata = list(),
+  ...
+)
+
+SpatialDataLabel(
+  data = list(),
+  meta = SpatialDataAttrs(),
+  metadata = list(),
+  ...
+)
+
 \S4method{data}{SpatialDataArray}(x, k = 1)
 
 \S4method{dim}{SpatialDataArray}(x)
@@ -28,13 +42,6 @@
 
 \S4method{data_type}{DelayedArray}(x)
 
-SpatialDataImage(
-  data = list(),
-  meta = SpatialDataAttrs(),
-  metadata = list(),
-  ...
-)
-
 \S4method{channels}{SpatialDataAttrs}(x, ...)
 
 \S4method{channels}{SpatialDataImage}(x, ...)
@@ -43,20 +50,9 @@ SpatialDataImage(
 
 \S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
 
-SpatialDataLabel(
-  data = list(),
-  meta = SpatialDataAttrs(),
-  metadata = list(),
-  ...
-)
-
 \S4method{[}{SpatialDataLabel,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
 \arguments{
-\item{x}{\code{SpatialDataArray}}
-
-\item{k}{scalar index specifying which image scale to extract.}
-
 \item{data}{list of \code{ZarrArray}s}
 
 \item{meta}{\code{\link{SpatialDataAttrs}}}
@@ -64,6 +60,10 @@ SpatialDataLabel(
 \item{metadata}{optional list of arbitrary additional content.}
 
 \item{...}{option arguments passed to and from other methods.}
+
+\item{x}{\code{SpatialDataArray}}
+
+\item{k}{scalar index specifying which image scale to extract.}
 
 \item{i, j}{indices specifying elements to extract.}
 
@@ -97,7 +97,7 @@ zs <- system.file(zs, package="SpatialData")
 fn <- \(l, i=1) list.dirs(file.path(zs, l), recursive=FALSE)[i]
 
 # label
-(x <- readLabel(fn("labels", 1)))
+(x <- readLabel(fn("labels")))
 x[1:10, 1:10]
 meta(x)
 
@@ -111,6 +111,7 @@ channels(x)
 dim(data(x, 1))   # highest res.
 dim(data(x, Inf)) # lowest res.
 
+# RGB visual
 rgb <- apply(
   data(x, 1), c(2, 3), 
   \(.) rgb(.[1], .[2], .[3]))
