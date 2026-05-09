@@ -16,6 +16,7 @@
 #' @param rk,ik character string; region and instance key (the latter will be
 #'   ignored if an instance key is already specified within element \code{i}).
 #' @param y \code{SingleCellExperiment} containing annotations for \code{i}.
+#' @param ... option arguments passed to and from other methods.
 #'
 #' @returns
 #' \itemize{
