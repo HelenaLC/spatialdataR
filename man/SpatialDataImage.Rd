@@ -7,7 +7,7 @@
 \alias{channels,SpatialDataImage-method}
 \alias{channels,SpatialDataElement-method}
 \alias{[,SpatialDataImage,ANY,ANY,ANY-method}
-\title{The `SpatialDataImage` class}
+\title{\code{SpatialDataImage}}
 \usage{
 SpatialDataImage(
   data = list(),
@@ -46,7 +46,7 @@ content describing the overall object.}
 \code{SpatialDataImage}
 }
 \description{
-The `SpatialDataImage` class
+\code{SpatialDataImage}
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")

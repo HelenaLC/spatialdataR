@@ -3,7 +3,7 @@
 \name{SpatialDataLabel}
 \alias{SpatialDataLabel}
 \alias{[,SpatialDataLabel,ANY,ANY,ANY-method}
-\title{The \code{SpatialDataLabel} class}
+\title{\code{SpatialDataLabel}}
 \usage{
 SpatialDataLabel(
   data = list(),

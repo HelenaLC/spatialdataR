@@ -1,5 +1,5 @@
 #' @name SpatialDataFrame
-#' @title The `SpatialDataFrame` class
+#' @title \code{SpatialDataFrame}
 #' @aliases SpatialDataPoint SpatialDataShape geom_type
 #'
 #' @description 
@@ -13,6 +13,7 @@
 #' Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
 #' \itemize{
 #' \item \code{data/meta(x)} access underlying data/.zattrs
+#' \item \code{geom_type(x)} get the shape's type (e.g., POLYGON)
 #' \item \code{names(x)} returns the underlying table's column names
 #' \item \code{dim(x)} returns the dimensions of \code{data(x)}
 #' \item \code{`$`,`[[`} directly access columns of \code{data(x)}
@@ -33,7 +34,7 @@
 #' @param ik,fk character string specifying "instance_/feature_key" 
 #'   of the spatialdata_attrs; used to match observations/features. 
 #'
-#' @return an \code{SpatialDataFrame}
+#' @return \code{SpatialDataFrame}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
