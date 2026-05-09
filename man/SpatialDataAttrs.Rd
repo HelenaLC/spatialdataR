@@ -2,6 +2,18 @@
 % Please edit documentation in R/sdAttrs.R
 \name{SpatialDataAttrs}
 \alias{SpatialDataAttrs}
+\alias{region}
+\alias{region<-}
+\alias{regions}
+\alias{regions<-}
+\alias{instances}
+\alias{instances<-}
+\alias{region_key}
+\alias{region_key<-}
+\alias{feature_key}
+\alias{feature_key<-}
+\alias{instance_key}
+\alias{instance_key<-}
 \alias{$,SpatialDataAttrs-method}
 \alias{feature_key,SpatialDataPoint-method}
 \alias{feature_key,SpatialDataAttrs-method}
