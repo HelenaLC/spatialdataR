@@ -14,6 +14,10 @@
 \alias{CTdata,SpatialDataAttrs-method}
 \alias{CTtype,SpatialDataAttrs-method}
 \alias{CTname,SpatialDataAttrs-method}
+\alias{axes,SpatialDataElement-method}
+\alias{CTlist,SpatialDataElement-method}
+\alias{CTtype,SpatialDataElement-method}
+\alias{CTname,SpatialDataElement-method}
 \alias{CTdata,SpatialDataElement-method}
 \alias{CTname,SpatialData-method}
 \alias{rmvCT,SpatialDataElement-method}
@@ -31,6 +35,14 @@
 \S4method{CTtype}{SpatialDataAttrs}(x, ...)
 
 \S4method{CTname}{SpatialDataAttrs}(x, ...)
+
+\S4method{axes}{SpatialDataElement}(x, ...)
+
+\S4method{CTlist}{SpatialDataElement}(x, ...)
+
+\S4method{CTtype}{SpatialDataElement}(x, ...)
+
+\S4method{CTname}{SpatialDataElement}(x, ...)
 
 \S4method{CTdata}{SpatialDataElement}(x, i = 1, ...)
 

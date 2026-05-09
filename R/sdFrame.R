@@ -1,18 +1,19 @@
 #' @name SpatialDataFrame
-#' @title The `SpatialDataFrame` class
-#' @aliases SpatialDataPoint SpatialDataShape
+#' @title \code{SpatialDataFrame}
+#' @aliases SpatialDataPoint SpatialDataShape geom_type
 #'
-#' @description
-#' The \code{SpatialDataPoint} and \code{SpatialDataShape} classes store 
-#' \code{SpatialData} elements from its \code{"points"} and 
-#' \code{"shapes"} layers, respectively. These are represented 
-#' as \code{duckspatial_df} (\code{data} slot) associated with 
-#' .zattrs stored as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
+#' @description 
+#' The \code{SpatialDataPoint} and \code{-Shape} classes represent 
+#' elements from a \code{SpatialData}'s \code{points/} and \code{shapes/} 
+#' layers, respectively. In both cases, these  are represented as a 
+#' \code{duckspatial_df} (\code{data} slot), and associated with .zattrs 
+#' represented as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
 #' a list of \code{metadata} stores other arbitrary info.
 #'
 #' Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
 #' \itemize{
 #' \item \code{data/meta(x)} access underlying data/.zattrs
+#' \item \code{geom_type(x)} get the shape's type (e.g., POLYGON)
 #' \item \code{names(x)} returns the underlying table's column names
 #' \item \code{dim(x)} returns the dimensions of \code{data(x)}
 #' \item \code{`$`,`[[`} directly access columns of \code{data(x)}
@@ -20,7 +21,7 @@
 #' \item \code{as.data.frame} to coerce \code{x} to a \code{data.frame}
 #' }
 #'
-#' @param x an \code{SpatialDataFrame}
+#' @param x,.data \code{SpatialDataFrame}
 #' @param data \code{duckspatial_df} for on-disk representation,
 #'   or a \code{data.frame} to be converted.
 #' @param meta \code{\link{SpatialDataAttrs}}
@@ -28,10 +29,12 @@
 #'   content describing the overall object.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param i,j indices for subsetting (see \code{?base::Extract}).
-#' @param drop ignored.
+#' @param drop,pattern ignored.
 #' @param ... optional arguments passed to and from other methods.
+#' @param ik,fk character string specifying "instance_/feature_key" 
+#'   of the spatialdata_attrs; used to match observations/features. 
 #'
-#' @return an \code{SpatialDataFrame}
+#' @return \code{SpatialDataFrame}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
@@ -68,119 +71,6 @@
 #' df <- as.data.frame(z)
 #' plot(df, col=seq(nrow(df)))
 NULL
-
-# dplyr ----
-
-#' @export
-dplyr::pull
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr pull
-pull.SpatialDataFrame <- \(.data, ...) pull(data(.data), ...)
-
-#' @export
-dplyr::select
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr select
-select.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=select(data(.data), ...))
-
-#' @export
-dplyr::mutate
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr mutate
-mutate.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=mutate(data(.data), ...))
-
-#' @export
-dplyr::filter
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr filter
-filter.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=filter(data(.data), ...))
-
-# utils ----
-
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr tally pull
-setMethod("length", "SpatialDataFrame", \(x) { 
-    n <- NULL # R CMD check
-    suppressWarnings(dplyr::pull(dplyr::tally(data(x)), n))
-})
-
-#' @export
-#' @rdname SpatialDataFrame
-setMethod("dim", "SpatialDataFrame", \(x) c(length(x), ncol(data(x))))
-
-#' @export
-#' @rdname SpatialDataFrame
-setMethod("names", "SpatialDataFrame", \(x) colnames(data(x)))
-
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom BiocGenerics as.data.frame
-setMethod("as.data.frame", "SpatialDataFrame", \(x) as.data.frame(data(x)))
-setAs(from="SpatialDataFrame", to="data.frame", \(from) as.data.frame(from))
-
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr slice
-#' @importFrom sf st_as_sf st_geometry_type
-setMethod("geom_type", "SpatialDataShape", \(x) {
-    y <- st_as_sf(head(data(x), 1))
-    z <- st_geometry_type(y)
-    return(as.character(z))
-})
-
-# get ----
-
-#' @exportMethod [[
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr pull
-setMethod("[[", "SpatialDataFrame", \(x, i, ...) pull(data(x), i))
-
-#' @export
-#' @importFrom utils .DollarNames
-.DollarNames.SpatialDataPoint <- \(x, pattern="") grepv(pattern, names(x))
-
-#' @exportMethod $
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr select all_of collect
-setMethod("$", "SpatialDataPoint", \(x, name) do.call(`[[`, list(x, name)))
-
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom utils .DollarNames
-.DollarNames.SpatialDataShape <- \(x, pattern="") grepv(pattern, names(x))
-
-#' @exportMethod $
-#' @rdname SpatialDataFrame
-setMethod("$", "SpatialDataShape", \(x, name) do.call(`[[`, list(x, name)))
-
-# sub ----
-
-#' @export
-#' @rdname SpatialDataFrame
-#' @importFrom dplyr filter select all_of row_number 
-setMethod("[", c("SpatialDataFrame", "ANY", "ANY"), \(x, i, j, ...) {
-    if (missing(i)) i <- TRUE
-    if (missing(j)) j <- TRUE
-    if (missing(i) || isTRUE(i)) {
-        if (missing(j) || isTRUE(j)) return(x)
-        data(x) <- select(data(x), all_of(j))
-    } else {
-        if (is.numeric(i) && any(i < 0)) 
-            stop("negative row-subsetting not supported")
-        if (is.logical(i)) i <- seq_len(nrow(x))[i]
-        if (is.character(j)) j <- match(j, names(x))
-        if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
-        data(x) <- data(x) |> 
-            filter(row_number() %in% i) |>
-            select(all_of(j))
-    }
-    return(x)
-})
 
 # new ----
 
@@ -253,9 +143,122 @@ SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     data <- .df_to_sf(data, "POLYGON")
     # always ensure internal data is 'duckspatial_df'
     if (isTRUE(nrow(data) > 0L) &&
-        !is(data, "duckspatial_df"))
+            !is(data, "duckspatial_df"))
         data <- as_duckspatial_df(data, crs=NA)
     x <- .SpatialDataShape(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
+
+# utils ----
+
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr tally pull
+setMethod("length", "SpatialDataFrame", \(x) { 
+    n <- NULL # R CMD check
+    suppressWarnings(dplyr::pull(dplyr::tally(data(x)), n))
+})
+
+#' @export
+#' @rdname SpatialDataFrame
+setMethod("dim", "SpatialDataFrame", \(x) c(length(x), ncol(data(x))))
+
+#' @export
+#' @rdname SpatialDataFrame
+setMethod("names", "SpatialDataFrame", \(x) colnames(data(x)))
+
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom BiocGenerics as.data.frame
+setMethod("as.data.frame", "SpatialDataFrame", \(x) as.data.frame(data(x)))
+setAs(from="SpatialDataFrame", to="data.frame", \(from) as.data.frame(from))
+
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr slice
+#' @importFrom sf st_as_sf st_geometry_type
+setMethod("geom_type", "SpatialDataShape", \(x) {
+    y <- st_as_sf(head(data(x), 1))
+    z <- st_geometry_type(y)
+    return(as.character(z))
+})
+
+# dplyr ----
+
+#' @export
+dplyr::pull
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr pull
+pull.SpatialDataFrame <- \(.data, ...) pull(data(.data), ...)
+
+#' @export
+dplyr::select
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr select
+select.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=select(data(.data), ...))
+
+#' @export
+dplyr::mutate
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr mutate
+mutate.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=mutate(data(.data), ...))
+
+#' @export
+dplyr::filter
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr filter
+filter.SpatialDataFrame <- \(.data, ...) `data<-`(.data, value=filter(data(.data), ...))
+
+# get ----
+
+#' @exportMethod [[
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr pull
+setMethod("[[", "SpatialDataFrame", \(x, i, ...) pull(data(x), i))
+
+#' @export
+#' @importFrom utils .DollarNames
+.DollarNames.SpatialDataPoint <- \(x, pattern="") grepv(pattern, names(x))
+
+#' @exportMethod $
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr select all_of collect
+setMethod("$", "SpatialDataPoint", \(x, name) do.call(`[[`, list(x, name)))
+
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom utils .DollarNames
+.DollarNames.SpatialDataShape <- \(x, pattern="") grepv(pattern, names(x))
+
+#' @exportMethod $
+#' @rdname SpatialDataFrame
+setMethod("$", "SpatialDataShape", \(x, name) do.call(`[[`, list(x, name)))
+
+# sub ----
+
+#' @export
+#' @rdname SpatialDataFrame
+#' @importFrom dplyr filter select all_of row_number 
+setMethod("[", c("SpatialDataFrame", "ANY", "ANY"), \(x, i, j, ...) {
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE
+    if (missing(i) || isTRUE(i)) {
+        if (missing(j) || isTRUE(j)) return(x)
+        data(x) <- select(data(x), all_of(j))
+    } else {
+        if (is.numeric(i) && any(i < 0)) 
+            stop("negative row-subsetting not supported")
+        if (is.logical(i)) i <- seq_len(nrow(x))[i]
+        if (is.character(j)) j <- match(j, names(x))
+        if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
+        data(x) <- data(x) |> 
+            filter(row_number() %in% i) |>
+            select(all_of(j))
+    }
+    return(x)
+})

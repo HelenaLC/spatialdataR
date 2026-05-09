@@ -2,6 +2,7 @@
 % Please edit documentation in R/combine.R
 \name{combine}
 \alias{combine}
+\alias{combine,SpatialData,SpatialData-method}
 \title{Combine two \code{SpatialData} objects}
 \usage{
 \S4method{combine}{SpatialData,SpatialData}(x, y, ...)
@@ -27,5 +28,4 @@ y <- combine(x, x)
 imageNames(y)
 region(table(y, 1))
 region(table(y, 2))
-
 }
