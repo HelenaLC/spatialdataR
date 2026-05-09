@@ -3,11 +3,19 @@
 \name{SpatialDataArray}
 \alias{SpatialDataArray}
 \alias{data_type}
+\alias{channels}
 \alias{data,SpatialDataArray-method}
 \alias{dim,SpatialDataArray-method}
 \alias{length,SpatialDataArray-method}
 \alias{data_type,SpatialDataArray-method}
 \alias{data_type,DelayedArray-method}
+\alias{SpatialDataImage}
+\alias{channels,SpatialDataAttrs-method}
+\alias{channels,SpatialDataImage-method}
+\alias{channels,SpatialDataElement-method}
+\alias{[,SpatialDataImage,ANY,ANY,ANY-method}
+\alias{SpatialDataLabel}
+\alias{[,SpatialDataLabel,ANY,ANY,ANY-method}
 \title{\code{SpatialDataArray}}
 \usage{
 \S4method{data}{SpatialDataArray}(x, k = 1)
@@ -19,29 +27,87 @@
 \S4method{data_type}{SpatialDataArray}(x)
 
 \S4method{data_type}{DelayedArray}(x)
+
+SpatialDataImage(
+  data = list(),
+  meta = SpatialDataAttrs(),
+  metadata = list(),
+  ...
+)
+
+\S4method{channels}{SpatialDataAttrs}(x, ...)
+
+\S4method{channels}{SpatialDataImage}(x, ...)
+
+\S4method{channels}{SpatialDataElement}(x, ...)
+
+\S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
+
+SpatialDataLabel(
+  data = list(),
+  meta = SpatialDataAttrs(),
+  metadata = list(),
+  ...
+)
+
+\S4method{[}{SpatialDataLabel,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
 \arguments{
-\item{x}{\code{SpatialDataImage} or \code{SpatialDataLabel}.}
+\item{x}{\code{SpatialDataArray}}
 
-\item{k}{scalar index specifying which scale to extract.}
+\item{k}{scalar index specifying which image scale to extract.}
+
+\item{data}{list of \code{ZarrArray}s}
+
+\item{meta}{\code{\link{SpatialDataAttrs}}}
+
+\item{metadata}{optional list of arbitrary additional content.}
+
+\item{...}{option arguments passed to and from other methods.}
+
+\item{i, j}{indices specifying elements to extract.}
+
+\item{drop}{ignored.}
 }
 \value{
 \code{SpatialDataArray}
 }
 \description{
-\code{SpatialDataArray}
+The \code{SpatialDataImage} and \code{-Label} classes represent 
+elements from a \code{SpatialData}'s \code{images/} and \code{labels/} 
+layers, respectively. In both cases, these  are represented as a 
+\code{ZarrArray} (\code{data} slot), and associated with .zattrs 
+represented as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
+a list of \code{metadata} stores other arbitrary info.
+
+Currently defined methods (here, \code{x} is a \code{SpatialDataArray}):
+\itemize{
+\item \code{data/meta(x)} access underlying data/.zattrs
+\item \code{data_type(x)} gets the underlying data type (e.g., float64)
+\item \code{channels(x)} gets channel names (applies to images only)
+\item \code{dim(x)} returns the dimensions of \code{data(x)}
+\item \code{length(x)} returns the length of \code{data(x)}
+}
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 
-pa <- list.dirs(
-  file.path(zs, "images"), 
-  recursive=FALSE, full.names=TRUE)
+# get path to 'i'th element in layer 'l'
+fn <- \(l, i=1) list.dirs(file.path(zs, l), recursive=FALSE)[i]
 
-(x <- readImage(pa[2]))  
+# label
+(x <- readLabel(fn("labels", 1)))
+x[1:10, 1:10]
+meta(x)
 
-data_type(x)
+# image
+readImage(fn("images"))
+
+# multi-scale
+(x <- readImage(fn("images", 2)))
+
+channels(x)
 dim(data(x, 1))   # highest res.
 dim(data(x, Inf)) # lowest res.
 
@@ -51,5 +117,4 @@ rgb <- apply(
 plot(
   row(rgb), col(rgb), col=rgb, 
   pch=15, asp=1, ylim=c(ncol(rgb), 0))
-
 }
