@@ -38,7 +38,7 @@
 #' fn <- \(l, i=1) list.dirs(file.path(zs, l), recursive=FALSE)[i]
 #' 
 #' # label
-#' (x <- readLabel(fn("labels", 1)))
+#' (x <- readLabel(fn("labels")))
 #' x[1:10, 1:10]
 #' meta(x)
 #' 
@@ -52,6 +52,7 @@
 #' dim(data(x, 1))   # highest res.
 #' dim(data(x, Inf)) # lowest res.
 #' 
+#' # RGB visual
 #' rgb <- apply(
 #'   data(x, 1), c(2, 3), 
 #'   \(.) rgb(.[1], .[2], .[3]))
@@ -60,7 +61,29 @@
 #'   pch=15, asp=1, ylim=c(ncol(rgb), 0))
 NULL
 
-# array ----
+# new ----
+
+#' @export
+#' @rdname SpatialDataArray
+#' @importFrom methods new
+#' @importFrom S4Vectors metadata<-
+SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataImage(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
+
+#' @export
+#' @rdname SpatialDataArray
+#' @importFrom methods new
+#' @importFrom S4Vectors metadata<-
+SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataLabel(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
+
+# utils ----
 
 #' @rdname SpatialDataArray
 #' @export
@@ -97,19 +120,12 @@ setMethod("data_type", "SpatialDataArray", \(x) {
 #' @importFrom DelayedArray DelayedArray
 #' @importFrom Rarr zarr_overview
 #' @importFrom ZarrArray path
-setMethod("data_type", "DelayedArray", \(x) zarr_overview(path(x), as_data_frame=TRUE)$data_type)
+setMethod("data_type", "DelayedArray", \(x) {
+    df <- zarr_overview(path(x), as_data_frame=TRUE)
+    return(df$data_type)
+})
 
-# image ----
-
-#' @export
-#' @rdname SpatialDataArray
-#' @importFrom methods new
-#' @importFrom S4Vectors metadata<-
-SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataImage(data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
-}
+# chs ----
 
 # internal use only!
 #' @noRd 
@@ -146,6 +162,8 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
     return(ps)
 }
 
+# sub ----
+
 .check_jk <- \(x, .) {
     if (isTRUE(x)) return()
     tryCatch(
@@ -180,18 +198,6 @@ setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
     })
     x
 })
-
-# label ----
-
-#' @export
-#' @rdname SpatialDataArray
-#' @importFrom methods new
-#' @importFrom S4Vectors metadata<-
-SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataLabel(data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
-}
 
 #' @exportMethod [
 #' @rdname SpatialDataArray
