@@ -16,7 +16,6 @@
 #' 
 #' (x <- readImage(pa[2]))  
 #' 
-#' channels(x)
 #' data_type(x)
 #' dim(data(x, 1))   # highest res.
 #' dim(data(x, Inf)) # lowest res.
