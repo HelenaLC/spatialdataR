@@ -3,10 +3,10 @@ x <- system.file(x, package="SpatialData")
 
 test_that("readElement()", {
     typ <- c(
-        images="ImageArray", 
-        labels="LabelArray", 
-        points="PointFrame",
-        shapes="ShapeFrame", 
+        images="SpatialDataImage", 
+        labels="SpatialDataLabel", 
+        points="SpatialDataPoint",
+        shapes="SpatialDataShape", 
         tables="SingleCellExperiment")
     for (l in names(typ)) {
         f <- paste0(toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))

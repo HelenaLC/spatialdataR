@@ -6,7 +6,7 @@ x <- readSpatialData(x, tables=FALSE)
 
 # centroids ----
 
-test_that("centroids,LabelArray", {
+test_that("centroids,sdLabel", {
     y <- label(x)
     z <- centroids(y, "data.frame")
     expect_is(z, "data.frame")
@@ -18,7 +18,7 @@ test_that("centroids,LabelArray", {
     z$i <- as.integer(as.character(z$i))
     expect_identical(.z, as.matrix(z))
 })
-test_that("centroids,PointFrame", {
+test_that("centroids,sdPoint", {
     i <- feature_key(y <- point(x))
     z <- centroids(y, "data.frame")
     expect_is(z, "data.frame")
@@ -32,7 +32,7 @@ test_that("centroids,PointFrame", {
     for (. in names(.z)) expect_identical(
         .z[[.]][xy], z[z[[i]] == ., xy])
 })
-test_that("centroids,ShapeFrame", {
+test_that("centroids,sdShape", {
     # circle
     y <- shape(x)
     z <- centroids(y, "data.frame")
@@ -63,7 +63,7 @@ test_that("centroids,ShapeFrame", {
 
 # extent ----
 
-test_that("extent,ImageArray", {
+test_that("extent,sdImage", {
     z <- extent(y <- image(x)[,-1,-c(1,2)])
     expect_is(z, "list")
     expect_is(unlist(z), "numeric")
@@ -71,7 +71,7 @@ test_that("extent,ImageArray", {
     expect_identical(z$x, c(0, dim(y)[3]))
     expect_identical(z$y, c(0, dim(y)[2]))
 })
-test_that("extent,LabelArray", {
+test_that("extent,sdLabel", {
     z <- extent(y <- label(x)[,-1,-c(1,2)])
     expect_is(z, "list")
     expect_is(unlist(z), "numeric")
@@ -79,7 +79,7 @@ test_that("extent,LabelArray", {
     expect_identical(z$y, c(0, dim(y)[1]))
     expect_identical(z$x, c(0, dim(y)[2]))
 })
-test_that("extent,PointFrame", {
+test_that("extent,sdPoint", {
     z <- extent(y <- point(x))
     expect_is(z, "list")
     expect_identical(names(z), xy)
@@ -88,7 +88,7 @@ test_that("extent,PointFrame", {
     expect_identical(z$x, range(xy[, 1]))
     expect_identical(z$y, range(xy[, 2]))
 })
-test_that("extent,ShapeFrame", {
+test_that("extent,sdShape", {
     z <- extent(y <- shape(x))
     expect_is(z, "list")
     expect_identical(names(z), xy)
