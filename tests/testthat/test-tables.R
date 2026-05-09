@@ -85,11 +85,9 @@ test_that("setTable(),labels", {
     expect_error(setTable(x, character(2), SingleCellExperiment()))
     # 'name' that already exists fails
     expect_error(setTable(x, i, SingleCellExperiment(), name=tableNames(x)))
-    # valid w/o name
+    # valid w/o specifications
     e <- element(x, i)
     sce <- SingleCellExperiment(matrix(0, 0, length(instances(e))))
-    # set instances manually
-    int_colData(sce)$instance_id <- instances(e)
     y <- setTable(x, i, sce)
     expect_length(tables(y), 2)
     expect_true(hasTable(y, i))

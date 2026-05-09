@@ -232,6 +232,7 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
+#' @importFrom dplyr anti_join
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
@@ -239,12 +240,31 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
         if (j %in% CTname(z))
             crop(z, y, j=j)
     })
-    # filter tables by remaining element(s)
-    ok <- unlist(colnames(z))
+    rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
-        t <- t[, regions(t) %in% ok]
-        region(t) <- intersect(region(t), ok)
-        return(t)
+        # filter for remaining element(s)
+        t <- t[, regions(t) %in% rs]
+        region(t) <- intersect(region(t), rs)
+        # table's regions-instances
+        df <- data.frame(
+            r=regions(t), 
+            i=instances(t),
+            keep=seq_len(ncol(t)))
+        # for each annotated element
+        is <- lapply(region(t), \(r) {
+            # subset look-up
+            df <- df[df$r == r, ]
+            e <- element(z, r)
+            if (is(e, "SpatialDataShape")) {
+                # element's regions-instances
+                i <- e[[instance_key(t)]]
+                fd <- data.frame(r, i)
+                # return table indices in element
+                right_join(df, fd, names(fd))$keep
+            } else df$keep
+        })
+        # subset table instances
+        t <- t[, unlist(is)]
     })
     tables(z) <- ts
     return(z)
