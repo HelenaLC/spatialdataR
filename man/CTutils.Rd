@@ -9,28 +9,28 @@
 \alias{CTdata}
 \alias{addCT}
 \alias{rmvCT}
-\alias{axes,Zattrs-method}
-\alias{CTlist,Zattrs-method}
-\alias{CTdata,Zattrs-method}
-\alias{CTtype,Zattrs-method}
-\alias{CTname,Zattrs-method}
+\alias{axes,SpatialDataAttrs-method}
+\alias{CTlist,SpatialDataAttrs-method}
+\alias{CTdata,SpatialDataAttrs-method}
+\alias{CTtype,SpatialDataAttrs-method}
+\alias{CTname,SpatialDataAttrs-method}
 \alias{CTdata,SpatialDataElement-method}
 \alias{CTname,SpatialData-method}
 \alias{rmvCT,SpatialDataElement-method}
-\alias{rmvCT,Zattrs-method}
+\alias{rmvCT,SpatialDataAttrs-method}
 \alias{addCT,SpatialDataElement-method}
-\alias{addCT,Zattrs-method}
+\alias{addCT,SpatialDataAttrs-method}
 \title{Coord. trans. utilities}
 \usage{
-\S4method{axes}{Zattrs}(x, ...)
+\S4method{axes}{SpatialDataAttrs}(x, ...)
 
-\S4method{CTlist}{Zattrs}(x, ...)
+\S4method{CTlist}{SpatialDataAttrs}(x, ...)
 
-\S4method{CTdata}{Zattrs}(x, i = 1, ...)
+\S4method{CTdata}{SpatialDataAttrs}(x, i = 1, ...)
 
-\S4method{CTtype}{Zattrs}(x, ...)
+\S4method{CTtype}{SpatialDataAttrs}(x, ...)
 
-\S4method{CTname}{Zattrs}(x, ...)
+\S4method{CTname}{SpatialDataAttrs}(x, ...)
 
 \S4method{CTdata}{SpatialDataElement}(x, i = 1, ...)
 
@@ -38,14 +38,14 @@
 
 \S4method{rmvCT}{SpatialDataElement}(x, i)
 
-\S4method{rmvCT}{Zattrs}(x, i)
+\S4method{rmvCT}{SpatialDataAttrs}(x, i)
 
 \S4method{addCT}{SpatialDataElement}(x, name, type = "identity", data = NULL)
 
-\S4method{addCT}{Zattrs}(x, name, type = "identity", data = NULL)
+\S4method{addCT}{SpatialDataAttrs}(x, name, type = "identity", data = NULL)
 }
 \arguments{
-\item{x}{\code{SpatialData}, an element, or \code{Zattrs}.}
+\item{x}{\code{SpatialData}, an element, or \code{SpatialDataAttrs}.}
 
 \item{...}{option arguments passed to and from other methods.}
 
@@ -70,7 +70,7 @@ element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)}
 \item \code{CTlist}: list;
   list of transformation specifications per OME-NGFF spec
 \item \code{add/rmvCT}: 
-  \code{SpatialDataElement} or \code{Zattrs} 
+  \code{SpatialDataElement} or \code{SpatialDataAttrs} 
   with transformation(s) added/removed
 \item \code{axes}: list; 
   each element is a character string (name), or list 

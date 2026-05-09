@@ -97,7 +97,7 @@ setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 #' @importFrom Matrix sparseVector
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
+setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, ...) {
     if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
     stopifnot(dim(i)[-1] == dim(j))
     .j <- as(data(j), "sparseVector")
@@ -119,7 +119,7 @@ setMethod(".mask", c("ImageArray", "LabelArray"), \(i, j, how=NULL, ...) {
 #' @importFrom SparseArray colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom dplyr mutate left_join coalesce join_by select count collect row_number
-setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
+setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, ...) {
     if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
     id_x <- id_y <- n <- NULL # R CMD check
     ij <- .mask_map(i, j)
@@ -151,7 +151,7 @@ setMethod(".mask", c("PointFrame", "ShapeFrame"), \(i, j, how=NULL, ...) {
 #' @importFrom SummarizedExperiment assay
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("ShapeFrame", "ShapeFrame"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
+setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))

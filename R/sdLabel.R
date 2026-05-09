@@ -1,28 +1,28 @@
-#' @name LabelArray
-#' @title The \code{LabelArray} class
+#' @name SpatialDataLabel
+#' @title The \code{SpatialDataLabel} class
 #'
 #' @description 
-#' The \code{LabelArray} class stores \code{SpatialData} elements from its 
+#' The \code{SpatialDataLabel} class stores \code{SpatialData} elements from its 
 #' \code{"labels"} layers. These are represented as a \code{ZarrMatrix} 
-#' (\code{data} slot) associated with .zattrs stored as \code{\link{Zattrs}} 
+#' (\code{data} slot) associated with \code{\link{SpatialDataAttrs}} 
 #' (\code{meta} slot); a list of \code{metadata} stores other arbitrary info.
 #'
-#' Currently defined methods (here, \code{x} is a \code{LabelArray}):
+#' Currently defined methods (here, \code{x} is a \code{SpatialDataLabel}):
 #' \itemize{
-#' \item \code{data/meta(x)} to access underlying \code{ZarrMatrix/Zattrs}
+#' \item \code{data/meta(x)} to access underlying \code{ZarrMatrix/SpatialDataAttrs}
 #' \item \code{dim(x)} returns the dimensions of \code{data(x)}
 #' }
 #'
-#' @param x \code{LabelArray}
+#' @param x \code{SpatialDataLabel}
 #' @param data list of \code{\link[ZarrArray]{ZarrArray}}s
-#' @param meta \code{\link{Zattrs}}
+#' @param meta \code{\link{SpatialDataAttrs}}
 #' @param metadata optional list of arbitrary 
 #'   content describing the overall object.
 #' @param i,j indices specifying elements to extract.
 #' @param drop ignored.
 #' @param ... option arguments passed to and from other methods.
 #' 
-#' @return \code{LabelArray}
+#' @return \code{SpatialDataLabel}
 #'
 #' @examples
 #' x <- file.path("extdata", "blobs.zarr")
@@ -36,16 +36,16 @@
 #' @importFrom S4Vectors metadata<-
 #' @importFrom methods new
 #' @export
-LabelArray <- function(data=list(), meta=Zattrs(), metadata=list(), ...) {
-    x <- .LabelArray(data=data, meta=meta, ...)
+SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataLabel(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
 
-#' @rdname LabelArray
+#' @rdname SpatialDataLabel
 #' @importFrom utils head tail
 #' @exportMethod [
-setMethod("[", "LabelArray", \(x, i, j, ..., drop=FALSE) {
+setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
     n <- length(data(x, NULL))

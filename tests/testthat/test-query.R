@@ -61,8 +61,7 @@ test_that("query() correctly filters SpatialData elements based on table annotat
     # 3. Query propagation to shapes
     s_name <- shapeNames(sd)[1] # blobs_circles
     s_element <- shape(sd, s_name)
-    # Add instance_id column to shapes to enable filtering by it
-    # We modify the data frame directly in the ShapeFrame object
+    # add 'instance_id' column to shape to enable filtering by it
     s_element@data$instance_id <- seq_len(nrow(s_element))
     shape(sd, s_name) <- s_element
     

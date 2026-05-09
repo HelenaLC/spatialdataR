@@ -1,5 +1,5 @@
-.Zattrs <- setClass(
-    Class="Zattrs",
+.SpatialDataAttrs <- setClass(
+    Class="SpatialDataAttrs",
     contains="list")
 
 #' @importFrom methods setClassUnion
@@ -8,15 +8,15 @@ setClassUnion(
     "array_OR_df",
     c("Array", "array", "data.frame"))
 
-.ImageArray <- setClass(
-    Class="ImageArray",
+.SpatialDataImage <- setClass(
+    Class="SpatialDataImage",
     contains=c("Annotated"),
-    slots=list(data="list", meta="Zattrs"))
+    slots=list(data="list", meta="SpatialDataAttrs"))
 
-.LabelArray <- setClass(
-    Class="LabelArray",
+.SpatialDataLabel <- setClass(
+    Class="SpatialDataLabel",
     contains=c("Annotated"),
-    slots=list(data="list", meta="Zattrs"))
+    slots=list(data="list", meta="SpatialDataAttrs"))
 
 # these are 'R6ClassGenerator's;
 # this somehow does the trick...
@@ -34,23 +34,23 @@ setClassUnion(
     "arrow_OR_df",
     c("tbl_duckdb_connection", "duckspatial_df", "FileSystemDataset", "Table", "arrow_dplyr_query", "data.frame"))
 
-.PointFrame <- setClass(
-    Class="PointFrame",
+.SpatialDataPoint <- setClass(
+    Class="SpatialDataPoint",
     contains=c("Annotated"),
-    slots=list(data="arrow_OR_df", meta="Zattrs"))
+    slots=list(data="arrow_OR_df", meta="SpatialDataAttrs"))
 
 #' @importClassesFrom S4Vectors DFrame
-.ShapeFrame <- setClass(
-    Class="ShapeFrame",
+.SpatialDataShape <- setClass(
+    Class="SpatialDataShape",
     contains=c("Annotated"),
-    slots=list(data="arrow_OR_df", meta="Zattrs"))
+    slots=list(data="arrow_OR_df", meta="SpatialDataAttrs"))
 
-setClassUnion("sdArray", c("ImageArray", "LabelArray"))
-setClassUnion("sdFrame", c("PointFrame", "ShapeFrame"))
+setClassUnion("SpatialDataArray", c("SpatialDataImage", "SpatialDataLabel"))
+setClassUnion("SpatialDataFrame", c("SpatialDataPoint", "SpatialDataShape"))
 
-setClassUnion(
-    "SpatialDataElement",
-    c("ImageArray", "LabelArray", "PointFrame", "ShapeFrame"))
+setClassUnion("SpatialDataElement", c(
+    "SpatialDataImage", "SpatialDataLabel", 
+    "SpatialDataPoint", "SpatialDataShape"))
 
 #' @rdname SpatialData
 #' @export
@@ -58,10 +58,10 @@ setClassUnion(
     Class="SpatialData",
     contains=c("list", "Annotated"),
     representation(
-        images="list",  # 'ImageArray's
-        labels="list",  # 'LabelArray's
-        points="list",  # 'PointFrame's
-        shapes="list",  # 'ShapeFrame's
+        images="list",  # 'SpatialDataImage's
+        labels="list",  # 'SpatialDataLabel's
+        points="list",  # 'SpatialDataPoint's
+        shapes="list",  # 'SpatialDataShape's
         tables="list")) # 'SingleCellExperiment's
 
 . <- c("images", "labels", "points", "shapes", "tables")

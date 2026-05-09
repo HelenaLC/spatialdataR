@@ -60,13 +60,13 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{[[}{SpatialData,character,ANY}(x, i) <- value
 }
 \arguments{
-\item{images}{list of \code{\link{ImageArray}}s}
+\item{images}{list of \code{\link{SpatialDataImage}}s}
 
-\item{labels}{list of \code{\link{LabelArray}}s}
+\item{labels}{list of \code{\link{SpatialDataLabel}}s}
 
-\item{points}{list of \code{\link{PointFrame}}s}
+\item{points}{list of \code{\link{SpatialDataPoint}}s}
 
-\item{shapes}{list of \code{\link{ShapeFrame}}s}
+\item{shapes}{list of \code{\link{SpatialDataShape}}s}
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
