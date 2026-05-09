@@ -56,41 +56,19 @@ setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
 setMethod("channels", "ANY", \(x, ...) stop("only 'images' have channels"))
 
 #' @importFrom S4Vectors isSequence
-.get_multiscales_dataset_paths <- function(za) {
-    # validate 'multiscales'
-    ms <- .check_ms(za)
-    # get & validate 'path's
-    ds <- ms[[1]]$datasets
-    ps <- vapply(ds, \(.) .$path, character(1))
+.get_multiscales_paths <- function(x) {
+    ps <- list.files(x)
     ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
+    ps <- ps[!is.na(ps)]
     if (length(ps)) {
         qs <- seq(min(ps), max(ps))
         if (!isTRUE(all.equal(ps, qs)))
             stop("SpatialDataImage paths are ill-defined, should",
                 " be an integer sequence, e.g., 0,1,...,n")
+    } else {
+      stop("SpatialDataImage path is empty")
     }
     return(ps)
-}
-
-.check_ms <- \(za) {
-    # validate 'multiscales'
-    ms <- multiscales(za)
-    if (!is.null(ms)) {
-        # validate 'datasets' 
-        ds <- ms[[1]]$datasets
-        if (!is.null(ds)) {
-            # validate 'paths'
-            ok <- vapply(ds, \(.) !is.null(.$path), logical(1))
-            if (!all(ok))
-                stop("'SpatialDataImage' paths are ill-defined,",
-                    " no 'path' attribute under 'multiscale-datasets'")
-        } else stop(
-            "'SpatialDataImage' paths are ill-defined,",
-            " no 'datasets' attribute under 'multiscale'")
-    } else stop( 
-        "'SpatialDataImage' paths are ill-defined,",
-        " no 'multiscales' attribute under '.zattrs'")
-    return(ms)
 }
 
 .check_jk <- \(x, .) {
