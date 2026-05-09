@@ -2,7 +2,7 @@ changes in version 0.99.35
 
 - class renaming
 - bug fix: 'centroids,shape' was previously 
-  returning vertex coordinates of for polygons
+  returning vertex coordinates for polygons
 
 changes in version 0.99.34
 
