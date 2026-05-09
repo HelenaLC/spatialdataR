@@ -71,7 +71,7 @@ options(reticulate.conda_binary=bin)
 use_condaenv("segtraq")
 ```
 
-### quality control
+### segmentation
 
 ```{python, eval=FALSE}
 import warnings
@@ -204,9 +204,9 @@ wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5)
 We can also zoom in further to inspect how well cell segmentation boundaries 
 align with the immunofluorescence signals used to infer them:
 
-```{r}
+```{r eval=FALSE}
 # sq <- crop(sd, list(xmin=2500, xmax=3000, ymin=2000, ymax=2500))
-# plotSpatialData() + 
+# plotSpatialData() +
 #     plotImage(sq, 2, ch=chs, c=pal[chs]) +
 #     plotShape(sq, fill=NA, col="white", linewidth=1)
 ```
@@ -228,19 +228,38 @@ to `.zarr`, which were read into R using `r BiocStyle::Biocpkg("anndataR")`.
 We can therefore perform standard processing tasks using tools available 
 in R/Bioconductor, e.g., `r BiocStyle::Biocpkg("scrapper")`, including:
 
+- cell-level quality control
 - log-library size normalization
 - highly variable gene (HVG) selection
 - principal component analysis (PCA)
 - shared-nearest neighbor (SNN) graph construction
 - community detection using the Leiden algorithm
 
-```{r pro}
+```{r fil}
+se <- tables(sd)[[1]]
 assayNames(se) <- "counts"
+se <- quickRnaQc.se(se, list())
+cpa <- log(se$sum / se$cell_area)
+ex <- cpa < median(cpa)-2*mad(cpa)
+se$ex <- ex | !se$keep
+```
+
+```{r}
+#| code-fold: true
+sp <- sd
+table(sp) <- se
+plotSpatialData() + 
+    plotShape(sp, col=NA, fill="ex") + 
+    scale_fill_manual("exclude", values=c("grey", "red"))
+```
+
+```{r pro}
+se <- se[, !ex]
 se <- normalizeRnaCounts.se(se)
-se <- se[, se$sizeFactor > 0]
 se <- chooseRnaHvgs.se(se)
 se <- runPca.se(se, features=rowData(se)$hvg)
 se <- clusterGraph.se(se, method="leiden", resolution=0.5)
+nk <- nlevels(se$clusters)
 ```
 
 For convenience, we'll add a few principal components (PCs) as cell metadata:
@@ -263,10 +282,10 @@ shape(sd)@meta$spatialdata_attrs$instance_key <- "cell_id"
 shape(sd) <- shape(sd)[match(shape(sd)[[2]], instances(se), nomatch=0)] 
 ```
 
-```{r plt-xy-pc, message=FALSE}
+```{r plt-xy-clu, message=FALSE}
 plotSpatialData() + 
-    plotShape(sd, col=NA, fill="PC1") +
-    scale_fill_gradient2(low="blue", mid="lightgrey", high="red")
+    plotShape(sd, col=NA, fill="clusters") +
+    scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
 ### downstream
@@ -279,7 +298,7 @@ library(spatstat.geom)
 ```
 
 ```{r sosta-ppp, warning=FALSE}
-xy <- centroids(SpatialData::transform(shape(sd)))
+xy <- centroids(transform(shape(sd)))
 ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
 pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
 ```
@@ -294,7 +313,7 @@ roj <- roi[head(order(st_area(roi), decreasing=TRUE)), ]
 plotSpatialData() + 
     plotShape(sd, col=NA, fill="clusters") + 
     geom_sf(data=roj, fill=NA, linewidth=1) +
-    scale_fill_manual(values=hcl.colors(7, "Spectral")) 
+    scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
 ### appendix
