@@ -27,7 +27,7 @@
 CTplot(g, cex = 0.5, fac = 2, max = 10)
 }
 \arguments{
-\item{x}{\code{SpatialData}, an element, or \code{Zattrs}.}
+\item{x}{\code{SpatialData}, an element, or \code{SpatialDataAttrs}.}
 
 \item{i}{character string; name of source node.}
 

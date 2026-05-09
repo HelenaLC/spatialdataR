@@ -45,7 +45,7 @@ test_that("query,.check_pol", {
     for (. in q) expect_error(SpatialData:::.check_pol(.))
 })
 
-test_that("crop,ImageArray", {
+test_that("crop,sdImage", {
     d <- dim(i <- image(x))
     # polygon query (should use bounding box)
     y <- matrix(c(10, 10, 20, 10, 20, 20, 10, 20), ncol=2, byrow=TRUE)
@@ -66,14 +66,14 @@ test_that("crop,ImageArray", {
     expect_equal(metadata(j)$wh, list(c(10, 40), c(10, 40)))
 })
 
-test_that("crop,LabelArray", {
+test_that("crop,sdLabel", {
     d <- dim(l <- label(x))
     # crop but don't shift
     y <- list(xmin=0, xmax=w <- d[1]/2, ymin=0, ymax=h <- d[2]/4)
     expect_equal(dim(m <- crop(l, y)), c(h, w))
 })
 
-test_that("crop-box,PointFrame", {
+test_that("crop-box,sdPoint", {
     n <- length(p <- point(x))
     # this shouldn't do anything
     q <- crop(p, list(xmin=-1e7, xmax=1e7, ymin=-1e7, ymax=1e7))
@@ -93,7 +93,7 @@ test_that("crop-box,PointFrame", {
     expect_true(nrow(z) < nrow(p))
 })
 
-test_that("crop-pol,PointFrame", {
+test_that("crop-pol,sdPoint", {
     n <- length(p <- point(x))
     f <- \(.) collect(data(.))
     # mock all-inclusive query
@@ -101,7 +101,7 @@ test_that("crop-pol,PointFrame", {
     expect_identical(f(crop(p, xy)), f(p))
 })
 
-test_that("crop-box,ShapeFrame", {
+test_that("crop-box,sdShape", {
     n <- length(s <- shape(x))
     # mock query without any effect
     t <- crop(s, list(xmin=-1e7, xmax=1e7, ymin=-1e7, ymax=1e7))
@@ -111,7 +111,7 @@ test_that("crop-box,ShapeFrame", {
     expect_equal(nrow(t), 0)
 })
 
-test_that("crop-pol,ShapeFrame", {
+test_that("crop-pol,sdShape", {
     n <- length(s <- shape(x))
     # mock all-inclusive query
     xy <- rbind(c(0,0), c(0,1e6), c(1e6,0))

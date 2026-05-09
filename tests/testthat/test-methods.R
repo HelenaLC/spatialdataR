@@ -5,7 +5,7 @@ x <- readSpatialData(x)
 
 fun <- c("image", "label", "shape", "point", "table")
 nms <- c("blobs_image", "blobs_labels", "blobs_circles", "blobs_points", "table")
-typ <- c("ImageArray", "LabelArray", "ShapeFrame", "PointFrame", "SingleCellExperiment")
+typ <- c("SpatialDataImage", "SpatialDataLabel", "SpatialDataShape", "SpatialDataPoint", "SingleCellExperiment")
 
 # get ----
 
@@ -67,12 +67,14 @@ test_that("get one", {
 
 # set ----
 
+obj <- list(
+    images=SpatialDataImage(), 
+    labels=SpatialDataLabel(),
+    shapes=SpatialDataShape(), 
+    points=SpatialDataPoint(),
+    tables=SingleCellExperiment())
+
 test_that("set all", {
-    obj <- list(
-        ImageArray(), LabelArray(),
-        ShapeFrame(), PointFrame(),
-        SingleCellExperiment())
-    names(obj) <- SpatialData:::.LAYERS
     for (. in SpatialData:::.LAYERS) {
         y <- x; y[[.]] <- list()
         expect_length(y[[.]], 0)
@@ -97,10 +99,6 @@ test_that("set one", {
         expect_true(m == (n-1))
     }
     # value=in/valid
-    obj <- list(
-        ImageArray(), LabelArray(),
-        ShapeFrame(), PointFrame(),
-        SingleCellExperiment())
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
         set <- get(paste0(f, "<-"))
         nms <- get(paste0(f, "Names"))
@@ -159,7 +157,7 @@ test_that("$", {
 
 # sub ----
 
-test_that("[,Shape/PointFrame", {
+test_that("[,sdShape/Point", {
     y <- shape(x)
     expect_error(y[-1,])
     # one index subsets in vector-like fashion
@@ -181,19 +179,13 @@ test_that("[,Shape/PointFrame", {
     expect_identical(dim(y[,]), dim(y)) # none
 })
 
-test_that("[,LabelArray", {
+test_that("[,sdLabel", {
     y <- label(x)
     # logical
     expect_identical(y[TRUE,TRUE], y)
     expect_equal(dim(y[FALSE,FALSE]), c(0,0))
     expect_equal(dim(y[FALSE,TRUE]), c(0,ncol(y)))
     expect_equal(dim(y[TRUE,FALSE]), c(nrow(y),0))
-    # i <- logical(nrow(y)); j <- logical(ncol(y))
-    # n <- replicate(2, sample(seq(2, 10), 1))
-    # i[sample(nrow(y), n[1])] <- TRUE
-    # j[sample(ncol(y), n[2])] <- TRUE
-    # expect_equal(nrow(y[i,]), n[1])
-    # expect_equal(ncol(y[,j]), n[2])
     # numeric
     expect_identical(y[,], y) # none
     expect_equal(nrow(y[1,]), 1) # no j
@@ -202,7 +194,7 @@ test_that("[,LabelArray", {
     # TODO: multiscales
 })
 
-test_that("[,ImageArray", {
+test_that("[,sdImage", {
     d <- \(x) {
         y <- data(x, NULL)
         vapply(y, dim, numeric(3))

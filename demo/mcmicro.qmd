@@ -1,0 +1,95 @@
+## MCMICRO
+
+In this demo, we'll analyze 12-plex CyCIF data on a human lung adenocarcinoma 
+core, as output by MCMICRO [@Schapiro2022-MCMICRO], which stems from a larger 
+tissue microarray (TMA); included are also cell segmentation outputs from both
+*UnMICST* and *Ilastik*, respectively, as well as corresponding channel x cell 
+protein expression matrices (here, corresponding to mean pixel intensities).
+
+### preamble
+
+```{r load-libs, message=FALSE, warning=FALSE}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(SpatialData)
+library(SpatialData.data)
+library(SpatialData.plot)
+```
+
+```{r load-data}
+(sd <- SpatialData.data::LungAdenocarcinomaMCMICRO())
+```
+
+Let's start by viewing available `channels()`:
+
+```{r}
+cat(channels(image(sd)))
+```
+
+For consistency, we will fix a color to use for each channel:
+
+```{r}
+pal <- c(
+    DNA_6="grey",
+    DNA_7="grey",
+    DNA_8="grey",
+    CD57="maroon",  # NK
+    FOXP3="yellow", # Treg
+    SMA="red",      # stromal
+    NCAM="orange",  # myocyte
+    CD11B="blue",   # dendritic
+    CD16="cyan",    # neutrophil
+    ELANE="purple", # neutrophil
+    ECAD="green",   # epithelial
+    CD45="magenta") # lymphocyte
+```
+
+The original image includes a superfluous empty region, which we'll remove:
+
+```{r}
+sd <- crop(sd, list(xmin=0, xmax=2500, ymin=600, ymax=3200))
+```
+
+Now, let's generate a composite image of few selected channels:
+
+```{r}
+ch <- c("CD16", "CD45", "FOXP3", "ELANE", "ECAD", "SMA")
+plotSpatialData() + plotImage(sd, ch=ch, c=pal[ch])
+```
+
+We can also visualize channels individually (here, using a smaller region):
+
+```{r fig.height=6}
+bb <- list(
+    xmin=1600, xmax=2400, 
+    ymin=1200, ymax=2000)
+sp <- crop(sd, bb)
+
+ch <- channels(image(sp))
+ps <- lapply(ch, \(.) {
+    plotSpatialData() + ggtitle(.) + 
+    plotImage(sp, ch=., c=pal[.]) })
+
+wrap_plots(ps, nrow=3) & 
+    theme_void() & theme(
+        legend.position="none", 
+        plot.title=element_text(hjust=0.5))
+```
+
+```{r}
+(se <- table(sd))
+```
+
+### appendix
+
+::: {.callout-note icon=false, collapse=true}
+
+### session
+
+```{r sess-info}
+sessionInfo()
+```
+
+:::
