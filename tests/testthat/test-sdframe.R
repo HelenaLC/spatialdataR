@@ -105,3 +105,176 @@ test_that("as.data.frame", {
     expect_equal(names(y), names(p))
     expect_identical(y, as.data.frame(collect(data(p))))
 })
+
+test_that("create, SpatialDataPoint", {
+  
+  # make point frame
+  df <- example_points()
+  pf <- SpatialDataPoint(df)
+  expect_identical(st_coordinates(st_as_sf(data(pf))), 
+                   {
+                     dfm <- as.matrix(df)
+                     colnames(dfm) <- c("X", "Y")
+                     dfm
+                   })
+  expect_equal(dim(pf), c(100,1)) # geometry column of POINT
+  expect_identical(names(pf), "geometry")
+
+  # coordinate systems
+  expect_identical(CTname(pf), "global")
+  expect_identical(CTtype(pf), "identity")
+  pf_new <- addCT(pf, "test", "scale", c(2,2))
+  expect_identical(CTname(pf_new), c("global", "test"))
+  expect_identical(CTtype(pf_new), c("identity", "scale"))
+  
+  # make spatial data
+  sd <- SpatialData(points = list(test_points = pf))
+  expect_identical(data(point(sd)), data(pf))
+  expect_identical(point(sd), pf)
+  expect_identical(point(sd, 1), pf)
+})
+
+test_that("create polygon, SpatialDataShape", {
+  
+  # make point frame
+  df <- example_polygons()
+  pf <- SpatialDataShape(df)
+  expect_identical(data(pf), df)
+  expect_identical(dim(pf),dim(ddbs_collect(df)))
+  expect_identical(names(pf), colnames(df))
+  expect_identical(ddbs_collect(data(pf[1:2,1])),
+                   ddbs_collect(df)[1:2,1])
+  
+  # coordinate systems
+  expect_identical(CTname(pf), "global")
+  expect_identical(CTtype(pf), "identity")
+  pf_new <- addCT(pf, "test", "scale", c(2,2))
+  expect_identical(CTname(pf_new), c("global", "test"))
+  expect_identical(CTtype(pf_new), c("identity", "scale"))
+  
+  # make spatial data
+  sd <- SpatialData(shapes = list(test_shapes = pf))
+  expect_identical(data(shape(sd)), data(pf))
+  expect_identical(shape(sd), pf)
+  expect_identical(shape(sd, 1), pf)
+})
+
+test_that("create circle, SpatialDataShape", {
+  
+  # make point frame
+  df <- example_circles()
+  pf <- SpatialDataShape(df)
+  expect_identical(data(pf), df)
+  expect_identical(dim(pf),dim(ddbs_collect(df)))
+  expect_identical(names(pf), colnames(df))
+  expect_identical(ddbs_collect(data(pf[1:2,1])),
+                   ddbs_collect(df)[1:2,1])
+  
+  # coordinate systems
+  expect_identical(CTname(pf), "global")
+  expect_identical(CTtype(pf), "identity")
+  pf_new <- addCT(pf, "test", "scale", c(2,2))
+  expect_identical(CTname(pf_new), c("global", "test"))
+  expect_identical(CTtype(pf_new), c("identity", "scale"))
+  
+  # make spatial data
+  sd <- SpatialData(shapes = list(test_shapes = pf))
+  expect_identical(data(shape(sd)), data(pf))
+  expect_identical(shape(sd), pf)
+  expect_identical(shape(sd, 1), pf)
+})
+
+z <- list(0.1, 0.2)
+
+for (v in z) {
+ 
+  td <- tempdir()
+  zarr.store <- "test.zarr"
+  zarr.path <- file.path(td, zarr.store)
+  unlink(zarr.path, recursive = TRUE)
+  
+  test_that("write, SpatialDataPoint", {
+    
+    # make sd data
+    df <- example_points()
+    pf <- SpatialDataPoint(df, version = point(sdFormat(v)))
+    sd <- SpatialData(points = list(test_points = pf))
+    
+    # write to location
+    zarr.path <- tempfile(fileext = ".zarr")
+    writeSpatialData(sd, path = zarr.path, version = v)
+    expect_true(dir.exists(zarr.path))
+    
+    # read back and compare
+    sd2 <- readSpatialData(zarr.path)
+    pf2 <- point(sd2)
+    # attr(data(pf), "source_table") is not identical, obviously
+    expect_equal(
+      ddbs_collect(data(pf)),
+      ddbs_collect(data(pf2))
+    )
+    expect_identical(st_coordinates(st_as_sf(data(pf))), 
+                     st_coordinates(st_as_sf(data(pf2))))
+    expect_identical(meta(pf),meta(pf2))
+    expect_identical(names(pf), names(pf2))
+  })
+  
+  td <- tempdir()
+  zarr.store <- "test.zarr"
+  zarr.path <- file.path(td, zarr.store)
+  unlink(zarr.path, recursive = TRUE)
+  
+  test_that("write polygon, SpatialDataShape", {
+    
+    # make sd data
+    df <- example_polygons()
+    pf <- SpatialDataShape(df, version = shape(sdFormat(v)))
+    sd <- SpatialData(shapes = list(test_shapes = pf))
+    
+    # write to location
+    zarr.path <- tempfile(fileext = ".zarr")
+    writeSpatialData(sd, path = zarr.path, version = v)
+    expect_true(dir.exists(zarr.path))
+    
+    # read back and compare
+    sd2 <- readSpatialData(zarr.path)
+    pf2 <- shape(sd2)
+    # TODO: they are not identical, why ? 
+    expect_equal(data(pf) |> collect(), 
+                 data(pf2) |> collect())
+    expect_identical(meta(pf),meta(pf2))
+    expect_identical(names(pf), names(pf2))
+    expect_identical(data(pf[1:2, 1]) |> collect(), 
+                     data(pf2[1:2,1]) |> collect())
+  })
+  
+  td <- tempdir()
+  zarr.store <- "test.zarr"
+  zarr.path <- file.path(td, zarr.store)
+  unlink(zarr.path, recursive = TRUE)
+  
+  test_that("write circle, SpatialDataShape", {
+    
+    # make sd data
+    df <- example_circles()
+    pf <- SpatialDataShape(df, version = shape(sdFormat(v)))
+    sd <- SpatialData(shapes = list(test_shapes = pf))
+    
+    # write to location
+    zarr.path <- tempfile(fileext = ".zarr")
+    writeSpatialData(sd, path = zarr.path, version = v)
+    expect_true(dir.exists(zarr.path))
+    
+    # read back and compare
+    sd2 <- readSpatialData(zarr.path)
+    pf2 <- shape(sd2)
+    # TODO: they are not identical, why ? 
+    expect_equal(data(pf) |> collect(), 
+                 data(pf2) |> collect())
+    expect_identical(meta(pf),meta(pf2))
+    expect_identical(names(pf), names(pf2))
+    expect_identical(data(pf[1:2, 1]) |> collect(), 
+                     data(pf2[1:2,1]) |> collect())
+  })
+  
+}

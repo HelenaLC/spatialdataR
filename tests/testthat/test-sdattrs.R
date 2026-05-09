@@ -47,5 +47,5 @@ for (v in names(z)) {
         expect_silent(z <- channels(y <- image(x)))
         expect_length(z, dim(y)[1])
     })
-
+    
 }

@@ -56,14 +56,16 @@ NULL
 #' @export
 readImage <- function(x, ...) {
     l <- .readArray(x, ...)
-    SpatialDataImage(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    SpatialDataImage(data=l$array, meta=SpatialDataAttrs(l$md), 
+                     version = version(l$md), ...)
 }
 
 #' @rdname readSpatialData
 #' @export
 readLabel <- function(x, ...) {
     l <- .readArray(x, ...)
-    SpatialDataLabel(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    SpatialDataLabel(data=l$array, meta=SpatialDataAttrs(l$md), 
+                     version = version(l$md), ...)
 }
 
 #' @rdname readSpatialData
@@ -79,7 +81,7 @@ readPoint <- function(x, ...) {
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
-    SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
+    SpatialDataPoint(data=df, meta=SpatialDataAttrs(md), version = version(md))
 }
 
 #' @rdname readSpatialData
@@ -90,7 +92,8 @@ readPoint <- function(x, ...) {
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    SpatialDataShape(data=ddbs_open_dataset(pq), meta=SpatialDataAttrs(md))
+    SpatialDataShape(data=ddbs_open_dataset(pq), meta=SpatialDataAttrs(md), 
+                     version = version(md))
 }
 
 #' @export
@@ -105,7 +108,7 @@ readTable <- function(x) {
     })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
-    md <- metadata(sce)[[nm]]
+    md <- read_zarr_attributes(x)
     int_metadata(sce)[[nm]] <- md
     metadata(sce)[[nm]] <- NULL
     # move these to 'int_colData'

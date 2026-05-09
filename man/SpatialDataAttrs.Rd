@@ -43,6 +43,7 @@ SpatialDataAttrs(
   trans = NULL,
   ver = "0.4",
   nch = 3,
+  scale_factors = NULL,
   ...
 )
 

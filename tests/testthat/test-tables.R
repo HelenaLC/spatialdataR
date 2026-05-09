@@ -1,4 +1,5 @@
 require(SingleCellExperiment, quietly=TRUE)
+require(anndataR, quietly=TRUE)
 
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
@@ -168,4 +169,49 @@ test_that("setTable() fails with invalid inputs", {
     
     # Non-existent element
     expect_error(setTable(x, "non_existent", SingleCellExperiment()), "is not an element of 'x'")
+})
+
+# TODO: update once v3 zarr anndata write support is implemented
+v <- 0.1
+
+test_that("write, Table (SCE) for shapes", {
+  
+  # make sd data
+  i <- "test_shapes"
+  df <- example_polygons()
+  pf <- SpatialDataShape(df, version = shape(sdFormat(v)))
+  sd <- SpatialData(shapes = setNames(list(pf), i))
+  
+  # create table (SCE)
+  set.seed(1)
+  n <- 30
+  mat <- matrix(1:(nrow(pf)*n), nrow = n)
+  sce <- SingleCellExperiment(assays = list(counts = mat))
+  
+  # set table to SpatialData
+  e <- element(sd, i)
+  
+  # set instances and region key manually
+  int_colData(sce)$instance_id <- instances(e)
+  colData(sce)$instance_id <- instances(e)
+  colData(sce)[["region"]] <- i
+  
+  # set new table
+  sd <- setTable(sd, i, name = "test_tables", sce, 
+                 version = "0.1")
+  
+  # write to location
+  zarr.path <- tempfile(fileext = ".zarr")
+  writeSpatialData(sd, path = zarr.path, version = v)
+  expect_true(dir.exists(zarr.path))
+  
+  # read back and compare
+  sd2 <- readSpatialData(zarr.path)
+  expect_true(hasTable(sd2, i))
+  expect_contains(meta(table(sd2)),
+                  meta(table(sd)))
+})
+
+test_that("write, Table (SCE) for labels", {
+  skip("write, Table (SCE) for labels is not implemented yet!")
 })

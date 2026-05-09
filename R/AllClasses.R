@@ -2,6 +2,20 @@
     Class="SpatialDataAttrs",
     contains="list")
 
+.sdFormat <- setClass(
+  Class = "sdFormat",
+  slots = list(
+    version = "character",
+    zarr_version = "integer",
+    ome_version = "character",
+    image = "character",
+    label = "character",
+    point = "character",
+    shape = "character",
+    table = "character"
+  )
+)
+
 #' @importFrom methods setClassUnion
 #' @importClassesFrom S4Arrays Array
 setClassUnion(

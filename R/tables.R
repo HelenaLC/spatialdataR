@@ -158,8 +158,7 @@ setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", 
 #' @importFrom SingleCellExperiment SingleCellExperiment int_colData int_colData<- int_metadata<-
 #' @export
 setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
-    name=NULL, rk="region", ik="instance_id") {
-
+    name=NULL, rk="region", ik="instance_id", version = "0.1") {
     # validity
     stopifnot(
         is(y, "SingleCellExperiment"),
@@ -183,6 +182,8 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     
     if (is.null(region_key(y))) region_key(y) <- rk
     if (is.null(instance_key(y))) instance_key(y) <- ik
+    
+    version(y) <- version
     
     if (is.null(region(y))) {
         regions(y) <- i

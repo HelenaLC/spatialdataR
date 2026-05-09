@@ -107,9 +107,17 @@ setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
 setGeneric("multiscales", \(x, ...) standardGeneric("multiscales"))
+setGeneric("datasets", \(x, ...) standardGeneric("datasets"))
 
 # tbl ----
 
 setGeneric("hasTable", \(x, i, ...) standardGeneric("hasTable"))
 setGeneric("getTable", \(x, i, ...) standardGeneric("getTable"))
 setGeneric("setTable", \(x, i, ...) standardGeneric("setTable"))
+
+# zarr ----
+
+setGeneric("version", \(x, ...) standardGeneric("version"))
+setGeneric("version<-", \(x, value) standardGeneric("version<-"))
+setGeneric("zarr_version", \(x, ...) standardGeneric("zarr_version"))
+setGeneric("ome_version", \(x, ...) standardGeneric("ome_version"))

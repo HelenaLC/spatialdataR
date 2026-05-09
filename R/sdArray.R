@@ -67,20 +67,59 @@ NULL
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataImage(data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
+SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(),
+                             version = image(sdFormat(0.1)),
+                             metadata=list(),
+                             scale_factors = NULL, ...) {
+  if(!is.list(data))
+    data <- list(data)  
+  if(!is.null(scale_factors)){
+    data <- .generate_multiscale(data[[1]], 
+                                 axes = vapply(axes(meta), 
+                                               \(.) .$name, 
+                                               character(1)), 
+                                 scale_factors = scale_factors, 
+                                 method = "image")
+    # TODO: this supposed to update the scale_factors not write a new meta
+    meta <- SpatialDataAttrs(scale_factors = scale_factors) 
+  }
+  # construct S4 object
+  x <- .SpatialDataImage(data=data, meta=meta, ...)
+  metadata(x) <- metadata
+  
+  # update version if provided
+  if(!is.null(version))
+    version(x) <- version
+  return(x)
 }
 
 #' @export
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataLabel(data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
+SpatialDataLabel <- function(data=list(), 
+                             meta=SpatialDataAttrs(label = TRUE),
+                             version = image(sdFormat(0.1)),
+                             metadata=list(),
+                             scale_factors = NULL, ...) {
+  if(!is.list(data))
+    data <- list(data)  
+  if(!is.null(scale_factors)){
+    data <- .generate_multiscale(data[[1]], 
+                                 axes = vapply(axes(meta), 
+                                               \(.) .$name, 
+                                               character(1)), 
+                                 scale_factors = scale_factors, 
+                                 method = "label")
+    meta <- SpatialDataAttrs(scale_factors = scale_factors, label = TRUE) 
+  }
+  x <- .SpatialDataLabel(data=data, meta=meta, ...)
+  metadata(x) <- metadata
+  
+  # update version if provided
+  if(!is.null(version))
+    version(x) <- version
+  return(x)
 }
 
 # utils ----
@@ -112,7 +151,7 @@ setMethod("length", "SpatialDataArray", \(x) length(data(x, NULL)))
 #' @importFrom S4Vectors metadata
 setMethod("data_type", "SpatialDataArray", \(x) {
     if (is(y <- data(x), "DelayedArray")) 
-        data_type(y) else metadata(x)$data_type
+      data_type(y) else metadata(x)$data_type
 })
 
 #' @export
@@ -124,6 +163,74 @@ setMethod("data_type", "DelayedArray", \(x) {
     df <- zarr_overview(path(x), as_data_frame=TRUE)
     return(df$data_type)
 })
+
+#' @importFrom S4Vectors isSequence
+.get_multiscales_paths <- function(x) {
+  ps <- list.files(x)
+  ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
+  ps <- ps[!is.na(ps)]
+  if (length(ps)) {
+    qs <- seq(min(ps), max(ps))
+    if (!isTRUE(all.equal(ps, qs)))
+      stop("SpatialDataImage paths are ill-defined, should",
+           " be an integer sequence, e.g., 0,1,...,n")
+  } else {
+    stop("SpatialDataImage path is empty")
+  }
+  return(ps)
+}
+
+#' .create_mip
+#' 
+#' Generate a downsampled pyramid of images.
+#' 
+#' @param image image
+#' @param scale_factors 
+#' 
+#' @importFrom EBImage resize
+#' @importFrom stats setNames
+#' 
+#' @inheritParams write_image
+#' 
+#' @noRd
+.generate_multiscale <- function(image,
+                                 scale_factors = c(2,2,2,2),
+                                 axes, 
+                                 method = "image"){
+  
+  # check dim
+  ndim <- length(dim(image))
+  if (ndim > 3) {
+    stop("Only images of 5D or less are supported")
+  }
+  
+  # get x y dimensions for EBImage
+  dim_image <- stats::setNames(dim(image), axes)
+  dim_image <- dim_image[c("x", "y")]
+  
+  # downscale image
+  image_list <- list(image)
+  cur_image <- aperm(image, 
+                     perm = rev(seq_along(axes)))
+  for (i in seq_along(scale_factors)) {
+    dim_image <- ceiling(dim_image / scale_factors[i])
+    image_list[[i+1]] <- 
+      aperm(EBImage::resize(cur_image,
+                            w = dim_image[1],
+                            h = dim_image[2],
+                            filter = switch(method, 
+                                            image = "bilinear",
+                                            label = "none")), 
+            perm = rev(seq_along(axes)))
+  }
+  if (method == "label") {
+    image_list <- lapply(image_list, function(x) {
+      storage.mode(x) <- "integer"
+      x
+    })
+  }
+  image_list
+}
 
 # chs ----
 
@@ -146,34 +253,18 @@ setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
 #' @rdname SpatialDataArray
 setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have channels"))
 
-#' @importFrom S4Vectors isSequence
-.get_multiscales_paths <- function(x) {
-    ps <- list.files(x)
-    ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
-    ps <- ps[!is.na(ps)]
-    if (length(ps)) {
-        qs <- seq(min(ps), max(ps))
-        if (!isTRUE(all.equal(ps, qs)))
-            stop("SpatialDataImage paths are ill-defined, should",
-                " be an integer sequence, e.g., 0,1,...,n")
-    } else {
-      stop("SpatialDataImage path is empty")
-    }
-    return(ps)
-}
-
 # sub ----
 
 .check_jk <- \(x, .) {
-    if (isTRUE(x)) return()
-    tryCatch(
-        stopifnot(
-            is.numeric(x), x == round(x),
-            diff(range(x)) == length(x)-1,
-            (y <- abs(x)) == seq(min(y), max(y))
-        ),
-        error=\(e) stop(sprintf("invalid '%s'", .))
-    )
+  if (isTRUE(x)) return()
+  tryCatch(
+    stopifnot(
+      is.numeric(x), x == round(x),
+      diff(range(x)) == length(x)-1,
+      (y <- abs(x)) == seq(min(y), max(y))
+    ),
+    error=\(e) stop(sprintf("invalid '%s'", .))
+  )
 }
 
 #' @exportMethod [

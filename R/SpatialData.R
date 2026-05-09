@@ -28,6 +28,7 @@
 #' @param x \code{SpatialData}
 #' @param i,j character string, scalar or vector of indices
 #'   specifying the element to extract from a given layer.
+#'   
 #' @param drop ignored.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param value (list of) element(s) with layer-compliant object(s), 
@@ -51,11 +52,11 @@
 #' 
 #' @export
 SpatialData <- \(images, labels, points, shapes, tables) {
-    if (missing(images)) images <- list()
-    if (missing(labels)) labels <- list()
-    if (missing(points)) points <- list()
-    if (missing(shapes)) shapes <- list()
-    if (missing(tables)) tables <- list()
+    if (missing(images)) images <- setNames(list(), character(0))
+    if (missing(labels)) labels <- setNames(list(), character(0))
+    if (missing(points)) points <- setNames(list(), character(0))
+    if (missing(shapes)) shapes <- setNames(list(), character(0))
+    if (missing(tables)) tables <- setNames(list(), character(0))
     .SpatialData(
         images=images, labels=labels, 
         points=points, shapes=shapes, tables=tables)

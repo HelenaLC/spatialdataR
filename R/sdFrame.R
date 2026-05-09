@@ -104,7 +104,9 @@ NULL
 #' @importFrom sf st_geometry_type
 #' @importFrom S4Vectors metadata<-
 #' @importFrom duckspatial as_duckspatial_df
-SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ik=NULL, fk=NULL, ...) {
+SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), 
+                      version = point(sdFormat(0.1)), 
+                      metadata=list(), ik=NULL, fk=NULL, ...) {
     data <- .df_to_sf(data, "POINT")
     # validate geometry type (must be points)
     if (isTRUE(nrow(data) > 0L)) {
@@ -131,6 +133,10 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     # construct S4 object
     x <- .SpatialDataPoint(data=data, meta=SpatialDataAttrs(za), ...)
     metadata(x) <- metadata
+    
+    # update version if provided
+    if(!is.null(version))
+      version(x) <- version
     return(x)
 }
 
@@ -139,7 +145,9 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
 #' @importFrom methods is
 #' @importFrom S4Vectors metadata<-
 #' @importFrom duckspatial as_duckspatial_df
-SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ...) {
+SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), 
+                      version = shape(sdFormat(0.1)),
+                      metadata=list(), ...) {
     data <- .df_to_sf(data, "POLYGON")
     # always ensure internal data is 'duckspatial_df'
     if (isTRUE(nrow(data) > 0L) &&
@@ -147,6 +155,10 @@ SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
         data <- as_duckspatial_df(data, crs=NA)
     x <- .SpatialDataShape(data=data, meta=meta, ...)
     metadata(x) <- metadata
+    
+    # update version if provided
+    if(!is.null(version))
+      version(x) <- version
     return(x)
 }
 

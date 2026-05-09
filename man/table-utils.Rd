@@ -26,7 +26,15 @@
 
 \S4method{setTable}{SpatialData,ANY}(x, i, ..., name = NULL, rk = "rk", ik = "ik")
 
-\S4method{setTable}{SpatialData,character}(x, i, y, name = NULL, rk = "region", ik = "instance_id")
+\S4method{setTable}{SpatialData,character}(
+  x,
+  i,
+  y,
+  name = NULL,
+  rk = "region",
+  ik = "instance_id",
+  version = "0.1"
+)
 }
 \arguments{
 \item{x}{\code{\link{SpatialData}} object.}

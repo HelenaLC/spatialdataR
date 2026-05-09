@@ -1,23 +1,11 @@
 #' @name SpatialDataAttrs
 #' @title The `SpatialDataAttrs` class
 #' 
-#' @aliases region region<- 
-#' @aliases regions regions<- 
-#' @aliases instances instances<- 
-#' @aliases region_key region_key<- 
-#' @aliases feature_key feature_key<- 
-#' @aliases instance_key instance_key<- 
-#' 
 #' @param x element or list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
 #' @param type character string; either "array" (image/label) or "frame" (point/shape).
-#' @param label flag; when \code{type="frame"}, should attributes be for a label?
-#' @param trans list of coordinate transformations; defaults to identity only.
-#' @param value character string (for one \code{region} and \code{_key}s), 
-#'   or vector (for many \code{region}s, \code{instances} and \code{regions}).
-#' @param ver character string; specified the .zarr version to comply with.
-#' @param nch scalar integer; how many channels should there be?
-#'   (ignored unless \code{type="frame"} and \code{label=FALSE}). 
+#' @param axes list of axes; if NULL, defaults to cyx (array) or xy (frame).
+#' @param transformations list of transformations; if NULL, defaults to global identity.
 #' @param ... additional attributes (e.g., version, feature_key).
 #' 
 #' @details 
@@ -54,108 +42,67 @@
 #' # constructor
 #' SpatialDataAttrs(type="frame")
 #' SpatialDataAttrs(type="array")
-#' SpatialDataAttrs(type="array", nch=7)
+#' SpatialDataAttrs(type="array", n=7)
 #' SpatialDataAttrs(type="array", label=TRUE)
 #' 
 #' @export
 SpatialDataAttrs <- \(x, type=c("array", "frame"), 
-    label=FALSE, trans=NULL, ver="0.4", nch=3, scale_factors = NULL, ...) 
+    label=FALSE, trans=NULL, ver="0.4", n=3, ...) 
 {
     if (!missing(x)) return(.SpatialDataAttrs(x))
     type <- match.arg(type)
     # axes:
-    ax <- .default_ax(type, label)
+    # xy for points/shapes
+    ax <-  list(
+        list(name="x", type="space"), 
+        list(name="y", type="space"))
+    if (type == "array") {
+        # yx for labels
+        ax <- rev(ax)
+        # cyx for images
+        if (!label) ax <- c(list(list(name="c", type="channel")), ax)
+    }
     # transformations:
     ct <- trans %||% .default_ct(ax)
-    ds <- .default_ds(.ax_names(ax), scale_factors) 
     # .zattrs list:
     if (type == "array") {
-      # default structure
-      res <- list()
-      if(!label)
-        res <- c(res,
-                 list(omero=list(channels=lapply(letters[seq_len(nch)], 
-                                                 \(.) list(label = .)))))
-      res <- c(res,
-               list(
-                 multiscales=
-                   list(
-                     list(
-                       axes=ax,
-                       version="0.4",
-                       coordinateTransformations=ct,
-                       datasets=ds
-                     )
-                   )
-               )
-      )
-      if (ver == "0.3") res <- list(ome=res)
+        # default structure
+        res <- list(
+            omero=list(channels=list(label=letters[seq_len(n)])),
+            multiscales=list(list(
+                axes=ax,
+                version="0.4",
+                coordinateTransformations=ct,
+                datasets=list(list(path="0", coordinateTransformations=list(list(type="scale", scale=list(1, 1))))))))
+        if (ver == "0.3") res <- list(ome=res)
     } else {
-      # points/shapes
-      res <- list(axes=ax, coordinateTransformations=ct)
+        # points/shapes
+        res <- list(axes=ax, coordinateTransformations=ct)
     }
     res$spatialdata_attrs <- list(version=ver)
     SpatialDataAttrs(res)
 }
 
 # Internal helper to generate OME-NGFF axes
-.default_ax <- \(type=c("array", "frame"), label = FALSE) {
-  switch(match.arg(type),
-         # (c)yx for images/labels
-         array={
-           ax <-  list(
-             list(name="x", type="space"), 
-             list(name="y", type="space"))
-           if (type == "array") {
-             # yx for labels
-             ax <- rev(ax)
-             # yx for images, cyx if requested
-             if (!label) ax <- c(list(list(name="c", type="channel")), ax)
-           }
-           ax
-         },
-         # xy for points/shapes
-         list("x", "y"))
-}
-
-.ax_names <- function(ax){
-  if (is.character(ax[[1]])) {
-    unlist(ax)
-  } else {
-    vapply(ax, \(.) .$name, character(1))
-  }
+.default_ax <- \(type=c("array", "frame")) {
+    switch(match.arg(type),
+        # cyx for images/labels
+        array=list(
+            list(name="c", type="channel"),
+            list(name="y", type="space"),
+            list(name="x", type="space")),
+        # xy for points/shapes
+        list(
+            list(name="x", type="space"),
+            list(name="y", type="space")))
 }
 
 # Internal helper to generate coordinate transformations
 .default_ct <- \(axes, name="global", type="identity", data=NULL) {
-  ct <- list(
-    input=list(axes = axes,
-               name = if(length(axes) == 3) "cyx" else "yx"), 
-    output=list(axes = axes,
-                name = name), 
-    type = type)
-  if (!is.null(data)) ct[[type]] <- data
-  list(ct)
+    ct <- list(input=axes, output=list(name=name), type=type)
+    if (!is.null(data)) ct[[type]] <- data
+    list(ct)
 }
-
-.default_ds <- function(axes, scale_factors = NULL){
-  scale_factors <- cumprod(c(1,scale_factors))
-  paths <- paste0(seq_along(scale_factors) - 1)
-  mapply(\(p,s) {
-    list(
-      coordinateTransformations = list(
-        list(
-          scale = lapply(
-            axes,
-            \(.) if(. == "c") 1 else s),
-          type = "scale"
-        )
-      ),
-      path = p
-    )
-  }, paths, scale_factors, USE.NAMES = FALSE, SIMPLIFY = FALSE)
-}
-
 
 #' @export
 #' @importFrom utils .DollarNames
@@ -167,19 +114,31 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 
 # internal use only!
 #' @noRd 
-.ms <- \(x) switch(version(x), "0.3"=x$ome$multiscales, x$multiscales)
+.zv <- \(x) {
+    v <- x$spatialdata_attrs$version
+    if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
+    ok <- length(v) == 1 && is.character(v) && v %in% sprintf("0.%d", seq_len(5))
+    if (!ok) stop("invalid 'version' in 'spatialdata_attrs'; expected '0.x' where x is 1-5")
+    return(v)
+}
+
+# internal use only!
+#' @noRd 
+.ms <- \(x) switch(.zv(x), "0.3"=x$ome$multiscales, x$multiscales)
+
+# internal use only!
+#' @noRd 
+.ch <- \(x) {
+    if (.zv(x) == "0.3") x <- x$ome
+    unlist(x$omero$channels)
+}
 
 # internal use only!
 #' @noRd 
 setMethod("multiscales", "list", .ms)
 
-# internal use only!
-#' @noRd 
-setMethod("datasets", "list", \(x, ...) {
-  vapply(multiscales(x)[[1]]$datasets, \(.){
-    .$path
-  }, character(1))
-})
+#' @export
+setMethod("channels", "SpatialDataAttrs", \(x, ...) .ch(x))
 
 # features ----
 
@@ -219,7 +178,11 @@ setReplaceMethod("region_key", c("SingleCellExperiment", "NULL"), \(x, value) {
 
 #' @export
 #' @rdname SpatialDataAttrs
-setMethod("region", "SingleCellExperiment", \(x) meta(x)[["region"]])
+setMethod("region", "SingleCellExperiment", \(x) {
+    rk <- region_key(x)
+    if (is.null(rk)) return(NULL)
+    meta(x)[[rk]]
+})
 
 #' @export
 #' @rdname SpatialDataAttrs
@@ -350,7 +313,7 @@ setMethod("version", c("SingleCellExperiment"), \(x) {
   meta(x)$version
 })
 
-setMethod("version", "SpatialDataAttrs", \(x) .zv(x))
+setMethod("version", "Zattrs", \(x) .zv(x))
 
 setMethod("version", "list", \(x) .zv(x))
 
@@ -362,14 +325,14 @@ setMethod("version", "list", \(x) .zv(x))
     return(v)
 }
 
-setReplaceMethod("version", c("SpatialDataFrame"), \(x, value) {
+setReplaceMethod("version", c("sdFrame"), \(x, value) {
   if(!value %in% c("0.1", "0.2", "0.3"))
     stop("Unknown version for shape/point! Must be 0.2 or 0.3.")
   meta(x)$spatialdata_attrs$version <- value
   x
 })
 
-setReplaceMethod("version", c("SpatialDataArray"), \(x, value) {
+setReplaceMethod("version", c("sdArray"), \(x, value) {
   mt <- meta(x)
   if(value == "0.3"){
     if(is.null(mt$ome)){
