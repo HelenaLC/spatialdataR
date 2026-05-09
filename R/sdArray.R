@@ -1,23 +1,54 @@
 #' @name SpatialDataArray
 #' @title \code{SpatialDataArray}
-#' @aliases data_type
+#' @aliases data_type channels 
 #' 
-#' @param x \code{SpatialDataImage} or \code{SpatialDataLabel}.
-#' @param k scalar index specifying which scale to extract.
+#' @description
+#' The \code{SpatialDataImage} and \code{-Label} classes represent 
+#' elements from a \code{SpatialData}'s \code{images/} and \code{labels/} 
+#' layers, respectively. In both cases, these  are represented as a 
+#' \code{ZarrArray} (\code{data} slot), and associated with .zattrs 
+#' represented as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
+#' a list of \code{metadata} stores other arbitrary info.
 #' 
+#' Currently defined methods (here, \code{x} is a \code{SpatialDataArray}):
+#' \itemize{
+#' \item \code{data/meta(x)} access underlying data/.zattrs
+#' \item \code{data_type(x)} gets the underlying data type (e.g., float64)
+#' \item \code{channels(x)} gets channel names (applies to images only)
+#' \item \code{dim(x)} returns the dimensions of \code{data(x)}
+#' \item \code{length(x)} returns the length of \code{data(x)}
+#' }
+#' 
+#' @param x \code{SpatialDataArray}
+#' @param data list of \code{ZarrArray}s
+#' @param meta \code{\link{SpatialDataAttrs}}
+#' @param metadata optional list of arbitrary additional content.
+#' @param k scalar index specifying which image scale to extract.
+#' @param ... option arguments passed to and from other methods.
+#' @param i,j indices specifying elements to extract.
+#' @param drop ignored.
+#'
 #' @return \code{SpatialDataArray}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
 #' zs <- system.file(zs, package="SpatialData")
 #' 
-#' pa <- list.dirs(
-#'   file.path(zs, "images"), 
-#'   recursive=FALSE, full.names=TRUE)
+#' # get path to 'i'th element in layer 'l'
+#' fn <- \(l, i=1) list.dirs(file.path(zs, l), recursive=FALSE)[i]
 #' 
-#' (x <- readImage(pa[2]))  
+#' # label
+#' (x <- readLabel(fn("labels", 1)))
+#' x[1:10, 1:10]
+#' meta(x)
 #' 
-#' data_type(x)
+#' # image
+#' readImage(fn("images"))
+#' 
+#' # multi-scale
+#' (x <- readImage(fn("images", 2)))
+#' 
+#' channels(x)
 #' dim(data(x, 1))   # highest res.
 #' dim(data(x, Inf)) # lowest res.
 #' 
@@ -27,10 +58,9 @@
 #' plot(
 #'   row(rgb), col(rgb), col=rgb, 
 #'   pch=15, asp=1, ylim=c(ncol(rgb), 0))
-#' 
-#' @importFrom S4Vectors metadata<-
-#' @importFrom methods new
 NULL
+
+# array ----
 
 #' @rdname SpatialDataArray
 #' @export
@@ -68,3 +98,118 @@ setMethod("data_type", "SpatialDataArray", \(x) {
 #' @importFrom Rarr zarr_overview
 #' @importFrom ZarrArray path
 setMethod("data_type", "DelayedArray", \(x) zarr_overview(path(x), as_data_frame=TRUE)$data_type)
+
+# image ----
+
+#' @export
+#' @rdname SpatialDataArray
+#' @importFrom methods new
+#' @importFrom S4Vectors metadata<-
+SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataImage(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
+
+# internal use only!
+#' @noRd 
+.ch <- \(x) {
+    if (.zv(x) == "0.3") x <- x$ome
+    unlist(x$omero$channels)
+}
+
+#' @export
+#' @rdname SpatialDataArray
+setMethod("channels", "SpatialDataAttrs", \(x, ...) .ch(x))
+
+#' @export
+#' @rdname SpatialDataArray
+setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
+
+#' @export
+#' @rdname SpatialDataArray
+setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have channels"))
+
+#' @importFrom S4Vectors isSequence
+.get_multiscales_paths <- function(x) {
+    ps <- list.files(x)
+    ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
+    ps <- ps[!is.na(ps)]
+    if (length(ps)) {
+        qs <- seq(min(ps), max(ps))
+        if (!isTRUE(all.equal(ps, qs)))
+            stop("SpatialDataImage paths are ill-defined, should",
+                " be an integer sequence, e.g., 0,1,...,n")
+    } else {
+      stop("SpatialDataImage path is empty")
+    }
+    return(ps)
+}
+
+.check_jk <- \(x, .) {
+    if (isTRUE(x)) return()
+    tryCatch(
+        stopifnot(
+            is.numeric(x), x == round(x),
+            diff(range(x)) == length(x)-1,
+            (y <- abs(x)) == seq(min(y), max(y))
+        ),
+        error=\(e) stop(sprintf("invalid '%s'", .))
+    )
+}
+
+#' @exportMethod [
+#' @rdname SpatialDataArray
+#' @importFrom utils head tail
+setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
+    ijk <- list(i, j, k)
+    n <- length(data(x, NULL))
+    d <- dim(data(x))
+    data(x) <- lapply(seq_len(n), \(.) {
+        j <- if (isTRUE(j)) seq_len(d[2]) else j
+        k <- if (isTRUE(k)) seq_len(d[3]) else k
+        jk <- lapply(list(j, k), \(jk) {
+            fac <- 2^(.-1)
+            seq(floor(head(jk, 1)/fac), 
+                ceiling(tail(jk, 1)/fac))
+        })
+        data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
+    })
+    x
+})
+
+# label ----
+
+#' @export
+#' @rdname SpatialDataArray
+#' @importFrom methods new
+#' @importFrom S4Vectors metadata<-
+SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataLabel(data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
+
+#' @exportMethod [
+#' @rdname SpatialDataArray
+#' @importFrom utils head tail
+setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
+    if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    n <- length(data(x, NULL))
+    d <- dim(data(x, 1))
+    data(x) <- lapply(seq_len(n), \(.) {
+        i <- if (isTRUE(i)) seq_len(d[1]) else i
+        j <- if (isTRUE(j)) seq_len(d[2]) else j
+        ij <- lapply(list(i, j), \(ij) {
+            fac <- 2^(.-1)
+            seq(floor(head(ij, 1)/fac), 
+                ceiling(tail(ij, 1)/fac))
+        })
+        data(x, .)[ij[[1]], ij[[2]], drop=FALSE]
+    })
+    x
+})
