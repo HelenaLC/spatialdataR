@@ -19,6 +19,11 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
+\alias{images,SpatialData-method}
+\alias{labels,SpatialData-method}
+\alias{points,SpatialData-method}
+\alias{shapes,SpatialData-method}
+\alias{tables,SpatialData-method}
 \alias{[[<-,SpatialData,numeric,ANY,ANY-method}
 \alias{[[<-,SpatialData,character,ANY,ANY-method}
 \title{The `SpatialData` class}
@@ -54,6 +59,14 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{element}{SpatialData,ANY}(x, i)
 
 \S4method{images}{SpatialData}(x)
+
+\S4method{labels}{SpatialData}(x)
+
+\S4method{points}{SpatialData}(x)
+
+\S4method{shapes}{SpatialData}(x)
+
+\S4method{tables}{SpatialData}(x)
 
 \S4method{[[}{SpatialData,numeric,ANY,ANY}(x, i) <- value
 
