@@ -1,11 +1,23 @@
 #' @name SpatialDataAttrs
 #' @title The `SpatialDataAttrs` class
 #' 
+#' @aliases region region<- 
+#' @aliases regions regions<- 
+#' @aliases instances instances<- 
+#' @aliases region_key region_key<- 
+#' @aliases feature_key feature_key<- 
+#' @aliases instance_key instance_key<- 
+#' 
 #' @param x element or list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
 #' @param type character string; either "array" (image/label) or "frame" (point/shape).
-#' @param axes list of axes; if NULL, defaults to cyx (array) or xy (frame).
-#' @param transformations list of transformations; if NULL, defaults to global identity.
+#' @param label flag; when \code{type="frame"}, should attributes be for a label?
+#' @param trans list of coordinate transformations; defaults to identity only.
+#' @param value character string (for one \code{region} and \code{_key}s), 
+#'   or vector (for many \code{region}s, \code{instances} and \code{regions}).
+#' @param ver character string; specified the .zarr version to comply with.
+#' @param nch scalar integer; how many channels should there be?
+#'   (ignored unless \code{type="frame"} and \code{label=FALSE}). 
 #' @param ... additional attributes (e.g., version, feature_key).
 #' 
 #' @details 
@@ -42,12 +54,12 @@
 #' # constructor
 #' SpatialDataAttrs(type="frame")
 #' SpatialDataAttrs(type="array")
-#' SpatialDataAttrs(type="array", n=7)
+#' SpatialDataAttrs(type="array", nch=7)
 #' SpatialDataAttrs(type="array", label=TRUE)
 #' 
 #' @export
 SpatialDataAttrs <- \(x, type=c("array", "frame"), 
-    label=FALSE, trans=NULL, ver="0.4", n=3, ...) 
+    label=FALSE, trans=NULL, ver="0.4", nch=3, ...) 
 {
     if (!missing(x)) return(.SpatialDataAttrs(x))
     type <- match.arg(type)
@@ -68,7 +80,7 @@ SpatialDataAttrs <- \(x, type=c("array", "frame"),
     if (type == "array") {
         # default structure
         res <- list(
-            omero=list(channels=list(label=letters[seq_len(n)])),
+            omero=list(channels=list(label=letters[seq_len(nch)])),
             multiscales=list(list(
                 axes=ax,
                 version="0.4",
@@ -128,17 +140,7 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 
 # internal use only!
 #' @noRd 
-.ch <- \(x) {
-    if (.zv(x) == "0.3") x <- x$ome
-    unlist(x$omero$channels)
-}
-
-# internal use only!
-#' @noRd 
 setMethod("multiscales", "list", .ms)
-
-#' @export
-setMethod("channels", "SpatialDataAttrs", \(x, ...) .ch(x))
 
 # features ----
 

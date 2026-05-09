@@ -4,6 +4,7 @@
 #' @aliases transform scale rotate translation flip flop mirror sequence
 #' 
 #' @param x \code{SpatialData} element.
+#' @param i scalar integer or string; target coordinate space.
 #' @param t transformation data; exceptions: for \code{mirror}, controls
 #'   whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
 #'   no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).
@@ -11,6 +12,7 @@
 #'   \code{Inf} to use lowest available resolution;
 #'   only applies to \code{SpatialDataArray}s (images, labels).
 #' @param ... option arguments passed to and from other methods.
+#' @param rev flag; should transformation(s) be reversed?
 #' 
 #' @returns \code{SpatialData} element with transformation(s) applied.
 #' 
@@ -48,11 +50,15 @@ NULL
 
 #' @export
 #' @rdname trans
-setMethod("transform", c("SpatialDataElement", "missing"), \(x, i, ...) transform(x, 1, ...))
+setMethod("transform", 
+    c("SpatialDataElement", "missing"), 
+    \(x, i, ...) transform(x, 1, ...))
 
 #' @export
 #' @rdname trans
-setMethod("transform", c("SpatialDataElement", "numeric"), \(x, i, ...) transform(x, CTname(x)[i], ...))
+setMethod("transform", 
+    c("SpatialDataElement", "numeric"), 
+    \(x, i, ...) transform(x, CTname(x)[i], ...))
 
 #' @export
 #' @rdname trans
@@ -100,30 +106,26 @@ setMethod("flip", "SpatialDataArray", \(x, k=1, ...) .mirror(x, -90, k))
 #' @rdname trans
 setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
 
-#' @importFrom methods as
-#' @importFrom S4Vectors metadata<-
-.trans_a. <- \(x, f, k=1) {
-    a <- f(aperm(as.array(data(x, k))))
-    metadata(x)$data_type <- data_type(x)
-    data(x) <- list(as(aperm(a), "SparseArray"))
-    return(x)
-}
-
 # rotation matrix to rotate points counter-clockwise through an angle 't'
 .R <- \(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
 
 #' @export
 #' @rdname trans
+#' @importFrom methods as
 #' @importFrom EBImage rotate
+#' @importFrom S4Vectors metadata<-
 setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, k=1, ..., rev=FALSE) {
     # negate angle since 'EBImage' rotates clockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
     if (rev) t <- -t
-    f <- \(.) EBImage::rotate(., -t) 
     if (length(d <- dim(data(x, k))) == 3) d <- d[-1]
     metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(t*pi/180)))
-    .trans_a.(x, f, k)
+    f <- \(.) EBImage::rotate(., -t) 
+    a <- f(aperm(as.array(data(x, k))))
+    metadata(x)$data_type <- data_type(x)
+    data(x) <- list(as(aperm(a), "SparseArray"))
+    return(x)
 })
 
 .trans_a <- \(x, t, f=c("scale", "translation"), k=1, rev=FALSE) {
@@ -153,25 +155,30 @@ setMethod("rotate", c("SpatialDataArray", "numeric"), \(x, t, k=1, ..., rev=FALS
 
 #' @export
 #' @rdname trans
-setMethod("scale", c("SpatialDataArray", "numeric"), \(x, t, ...) .trans_a(x, t, "scale", ...))
+setMethod("scale", 
+    c("SpatialDataArray", "numeric"), 
+    \(x, t, ...) .trans_a(x, t, "scale", ...))
 
 #' @export
 #' @rdname trans
-setMethod("translation", c("SpatialDataArray", "numeric"), \(x, t, ...) .trans_a(x, t, "translation", ...))
+setMethod("translation", 
+    c("SpatialDataArray", "numeric"), 
+    \(x, t, ...) .trans_a(x, t, "translation", ...))
 
 # point/shape ----
 
 #' @importFrom dplyr mutate
 #' @importFrom rlang call2 !!
 .trans_f <- \(x, t, f=c("scale", "rotate", "translation"), rev=FALSE) {
+    ST_Scale <- ST_Rotate <- ST_Translate <- radius <- NULL # R CMD check
+    
     f <- match.arg(f)
     n <- length(axes(x))
-    ST_Scale <- ST_Rotate <- ST_Translate <- NULL # R CMD check
     
     # setup: length, identity, function
     map <- list(
-        len=c(scale=n, translation=n, rotate=1),
-        ids=c(scale=1, translation=0, rotate=0),
+        len=c(scale=n, rotate=1, translation=n),
+        ids=c(scale=1, rotate=0, translation=0),
         fns=c(scale="ST_Scale", rotate="ST_Rotate", translation="ST_Translate"))
     
     # validation
@@ -202,12 +209,17 @@ setMethod("translation", c("SpatialDataArray", "numeric"), \(x, t, ...) .trans_a
 #' @export
 #' @rdname trans
 setMethod("rotate", 
-    c("SpatialDataFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "rotate", ...))
+    c("SpatialDataFrame", "numeric"), 
+    \(x, t, ...) .trans_f(x, t, "rotate", ...))
 
 #' @export
 #' @rdname trans
-setMethod("scale", c("SpatialDataFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "scale", ...))
+setMethod("scale", 
+    c("SpatialDataFrame", "numeric"), 
+    \(x, t, ...) .trans_f(x, t, "scale", ...))
 
 #' @export
 #' @rdname trans
-setMethod("translation", c("SpatialDataFrame", "numeric"), \(x, t, ...) .trans_f(x, t, "translation", ...))
+setMethod("translation", 
+    c("SpatialDataFrame", "numeric"), 
+    \(x, t, ...) .trans_f(x, t, "translation", ...))

@@ -4,50 +4,23 @@
 \alias{SpatialDataFrame}
 \alias{SpatialDataPoint}
 \alias{SpatialDataShape}
-\alias{pull.SpatialDataFrame}
-\alias{select.SpatialDataFrame}
-\alias{mutate.SpatialDataFrame}
-\alias{filter.SpatialDataFrame}
+\alias{geom_type}
 \alias{length,SpatialDataFrame-method}
 \alias{dim,SpatialDataFrame-method}
 \alias{names,SpatialDataFrame-method}
 \alias{as.data.frame,SpatialDataFrame-method}
 \alias{geom_type,SpatialDataShape-method}
+\alias{pull.SpatialDataFrame}
+\alias{select.SpatialDataFrame}
+\alias{mutate.SpatialDataFrame}
+\alias{filter.SpatialDataFrame}
 \alias{[[,SpatialDataFrame,ANY,ANY-method}
 \alias{$,SpatialDataPoint-method}
 \alias{.DollarNames.SpatialDataShape}
 \alias{$,SpatialDataShape-method}
 \alias{[,SpatialDataFrame,ANY,ANY,ANY-method}
-\title{The `SpatialDataFrame` class}
+\title{\code{SpatialDataFrame}}
 \usage{
-\method{pull}{SpatialDataFrame}(.data, ...)
-
-\method{select}{SpatialDataFrame}(.data, ...)
-
-\method{mutate}{SpatialDataFrame}(.data, ...)
-
-\method{filter}{SpatialDataFrame}(.data, ...)
-
-\S4method{length}{SpatialDataFrame}(x)
-
-\S4method{dim}{SpatialDataFrame}(x)
-
-\S4method{names}{SpatialDataFrame}(x)
-
-\S4method{as.data.frame}{SpatialDataFrame}(x)
-
-\S4method{geom_type}{SpatialDataShape}(x)
-
-\S4method{[[}{SpatialDataFrame,ANY,ANY}(x, i, j, ...)
-
-\S4method{$}{SpatialDataPoint}(x, name)
-
-\method{.DollarNames}{SpatialDataShape}(x, pattern = "")
-
-\S4method{$}{SpatialDataShape}(x, name)
-
-\S4method{[}{SpatialDataFrame,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
-
 SpatialDataPoint(
   data = NULL,
   meta = SpatialDataAttrs(type = "frame"),
@@ -63,18 +36,36 @@ SpatialDataShape(
   metadata = list(),
   ...
 )
+
+\S4method{length}{SpatialDataFrame}(x)
+
+\S4method{dim}{SpatialDataFrame}(x)
+
+\S4method{names}{SpatialDataFrame}(x)
+
+\S4method{as.data.frame}{SpatialDataFrame}(x)
+
+\S4method{geom_type}{SpatialDataShape}(x)
+
+\method{pull}{SpatialDataFrame}(.data, ...)
+
+\method{select}{SpatialDataFrame}(.data, ...)
+
+\method{mutate}{SpatialDataFrame}(.data, ...)
+
+\method{filter}{SpatialDataFrame}(.data, ...)
+
+\S4method{[[}{SpatialDataFrame,ANY,ANY}(x, i, j, ...)
+
+\S4method{$}{SpatialDataPoint}(x, name)
+
+\method{.DollarNames}{SpatialDataShape}(x, pattern = "")
+
+\S4method{$}{SpatialDataShape}(x, name)
+
+\S4method{[}{SpatialDataFrame,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
-\item{...}{optional arguments passed to and from other methods.}
-
-\item{x}{an \code{SpatialDataFrame}}
-
-\item{i, j}{indices for subsetting (see \code{?base::Extract}).}
-
-\item{name}{character string for extraction (see \code{?base::`$`}).}
-
-\item{drop}{ignored.}
-
 \item{data}{\code{duckspatial_df} for on-disk representation,
 or a \code{data.frame} to be converted.}
 
@@ -82,21 +73,35 @@ or a \code{data.frame} to be converted.}
 
 \item{metadata}{optional list of arbitrary
 content describing the overall object.}
+
+\item{ik, fk}{character string specifying "instance_/feature_key" 
+of the spatialdata_attrs; used to match observations/features.}
+
+\item{...}{optional arguments passed to and from other methods.}
+
+\item{x, .data}{\code{SpatialDataFrame}}
+
+\item{i, j}{indices for subsetting (see \code{?base::Extract}).}
+
+\item{name}{character string for extraction (see \code{?base::`$`}).}
+
+\item{drop, pattern}{ignored.}
 }
 \value{
-an \code{SpatialDataFrame}
+\code{SpatialDataFrame}
 }
 \description{
-The \code{SpatialDataPoint} and \code{SpatialDataShape} classes store 
-\code{SpatialData} elements from its \code{"points"} and 
-\code{"shapes"} layers, respectively. These are represented 
-as \code{duckspatial_df} (\code{data} slot) associated with 
-.zattrs stored as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
+The \code{SpatialDataPoint} and \code{-Shape} classes represent 
+elements from a \code{SpatialData}'s \code{points/} and \code{shapes/} 
+layers, respectively. In both cases, these  are represented as a 
+\code{duckspatial_df} (\code{data} slot), and associated with .zattrs 
+represented as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
 a list of \code{metadata} stores other arbitrary info.
 
 Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
 \itemize{
 \item \code{data/meta(x)} access underlying data/.zattrs
+\item \code{geom_type(x)} get the shape's type (e.g., POLYGON)
 \item \code{names(x)} returns the underlying table's column names
 \item \code{dim(x)} returns the dimensions of \code{data(x)}
 \item \code{`$`,`[[`} directly access columns of \code{data(x)}

@@ -1,14 +1,14 @@
-#' @importFrom utils .DollarNames
 #' @export
+#' @importFrom utils .DollarNames
 .DollarNames.SpatialData <- \(x, pattern="") grep(pattern, .LAYERS, value=TRUE)
 
-#' @rdname SpatialData
 #' @exportMethod $
+#' @rdname SpatialData
 setMethod("$", "SpatialData", \(x, name) attr(x, name))
 
+#' @export
 #' @rdname SpatialData
 #' @importFrom methods callNextMethod
-#' @export
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
@@ -144,12 +144,24 @@ setMethod("element", c("SpatialData", "ANY"), \(x, i)
 
 # get all ----
 
-#' @name SpatialData
-#' @exportMethod images labels points shapes tables
+#' @export
+#' @rdname SpatialData
 setMethod("images", "SpatialData", \(x) x$images)
+
+#' @export
+#' @rdname SpatialData
 setMethod("labels", "SpatialData", \(x) x$labels)
+
+#' @export
+#' @rdname SpatialData
 setMethod("points", "SpatialData", \(x) x$points)
+
+#' @export
+#' @rdname SpatialData
 setMethod("shapes", "SpatialData", \(x) x$shapes)
+
+#' @export
+#' @rdname SpatialData
 setMethod("tables", "SpatialData", \(x) x$tables)
 
 # get nms ----

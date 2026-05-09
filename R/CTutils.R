@@ -103,11 +103,21 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
 
 # SpatialDataElement ----
 
-.SDE_METS <- c("axes", "CTlist", "CTtype", "CTname")
-for (. in .SDE_METS) {
-    setMethod(., "SpatialDataElement", 
-        eval(parse(text=sprintf("\\(x, ...) %s(meta(x), ...)", .))))
-}
+#' @rdname CTutils
+#' @export
+setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTname", "SpatialDataElement", \(x, ...) CTname(meta(x), ...))
 
 #' @rdname CTutils
 #' @export
@@ -185,7 +195,6 @@ setMethod("addCT", "SpatialDataElement",
 #' @rdname CTutils
 #' @export
 setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
-    #x <- meta(image(sd, 2)); name <- "lowres"; type="identity"; data=NULL
     stopifnot(
         is.character(name), length(name) == 1,
         is.character(type), length(type) == 1)
