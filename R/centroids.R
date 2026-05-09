@@ -16,7 +16,6 @@
 #'
 #' centroids(label(x))
 #' centroids(shape(x))
-#' centroids(shape(x, 3), "list")
 #'
 #' head(centroids(point(x)))
 #' xy <- centroids(point(x), "list")
@@ -33,7 +32,7 @@ setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
 #' @export
 #' @rdname centroids
 #' @importFrom Matrix summary
-setMethod("centroids", "LabelArray", \(x,
+setMethod("centroids", "SpatialDataLabel", \(x,
     as=c("data.frame", "matrix")) {
     as <- match.arg(as)
     y <- data(x)
@@ -53,12 +52,14 @@ setMethod("centroids", "LabelArray", \(x,
 
 #' @export
 #' @rdname centroids
-#' @importFrom sf st_as_sf st_geometry_type st_coordinates
-setMethod("centroids", "ShapeFrame", \(x,
+#' @importFrom sf st_as_sf st_geometry_type st_centroid st_coordinates
+setMethod("centroids", "SpatialDataShape", \(x,
     as=c("data.frame", "matrix", "list")) {
     as <- match.arg(as)
-    y <- st_as_sf(data(x))
-    xy <- st_coordinates(y)
+    xy <- data(x) |>
+        st_as_sf() |>
+        st_centroid() |>
+        st_coordinates()
     colnames(xy)[c(1, 2)] <- c("x", "y")
     if (as == "matrix") return(xy)
     xy <- as.data.frame(xy)
@@ -74,7 +75,7 @@ setMethod("centroids", "ShapeFrame", \(x,
 #' @rdname centroids
 #' @importFrom dplyr pull
 #' @importFrom sf st_as_sf st_coordinates
-setMethod("centroids", "PointFrame", \(x,
+setMethod("centroids", "SpatialDataPoint", \(x,
     as=c("data.frame", "list")) {
     as <- match.arg(as)
     xy <- data(x) |>

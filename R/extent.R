@@ -35,7 +35,7 @@ setMethod("extent", "SpatialData", \(x, i=1) {
 
 #' @export
 #' @rdname extent
-setMethod("extent", "sdArray", \(x, i=1) {
+setMethod("extent", "SpatialDataArray", \(x, i=1) {
     x <- transform(x, i)
     wh <- metadata(x)$wh
     if (!is.null(wh)) return(wh)
@@ -49,7 +49,7 @@ setMethod("extent", "sdArray", \(x, i=1) {
 #' @export
 #' @rdname extent
 #' @importFrom duckspatial ddbs_bbox
-setMethod("extent", "sdFrame", \(x, i=1) {
+setMethod("extent", "SpatialDataFrame", \(x, i=1) {
     x <- transform(x, i)
     v <- ddbs_bbox(data(x))
     l <- list(

@@ -3,18 +3,18 @@
 \name{centroids}
 \alias{centroids}
 \alias{centroids,ANY-method}
-\alias{centroids,LabelArray-method}
-\alias{centroids,ShapeFrame-method}
-\alias{centroids,PointFrame-method}
+\alias{centroids,SpatialDataLabel-method}
+\alias{centroids,SpatialDataShape-method}
+\alias{centroids,SpatialDataPoint-method}
 \title{Spatial element centroids}
 \usage{
 \S4method{centroids}{ANY}(x, ...)
 
-\S4method{centroids}{LabelArray}(x, as = c("data.frame", "matrix"))
+\S4method{centroids}{SpatialDataLabel}(x, as = c("data.frame", "matrix"))
 
-\S4method{centroids}{ShapeFrame}(x, as = c("data.frame", "matrix", "list"))
+\S4method{centroids}{SpatialDataShape}(x, as = c("data.frame", "matrix", "list"))
 
-\S4method{centroids}{PointFrame}(x, as = c("data.frame", "list"))
+\S4method{centroids}{SpatialDataPoint}(x, as = c("data.frame", "list"))
 }
 \arguments{
 \item{x}{a \code{SpatialData} element (any but image).}
@@ -37,7 +37,6 @@ x <- readSpatialData(x, tables=FALSE)
 
 centroids(label(x))
 centroids(shape(x))
-centroids(shape(x, 3), "list")
 
 head(centroids(point(x)))
 xy <- centroids(point(x), "list")

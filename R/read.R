@@ -21,8 +21,9 @@
 #' @return
 #' \itemize{
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.},
-#' \item{For element readers, a \code{ImageArray}, \code{LabelArray},
-#' \code{PointFrame}, \code{ShapeFrame}, or \code{SingleCellExperiment}.}}
+#' \item{For element readers, 
+#' a \code{SpatialDataImage/Label/Point/Shape} 
+#' or \code{SingleCellExperiment}.}}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
@@ -59,14 +60,14 @@ NULL
 #' @export
 readImage <- function(x, ...) {
     l <- .readArray(x, ...)
-    ImageArray(data=l$array, meta=Zattrs(l$md), ...)
+    SpatialDataImage(data=l$array, meta=SpatialDataAttrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
 #' @export
 readLabel <- function(x, ...) {
     l <- .readArray(x, ...)
-    LabelArray(data=l$array, meta=Zattrs(l$md), ...)
+    SpatialDataLabel(data=l$array, meta=SpatialDataAttrs(l$md), ...)
 }
 
 #' @rdname readSpatialData
@@ -82,7 +83,7 @@ readPoint <- function(x, ...) {
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
-    PointFrame(data=df, meta=Zattrs(md))
+    SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
 #' @rdname readSpatialData
@@ -93,7 +94,7 @@ readPoint <- function(x, ...) {
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    ShapeFrame(data=ddbs_open_dataset(pq), meta=Zattrs(md))
+    SpatialDataShape(data=ddbs_open_dataset(pq), meta=SpatialDataAttrs(md))
 }
 
 #' @export

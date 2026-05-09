@@ -14,17 +14,20 @@ project:
 format:
   html:
     toc: true
-    toc-depth: 3
+    toc-depth: 4
     code-fold: false
     standalone: true
     embed-resources: true
+    bibliography: demo/_.bib
 
 website:
   title: "SpatialData"
   navbar:
     left:
+      - demo/csama.qmd
       - demo/merfish.qmd
       - demo/mibitof.qmd
+      - demo/mcmicro.qmd
       - demo/cosmx.qmd
       - demo/xenium.qmd
       - demo/visium.qmd

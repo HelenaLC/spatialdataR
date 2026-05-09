@@ -2,14 +2,14 @@
 % Please edit documentation in R/crop.R
 \name{crop}
 \alias{crop}
-\alias{crop,sdArray-method}
-\alias{crop,sdFrame-method}
+\alias{crop,SpatialDataArray-method}
+\alias{crop,SpatialDataFrame-method}
 \alias{crop,SpatialData-method}
 \title{spatial cropping}
 \usage{
-\S4method{crop}{sdArray}(x, y, j = 1, ...)
+\S4method{crop}{SpatialDataArray}(x, y, j = 1, ...)
 
-\S4method{crop}{sdFrame}(x, y, j = 1, ...)
+\S4method{crop}{SpatialDataFrame}(x, y, j = 1, ...)
 
 \S4method{crop}{SpatialData}(x, y, j = 1, ...)
 }
@@ -36,13 +36,13 @@ to a rectangular bounding box or arbitrary polygonal shapes.
 For \code{SpatialData} objects, \code{crop} propagates the operation 
 across all layers that share the coordinate space \code{j}.
 
-For \code{sdFrame}s (points and shapes), cropping relies on 
+For \code{SpatialDataFrame}s (points and shapes), cropping relies on 
 \code{sf::st_intersects} (i.e., instances that intersect the 
 query region in any way are kept). For circle shapes, radii 
 are currently ignored (i.e., a circle is kept if its centroid 
 intersects the query region).
 
-For \code{sdArray}s (images and labels), only bounding box 
+For \code{SpatialDataArray}s (images and labels), only bounding box 
 cropping is supported. The requested spatial bounding box is 
 projected into pixel coordinates, and the underlying array is 
 sliced accordingly. The \code{wh} metadata is updated to 
