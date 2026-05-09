@@ -1,6 +1,13 @@
 #' @name SpatialDataAttrs
 #' @title The `SpatialDataAttrs` class
 #' 
+#' @aliases region region<- 
+#' @aliases regions regions<- 
+#' @aliases instances instances<- 
+#' @aliases region_key region_key<- 
+#' @aliases feature_key feature_key<- 
+#' @aliases instance_key instance_key<- 
+#' 
 #' @param x element or list extracted from a OME-NGFF compliant .zattrs file.
 #' @param name character string for extraction (see ?base::`$`).
 #' @param type character string; either "array" (image/label) or "frame" (point/shape).

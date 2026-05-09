@@ -1,7 +1,24 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @description ...
+#' @aliases data meta layer element
+#' @aliases image label point shape table
+#' @aliases images labels points shapes tables
+#' @aliases image<- label<- point<- shape<- table<-
+#' @aliases images<- labels<- points<- shapes<- tables<-
+#' @aliases imageNames labelNames pointNames shapeNames tableNames
+#' @aliases imageNames<- labelNames<- pointNames<- shapeNames<- tableNames<-
+#' @aliases [[,SpatialData,character,ANY
+#' @aliases [[,SpatialData,numeric,ANY
+#' 
+#' @description 
+#' \code{SpatialData} provides an R interface to Python's \code{spatialdata},
+#' which enables the representation of diverse spatial omics datasets using 
+#' the OME-NGFF (Next Generation File Format) standard. In R, 
+#' \itemize{
+#' \item images and labels are \code{ZarrArray}s (\code{Rarr} package).
+#' \item points and shapes are managed using \code{duckspatial} tables.
+#' \item tables are \code{SingleCellExperiment}s (read with \code{anndataR}).}
 #' 
 #' @param images list of \code{\link{SpatialDataImage}}s
 #' @param labels list of \code{\link{SpatialDataLabel}}s

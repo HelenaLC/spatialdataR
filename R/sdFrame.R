@@ -1,13 +1,13 @@
 #' @name SpatialDataFrame
 #' @title The `SpatialDataFrame` class
-#' @aliases SpatialDataPoint SpatialDataShape
+#' @aliases SpatialDataPoint SpatialDataShape geom_type
 #'
-#' @description
-#' The \code{SpatialDataPoint} and \code{SpatialDataShape} classes store 
-#' \code{SpatialData} elements from its \code{"points"} and 
-#' \code{"shapes"} layers, respectively. These are represented 
-#' as \code{duckspatial_df} (\code{data} slot) associated with 
-#' .zattrs stored as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
+#' @description 
+#' The \code{SpatialDataPoint} and \code{-Shape} classes represent 
+#' elements from a \code{SpatialData}'s \code{points/} and \code{shapes/} 
+#' layers, respectively. In both cases, these  are represented as a 
+#' \code{duckspatial_df} (\code{data} slot), and associated with .zattrs 
+#' represented as \code{\link{SpatialDataAttrs}} (\code{meta} slot); 
 #' a list of \code{metadata} stores other arbitrary info.
 #'
 #' Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
