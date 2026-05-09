@@ -1,10 +1,10 @@
-#' @name sdArray
-#' @title Methods for `ImageArray` and `LabelArray` class
+#' @name SpatialDataArray
+#' @title Methods for `SpatialDataArray`s
 #' 
-#' @param x \code{ImageArray} or  \code{LabelArray}
+#' @param x \code{SpatialDataImage} or \code{SpatialDataLabel}.
 #' @param k scalar index specifying which scale to extract.
 #' 
-#' @return \code{ImageArray}
+#' @return \code{SpatialDataArray}
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
@@ -32,9 +32,9 @@
 #' @importFrom methods new
 NULL
 
-#' @rdname sdArray
+#' @rdname SpatialDataArray
 #' @export
-setMethod("data", "sdArray", \(x, k=1) {
+setMethod("data", "SpatialDataArray", \(x, k=1) {
     # direct accession needed here
     # to get at available scales
     x <- x@data 
@@ -46,24 +46,24 @@ setMethod("data", "sdArray", \(x, k=1) {
     stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
-#' @rdname sdArray
+#' @rdname SpatialDataArray
 #' @export
-setMethod("dim", "sdArray", \(x) dim(data(x)))
+setMethod("dim", "SpatialDataArray", \(x) dim(data(x)))
 
-#' @rdname sdArray
+#' @rdname SpatialDataArray
 #' @export
-setMethod("length", "sdArray", \(x) length(data(x, NULL)))
+setMethod("length", "SpatialDataArray", \(x) length(data(x, NULL)))
 
 #' @export
-#' @rdname sdArray
+#' @rdname SpatialDataArray
 #' @importFrom S4Vectors metadata
-setMethod("data_type", "sdArray", \(x) {
+setMethod("data_type", "SpatialDataArray", \(x) {
     if (is(y <- data(x), "DelayedArray")) 
         data_type(y) else metadata(x)$data_type
 })
 
 #' @export
-#' @rdname sdArray
+#' @rdname SpatialDataArray
 #' @importFrom DelayedArray DelayedArray
 #' @importFrom Rarr zarr_overview
 #' @importFrom ZarrArray path

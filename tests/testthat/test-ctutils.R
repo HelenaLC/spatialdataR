@@ -113,7 +113,7 @@ test_that("addCT", {
         expect_silent(z <- addCT(y, ".", t, v <- 1)) 
         .check_data(z, v)
         t <- "scale"
-        d <- ifelse(is(y, "ImageArray"), 3, 2)
+        d <- ifelse(is(y, "SpatialDataImage"), 3, 2)
         expect_error(addCT(y, ".", t, numeric(d))) # zeroes
         expect_error(addCT(y, ".", t, 1+numeric(d+1))) # too many
         expect_error(addCT(y, ".", t, character(d))) # not a number

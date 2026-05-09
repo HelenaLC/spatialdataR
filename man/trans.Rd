@@ -14,15 +14,15 @@
 \alias{transform,SpatialDataElement,numeric-method}
 \alias{transform,SpatialDataElement,character-method}
 \alias{sequence,SpatialDataElement,list-method}
-\alias{mirror,sdArray-method}
-\alias{flip,sdArray-method}
-\alias{flop,sdArray-method}
-\alias{rotate,sdArray,numeric-method}
-\alias{scale,sdArray,numeric-method}
-\alias{translation,sdArray,numeric-method}
-\alias{rotate,sdFrame,numeric-method}
-\alias{scale,sdFrame,numeric-method}
-\alias{translation,sdFrame,numeric-method}
+\alias{mirror,SpatialDataArray-method}
+\alias{flip,SpatialDataArray-method}
+\alias{flop,SpatialDataArray-method}
+\alias{rotate,SpatialDataArray,numeric-method}
+\alias{scale,SpatialDataArray,numeric-method}
+\alias{translation,SpatialDataArray,numeric-method}
+\alias{rotate,SpatialDataFrame,numeric-method}
+\alias{scale,SpatialDataFrame,numeric-method}
+\alias{translation,SpatialDataFrame,numeric-method}
 \title{Transformations}
 \usage{
 \S4method{transform}{SpatialDataElement,missing}(x, i, ...)
@@ -33,23 +33,23 @@
 
 \S4method{sequence}{SpatialDataElement,list}(x, t, ..., rev = FALSE)
 
-\S4method{mirror}{sdArray}(x, t = c("v", "h"), k = 1, ...)
+\S4method{mirror}{SpatialDataArray}(x, t = c("v", "h"), k = 1, ...)
 
-\S4method{flip}{sdArray}(x, k = 1, ...)
+\S4method{flip}{SpatialDataArray}(x, k = 1, ...)
 
-\S4method{flop}{sdArray}(x, k = 1, ...)
+\S4method{flop}{SpatialDataArray}(x, k = 1, ...)
 
-\S4method{rotate}{sdArray,numeric}(x, t, k = 1, ..., rev = FALSE)
+\S4method{rotate}{SpatialDataArray,numeric}(x, t, k = 1, ..., rev = FALSE)
 
-\S4method{scale}{sdArray,numeric}(x, t, ...)
+\S4method{scale}{SpatialDataArray,numeric}(x, t, ...)
 
-\S4method{translation}{sdArray,numeric}(x, t, ...)
+\S4method{translation}{SpatialDataArray,numeric}(x, t, ...)
 
-\S4method{rotate}{sdFrame,numeric}(x, t, ...)
+\S4method{rotate}{SpatialDataFrame,numeric}(x, t, ...)
 
-\S4method{scale}{sdFrame,numeric}(x, t, ...)
+\S4method{scale}{SpatialDataFrame,numeric}(x, t, ...)
 
-\S4method{translation}{sdFrame,numeric}(x, t, ...)
+\S4method{translation}{SpatialDataFrame,numeric}(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}
@@ -62,7 +62,7 @@ no data is needed for \code{flip} (\bold{v}) and \code{flop} (\bold{h}).}
 
 \item{k}{scalar index specifying which scale to use; 
 \code{Inf} to use lowest available resolution;
-only applies to \code{sdArray}s (images, labels).}
+only applies to \code{SpatialDataArray}s (images, labels).}
 }
 \value{
 \code{SpatialData} element with transformation(s) applied.
