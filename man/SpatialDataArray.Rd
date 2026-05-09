@@ -8,7 +8,7 @@
 \alias{length,SpatialDataArray-method}
 \alias{data_type,SpatialDataArray-method}
 \alias{data_type,DelayedArray-method}
-\title{Methods for `SpatialDataArray`s}
+\title{\code{SpatialDataArray}}
 \usage{
 \S4method{data}{SpatialDataArray}(x, k = 1)
 
@@ -29,7 +29,7 @@
 \code{SpatialDataArray}
 }
 \description{
-Methods for `SpatialDataArray`s
+\code{SpatialDataArray}
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")

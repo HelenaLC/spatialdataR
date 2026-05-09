@@ -1,5 +1,5 @@
 #' @name SpatialDataLabel
-#' @title The \code{SpatialDataLabel} class
+#' @title \code{SpatialDataLabel}
 #'
 #' @description 
 #' The \code{SpatialDataLabel} class stores \code{SpatialData} elements from its 

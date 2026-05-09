@@ -39,8 +39,8 @@
 \alias{pointNames<-}
 \alias{shapeNames<-}
 \alias{tableNames<-}
-\alias{[[,SpatialData,character,ANY}
-\alias{[[,SpatialData,numeric,ANY}
+\alias{[[<-,SpatialData,character,ANY-method}
+\alias{[[<-,SpatialData,numeric,ANY-method}
 \alias{$,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}

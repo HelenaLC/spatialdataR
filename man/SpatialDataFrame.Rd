@@ -19,7 +19,7 @@
 \alias{.DollarNames.SpatialDataShape}
 \alias{$,SpatialDataShape-method}
 \alias{[,SpatialDataFrame,ANY,ANY,ANY-method}
-\title{The `SpatialDataFrame` class}
+\title{\code{SpatialDataFrame}}
 \usage{
 \method{pull}{SpatialDataFrame}(.data, ...)
 
@@ -88,7 +88,7 @@ content describing the overall object.}
 of the spatialdata_attrs; used to match observations/features.}
 }
 \value{
-an \code{SpatialDataFrame}
+\code{SpatialDataFrame}
 }
 \description{
 The \code{SpatialDataPoint} and \code{-Shape} classes represent 
@@ -101,6 +101,7 @@ a list of \code{metadata} stores other arbitrary info.
 Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
 \itemize{
 \item \code{data/meta(x)} access underlying data/.zattrs
+\item \code{geom_type(x)} get the shape's type (e.g., POLYGON)
 \item \code{names(x)} returns the underlying table's column names
 \item \code{dim(x)} returns the dimensions of \code{data(x)}
 \item \code{`$`,`[[`} directly access columns of \code{data(x)}
