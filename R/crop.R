@@ -140,10 +140,8 @@ NULL
         data <- ct[[type]]
         ct[[type]] <- .adapt(data, type)
     }
-    # update input axes to spatial (XY)
-    ct$input$axes <- list(
-        list(name="x", type="space"),
-        list(name="y", type="space"))
+    # update input axes from 'cyx' to 'xy'
+    ct$input$axes <- .default_ax(type="frame")
     # create temporary shape & transform back
     md <- SpatialDataAttrs(type="frame", trans=list(ct))
     z <- SpatialDataShape(df, meta=md)
@@ -236,16 +234,14 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
-    z <- .lapplyElement(x, \(z) {
-        if (j %in% CTname(z))
-            crop(z, y, j=j)
+    z <- .lapplyElement(x, \(.) {
+        if (j %in% CTname(.))
+            crop(., y, j=j)
     })
     # drop elements without content
-    n <- lapply(.lapplyLayer(z, length), unlist)
-    n <- lapply(n, \(.) if (any(i <- . > 0)) .[i])
-    names(ts) <- ts <- tableNames(z)
-    n <- c(n, list(tables=ts))
-    z <- z[names(n), lapply(n, names)]
+    z <- .lapplyElement(z, 
+        \(.) if (length(.) > 0) .) |>
+        `tables<-`(value=tables(z))
     # filter tables for remaining region(s)/instance(s)
     rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
