@@ -14,26 +14,47 @@ test_that("mask,unsupported", {
     for (ij in nm) expect_error(mask(x, ij[1], ij[2]))
 })
 
-test_that("mask,sdImage,sdLabel", {
+test_that("mask,unaligned", {
     i <- "blobs_image"
     j <- "blobs_labels"
     
-    # reproduce example data
-    y <- mask(x, i, j, how="sum")
-    expect_equivalent(
-        assay(tables(y)[[2]]), 
-        assay(tables(x)[[1]]))
+    # non-existent
+    expect_error(
+        mask(x, i, j, "x"), 
+        "should be \"global\"")
+    
+    # not shared
+    za <- meta(image(x, i))
+    ct <- "coordinateTransformations"
+    za$multiscales[[1]][[ct]][[1]]$output$name <- "x"
+    y <- x; meta(image(y, i)) <- za
+    expect_error(
+        mask(y, i, j, "x"), 
+        "found no common")
+})
+
+test_that("mask,sdImage,sdLabel", {
+    i <- "blobs_image"
+    j <- "blobs_labels"
     
     # default to 'mean' with a message
     expect_message(y <- mask(x, i, j))
     expect_silent(z <- mask(x, i, j, how="mean"))
     expect_identical(y, z)
+    
+    # check against original
+    expect_equivalent(
+        assay(tables(y)[[2]]), 
+        assay(tables(x)[[1]]))
 })
 
 test_that("mask,sdPoint,sdShape", {
     i <- "blobs_points"
     j <- "blobs_circles"
     k <- "blobs_polygons"
+    
+    # can only count points
+    expect_message(mask(x, i, j, how="mean"))
     
     # test basic masking
     y <- mask(x, i, j)
@@ -82,8 +103,8 @@ test_that("mask,sdShape,sdShape", {
         ymin=ex$y[1],
         xmax=ex$x[2],
         ymax=ex$y[2]))
-    nn <- st_as_sfc(bb)
-    bb <- st_sf(geometry=nn)
+    bb <- st_as_sfc(bb)
+    bb <- st_sf(geometry=bb)
     y <- SpatialDataShape(bb)
     
     # missing table
@@ -95,6 +116,13 @@ test_that("mask,sdShape,sdShape", {
     se <- SingleCellExperiment(mx)
     y <- setTable(x, i, se)
     
+    # out-of-bounds masking
+    t <- translation(s, c(1e3,1e3))
+    shape(y, "out") <- t
+    expect_error(mask(y, i, "out"))
+    
+    # note: data at "0" are from non-intersecting instances;
+    # here, all data should be aggregated to column "1"
     for (how in c("sum", "mean", "detected", "prop.detected")) {
         fun <- switch(how, 
             sum=rowSums, mean=rowMeans,
@@ -106,7 +134,4 @@ test_that("mask,sdShape,sdShape", {
         expect_equal(dim(sf), c(7,2))
         expect_identical(assay(sf)[,"1"], fun(mx))
     }
-    
-    # non-null value
-    
 })
