@@ -48,6 +48,46 @@ test_that("mask,sdImage,sdLabel", {
         assay(tables(x)[[1]]))
 })
 
+test_that("mask w/ transform", {
+    i <- "blobs_image"
+    j <- "blobs_labels"
+    a <- element(x, i)
+    b <- element(x, j)
+    
+    # misaligned
+    l <- list(1,.1,.1); t <- "scale"
+    a <- addCT(a, name=t, type=t, data=l)
+    y <- x; y[[layer(y, i)]][[i]] <- a
+    expect_error(mask(y, i, j, t))
+    
+    # aligned
+    l <- c(list(1), CTdata(b, t <- "scale"))
+    a <- addCT(a, name=t, type=t, data=l)
+    y <- x; y[[layer(y, i)]][[i]] <- a
+    expect_silent(z <- mask(y, i, j, t, how=how <- "sum"))
+    
+    # in/valid CT index (not name)
+    expect_error(mask(y, i, j, 0))
+    expect_error(mask(y, i, j, 9))
+    t <- which(CTname(a) == t)
+    expect_identical(z, mask(y, i, j, t, how="sum"))
+    
+    # check structure
+    se <- tail(tables(z),1)[[1]]
+    expect_identical(assayNames(se), how)
+    expect_equal(dim(se), c(dim(a)[1], length(instances(b))))
+    expect_identical(rownames(se), as.character(channels(a)))
+    expect_setequal(colnames(se), as.character(instances(b)))
+    
+    # check aggregation
+    replicate(3, {
+        . <- sample(instances(b), 1)
+        mx <- as.matrix(data(a)[1,,])
+        my <- as.matrix(data(b) == .)
+        expect_identical(sum(mx*my), assay(se)[1,as.character(.)])
+    })
+})
+
 test_that("mask,sdPoint,sdShape", {
     i <- "blobs_points"
     j <- "blobs_circles"

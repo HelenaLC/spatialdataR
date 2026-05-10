@@ -89,8 +89,17 @@ setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, ...) {
-    if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
-    stopifnot(dim(i)[-1] == dim(j))
+    .wh <- \(.) {
+        ds <- dim(.); if (length(ds) == 3) ds <- ds[-1]
+        metadata(.)$wh %||% list(c(0, ds[2]), c(0, ds[1]))
+    }
+    stopifnot(
+        "image/label width mismatch"=.wh(i)[[1]] == .wh(j)[[1]],
+        "image/label height mismatch"=.wh(i)[[2]] == .wh(j)[[2]])
+    if (is.null(how)) { 
+        message("Missing 'how'; defaulting to 'mean'") 
+        how <- "mean"
+    }
     .j <- as(data(j), "sparseVector")
     .j <- as.vector(.j[ok <- .j > 0])
     mx <- apply(data(i), 1, \(.i) {
@@ -106,11 +115,11 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
 
 .mask_map <- \(i, j) {
     ST_Buffer <- geometry <- radius <- NULL # R CMD check
-    jdata <- switch(
+    df_j <- switch(
         geom_type(j), 
-        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
-        j@data)
-    ddbs_intersects(jdata, i@data, sparse=TRUE)
+        "POINT"=mutate(data(j), geometry=ST_Buffer(geometry, radius)), 
+        data(j))
+    ddbs_intersects(df_j, data(i), sparse=TRUE)
 }
 
 #' @noRd
