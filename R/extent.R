@@ -37,13 +37,14 @@ setMethod("extent", "SpatialData", \(x, i=1) {
 #' @rdname extent
 setMethod("extent", "SpatialDataArray", \(x, i=1) {
     x <- transform(x, i)
-    wh <- metadata(x)$wh
-    if (!is.null(wh)) return(wh)
-    n <- length(d <- dim(x))
-    if (n == 3) d <- d[-1]
-    d <- rev(d)
-    names(d) <- c("x", "y")
-    lapply(d, \(.) c(0, .))
+    wh <- metadata(x)$wh %||% {
+        n <- length(d <- dim(x))
+        if (n == 3) d <- d[-1]
+        d <- rev(d)
+        lapply(d, \(.) c(0, .))
+    }
+    names(wh) <- c("x", "y")
+    return(wh)
 })
 
 #' @export

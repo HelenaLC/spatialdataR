@@ -17,18 +17,23 @@
             ok <- all(vapply(md, is.character, logical(1)))
             if (!ok) msg <- c(msg, paste0(
                 i, "-th table's ", .nm, " is not of type character"))
-            ok <- all(lengths(intersect(md, nm[-1])) == 1)
-            if (!ok) msg <- c(msg, paste0(
-                i, "-th table's 'region/instance_key' is not length 1"))
-            ok <- !is.null(int_colData(se)[[md$instance_key]])
-            if (!ok) msg <- c(msg, paste0(
-                i, "-th table missing 'instance_key' column in 'int_colData'"))
-            ok <- !is.null(rs <- int_colData(se)[[rk <- md$region_key]])
-            if (!ok) msg <- c(msg, paste0(
-                i, "-th table missing 'region_key' column in 'int_colData'"))
-            ok <- all(md[[rk]] %in% rs)
-            if (!ok) msg <- c(msg, paste0(
-                i, "-th table's 'region_key' values not found in 'int_colData'"))
+            ks <- intersect(names(md), nm[-1])
+            ok <- all(lengths(md[ks]) == 1)
+            if (!ok) {
+                msg <- c(msg, paste0(i, "-th table's 'region/instance_key' is not length 1"))
+            } else {
+                ok <- length(int_colData(se)[[md$instance_key]])
+                if (!ok) msg <- c(msg, paste0(
+                    i, "-th table missing 'instance_key' column in 'int_colData'"))
+                ok <- length(rs <- int_colData(se)[[rk <- md$region_key]])
+                if (!ok) {
+                    msg <- c(msg, paste0(i, "-th table missing 'region_key' column in 'int_colData'"))
+                } else {
+                    ok <- all(md$region %in% rs)
+                    if (!ok) msg <- c(msg, paste0(
+                        i, "-th table's 'region_key' values not found in 'int_colData'"))
+                }
+            }
         }
     }
     na <- setdiff(
