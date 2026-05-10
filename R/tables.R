@@ -131,7 +131,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
         i <- if (is(y, "SpatialDataLabel")) {
             instances(y)
         } else if (is(y, "SpatialDataShape")) {
-            if (ik %in% names(y)) pull(y, !!ik) else seq(0, length(y)-1)
+            if (ik %in% names(y)) pull(y, !!ik) else seq_along(y)
         } else stop ("Only labels and shapes can have tables.")
         t <- t[, instances(t) %in% i]
     }

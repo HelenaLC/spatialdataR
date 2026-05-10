@@ -97,3 +97,35 @@ test_that("extent,sdShape", {
     expect_identical(z$x, range(mx[, 1]))
     expect_identical(z$y, range(mx[, 2]))
 })
+test_that("extent,SpatialData", {
+    # single element
+    y <- x["images",1]
+    expect_identical(extent(y), extent(image(y,1)))
+    expect_identical(extent(y)$x, c(0, dim(image(y,1))[3]))
+    expect_identical(extent(y)$y, c(0, dim(image(y,1))[2]))
+    
+    # two elements w/ different extents
+    y <- x[c("images","points"),list(1,1)]
+    a <- extent(image(y)); b <- extent(point(y))
+    ab <- rbind(data.frame(a), data.frame(b))
+    ab <- list(x=range(ab[,1]), y=range(ab[,2]))
+    expect_identical(extent(y), ab)
+})
+test_that("extent w/ transform", {
+    # array
+    y <- image(x)
+    t <- c(1,0.7,7)
+    z <- scale(y, t)
+    wh <- list(
+        x=extent(y)[[1]]*t[3],
+        y=extent(y)[[2]]*t[2])
+    expect_identical(extent(z), wh)
+    # frame
+    y <- point(x)
+    t <- c(0.3,3)
+    z <- scale(y, t)
+    wh <- list(
+        x=extent(y)[[1]]*t[1],
+        y=extent(y)[[2]]*t[2])
+    expect_identical(extent(z), wh)
+})
