@@ -83,23 +83,23 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
 
 setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 
-.mask_map <- \(i, j) {
-    ST_Buffer <- geometry <- radius <- NULL # R CMD check
-    jdata <- switch(
-        geom_type(j), 
-        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
-        j@data)
-    ddbs_intersects(jdata, i@data, sparse=TRUE)
-}
-
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, ...) {
-    if (is.null(how)) { how <- "mean"; message("Missing 'how'; defaulting to 'mean'") }
-    stopifnot(dim(i)[-1] == dim(j))
+    .wh <- \(.) {
+        ds <- dim(.); if (length(ds) == 3) ds <- ds[-1]
+        metadata(.)$wh %||% list(c(0, ds[2]), c(0, ds[1]))
+    }
+    stopifnot(
+        "image/label width mismatch"=.wh(i)[[1]] == .wh(j)[[1]],
+        "image/label height mismatch"=.wh(i)[[2]] == .wh(j)[[2]])
+    if (is.null(how)) { 
+        message("Missing 'how'; defaulting to 'mean'") 
+        how <- "mean"
+    }
     .j <- as(data(j), "sparseVector")
     .j <- as.vector(.j[ok <- .j > 0])
     mx <- apply(data(i), 1, \(.i) {
@@ -113,6 +113,15 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
     return(se)
 })
 
+.mask_map <- \(i, j) {
+    ST_Buffer <- geometry <- radius <- NULL # R CMD check
+    df_j <- switch(
+        geom_type(j), 
+        "POINT"=mutate(data(j), geometry=ST_Buffer(geometry, radius)), 
+        data(j))
+    ddbs_intersects(df_j, data(i), sparse=TRUE)
+}
+
 #' @noRd
 #' @importFrom rlang .data
 #' @importFrom Matrix sparseMatrix
@@ -120,11 +129,11 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom dplyr mutate left_join coalesce join_by select count collect row_number
 setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, ...) {
-    if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
+    if (!is.null(how)) message("Can only count when masking points; ignoring 'how'")
     id_x <- id_y <- n <- NULL # R CMD check
     ij <- .mask_map(i, j)
     fk <- feature_key(i)
-    res <- i@data |>
+    res <- data(i) |>
         mutate(id_y=row_number()) |>
         left_join(ij, by=join_by(id_y)) |>
         mutate(id_x=coalesce(id_x, 0L)) |>
@@ -146,16 +155,14 @@ setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, 
 
 #' @noRd
 #' @importFrom methods as
-#' @importFrom Matrix sparseMatrix
 #' @importFrom SparseArray colSums
+#' @importFrom Matrix t sparseMatrix
 #' @importFrom SummarizedExperiment assay
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
+setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
-    ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
-    if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # mapping of 'i' to 'j'
@@ -166,10 +173,9 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     id_x <- id_y <- NULL # R CMD check
     is <- pull(ij, id_y) # elements in i
     js <- pull(ij, id_x) # masks in j
-    na <- setdiff(seq_len(nrow(i)), is)
+    na <- setdiff(length(i), is)
     # aggregation
     mx <- assay(table, assay)
-    if (!is.null(value)) mx <- mx[value, , drop=FALSE]
     if (endsWith(how, "detected")) mx <- mx > 0
     # auxiliary matrix to aggregate 'i's by 'j's; 
     # add dummy 'j' for 'i's without any 'j's
@@ -182,7 +188,7 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     ns <- colSums(my > 0) # number of 'i's per 'j'
     if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
     # wrangling
-    mx <- as(mx, "dgCMatrix")
+    mx <- as(mx, "CsparseMatrix")
     colnames(mx) <- c("0", instances(j))
     mx <- list(mx); names(mx) <- how
     se <- SingleCellExperiment(mx)

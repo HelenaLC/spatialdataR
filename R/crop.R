@@ -140,10 +140,8 @@ NULL
         data <- ct[[type]]
         ct[[type]] <- .adapt(data, type)
     }
-    # update input axes to spatial (XY)
-    ct$input$axes <- list(
-        list(name="x", type="space"),
-        list(name="y", type="space"))
+    # update input axes from 'cyx' to 'xy'
+    ct$input$axes <- .default_ax(type="frame")
     # create temporary shape & transform back
     md <- SpatialDataAttrs(type="frame", trans=list(ct))
     z <- SpatialDataShape(df, meta=md)
@@ -232,14 +230,19 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
-#' @importFrom dplyr anti_join
+#' @importFrom dplyr right_join
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
-    z <- .lapplyElement(x, \(z) {
-        if (j %in% CTname(z))
-            crop(z, y, j=j)
+    z <- .lapplyElement(x, \(.) {
+        if (j %in% CTname(.))
+            crop(., y, j=j)
     })
+    # drop elements without content
+    z <- .lapplyElement(z, 
+        \(.) if (length(.) > 0) .) |>
+        `tables<-`(value=tables(z))
+    # filter tables for remaining region(s)/instance(s)
     rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
         # filter for remaining element(s)
@@ -257,7 +260,8 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
             e <- element(z, r)
             if (is(e, "SpatialDataShape")) {
                 # element's regions-instances
-                i <- e[[instance_key(t)]]
+                ik <- instance_key(t)
+                i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
                 fd <- data.frame(r, i)
                 # return table indices in element
                 right_join(df, fd, names(fd))$keep
