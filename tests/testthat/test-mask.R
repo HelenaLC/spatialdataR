@@ -1,4 +1,6 @@
-library(SingleCellExperiment)
+require(sf, quietly=TRUE)
+require(SingleCellExperiment, quietly=TRUE)
+
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
@@ -15,11 +17,13 @@ test_that("mask,unsupported", {
 test_that("mask,sdImage,sdLabel", {
     i <- "blobs_image"
     j <- "blobs_labels"
+    
     # reproduce example data
     y <- mask(x, i, j, how="sum")
     expect_equivalent(
         assay(tables(y)[[2]]), 
         assay(tables(x)[[1]]))
+    
     # default to 'mean' with a message
     expect_message(y <- mask(x, i, j))
     expect_silent(z <- mask(x, i, j, how="mean"))
@@ -66,35 +70,43 @@ test_that("mask,sdPoint,sdShape", {
     expect_true("t2" %in% tableNames(z))
 })
 
-# TODO: omit SpatialData.data
-
 test_that("mask,sdShape,sdShape", {
-    testthat::skip()
+    i <- "blobs_polygons"
+    s <- shape(x, i)
+    n <- length(s)
     
-    i <- "cells"
-    j <- "anatomical"
+    # mock all-inclusive shape
+    ex <- extent(s)
+    bb <- st_bbox(c(
+        xmin=ex$x[1],
+        ymin=ex$y[1],
+        xmax=ex$x[2],
+        ymax=ex$y[2]))
+    nn <- st_as_sfc(bb)
+    bb <- st_sf(geometry=nn)
+    y <- SpatialDataShape(bb)
     
-    # error without 'table'
-    y <- x; tables(y) <- list()
-    expect_error(mask(y, i, j))
+    # missing table
+    shape(x, j <- "box") <- y
+    expect_error(mask(x, i, j))
     
-    # test basic masking with "0" column
-    y <- mask(x, i, j, how="sum")
-    old <- getTable(x, i)
-    new <- getTable(y, j, drop=FALSE)
+    # w/ mock table
+    mx <- matrix(runif(7*n),7,n)
+    se <- SingleCellExperiment(mx)
+    y <- setTable(x, i, se)
     
-    # dimensions: features x (1 + #shapes)
-    expect_equal(dim(new), c(nrow(old), nrow(shape(x, j)) + 1))
-    expect_true("0" %in% colnames(new))
+    for (how in c("sum", "mean", "detected", "prop.detected")) {
+        fun <- switch(how, 
+            sum=rowSums, mean=rowMeans,
+            detected=\(.) rowSums(. > 0),
+            prop.detected=\(.) rowMeans(. > 0))
+        z <- mask(y, i, j, how=how)
+        expect_length(tables(z), 1+length(tables(y)))
+        sf <- tail(tables(z), 1)[[1]]
+        expect_equal(dim(sf), c(7,2))
+        expect_identical(assay(sf)[,"1"], fun(mx))
+    }
     
-    # sum of aggregated should match original total (for "sum")
-    expect_equal(sum(assay(new)), sum(assay(old)))
-    expect_equal(sum(new$n_instances), ncol(old))
+    # non-null value
     
-    # test with partial values (subset of genes)
-    v <- sample(rownames(old), 10)
-    y_sub <- mask(x, i, j, value=v)
-    new_sub <- getTable(y_sub, j, drop=FALSE)
-    expect_equal(nrow(new_sub), length(v))
-    expect_equal(sum(assay(new_sub)), sum(assay(old[v, ])))
 })

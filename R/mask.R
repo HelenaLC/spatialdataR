@@ -146,16 +146,14 @@ setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, 
 
 #' @noRd
 #' @importFrom methods as
-#' @importFrom Matrix sparseMatrix
 #' @importFrom SparseArray colSums
+#' @importFrom Matrix t sparseMatrix
 #' @importFrom SummarizedExperiment assay
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, value=NULL, assay=1, ...) {
+setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
-    ok <- is.null(value) || (is.character(value) && all(value %in% rownames(table)))
-    if (!ok) stop("Invalid 'value'; should be in 'rownames(table(x, i))'")
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
     if (is.character(how)) how <- match.arg(how, c("sum", "mean", "detected", "prop.detected"))
     # mapping of 'i' to 'j'
@@ -166,10 +164,9 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     id_x <- id_y <- NULL # R CMD check
     is <- pull(ij, id_y) # elements in i
     js <- pull(ij, id_x) # masks in j
-    na <- setdiff(seq_len(nrow(i)), is)
+    na <- setdiff(length(i), is)
     # aggregation
     mx <- assay(table, assay)
-    if (!is.null(value)) mx <- mx[value, , drop=FALSE]
     if (endsWith(how, "detected")) mx <- mx > 0
     # auxiliary matrix to aggregate 'i's by 'j's; 
     # add dummy 'j' for 'i's without any 'j's
@@ -182,7 +179,7 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     ns <- colSums(my > 0) # number of 'i's per 'j'
     if (grepl("mean|prop", how)) mx <- t(t(mx)/ns)
     # wrangling
-    mx <- as(mx, "dgCMatrix")
+    mx <- as(mx, "CsparseMatrix")
     colnames(mx) <- c("0", instances(j))
     mx <- list(mx); names(mx) <- how
     se <- SingleCellExperiment(mx)
