@@ -50,7 +50,7 @@ test_that("validity,sdShape", {
     expect_error(SpatialDataShape(df, meta(x)))
 })
 
-test_that("validity,SCE", {
+test_that("validity,sdTable", {
     # valid
     fn <- SpatialData:::.validateTables
     expect_length(fn(sd), 0)
@@ -58,22 +58,26 @@ test_that("validity,SCE", {
     x <- sd
     tables(x)[[1]] <- data.frame()
     expect_error(validObject(x))
-    # invalid: missing region
-    x <- sd
-    t <- SpatialData::table(x)
-    md <- int_metadata(t)
-    md$spatialdata_attrs$region <- NULL
-    int_metadata(t) <- md
-    tables(x) <- list(table=t)
-    expect_error(validObject(x))
-    # invalid: non-existent region
-    x <- sd
-    t <- SpatialData::table(x)
-    md <- int_metadata(t)
-    md$spatialdata_attrs$region <- "x"
-    int_metadata(t) <- md
-    tables(x) <- list(table=t)
-    expect_error(validObject(x))
+    
+    # helper to update table's 'spatialdata_attrs'
+    f <- \(x, i, j) {
+        t <- x$tables[[1]]
+        md <- int_metadata(t)
+        md$spatialdata_attrs[[i]] <- j
+        int_metadata(t) <- md
+        `table<-`(x, value=t)
+    }
+    
+    # missing/non-existent region
+    expect_error(validObject(f(sd, "region", NULL)))
+    expect_error(validObject(f(sd, "region", "x")))
+    
+    # invalid/multiple keys
+    for (key in c("region_key", "instance_key")) {
+        expect_error(validObject(f(sd, key, 1)), "character")
+        expect_error(validObject(f(sd, key, "x")), "missing")
+        expect_error(validObject(f(sd, key, c("a", "b"))), "length")
+    }
 })
 
 test_that("validity,SpatialDataAttrs", {
