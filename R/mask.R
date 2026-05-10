@@ -83,15 +83,6 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
 
 setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
 
-.mask_map <- \(i, j) {
-    ST_Buffer <- geometry <- radius <- NULL # R CMD check
-    jdata <- switch(
-        geom_type(j), 
-        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
-        j@data)
-    ddbs_intersects(jdata, i@data, sparse=TRUE)
-}
-
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector
@@ -113,6 +104,15 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
     return(se)
 })
 
+.mask_map <- \(i, j) {
+    ST_Buffer <- geometry <- radius <- NULL # R CMD check
+    jdata <- switch(
+        geom_type(j), 
+        "POINT"=mutate(j@data, geometry=ST_Buffer(geometry, radius)), 
+        j@data)
+    ddbs_intersects(jdata, i@data, sparse=TRUE)
+}
+
 #' @noRd
 #' @importFrom rlang .data
 #' @importFrom Matrix sparseMatrix
@@ -120,11 +120,11 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom dplyr mutate left_join coalesce join_by select count collect row_number
 setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, ...) {
-    if (!is.null(how)) warning("Can only count when masking points; ignoring 'how'")
+    if (!is.null(how)) message("Can only count when masking points; ignoring 'how'")
     id_x <- id_y <- n <- NULL # R CMD check
     ij <- .mask_map(i, j)
     fk <- feature_key(i)
-    res <- i@data |>
+    res <- data(i) |>
         mutate(id_y=row_number()) |>
         left_join(ij, by=join_by(id_y)) |>
         mutate(id_x=coalesce(id_x, 0L)) |>
