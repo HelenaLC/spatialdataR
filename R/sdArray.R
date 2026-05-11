@@ -150,10 +150,10 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 #' @importFrom S4Vectors isSequence
 .validate_multiscales_paths <- function(x, ds) {
     ps <- list.files(x)
-    ps <- ps[ps %in% ds]
-    if (!length(ps))
+    ds <- ds[ds %in% ps]
+    if (!length(ds))
       stop("Invalid SpatialData image or label: metadata does not match the names of Zarr arrays")
-    return(ps)
+    return(ds)
 }
 
 # sub ----
