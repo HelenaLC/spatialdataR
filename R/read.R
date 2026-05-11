@@ -82,12 +82,14 @@ readPoint <- function(x, ...) {
     SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
-# create DuckDB connection (to be used everywhere!)
+# create DuckDB connection
+# (to be used everywhere!)
+#' @importFrom DBI dbIsValid
 #' @importFrom duckspatial ddbs_create_conn
 .conn <- \() {
     nm <- ".SpatialData_DuckDB_conn"
     if (!exists(nm, envir=.GlobalEnv) ||
-        !DBI::dbIsValid(.GlobalEnv[[nm]])) {
+        !dbIsValid(.GlobalEnv[[nm]])) {
         .GlobalEnv[[nm]] <- ddbs_create_conn()
     }
     .GlobalEnv[[nm]]
