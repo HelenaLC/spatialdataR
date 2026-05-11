@@ -142,6 +142,14 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 #' @noRd 
 setMethod("multiscales", "list", .ms)
 
+# internal use only!
+#' @noRd 
+setMethod("datasets", "list", \(x, ...) {
+  vapply(multiscales(x)[[1]]$datasets, \(.){
+    .$path
+  }, character(1))
+})
+
 # features ----
 
 #' @export
