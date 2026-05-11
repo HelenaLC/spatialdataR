@@ -114,7 +114,7 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
             "found: ", paste(gt, collapse=", "))
         # always ensure internal data is 'duckspatial_df'
         if (!is(data, "duckspatial_df"))
-            data <- as_duckspatial_df(data, crs=NA)
+            data <- as_duckspatial_df(data, crs=NA_character_)
     }
     # update 'spatialdata_attrs' if keys are provided
     za <- as.list(meta)
@@ -138,13 +138,25 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
 #' @rdname SpatialDataFrame
 #' @importFrom methods is
 #' @importFrom S4Vectors metadata<-
+#' @importFrom duckspatial ddbs_write_table
 #' @importFrom duckspatial as_duckspatial_df
 SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ...) {
     data <- .df_to_sf(data, "POLYGON")
     # always ensure internal data is 'duckspatial_df'
-    if (isTRUE(nrow(data) > 0L) &&
-            !is(data, "duckspatial_df"))
-        data <- as_duckspatial_df(data, crs=NA)
+    if (!is(data, "duckspatial_df") && isTRUE(nrow(data) > 0L)) {
+        suppressMessages( # silent complaint re: missing CRS
+        ddbs_write_table(
+            conn=.conn(),
+            data=data,
+            name="sdShape",
+            overwrite=TRUE,
+            temp_view=FALSE))
+        data <- as_duckspatial_df(
+            x="sdShape", 
+            conn=.conn(), 
+            crs=NA_character_,
+            geom_col=attr(data, "sf_column"))
+    }
     x <- .SpatialDataShape(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
