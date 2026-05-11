@@ -146,19 +146,13 @@ setMethod("channels", "SpatialDataImage", \(x, ...) channels(meta(x)))
 #' @rdname SpatialDataArray
 setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have channels"))
 
+# compares metadata dataset paths to arrays on disk
 #' @importFrom S4Vectors isSequence
-.get_multiscales_paths <- function(x) {
+.validate_multiscales_paths <- function(x, ds) {
     ps <- list.files(x)
-    ps <- suppressWarnings(as.numeric(sort(ps, decreasing=FALSE)))
-    ps <- ps[!is.na(ps)]
-    if (length(ps)) {
-        qs <- seq(min(ps), max(ps))
-        if (!isTRUE(all.equal(ps, qs)))
-            stop("SpatialDataImage paths are ill-defined, should",
-                " be an integer sequence, e.g., 0,1,...,n")
-    } else {
-      stop("SpatialDataImage path is empty")
-    }
+    ps <- ps[ps %in% ds]
+    if (!length(ps))
+      stop("Invalid SpatialData image or label: metadata does not match the names of Zarr arrays")
     return(ps)
 }
 

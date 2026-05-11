@@ -46,24 +46,31 @@ NULL
 #' @importFrom ZarrArray ZarrArray
 .readArray <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    ps <- .get_multiscales_paths(x)
+    mdattr <- SpatialDataAttrs(md)
+    # TODO: paths to datasets have to be validated properly in the future
+    # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
+    # The name of the array is arbitrary with the ordering defined by
+    # by the "multiscales" metadata, but is often a sequence starting at 0.
+    ps <- .validate_multiscales_paths(x, datasets(mdattr))
     ps <- file.path(x, as.character(ps))
     as <- lapply(ps, ZarrArray)
-    list(array=as, md=md)
+    list(array=as, mdattr=mdattr)
 }
 
 #' @rdname readSpatialData
 #' @export
 readImage <- function(x, ...) {
     l <- .readArray(x, ...)
-    SpatialDataImage(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    # SpatialDataImage(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    SpatialDataImage(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData
 #' @export
 readLabel <- function(x, ...) {
     l <- .readArray(x, ...)
-    SpatialDataLabel(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    # SpatialDataLabel(data=l$array, meta=SpatialDataAttrs(l$md), ...)
+    SpatialDataLabel(data=l$array, meta=l$mdattr, ...)
 }
 
 #' @rdname readSpatialData
