@@ -21,7 +21,7 @@ test_that("mask,unaligned", {
     # non-existent
     expect_error(
         mask(x, i, j, "x"), 
-        "should be \"global\"")
+        "should be “global”")
     
     # not shared
     za <- meta(image(x, i))
@@ -157,9 +157,8 @@ test_that("mask,sdShape,sdShape", {
     y <- setTable(x, i, se)
     
     # out-of-bounds masking
-    t <- translation(s, c(1e3,1e3))
-    shape(y, "out") <- t
-    expect_error(mask(y, i, "out"))
+    shape(y, "out") <- translation(s, c(1e3,1e3))
+    expect_error(mask(y, i, "out", how="sum"))
     
     # note: data at "0" are from non-intersecting instances;
     # here, all data should be aggregated to column "1"
