@@ -120,6 +120,7 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
         "POINT"=mutate(data(j), geometry=ST_Buffer(geometry, radius)), 
         data(j))
     ddbs_intersects(df_j, data(i), sparse=TRUE)
+        
 }
 
 #' @noRd
