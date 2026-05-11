@@ -21,7 +21,7 @@ test_that("mask,unaligned", {
     # non-existent
     expect_error(
         mask(x, i, j, "x"), 
-        "should be “global”")
+        "'arg' should be")
     
     # not shared
     za <- meta(image(x, i))
