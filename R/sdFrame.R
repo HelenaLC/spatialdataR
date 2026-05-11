@@ -146,7 +146,6 @@ SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     # always ensure internal data is 'duckspatial_df'
     if (isTRUE(nrow(data) > 0L) &&
         !is(data, "duckspatial_df")) {
-        #data <- as_duckspatial_df(data, crs=NA)
         conn <- ddbs_create_conn()
         ddbs_write_table(
             conn=conn,
