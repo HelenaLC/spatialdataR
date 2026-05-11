@@ -54,6 +54,7 @@ Authors@R: c(
 Imports:
     anndataR (>= 1.1.3),
     BiocGenerics,
+    DBI,
     DelayedArray,
     dplyr,
     duckspatial,
