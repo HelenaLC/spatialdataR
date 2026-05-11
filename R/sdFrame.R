@@ -138,13 +138,26 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
 #' @rdname SpatialDataFrame
 #' @importFrom methods is
 #' @importFrom S4Vectors metadata<-
+#' @importFrom duckspatial ddbs_create_conn
+#' @importFrom duckspatial ddbs_write_table
 #' @importFrom duckspatial as_duckspatial_df
 SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ...) {
     data <- .df_to_sf(data, "POLYGON")
     # always ensure internal data is 'duckspatial_df'
     if (isTRUE(nrow(data) > 0L) &&
-            !is(data, "duckspatial_df"))
-        data <- as_duckspatial_df(data, crs=NA)
+        !is(data, "duckspatial_df")) {
+        #data <- as_duckspatial_df(data, crs=NA)
+        conn <- ddbs_create_conn()
+        ddbs_write_table(
+            conn=conn,
+            data=data,
+            name="sdShape",
+            overwrite=TRUE,
+            temp_view=FALSE)
+        data <- as_duckspatial_df(
+            x="sdShape", conn=conn, crs=NA,
+            geom_col=attr(data, "sf_column"))
+    }
     x <- .SpatialDataShape(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
