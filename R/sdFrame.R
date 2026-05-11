@@ -146,14 +146,14 @@ SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     if (!is(data, "duckspatial_df") && isTRUE(nrow(data) > 0L)) {
         suppressMessages( # silent complaint re: missing CRS
         ddbs_write_table(
-            conn=CONN,
+            conn=.conn(),
             data=data,
             name="sdShape",
             overwrite=TRUE,
             temp_view=FALSE))
         data <- as_duckspatial_df(
             x="sdShape", 
-            conn=CONN, 
+            conn=.conn(), 
             crs=NA_character_,
             geom_col=attr(data, "sf_column"))
     }

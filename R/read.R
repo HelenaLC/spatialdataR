@@ -75,16 +75,23 @@ readPoint <- function(x, ...) {
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
-    df <- ddbs_open_dataset(pq, conn=CONN) |>
+    df <- ddbs_open_dataset(pq, conn=.conn()) |>
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
     SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
-# create DuckDB connection 
-# (to be used everywhere!)
-CONN <- duckspatial::ddbs_create_conn()
+# create DuckDB connection (to be used everywhere!)
+#' @importFrom duckspatial ddbs_create_conn
+.conn <- \() {
+    nm <- ".SpatialData_DuckDB_conn"
+    if (!exists(nm, envir=.GlobalEnv) ||
+        !DBI::dbIsValid(.GlobalEnv[[nm]])) {
+        .GlobalEnv[[nm]] <- ddbs_create_conn()
+    }
+    .GlobalEnv[[nm]]
+}
 
 #' @rdname readSpatialData
 #' @importFrom Rarr read_zarr_attributes
@@ -94,7 +101,7 @@ CONN <- duckspatial::ddbs_create_conn()
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
-    df <- ddbs_open_dataset(pq, conn=CONN, crs=NA_character_)
+    df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
 }
 
