@@ -107,6 +107,7 @@ setGeneric("centroids", \(x, ...) standardGeneric("centroids"))
 setGeneric("data_type", \(x, ...) standardGeneric("data_type"))
 setGeneric("geom_type", \(x, ...) standardGeneric("geom_type"))
 setGeneric("multiscales", \(x, ...) standardGeneric("multiscales"))
+setGeneric("datasets", \(x, ...) standardGeneric("datasets"))
 
 # tbl ----
 
