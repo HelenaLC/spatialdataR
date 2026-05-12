@@ -234,14 +234,15 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
-    z <- .lapplyElement(x, \(.) {
-        if (j %in% CTname(.))
+    z <- .lapplyLayer(x, \(.) {
+        if (j %in% CTname(.)) {
             crop(., y, j=j)
-    })
+        } else list()
+    }) 
     # drop elements without content
-    z <- .lapplyElement(z, 
-        \(.) if (length(.) > 0) .) |>
-        `tables<-`(value=tables(z))
+    z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
+    z <- do.call("SpatialData", z)
+    tables(z) <- tables(x)
     # filter tables for remaining region(s)/instance(s)
     rs <- unlist(colnames(z))
     ts <- lapply(tables(z), \(t) {
@@ -254,7 +255,8 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
             i=instances(t),
             keep=seq_len(ncol(t)))
         # for each annotated element
-        is <- lapply(region(t), \(r) {
+        rs <- intersect(region(t), unlist(colnames(z)))
+        is <- lapply(rs, \(r) {
             # subset look-up
             df <- df[df$r == r, ]
             e <- element(z, r)
