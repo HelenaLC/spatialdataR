@@ -286,6 +286,8 @@ f <- \(.) setReplaceMethod(.,
         y <- attr(x, paste0(., "s"))
         y[[i]] <- value
         attr(x, paste0(., "s")) <- y
+        if (. == "table")
+            x <- .sync_shapes_on_drop(x)
         return(x)
     })
 for (. in one) eval(f(.), parent.env(environment()))

@@ -72,3 +72,17 @@
     tables(x) <- ts
     return(x)
 }
+
+.sync_shapes_on_drop <- \(x) {
+    if (!length(shapes(x))) return(x)
+    all_nms <- instances(table(x))
+    for (i in seq_along(shapes(x))) {
+        s <- shapes(x)[[i]]
+        # check which cells still exist
+        # FIXME: I kind of doubt this always has this name. Do we have an accessor for this???
+        keep <- s[["__index_level_0__"]] %in% all_nms
+        s <- s[keep, , drop = FALSE]
+        shapes(x)[[i]] <- s
+    }
+    return(x)
+}
