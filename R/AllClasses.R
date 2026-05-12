@@ -2,12 +2,6 @@
     Class="SpatialDataAttrs",
     contains="list")
 
-#' @importFrom methods setClassUnion
-#' @importClassesFrom S4Arrays Array
-setClassUnion(
-    "array_OR_df",
-    c("Array", "array", "data.frame"))
-
 .SpatialDataImage <- setClass(
     Class="SpatialDataImage",
     contains=c("Annotated"),

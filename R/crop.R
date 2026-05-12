@@ -223,6 +223,7 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
         fd <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
     }
     df <- data(transform(x, j))
+    fd <- data(SpatialDataShape(fd))
     ok <- ddbs_intersects(df, fd, sparse=TRUE)
     id_x <- NULL # R CMD check
     x[pull(ok, id_x), ]
