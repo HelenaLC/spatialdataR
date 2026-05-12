@@ -19,7 +19,7 @@
     return(x)
 }
 
-.sync_tables <- \(x, old, new) {
+.sync_tables_sdattrs <- \(x, old, new) {
     if (!length(ts <- tables(x))) return(x)
     for (i in seq_along(ts)) {
         t <- ts[[i]]
@@ -41,6 +41,23 @@
         ts[[i]] <- t
     }
     tables(x) <- ts
+    return(x)
+}
+
+.sync_shapes_on_drop <- \(x, i) {
+    # skip when there aren't any shapes
+    if (!length(shapes(x))) return(x)
+    t <- SpatialData::table(x, i)
+    for (j in region(t)) {
+        # skip non-shape elements
+        if (layer(x, j) != "shapes") next
+        # get element 'y' annotated by table 't'
+        y <- element(x, j)
+        # match instances between them
+        y <- y[match(instances(t), instances(y), nomatch=0)] 
+        # return matching shape instances
+        shape(x, j) <- y
+    }
     return(x)
 }
 
