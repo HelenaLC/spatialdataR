@@ -6,6 +6,10 @@
 #' @rdname SpatialData
 setMethod("$", "SpatialData", \(x, name) attr(x, name))
 
+#' @exportMethod $<-
+#' @rdname SpatialData
+setReplaceMethod("$", "SpatialData", \(x, name, value) `[[<-`(x, i=name, value=value))
+
 #' @export
 #' @rdname SpatialData
 #' @importFrom methods callNextMethod
@@ -16,9 +20,7 @@ setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
 
 #' @rdname SpatialData
 #' @export
-setMethod("[[", c("SpatialData", "character"), \(x, i, ...) {
-    attr(x, grep(i, names(attributes(x)), value=TRUE))
-})
+setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
 
 # data/meta ----
 
@@ -142,6 +144,12 @@ setMethod("element", c("SpatialData", "missing"), \(x, i) element(x, 1))
 setMethod("element", c("SpatialData", "ANY"), \(x, i) 
     stop("invalid 'i'; should be a string specifying an element in 'x'"))
 
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("element", 
+    c("SpatialData", "character"), 
+    \(x, i, value) { x[[layer(x, i)]][[i]] <- value; x })
+
 # get all ----
 
 #' @export
@@ -173,7 +181,9 @@ all <- paste0(one, "s")
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
 NULL
 
-f <- \(.) setMethod(paste0(., "Names"), "SpatialData", \(x) names(x[[.]]))
+f <- \(.) setMethod(
+    paste0(., "Names"), "SpatialData", 
+    \(x) names(x[[paste0(., "s")]]))
 for (. in one) eval(f(.), parent.env(environment()))
 
 # set nms ----
@@ -190,7 +200,7 @@ f <- \(.) setReplaceMethod(
         old <- names(x[[paste0(., "s")]])
         new <- names(x[[paste0(., "s")]]) <- value
         if (. == "table") return(x)
-        .sync_tables(x, old, new)
+        .sync_tables_sdattrs(x, old, new)
     })
 for (. in one) eval(f(.), parent.env(environment()))
 
@@ -226,7 +236,7 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @importFrom methods setReplaceMethod
 #' @export
 setReplaceMethod("[[", c("SpatialData", "numeric"), 
-    \(x, i, value) { attr(x, .LAYERS[i]) <- value; return(x) })
+    \(x, i, value) { x[[.LAYERS[i]]] <- value; x })
 
 #' @rdname SpatialData
 #' @export
@@ -237,12 +247,17 @@ setReplaceMethod("[[", c("SpatialData", "character"),
             old <- names(attr(x, l))
             new <- names(value)
             if (length(old) == length(new) && any(old != new))
-                x <- .sync_tables(x, old, new)
+                x <- .sync_tables_sdattrs(x, old, new)
         }
         attr(x, l) <- value
-        if (l != "tables")
+        if (l != "tables") {
             x <- .sync_tables_on_drop(x)
-        return(x)
+        } else {
+            for (t in tableNames(x)) {
+                x <- .sync_shapes_on_drop(x, t)
+            }
+        }
+        x
     })
 
 # |_value=list ----
@@ -258,7 +273,7 @@ f <- \(.) setReplaceMethod(.,
             old <- names(attr(x, .))
             new <- names(value)
             if (length(old) == length(new) && any(old != new))
-                x <- .sync_tables(x, old, new)
+                x <- .sync_tables_sdattrs(x, old, new)
         }
         attr(x, .) <- value
         if (. != "tables")
@@ -286,13 +301,10 @@ f <- \(.) setReplaceMethod(.,
         y <- attr(x, paste0(., "s"))
         y[[i]] <- value
         attr(x, paste0(., "s")) <- y
+        if (. == "table") x <- .sync_shapes_on_drop(x, i)
         return(x)
     })
 for (. in one) eval(f(.), parent.env(environment()))
-
-# TODO: something like table(x)$cluster_id <- doesn't work atm... 
-# not sure how to get around without defining all the possible 
-# SCE replacement methods :/ 
 
 # _i=numeric ----
 
