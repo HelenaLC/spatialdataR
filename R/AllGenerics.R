@@ -94,6 +94,7 @@ setGeneric("meta<-", \(x, ..., value) standardGeneric("meta<-"))
 
 setGeneric("layer", \(x, i, ...) standardGeneric("layer"))
 setGeneric("element", \(x, i, ...) standardGeneric("element"))
+setGeneric("element<-", \(x, i, value) standardGeneric("element<-"))
 setGeneric("elements", \(x, i, ...) standardGeneric("elements"))
 
 setGeneric("query", \(x, ...) standardGeneric("query"))
