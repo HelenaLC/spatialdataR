@@ -4,10 +4,39 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="SpatialData")
 x <- readSpatialData(x)
 
-se <- SpatialData::table(x)
-md <- int_metadata(se)
+t <- SpatialData::table(x)
+md <- int_metadata(t)
 md <- md$spatialdata_attrs
 i <- md[[rk <- md$region_key]]
+
+test_that("table<-", {
+    # labels aren't affected
+    y <- x
+    i <- region(t)
+    table(y) <- t[, -1]
+    expect_identical(element(x, i), element(y, i))
+    # shapes are synchronized
+    i <- shapeNames(x)[1]
+    y <- shape(x, i)
+    m <- 77; n <- length(y)
+    u <- matrix(m*n, m, n)
+    u <- SingleCellExperiment(u)
+    a <- setTable(x, i, u, name="x")
+    v <- element(a, "x")[-33, -3]
+    f <- \(a, b) {
+        a <- element(a, "x")
+        b <- element(b, "x")
+        expect_equal(dim(a), c(m,n))
+        expect_equal(dim(b), c(m-1,n-1))
+        expect_identical(instances(a), instances(y))
+        expect_identical(instances(b), instances(y)[-3])
+    }
+    b <- a; b$tables$x <- v; f(a, b)
+    b <- a; table(b, "x") <- v; f(a, b)
+    b <- a; b$tables <- list(x=v); f(a, b)
+    b <- a; tables(b) <- list(x=v); f(a, b)
+    b <- a; table(b, grep("x", tableNames(b))) <- v; f(a, b)
+})
 
 test_that("hasTable()", {
     # TRUE
