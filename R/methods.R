@@ -144,6 +144,12 @@ setMethod("element", c("SpatialData", "missing"), \(x, i) element(x, 1))
 setMethod("element", c("SpatialData", "ANY"), \(x, i) 
     stop("invalid 'i'; should be a string specifying an element in 'x'"))
 
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("element", 
+    c("SpatialData", "character"), 
+    \(x, i, value) { x[[layer(x, i)]][[i]] <- value; x })
+
 # get all ----
 
 #' @export

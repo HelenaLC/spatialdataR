@@ -56,6 +56,7 @@
 \alias{element,SpatialData,numeric-method}
 \alias{element,SpatialData,missing-method}
 \alias{element,SpatialData,ANY-method}
+\alias{element<-,SpatialData,character-method}
 \alias{images,SpatialData-method}
 \alias{labels,SpatialData-method}
 \alias{points,SpatialData-method}
@@ -94,6 +95,8 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{element}{SpatialData,missing}(x, i)
 
 \S4method{element}{SpatialData,ANY}(x, i)
+
+\S4method{element}{SpatialData,character}(x, i) <- value
 
 \S4method{images}{SpatialData}(x)
 
