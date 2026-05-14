@@ -25,7 +25,7 @@
 #' @param metadata optional list of arbitrary additional content.
 
 #' @param ... option arguments passed to and from other methods.
-#' @param i,j indices specifying elements to extract.
+#' @param i,j,k indices specifying elements/slices to extract.
 #' @param drop ignored.
 #'
 #' @return \code{SpatialDataArray}

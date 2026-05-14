@@ -1,3 +1,5 @@
+#' @importFrom methods is setMethod callNextMethod setReplaceMethod
+
 #' @export
 #' @importFrom utils .DollarNames
 .DollarNames.SpatialData <- \(x, pattern="") grep(pattern, .LAYERS, value=TRUE)
@@ -12,7 +14,6 @@ setReplaceMethod("$", "SpatialData", \(x, name, value) `[[<-`(x, i=name, value=v
 
 #' @export
 #' @rdname SpatialData
-#' @importFrom methods callNextMethod
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
@@ -26,7 +27,6 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
 
 #' @export
 #' @rdname SpatialData
-#' @importFrom methods is
 setMethod("data", "ANY", \(...) {
     l <- list(...)
     x <- l[[1]]
@@ -247,8 +247,6 @@ NULL
         paste(names(y), collapse=", "))
     y[[i]]
 }
-.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
-for (. in setdiff(one, "table")) eval(.set(.), parent.env(environment()))
 
 #' @name SpatialData
 #' @export
@@ -265,12 +263,14 @@ setMethod("table", "ANY", \(...) {
     .get(y, i)
 })
 
+.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
+for (. in setdiff(one, "table")) eval(.set(.), parent.env(environment()))
+
 # set all ----
 
 # |_[[<- ----
 
 #' @rdname SpatialData
-#' @importFrom methods setReplaceMethod
 #' @export
 setReplaceMethod("[[", c("SpatialData", "numeric"), 
     \(x, i, value) { x[[.LAYERS[i]]] <- value; x })
