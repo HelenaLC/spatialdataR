@@ -26,20 +26,27 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
 
 #' @export
 #' @rdname SpatialData
+#' @importFrom methods is
 setMethod("data", "ANY", \(...) {
     l <- list(...)
     x <- l[[1]]
-    if (!is(x, "SpatialDataElement"))
+    if (!is(x, "SpatialDataElement")) 
         return(utils::data(...))
-    if (!is(x, "SpatialDataArray"))
+    if (!is(x, "SpatialDataArray")) 
         return(x@data)
-    x <- x@data
+    # return list of available scales
     k <- if (length(l) == 1) 1 else l[[2]]
-    if (is.null(k)) return(x)
-    stopifnot(length(k) == 1, is.numeric(k), k > 0)
-    n <- length(x) # get number of available scales
-    if (is.infinite(k)) k <- n # input of Inf uses lowest
-    if (k <= n) return(x[[k]]) # return specified scale
+    if (is.null(k)) return(x@data)
+    # should be a scalar positive integer
+    ok <- length(k) == 1 && is.numeric(k) && k > 0 && k == round(k)
+    if (!ok) stop("invalid 'k'; should be ",
+        "NULL or a scalar positive integer")
+    # get number of available scales
+    n <- length(x <- x@data)   
+    # input of Inf uses lowest
+    if (is.infinite(k)) k <- n 
+    # return specified scale
+    if (k <= n) return(x[[k]]) 
     stop("'k=", k, "' but only ", n, " resolution(s) available")
 })
 
