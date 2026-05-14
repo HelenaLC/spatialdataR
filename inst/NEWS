@@ -1,3 +1,7 @@
+changes in version 0.99.36
+
+- fix conflicts with 'base::table' and 'utils::data'
+
 changes in version 0.99.35
 
 - class renaming
