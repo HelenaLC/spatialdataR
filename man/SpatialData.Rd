@@ -9,11 +9,12 @@
 \alias{meta}
 \alias{layer}
 \alias{element}
+\alias{element<-}
 \alias{image}
 \alias{label}
 \alias{point}
 \alias{shape}
-\alias{table}
+\alias{table,ANY-method}
 \alias{images}
 \alias{labels}
 \alias{points}
@@ -130,7 +131,9 @@ SpatialData(images, labels, points, shapes, tables)
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 
 \item{value}{(list of) element(s) with layer-compliant object(s), 
-or NULL/\code{list()} to remove an element/layer completely.}
+or NULL/\code{list()} to remove an element/layer completely; 
+for \code{element<-}, a single \code{SpatialDataElement}
+of the same class as \code{element(x, i)}.}
 
 \item{i, j}{character string, scalar or vector of indices
 specifying the element to extract from a given layer.}
