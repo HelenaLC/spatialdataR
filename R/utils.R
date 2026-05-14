@@ -47,7 +47,7 @@
 .sync_shapes_on_drop <- \(x, i) {
     # skip when there aren't any shapes
     if (!length(shapes(x))) return(x)
-    t <- SpatialData::table(x, i)
+    t <- table(x, i)
     for (j in region(t)) {
         # skip non-shape elements
         if (layer(x, j) != "shapes") next

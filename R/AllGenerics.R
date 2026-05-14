@@ -4,7 +4,8 @@ setGeneric("image", \(x, ...) standardGeneric("image"))
 setGeneric("label", \(x, ...) standardGeneric("label"))
 setGeneric("shape", \(x, ...) standardGeneric("shape"))
 setGeneric("point", \(x, ...) standardGeneric("point"))
-setGeneric("table", \(x, ...) standardGeneric("table"))
+#setGeneric("table", \(x, ...) standardGeneric("table"))
+#' @importFrom BiocGenerics table
 
 # get all ----
 
@@ -86,7 +87,7 @@ setGeneric("instance_key<-", \(x, value) standardGeneric("instance_key<-"))
 
 # uts ----
 
-setGeneric("data", \(x, ...) standardGeneric("data"))
+setGeneric("data", \(...) standardGeneric("data"))
 setGeneric("meta", \(x, ...) standardGeneric("meta"))
 
 setGeneric("data<-", \(x, ..., value) standardGeneric("data<-"))
