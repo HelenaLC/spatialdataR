@@ -23,7 +23,7 @@
 #' @param data list of \code{ZarrArray}s
 #' @param meta \code{\link{SpatialDataAttrs}}
 #' @param metadata optional list of arbitrary additional content.
-#' @param k scalar index specifying which image scale to extract.
+
 #' @param ... option arguments passed to and from other methods.
 #' @param i,j indices specifying elements to extract.
 #' @param drop ignored.

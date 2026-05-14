@@ -62,8 +62,6 @@ SpatialDataLabel(
 
 \item{i, j}{indices specifying elements to extract.}
 
-\item{k}{scalar index specifying which image scale to extract.}
-
 \item{drop}{ignored.}
 }
 \value{
