@@ -13,7 +13,7 @@ test_that("combine", {
     expect_all_true(r %in% f(y))
     expect_true(!all(r %in% f(x)))
     expect_all_true(!duplicated(r))
-    expect_true(r[1] == region(SpatialData::table(x)))
+    expect_true(r[1] == region(table(x)))
     
     f <- \(x, y) `names<-`(x, paste(names(x), y, sep="."))
     a <- b <- x
