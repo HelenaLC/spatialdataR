@@ -188,7 +188,7 @@ Tables (SCE objects) link to specific labels or shapes using `region` and
 feature-level information.
 
 ```{r tables}
-(sce <- SpatialData::table(sd))
+(sce <- table(sd))
 
 # Check which region this table annotates
 region(sce)

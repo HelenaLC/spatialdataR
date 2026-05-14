@@ -1,7 +1,7 @@
 Package: SpatialData
 Title: Representation of Python's SpatialData in R
 Depends: R (>= 4.6)
-Version: 0.99.35
+Version: 0.99.36
 Description: R interface to Python/scverse's 'spatialdata' framework for 
     unified spatial omics data handling. Adheres to OME-NGFF standards, 
     providing lazy, on-disk representations for multiscale images and 
@@ -67,7 +67,6 @@ Imports:
     RBGL,
     rlang,
     sf,
-    S4Arrays,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,

@@ -1,3 +1,5 @@
+#' @importFrom methods is setMethod callNextMethod setReplaceMethod
+
 #' @export
 #' @importFrom utils .DollarNames
 .DollarNames.SpatialData <- \(x, pattern="") grep(pattern, .LAYERS, value=TRUE)
@@ -12,7 +14,6 @@ setReplaceMethod("$", "SpatialData", \(x, name, value) `[[<-`(x, i=name, value=v
 
 #' @export
 #' @rdname SpatialData
-#' @importFrom methods callNextMethod
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     i <- .LAYERS[i]
     callNextMethod(x, i)
@@ -26,7 +27,28 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
 
 #' @export
 #' @rdname SpatialData
-setMethod("data", "SpatialDataElement", \(x) x@data)
+setMethod("data", "ANY", \(...) {
+    l <- list(...)
+    x <- l[[1]]
+    if (!is(x, "SpatialDataElement")) 
+        return(utils::data(...))
+    if (!is(x, "SpatialDataArray")) 
+        return(x@data)
+    # return list of available scales
+    k <- if (length(l) == 1) 1 else l[[2]]
+    if (is.null(k)) return(x@data)
+    # should be a scalar positive integer
+    ok <- length(k) == 1 && is.numeric(k) && k > 0 && k == round(k)
+    if (!ok) stop("invalid 'k'; should be ",
+        "NULL or a scalar positive integer")
+    # get number of available scales
+    n <- length(x <- x@data)   
+    # input of Inf uses lowest
+    if (is.infinite(k)) k <- n 
+    # return specified scale
+    if (k <= n) return(x[[k]]) 
+    stop("'k=", k, "' but only ", n, " resolution(s) available")
+})
 
 #' @export
 #' @rdname SpatialData
@@ -207,11 +229,10 @@ for (. in one) eval(f(.), parent.env(environment()))
 # get one ----
 
 #' @name SpatialData
-#' @exportMethod image label point shape table
+#' @exportMethod image label point shape
 NULL
 
-f <- \(.) setMethod(., "SpatialData", \(x, i=1) {
-    y <- x[[paste0(., "s")]]
+.get <- \(y, i) {
     if (is.numeric(i)) {
         if (i < 1 || !is.finite(i)) stop(
             "invalid 'i'; should be a ",
@@ -225,15 +246,31 @@ f <- \(.) setMethod(., "SpatialData", \(x, i=1) {
         "invalid 'i'; should be one of: ",
         paste(names(y), collapse=", "))
     y[[i]]
+}
+
+#' @name SpatialData
+#' @export
+setMethod("table", "ANY", \(...) {
+    l <- list(...)
+    if (!is(l[[1]], "SpatialData")) 
+        return(base::table(...))
+    n <- length(l)
+    i <- if (n == 1) 1 else l[[2]]
+    m <- length(i)
+    if (any(c(n, m) > 2)) 
+        stop("too many arguments")
+    y <- l[[1]]$tables
+    .get(y, i)
 })
-for (. in one) eval(f(.), parent.env(environment()))
+
+.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
+for (. in setdiff(one, "table")) eval(.set(.), parent.env(environment()))
 
 # set all ----
 
 # |_[[<- ----
 
 #' @rdname SpatialData
-#' @importFrom methods setReplaceMethod
 #' @export
 setReplaceMethod("[[", c("SpatialData", "numeric"), 
     \(x, i, value) { x[[.LAYERS[i]]] <- value; x })
