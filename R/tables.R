@@ -191,6 +191,11 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     }
     
     e <- element(x, i)
+    if (is(e, "SpatialDataShape") &&
+        ik %in% names(e)) {
+        instance_key(meta(e)) <- ik
+        element(x, i) <- e
+    }
     n <- length(instances(e))
     if (ncol(y) != n) stop(
         "'instances<-' have not been set on 'y'; ",
