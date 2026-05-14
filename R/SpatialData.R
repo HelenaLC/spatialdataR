@@ -1,8 +1,9 @@
 #' @name SpatialData
 #' @title The `SpatialData` class
 #' 
-#' @aliases data meta layer element
-#' @aliases image label point shape table
+#' @aliases data meta 
+#' @aliases layer element element<-
+#' @aliases image label point shape table,ANY-method
 #' @aliases images labels points shapes tables
 #' @aliases image<- label<- point<- shape<- table<-
 #' @aliases images<- labels<- points<- shapes<- tables<-
@@ -31,7 +32,9 @@
 #' @param drop ignored.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param value (list of) element(s) with layer-compliant object(s), 
-#'   or NULL/\code{list()} to remove an element/layer completely.
+#'   or NULL/\code{list()} to remove an element/layer completely; 
+#'   for \code{element<-}, a single \code{SpatialDataElement}
+#'   of the same class as \code{element(x, i)}.
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return \code{SpatialData}

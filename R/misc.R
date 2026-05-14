@@ -64,7 +64,7 @@ NULL
     d <- lapply(d, paste, collapse=",")
     cat(sprintf("- tables(%s):\n", length(t)))
     for (. in seq_along(t)) {
-        r <- paste(region(SpatialData::table(object, t[.])), collapse=",")
+        r <- paste(region(table(object, t[.])), collapse=",")
         cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
     }
     # spaces

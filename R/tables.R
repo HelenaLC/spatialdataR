@@ -118,7 +118,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
     stopifnot(isTRUE(drop) || isFALSE(drop))
     # get 'table' annotating 'i', if any
     nm <- hasTable(x, i, name=TRUE) 
-    t <- SpatialData::table(x, nm)
+    t <- table(x, nm)
     # only keep observations belonging to 'i' (optional)
     if (drop) {
         rk <- region_key(t)

@@ -144,9 +144,9 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
-    r <- region(SpatialData::table(x))
+    r <- region(table(x))
     y <- x; labelNames(y) <- "x"
-    r <- region(SpatialData::table(y))
+    r <- region(table(y))
     expect_identical(r, "x")
 })
 

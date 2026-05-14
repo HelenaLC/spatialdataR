@@ -5,7 +5,7 @@ x <- readSpatialData(x)
 test_that("CTgraph", {
     # invalid
     expect_error(CTgraph(list()))
-    expect_error(CTgraph(SpatialData::table(x)))
+    expect_error(CTgraph(table(x)))
     # object-wide
     g <- CTgraph(x)
     expect_is(g, "graph")

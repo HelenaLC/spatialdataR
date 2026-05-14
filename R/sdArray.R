@@ -23,9 +23,9 @@
 #' @param data list of \code{ZarrArray}s
 #' @param meta \code{\link{SpatialDataAttrs}}
 #' @param metadata optional list of arbitrary additional content.
-#' @param k scalar index specifying which image scale to extract.
+
 #' @param ... option arguments passed to and from other methods.
-#' @param i,j indices specifying elements to extract.
+#' @param i,j,k indices specifying elements/slices to extract.
 #' @param drop ignored.
 #'
 #' @return \code{SpatialDataArray}
@@ -84,20 +84,6 @@ SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list
 }
 
 # utils ----
-
-#' @rdname SpatialDataArray
-#' @export
-setMethod("data", "SpatialDataArray", \(x, k=1) {
-    # direct accession needed here
-    # to get at available scales
-    x <- x@data 
-    if (is.null(k)) return(x)
-    stopifnot(length(k) == 1, is.numeric(k), k > 0)
-    n <- length(x) # get number of available scales
-    if (is.infinite(k)) k <- n # input of Inf uses lowest
-    if (k <= n) return(x[[k]]) # return specified scale
-    stop("'k=", k, "' but only ", n, " resolution(s) available")
-})
 
 #' @rdname SpatialDataArray
 #' @export
