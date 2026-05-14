@@ -60,7 +60,7 @@ SpatialDataLabel(
 
 \item{x}{\code{SpatialDataArray}}
 
-\item{i, j}{indices specifying elements to extract.}
+\item{i, j, k}{indices specifying elements/slices to extract.}
 
 \item{drop}{ignored.}
 }
