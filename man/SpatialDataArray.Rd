@@ -6,7 +6,6 @@
 \alias{channels}
 \alias{SpatialDataImage}
 \alias{SpatialDataLabel}
-\alias{data,SpatialDataArray-method}
 \alias{dim,SpatialDataArray-method}
 \alias{length,SpatialDataArray-method}
 \alias{data_type,SpatialDataArray-method}
@@ -31,8 +30,6 @@ SpatialDataLabel(
   metadata = list(),
   ...
 )
-
-\S4method{data}{SpatialDataArray}(x, k = 1)
 
 \S4method{dim}{SpatialDataArray}(x)
 
@@ -63,9 +60,7 @@ SpatialDataLabel(
 
 \item{x}{\code{SpatialDataArray}}
 
-\item{k}{scalar index specifying which image scale to extract.}
-
-\item{i, j}{indices specifying elements to extract.}
+\item{i, j, k}{indices specifying elements/slices to extract.}
 
 \item{drop}{ignored.}
 }
