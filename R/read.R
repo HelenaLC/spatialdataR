@@ -51,8 +51,8 @@ NULL
     # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
     # The name of the array is arbitrary with the ordering defined by
     # by the "multiscales" metadata, but is often a sequence starting at 0.
-    ds <- .validate_multiscales_paths(x, datasets(mdattr))
-    ds <- file.path(x, as.character(ds))
+    # ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    ds <- paste0(x, ds)
     as <- lapply(ds, ZarrArray)
     list(array=as, mdattr=mdattr)
 }
@@ -77,7 +77,7 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    pq <- paste0(x, file.path("points.parquet", "part.0.parquet"))
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
     df <- ddbs_open_dataset(pq, conn=.conn()) |>
@@ -94,7 +94,8 @@ readPoint <- function(x, ...) {
 #' @export
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    # "shapes.parquet" currently hardcoded in SpatialData.io
+    pq <- paste0(x, "shapes.parquet")
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     attr(df, "source_path") <- pq
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
@@ -134,11 +135,22 @@ readSpatialData <- function(x,
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     
+    x <- Rarr:::.normalize_array_path(x) 
+    store_meta <- Rarr:::.read_consolidated_metadata(x)$metadata
+    # is.null(.$data_type) is a hack that works for both v2 and v3 Zarr stores, to keep only
+    # groups, but not arrays
+    # In v3, we could just do .$node_type == "group", but in v2, there is no node_type.
+    store_groups <- names(store_meta[vapply(store_meta, \(.) is.null(.$data_type), logical(1))])
+    
     # helper for layer reading
     .readLayer <- \(l) {
-        # 'j' are the paths on disk, 'nms' are their basenames
-        j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
-        nms <- names(j) <- basename(j)
+        message("  reading ", l, "...")
+        j <- store_groups[startsWith(store_groups, paste0(l, "/"))]
+        j <- setNames(
+            paste0(x, j, "/", recycle0 = TRUE),
+            basename(j)
+        )
+        
         opt <- args[[l]]
         if (!isTRUE(opt)) {
             # validate each requested element
