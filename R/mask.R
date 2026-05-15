@@ -156,6 +156,7 @@ setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, 
 
 #' @noRd
 #' @importFrom methods as
+#' @importFrom S4Vectors DataFrame
 #' @importFrom SparseArray colSums
 #' @importFrom Matrix t sparseMatrix
 #' @importFrom SummarizedExperiment assay
@@ -174,7 +175,7 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     id_x <- id_y <- NULL # R CMD check
     is <- pull(ij, id_y) # elements in i
     js <- pull(ij, id_x) # masks in j
-    na <- setdiff(length(i), is)
+    na <- setdiff(seq_along(i), is)
     # aggregation
     mx <- assay(table, assay)
     if (endsWith(how, "detected")) mx <- mx > 0
@@ -192,9 +193,11 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
     mx <- as(mx, "CsparseMatrix")
     colnames(mx) <- c("0", instances(j))
     mx <- list(mx); names(mx) <- how
-    se <- SingleCellExperiment(mx)
-    se$n_instances <- ns
-    return(se)
+    ci <- seq_len(ncol(my))
+    ci <- factor(rep(ci, diff(my@p)), levels=ci)
+    ri <- split(my@i+1, ci)
+    cd <- DataFrame(i_instances=I(ri), n_instances=ns)
+    SingleCellExperiment(mx, colData=cd)
 })
 
 #' @noRd
