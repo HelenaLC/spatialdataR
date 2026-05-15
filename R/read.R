@@ -51,7 +51,11 @@ NULL
     # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
     # The name of the array is arbitrary with the ordering defined by
     # by the "multiscales" metadata, but is often a sequence starting at 0.
-    # ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    if (!any(startsWith(x, c("http://", "https://", "s3://")))) {
+      # Until we have a complete store interface (https://github.com/Huber-group-EMBL/Rarr/pull/176),
+      # only local objects can be fully validated.
+      ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    } 
     ds <- paste0(x, ds)
     as <- lapply(ds, ZarrArray)
     list(array=as, mdattr=mdattr)
