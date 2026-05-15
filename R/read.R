@@ -55,6 +55,9 @@ NULL
       # Until we have a complete store interface (https://github.com/Huber-group-EMBL/Rarr/pull/176),
       # only local objects can be fully validated.
       ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    } else {
+      # For remote objects, we skip validation and assume that the datasets are in the expected location.
+      ds <- datasets(mdattr)
     } 
     ds <- paste0(x, ds)
     as <- lapply(ds, ZarrArray)
