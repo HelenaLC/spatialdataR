@@ -63,8 +63,6 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
-#' @importFrom S4Vectors transform
-#setGeneric("transform") # base::transform (`_data`)
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))

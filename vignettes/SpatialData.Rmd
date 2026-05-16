@@ -74,17 +74,17 @@ the `readSpatialData()` function to ingest an entire store. For this demonstrati
 we use a toy dataset included in the package.
 
 ```{r read-data}
-# Path to a toy dataset included in the package
-path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+# path to 'spatialdata' .zarr store
+zs <- file.path("extdata", "blobs.zarr")
+zs <- system.file(zs, package="SpatialData")
 
-# Read the complete SpatialData object
-sd <- readSpatialData(path)
-sd
+# read as 'SpatialData' R object
+(sd <- readSpatialData(zs))
 ```
 
-The output above summarizes the `SpatialData` object, showing the number of 
-elements in each layer (images, labels, points, shapes, and tables), as well 
-as the coordinate systems defined in the dataset.
+The output above summarizes the `SpatialData` object, showing the dimension 
+of elements in each layer (images, labels, points, shapes, tables), as well 
+as the defined coordinate systems and which elements map to each of these.
 
 ## Exploring the Object
 
@@ -99,17 +99,12 @@ shapeNames(sd)
 We can retrieve a specific element using its name or index:
 
 ```{r explore-element}
-# Retrieve the first label element
-lbl <- label(sd, 1)
-lbl
+# retrieve 1st label element
+(l <- label(sd))
 
-# Check the class of the retrieved element
-class(lbl)
-
-# Access the underlying data of a point element
-pts <- point(sd, 1)
-class(data(pts))
-head(as.data.frame(data(pts)))
+# access data underlying a point element
+p <- point(sd)
+as.data.frame(head(p))
 ```
 
 Elements are S4 objects composed of two key slots:
@@ -121,14 +116,11 @@ Elements are S4 objects composed of two key slots:
 
 ## AnnData Integration with `anndataR`
 
-For spatial omics datasets, functional annotations are often stored as 
-[AnnData](https://anndata.readthedocs.io) objects in Python. The 
-`r BiocStyle::Biocpkg("anndataR")` package [@Deconinck2025-anndataR] is used by 
-`SpatialData` to seamlessly read these `.zarr`-backed `AnnData` objects into 
-R as `SingleCellExperiment` objects.
-
-By default, `readSpatialData(..., anndataR=TRUE)` will use this package to 
-ingest any tables found in the Zarr store.
+For spatial omics datasets, functional annotations are typically stored as 
+[AnnData](https://anndata.readthedocs.io) objects in Python. 
+`SpatialData` uses the `r BiocStyle::Biocpkg("anndataR")` R/Bioconductor 
+package [@Deconinck2025-anndataR] to seamlessly read these `.zarr`-backed 
+`AnnData` objects into R as `r BiocStyle::Biocpkg("SingleCellExperiment")`.
 
 # Coordinate Systems and Transformations
 
@@ -139,11 +131,11 @@ simultaneously, defined by transformations in its metadata.
 ## Coordinate Transformation Graph
 
 The relationships between different elements and their respective coordinate 
-spaces can be complex. `SpatialData` provides the `CTgraph()` function to 
-visualize these relationships as a directed graph.
+spaces can be complex. `SpatialData` provides the `CTgraph()` and `CTplot()` 
+functions to construct and visualize a directed graph of these relationships.
 
 ```{r ct-graph, fig.cap="Coordinate transformation graph for the 'blobs' dataset."}
-if (requireNamespace("Rgraphviz", quietly = TRUE)) {
+if (requireNamespace("Rgraphviz", quietly=TRUE)) {
     g <- CTgraph(sd)
     CTplot(g)
 }
@@ -158,27 +150,34 @@ In this graph:
 ## Applying Transformations
 
 The `transform()` function resolves the necessary steps to project an element 
-into a target coordinate system by traversing this graph:
+into a target coordinate system by traversing this graph, and applying the 
+respective transformation(s):
 
 ```{r transform}
-# Retrieve a point element
-p <- point(sd, 1)
-
-# Project it into the 'global' coordinate space
-q <- SpatialData::transform(p, "global")
+# retrieve element & project into 'global'
+b <- transform(a <- label(sd), "scale")
+do.call(rbind, c(a=extent(a), b=extent(b)))
 ```
 
 # Spatial Queries
 
-`SpatialData` supports sophisticated spatial operations such as cropping, 
-which are propagated across all layers:
+`SpatialData` supports spatial operations, such as cropping by a rectangular
+bounding box or polygon, which are propagated across all present layers:
 
 ```{r crop}
-# Define a bounding box for cropping
-bb <- list(xmin=10, xmax=50, ymin=10, ymax=50)
+# bounding box
+bb <- list(
+    xmin=10, xmax=50, 
+    ymin=20, ymax=30)
 
-# Crop the entire object
-(sp <- crop(sd, bb, j="global"))
+# subset object
+sp <- crop(sd, bb)
+
+# before vs. after
+rbind(
+    raw=dim(label(sd)),
+    box=dim(label(sp))) |> 
+    `colnames<-`(c("y", "x"))
 ```
 
 # Integration with Tables
@@ -188,13 +187,14 @@ Tables (SCE objects) link to specific labels or shapes using `region` and
 feature-level information.
 
 ```{r tables}
-(sce <- table(sd))
+# access annotation
+(se <- table(sd))
 
-# Check which region this table annotates
-region(sce)
+# annotated region(s)
+region(se)
     
-# Check which instances are being annotated
-instances(sce)
+# annotated instance(s)
+instances(se)
 ```
 
 # Conclusion
