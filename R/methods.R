@@ -180,7 +180,7 @@ setMethod("images", "SpatialData", \(x) x$images)
 
 #' @export
 #' @rdname SpatialData
-setMethod("labels", "SpatialData", \(x) x$labels)
+setMethod("labels", "SpatialData", \(object) object$labels)
 
 #' @export
 #' @rdname SpatialData

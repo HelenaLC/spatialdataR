@@ -3,7 +3,7 @@
 #' @title Transformations
 #' @aliases transform scale rotate translation flip flop mirror sequence
 #' 
-#' @param x \code{SpatialData} element.
+#' @param x,_data \code{SpatialData} element.
 #' @param i scalar integer or string; target coordinate space.
 #' @param t transformation data; exceptions: for \code{mirror}, controls
 #'   whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
@@ -50,21 +50,17 @@ NULL
 
 #' @export
 #' @rdname trans
-setMethod("transform", 
-    c("SpatialDataElement", "missing"), 
-    \(x, i, ...) transform(x, 1, ...))
-
-#' @export
-#' @rdname trans
-setMethod("transform", 
-    c("SpatialDataElement", "numeric"), 
-    \(x, i, ...) transform(x, CTname(x)[i], ...))
-
-#' @export
-#' @rdname trans
-setMethod("transform", c("SpatialDataElement", "character"), \(x, i, ...) {
+setMethod("transform", "SpatialDataElement", \(`_data`, i=1, ...) {
+    stopifnot(
+        length(i) == 1, is.character(i) | 
+        (is.numeric(i) && i == round(i)))
+    x <- `_data`
+    if (is.character(i)) {
+        i <- match.arg(i, CTname(x))
+        i <- match(i, CTname(x))
+    }
+    f <- CTtype(x)[i]
     t <- CTdata(x, i)
-    f <- CTtype(x)[match(i, CTname(x))]
     if (f == "sequence") {
         t <- lapply(t, unlist)
     } else t <- unlist(t)

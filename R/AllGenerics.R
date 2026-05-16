@@ -10,7 +10,7 @@ setGeneric("point", \(x, ...) standardGeneric("point"))
 # get all ----
 
 setGeneric("images", \(x, ...) standardGeneric("images"))
-setGeneric("labels", \(x, ...) standardGeneric("labels"))
+setGeneric("labels", \(object, ...) standardGeneric("labels"))
 setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
@@ -63,7 +63,8 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
-setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
+#' @importFrom S4Vectors transform
+#setGeneric("transform") # base::transform (`_data`)
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))

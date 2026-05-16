@@ -101,7 +101,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{images}{SpatialData}(x)
 
-\S4method{labels}{SpatialData}(x)
+\S4method{labels}{SpatialData}(object)
 
 \S4method{points}{SpatialData}(x)
 
