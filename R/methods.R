@@ -133,7 +133,9 @@ setMethod("colnames", "SpatialData", \(x) {
 
 # layer ----
 
-.invalid_i <- "invalid 'i'; should be a string specifying an element in 'x'"
+.invalid_i <- paste(
+    "invalid 'i'; should be a string or scalar integer",
+    "specifying the name or position of an element in 'x'")
 
 #' @rdname SpatialData
 #' @export
