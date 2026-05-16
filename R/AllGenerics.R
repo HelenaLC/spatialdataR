@@ -4,8 +4,6 @@ setGeneric("image", \(x, ...) standardGeneric("image"))
 setGeneric("label", \(x, ...) standardGeneric("label"))
 setGeneric("shape", \(x, ...) standardGeneric("shape"))
 setGeneric("point", \(x, ...) standardGeneric("point"))
-#setGeneric("table", \(x, ...) standardGeneric("table"))
-#' @importFrom BiocGenerics table
 
 # get all ----
 

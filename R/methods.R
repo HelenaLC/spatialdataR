@@ -248,8 +248,9 @@ NULL
     y[[i]]
 }
 
-#' @name SpatialData
 #' @export
+#' @name SpatialData
+#' @importFrom BiocGenerics table
 setMethod("table", "ANY", \(...) {
     l <- list(...)
     if (!is(l[[1]], "SpatialData"))
