@@ -241,9 +241,9 @@ do.call(rbind, c(a=extent(a), b=extent(b)))
 
 ## Cropping
 
-`crop` may be used to subset elements -- across all layers -- according to a 
-*spatial* bounding box or polygon. This region may be supplied in different
-ways, including as a `SpatialDataShape`. In addition, the following are ok:
+`crop()` may be used to subset elements -- across all layers -- according to 
+a *spatial* bounding box or polygon. This region may be supplied in different
+ways, including as a `SpatialDataShape`. In addition, the following are okay:
 
 - For bounding box cropping, an `sf::st_bbox()` object, or
 a list of `xmin/xmax/ymin/ymax` values (order irrelevant).
@@ -273,6 +273,18 @@ plot(
 points(point(sq)$geometry, col="red") 
 ```
 
+- `extent` extracts a list of X and Y ranges
+  in a coordinate space (per input argument)
+- `centroids` extracts spatial coordinates 
+  for every instance in a given element
+- `mask` aggregates information across layers; 
+  supports image-label, point-shape, shape-shape
+- `query` filters elements across all layers
+  based on table metadata in `dplyr`-style
+  (e.g., `query(foo, cell_type == "bar")`)
+- `combine` merges two `SpatialData` objects
+  (or many, via `do.call(list(...), combine)`)
+
 # Integration with Tables
 
 Tables (SCE objects) link to specific labels or shapes using `region` and 
@@ -292,42 +304,10 @@ instances(se)
 
 # Appendix
 
-## Accession
-
-`SpatialData` objects behave like a nested list: the first level corresponds 
-to layers, and the second level corresponds to elements within each layers.
-
-As such, the following are are equivalent ways of accession across all layers
-(here, `x` = `SpatialData` object, `i` = index or string giving element name):
-
-- `x$images$i`
-- `x$images[[i]]`
-- `x$images[["i"]]`
-- `images(x)[[i]]`
-- `images(x)[["i"]]`
-- `image(x, i)`
-- `image(x, "i")`
-
-## Capabilities
-
-### Utilities
-
-- `extent` extracts a list of X and Y ranges
-  in a coordinate space (per input argument)
-- `centroids` extracts spatial coordinates 
-  for every instance in a given element
-- `mask` aggregates information across layers; 
-  supports image-label, point-shape, shape-shape
-- `query` filters elements across all layers
-  based on table metadata in `dplyr`-style
-  (e.g., `query(foo, cell_type == "bar")`)
-- `combine` merges two `SpatialData` objects
-  (or many, via `do.call(list(...), combine)`)
-
-# Session info {- .smaller}
+## Session info {- .smaller}
 
 ```{r sessionInfo}
 sessionInfo()
 ```
 
-# References
+## References
