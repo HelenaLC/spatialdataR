@@ -90,16 +90,16 @@ setReplaceMethod("meta", c("SpatialDataElement", "list"),
     names(j) <- rownames(x)[ne > 0]
     for (. in names(j)) {
         .j <- j[[.]]
-        n <- length(attr(x, .))
+        n <- length(x[[.]])
         if (is.character(.j)) {
-            if (!all(.j %in% names(attr(x, .))))
+            if (!all(.j %in% names(x[[.]])))
                 stop("invalid 'j'")
         } else if (length(.j) == 1 && is.infinite(.j)) {
             .j <- n
         } else if (any(.j > n)) {
             stop("invalid 'j'")
         }
-        attr(x, .) <- attr(x, .)[.j]
+        x[[.]] <- x[[.]][.j]
     }
     x
 }
@@ -133,17 +133,18 @@ setMethod("colnames", "SpatialData", \(x) {
 
 # layer ----
 
+.invalid_i <- "invalid 'i'; should be a string specifying an element in 'x'"
+
 #' @rdname SpatialData
 #' @export
 setMethod("layer", c("SpatialData", "character"), \(x, i) {
-    stopifnot(i %in% unlist(colnames(x)), length(i) == 1)
+    match.arg(i, unlist(colnames(x)))
     names(Filter(\(.) i %in% ., colnames(x)))
 })
 
 #' @rdname SpatialData
 #' @export
-setMethod("layer", c("SpatialData", "ANY"), \(x, i) 
-    stop("invalid 'i'; should be a string specifying an element in 'x'"))
+setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 
 # element ----
 
@@ -163,8 +164,7 @@ setMethod("element", c("SpatialData", "missing"), \(x, i) element(x, 1))
 
 #' @rdname SpatialData
 #' @export
-setMethod("element", c("SpatialData", "ANY"), \(x, i) 
-    stop("invalid 'i'; should be a string specifying an element in 'x'"))
+setMethod("element", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 
 #' @rdname SpatialData
 #' @export
@@ -196,8 +196,7 @@ setMethod("tables", "SpatialData", \(x) x$tables)
 
 # get nms ----
 
-one <- c("image", "label", "point", "shape", "table")
-all <- paste0(one, "s")
+all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
 
 #' @name SpatialData
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
@@ -322,16 +321,16 @@ for (. in all) eval(f(.), parent.env(environment()))
 
 # set one ----
 
+#' @name SpatialData
+#' @exportMethod image<- label<- point<- shape<- table<-
+NULL
+
 typ <- c(
     image="SpatialDataImage", 
     label="SpatialDataLabel", 
     point="SpatialDataPoint", 
     shape="SpatialDataShape", 
     table="SingleCellExperiment")
-
-#' @name SpatialData
-#' @exportMethod image<- label<- point<- shape<- table<-
-NULL
 
 f <- \(.) setReplaceMethod(., 
     c("SpatialData", "character", typ[[.]]), 
