@@ -252,12 +252,12 @@ NULL
 #' @export
 setMethod("table", "ANY", \(...) {
     l <- list(...)
-    if (!is(l[[1]], "SpatialData")) 
+    if (!is(l[[1]], "SpatialData"))
         return(base::table(...))
     n <- length(l)
     i <- if (n == 1) 1 else l[[2]]
     m <- length(i)
-    if (any(c(n, m) > 2)) 
+    if (n > 2 || m > 1)
         stop("too many arguments")
     y <- l[[1]]$tables
     .get(y, i)
