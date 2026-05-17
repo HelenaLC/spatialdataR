@@ -286,7 +286,7 @@ sq <- crop(sd, xy)
 
 plot(
     point(sd)$geometry, col="blue", 
-    main="crop with\npolygon") 
+    main="crop() with\npolygon") 
 points(point(sq)$geometry, col="red") 
 ```
 
