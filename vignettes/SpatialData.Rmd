@@ -61,7 +61,7 @@ These are DuckDB-backed by a `duckspatial_df`, enabling efficient lazy handling.
 
 **Tables** store functional annotations or information that has been aggregated
 across layers (e.g., gene $\times$ cell data). They are currently represented 
-as in-memory`r BiocStyle::Biocpkg("SingleCellExperiment")` objects; delayed,
+as in-memory `r BiocStyle::Biocpkg("SingleCellExperiment")` objects; delayed,
 *.zarr*-backed handling of assay data is under active development.
 
 ```{r schematic, echo=FALSE, fig.wide=TRUE}
@@ -327,6 +327,8 @@ sp <- mask(sd, i="blobs_polygons", j="blobs_circles")
 
 `query()` filters elements across all layers based on `table` metadata in
 `dplyr`-style syntax, where queries may be passed via the ellipsis (`...`):
+
+TODO
 
 ## Combining
 
