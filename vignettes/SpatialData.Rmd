@@ -73,8 +73,14 @@ transcript locations or segmentation boundaries). They are represented as
 `SpatialDataPoint/Shape` objects that, in turn, inherit from `SpatialDataFrame.` 
 These are DuckDB-backed by a `duckspatial_df`, enabling efficient lazy handling.
 
-**Tables** store functional annotations (e.g., gene $\times$ cell data) and
-are represented as `r BiocStyle::Biocpkg("SingleCellExperiment")` objects.
+**Tables** store functional annotations or information that has been aggregated
+across layers (e.g., gene $\times$ cell data). They are currently represented 
+as in-memory`r BiocStyle::Biocpkg("SingleCellExperiment")` objects; delayed,
+*.zarr*-backed handling of assay data is under active development.
+
+```{r schematic, echo=FALSE, fig.wide=TRUE}
+knitr::include_graphics("schematic.png")
+```
 
 # Handling
 
