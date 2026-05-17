@@ -67,41 +67,13 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to <code>SpatialData</code>
 </h1>
-                        <h4 data-toc-skip class="author">Helena L.
-Crowell</h4>
-            <address class="author_afil">
-      CNAG Barcelona,
-Spain<br><h4 data-toc-skip class="author">Artür
-Manukyan</h4>
-            <address class="author_afil">
-      MDC Berlin,
-Germany<br><h4 data-toc-skip class="author">Louise
-Deconinck</h4>
-                                    <h4 data-toc-skip class="author">Dario
-Righelli</h4>
-                                    <h4 data-toc-skip class="author">Estella
-Dong</h4>
-                                    <h4 data-toc-skip class="author">Samuel
-Gunz</h4>
-                                    <h4 data-toc-skip class="author">Yixing
-E. Dong</h4>
-                                    <h4 data-toc-skip class="author">Michael
-Stadler</h4>
-                                    <h4 data-toc-skip class="author">Charlotte
-Soneson</h4>
-                                    <h4 data-toc-skip class="author">Vince
-Carey</h4>
-                                    <h4 data-toc-skip class="author">Hugo
-Gruson</h4>
-                        
+            
             <h4 data-toc-skip class="date">May 17, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
       <div class="hidden name"><code>SpatialData.Rmd</code></div>
 
-    </address>
-</address>
-</div>
+    </div>
 
     
     
@@ -311,6 +283,44 @@ resolutions.</li>
 </div>
 </div>
 <div class="section level2">
+<h2 id="annotations">Annotations<a class="anchor" aria-label="anchor" href="#annotations"></a>
+</h2>
+<p>For single-cell and spatial omics datasets, functional annotations
+are commonly stored as <a href="https://anndata.readthedocs.io" class="external-link">AnnData</a> objects in Python. In
+R, we use <em><a href="https://bioconductor.org/packages/3.23/anndataR" class="external-link">anndataR</a></em>
+<span class="citation">(<span class="nocase">Deconinck et al.</span>
+2025)</span> to read these <code>.zarr</code>-backed
+<code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
+<p>A <code>table</code> can link to one or more <code>label</code> or
+<code>shape</code> (but not other layers), whereby internal metadata
+(<code>spatialdata_attrs</code>) are used to keep track of the
+element(s) and observations being annotated. This is handled internally
+so the user needn’t worry about it; however, we show it here for
+didactic purposes:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># access annotation</span></span>
+<span><span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## class: SingleCellExperiment </span></span>
+<span><span class="co">## dim: 3 10 </span></span>
+<span><span class="co">## metadata(0):</span></span>
+<span><span class="co">## assays(1): X</span></span>
+<span><span class="co">## rownames(3): channel_0_sum channel_1_sum channel_2_sum</span></span>
+<span><span class="co">## rowData names(0):</span></span>
+<span><span class="co">## colnames(10): 3 4 ... 15 16</span></span>
+<span><span class="co">## colData names(0):</span></span>
+<span><span class="co">## reducedDimNames(0):</span></span>
+<span><span class="co">## mainExpName: NULL</span></span>
+<span><span class="co">## altExpNames(0):</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># annotated region(s)</span></span>
+<span><span class="fu"><a href="../reference/SpatialDataAttrs.html">region</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "blobs_labels"</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># annotated instance(s)</span></span>
+<span><span class="fu"><a href="../reference/SpatialDataAttrs.html">instances</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1]  3  4  5  8 10 11 12 13 15 16</span></span></code></pre>
+</div>
+<div class="section level2">
 <h2 id="transformations">Transformations<a class="anchor" aria-label="anchor" href="#transformations"></a>
 </h2>
 <p>A key feature of the <code>SpatialData</code> framework is its
@@ -332,7 +342,7 @@ represent individual elements.</li>
 <strong>edges</strong> represent the transformations required to
 align an element.</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CTgraph.html">CTgraph</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/CTgraph.html">CTplot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SpatialData_files/figure-html/ct-graph-1.png" class="r-plt" alt="" width="576"></p>
@@ -348,7 +358,7 @@ y-coordinates); and,</p></li>
 correct order (e.g., <code><a href="../reference/trans.html">scale()</a></code> then
 <code><a href="../reference/trans.html">translation()</a></code>).</p></li>
 </ol>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get element </span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">label</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span></span>
@@ -362,44 +372,6 @@ correct order (e.g., <code><a href="../reference/trans.html">scale()</a></code> 
 <span><span class="co">## a.y    0   64</span></span>
 <span><span class="co">## b.x    0  128</span></span>
 <span><span class="co">## b.y    0  192</span></span></code></pre>
-</div>
-<div class="section level2">
-<h2 id="annotations">Annotations<a class="anchor" aria-label="anchor" href="#annotations"></a>
-</h2>
-<p>For single-cell and spatial omics datasets, functional annotations
-are commonly stored as <a href="https://anndata.readthedocs.io" class="external-link">AnnData</a> objects in Python. In
-R, we use <em><a href="https://bioconductor.org/packages/3.23/anndataR" class="external-link">anndataR</a></em>
-<span class="citation">(<span class="nocase">Deconinck et al.</span>
-2025)</span> to read these <code>.zarr</code>-backed
-<code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
-<p>A <code>table</code> can link to one or more <code>label</code> or
-<code>shape</code> (but not other layers), whereby internal metadata
-(<code>spatialdata_attrs</code>) are used to keep track of the
-element(s) and observations being annotated. This is handled internally
-so the user needn’t worry about it; however, we show it here for
-didactic purposes:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># access annotation</span></span>
-<span><span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## class: SingleCellExperiment </span></span>
-<span><span class="co">## dim: 3 10 </span></span>
-<span><span class="co">## metadata(0):</span></span>
-<span><span class="co">## assays(1): X</span></span>
-<span><span class="co">## rownames(3): channel_0_sum channel_1_sum channel_2_sum</span></span>
-<span><span class="co">## rowData names(0):</span></span>
-<span><span class="co">## colnames(10): 3 4 ... 15 16</span></span>
-<span><span class="co">## colData names(0):</span></span>
-<span><span class="co">## reducedDimNames(0):</span></span>
-<span><span class="co">## mainExpName: NULL</span></span>
-<span><span class="co">## altExpNames(0):</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># annotated region(s)</span></span>
-<span><span class="fu"><a href="../reference/SpatialDataAttrs.html">region</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "blobs_labels"</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># annotated instance(s)</span></span>
-<span><span class="fu"><a href="../reference/SpatialDataAttrs.html">instances</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##  [1]  3  4  5  8 10 11 12 13 15 16</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a>
