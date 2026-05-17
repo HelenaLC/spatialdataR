@@ -2,20 +2,6 @@
 title: "Introduction to `SpatialData`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
-author: 
-  - name: Helena L. Crowell
-    affiliation: CNAG Barcelona, Spain
-  - name: Artür Manukyan
-    affiliation: MDC Berlin, Germany
-  - name: Louise Deconinck
-  - name: Dario Righelli
-  - name: Estella Dong
-  - name: Samuel Gunz
-  - name: Yixing E. Dong
-  - name: Michael Stadler
-  - name: Charlotte Soneson
-  - name: Vince Carey
-  - name: Hugo Gruson
 output:
   BiocStyle::html_document:
     toc: true
