@@ -69,7 +69,7 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     .i <- transform(.i, ct[k])
     .j <- transform(.j, ct[k])
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
-    se <- .mask(.i, .j, how=how, table=t, ...)
+    se <- mask_i_by_j(.i, .j, how=how, table=t, ...)
     ik <- if (is.null(t)) "instance" else instance_key(t)
     md <- list(region=j, region_key="region", instance_key=ik)
     int_metadata(se)$spatialdata_attrs <- md
@@ -81,14 +81,18 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     `table<-`(x, nm, value=se)
 })
 
-setGeneric(".mask", \(i, j, ...) standardGeneric(".mask"))
+# internal use only!
+#' @noRd
+setGeneric("mask_i_by_j", \(i, j, ...) standardGeneric("mask_i_by_j"))
 
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector
 #' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, ...) {
+setMethod("mask_i_by_j", 
+    c("SpatialDataImage", "SpatialDataLabel"), 
+    \(i, j, how=NULL, ...) {
     .wh <- \(.) {
         ds <- dim(.); if (length(ds) == 3) ds <- ds[-1]
         metadata(.)$wh %||% list(c(0, ds[2]), c(0, ds[1]))
@@ -129,7 +133,9 @@ setMethod(".mask", c("SpatialDataImage", "SpatialDataLabel"), \(i, j, how=NULL, 
 #' @importFrom SparseArray colSums
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @importFrom dplyr mutate left_join coalesce join_by select count collect row_number
-setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, ...) {
+setMethod("mask_i_by_j", 
+    c("SpatialDataPoint", "SpatialDataShape"), 
+    \(i, j, how=NULL, ...) {
     if (!is.null(how)) message("Can only count when masking points; ignoring 'how'")
     id_x <- id_y <- n <- NULL # R CMD check
     ij <- .mask_map(i, j)
@@ -162,7 +168,9 @@ setMethod(".mask", c("SpatialDataPoint", "SpatialDataShape"), \(i, j, how=NULL, 
 #' @importFrom SummarizedExperiment assay
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom SingleCellExperiment SingleCellExperiment
-setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, table=NULL, assay=1, ...) {
+setMethod("mask_i_by_j", 
+    c("SpatialDataShape", "SpatialDataShape"), 
+    \(i, j, how=NULL, table=NULL, assay=1, ...) {
     # validity
     if (is.null(table)) stop("Missing 'table'; can't mask shapes without")
     if (is.null(how)) { how <- "sum"; message("Missing 'how'; defaulting to 'sum'") }
@@ -201,5 +209,5 @@ setMethod(".mask", c("SpatialDataShape", "SpatialDataShape"), \(i, j, how=NULL, 
 })
 
 #' @noRd
-setMethod(".mask", c("ANY", "ANY"), \(i, j, ...)
+setMethod("mask_i_by_j", c("ANY", "ANY"), \(i, j, ...)
     stop("'mask'ing between these element types not supported"))

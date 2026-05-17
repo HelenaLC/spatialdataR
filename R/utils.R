@@ -1,3 +1,15 @@
+# get/make DuckDB connection
+#' @importFrom DBI dbIsValid
+#' @importFrom duckspatial ddbs_create_conn
+.conn <- \() {
+    nm <- ".SpatialData_DuckDB_conn"
+    if (!exists(nm, envir=.GlobalEnv) ||
+            !dbIsValid(.GlobalEnv[[nm]])) {
+        .GlobalEnv[[nm]] <- ddbs_create_conn()
+    }
+    .GlobalEnv[[nm]]
+}
+
 # internal helper for null-coalescing
 `%||%` <- \(a, b) if (is.null(a)) b else a
 
