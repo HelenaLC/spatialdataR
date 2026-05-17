@@ -10,9 +10,7 @@
 \alias{flop}
 \alias{mirror}
 \alias{sequence}
-\alias{transform,SpatialDataElement,missing-method}
-\alias{transform,SpatialDataElement,numeric-method}
-\alias{transform,SpatialDataElement,character-method}
+\alias{transform,SpatialDataElement-method}
 \alias{sequence,SpatialDataElement,list-method}
 \alias{mirror,SpatialDataArray-method}
 \alias{flip,SpatialDataArray-method}
@@ -25,11 +23,7 @@
 \alias{translation,SpatialDataFrame,numeric-method}
 \title{Transformations}
 \usage{
-\S4method{transform}{SpatialDataElement,missing}(x, i, ...)
-
-\S4method{transform}{SpatialDataElement,numeric}(x, i, ...)
-
-\S4method{transform}{SpatialDataElement,character}(x, i, ...)
+\S4method{transform}{SpatialDataElement}(`_data`, i = 1, ...)
 
 \S4method{sequence}{SpatialDataElement,list}(x, t, ..., rev = FALSE)
 
@@ -52,11 +46,11 @@
 \S4method{translation}{SpatialDataFrame,numeric}(x, t, ...)
 }
 \arguments{
-\item{x}{\code{SpatialData} element.}
-
 \item{i}{scalar integer or string; target coordinate space.}
 
 \item{...}{option arguments passed to and from other methods.}
+
+\item{x, _data}{\code{SpatialData} element.}
 
 \item{t}{transformation data; exceptions: for \code{mirror}, controls
 whether to perform \bold{v}ertical or \bold{h}orizontal reflection;

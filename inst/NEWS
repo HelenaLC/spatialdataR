@@ -1,3 +1,9 @@
+changes in version 0.99.37
+
+- fix note regarding internal '.mask' generic
+- fix conclits with 'base::labels' and 'S4Vectors::transform'
+- in mask(), return 'j' instances that mapped to each 'i'
+
 changes in version 0.99.36
 
 - fix conflicts with 'base::table' and 'utils::data'

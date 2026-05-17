@@ -4,13 +4,11 @@ setGeneric("image", \(x, ...) standardGeneric("image"))
 setGeneric("label", \(x, ...) standardGeneric("label"))
 setGeneric("shape", \(x, ...) standardGeneric("shape"))
 setGeneric("point", \(x, ...) standardGeneric("point"))
-#setGeneric("table", \(x, ...) standardGeneric("table"))
-#' @importFrom BiocGenerics table
 
 # get all ----
 
 setGeneric("images", \(x, ...) standardGeneric("images"))
-setGeneric("labels", \(x, ...) standardGeneric("labels"))
+setGeneric("labels", \(object, ...) standardGeneric("labels"))
 setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
@@ -63,7 +61,6 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
 setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
 setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
-setGeneric("transform", \(x, i, ...) standardGeneric("transform"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
