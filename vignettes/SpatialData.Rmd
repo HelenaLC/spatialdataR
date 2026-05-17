@@ -382,6 +382,21 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 
 # Appendix
 
+## Resources
+
+- [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
+companion package with `ggplot`-based visualization capabilities, including 
+layered plotting of different elements with control over each's aesthetics,
+channel-mixing and auto-contrasting for images, transformations handling, etc.
+
+- [SpatialData.data](https://github.com/HelenaLC/SpatialData.data):
+companion package with example datasets from different platforms, including
+use of `r BiocStyle::Biocpkg("BiocFileCache")` for efficient data management.
+
+- [SpatialData.demo](https://github.com/HelenaLC/SpatialData.demo):
+companion repository with vignettes on analyzing datasets from 
+different platforms, including transcriptomics and proteomics.
+
 ## Session info {- .smaller}
 
 ```{r sessionInfo}
