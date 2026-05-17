@@ -4,8 +4,10 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 package: "`r BiocStyle::pkg_ver('SpatialData')`"
 author: 
   - name: Helena L. Crowell
-  - name: Louise Deconinck
+    affiliation: CNAG Barcelona, Spain
   - name: Artür Manukyan
+    affiliation: MDC Berlin, Germany
+  - name: Louise Deconinck
   - name: Dario Righelli
   - name: Estella Dong
   - name: Samuel Gunz
@@ -189,14 +191,6 @@ colnames(d) <- seq_along(l)
 show(d)
 ```
 
-## AnnData Integration with `anndataR`
-
-For spatial omics datasets, functional annotations are typically stored as 
-[AnnData](https://anndata.readthedocs.io) objects in Python. 
-`SpatialData` uses the `r BiocStyle::Biocpkg("anndataR")` R/Bioconductor 
-package [@Deconinck2025-anndataR] to seamlessly read these `.zarr`-backed 
-`AnnData` objects into R as `r BiocStyle::Biocpkg("SingleCellExperiment")`.
-
 # Transformations
 
 A key feature of the `SpatialData` framework is its handling of different 
@@ -237,6 +231,29 @@ b <- transform(a, "scale")
 do.call(rbind, c(a=extent(a), b=extent(b)))
 ```
 
+# Annotations
+
+For single-cell and spatial omics datasets, functional annotations are commonly
+stored as [AnnData](https://anndata.readthedocs.io) objects in Python. In R, we
+use `r BiocStyle::Biocpkg("anndataR")` [@Deconinck2025-anndataR] to read these 
+`.zarr`-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
+
+A `table` can link to one or more `label` or `shape` (but not other layers), 
+whereby internal metadata (`spatialdata_attrs`) are used to keep track of the
+element(s) and observations being annotated. This is handled internally so the 
+user needn't worry about it; however, we show it here for didactic purposes:
+
+```{r tables}
+# access annotation
+(se <- table(sd))
+
+# annotated region(s)
+region(se)
+    
+# annotated instance(s)
+instances(se)
+```
+
 # Utilities
 
 ## Cropping
@@ -273,33 +290,94 @@ plot(
 points(point(sq)$geometry, col="red") 
 ```
 
-- `extent` extracts a list of X and Y ranges
-  in a coordinate space (per input argument)
-- `centroids` extracts spatial coordinates 
-  for every instance in a given element
-- `mask` aggregates information across layers; 
-  supports image-label, point-shape, shape-shape
-- `query` filters elements across all layers
-  based on table metadata in `dplyr`-style
-  (e.g., `query(foo, cell_type == "bar")`)
-- `combine` merges two `SpatialData` objects
-  (or many, via `do.call(list(...), combine)`)
+## Masking
 
-# Integration with Tables
+`mask()` aggregates data between elements and across layers, with support for
+masking of points by images by labels, points by shapes, and shapes by shapes:
 
-Tables (SCE objects) link to specific labels or shapes using `region` and 
-`instance_key` identifiers, allowing for seamless integration of spatial and 
-feature-level information.
+- **point by shape** masking counts the number of points that fall 
+within each shape (e.g., counting transcripts in cell membrane or nucleus
+segmentation boundaries in order to obtain a gene $\times$ cell-level data).
 
-```{r tables}
-# access annotation
-(se <- table(sd))
+- **image by label** masking aggregates channel-wise pixel values in an image
+according to the regions defined by a label (e.g., obtaining mean fluorescence intensities per cell).
 
-# annotated region(s)
-region(se)
-    
-# annotated instance(s)
-instances(se)
+- **shape by shape** masking aggregates the data in a table of one shape by 
+another shape (e.g., summarizing cell-level data into regions of interest).
+
+A couple considerations are also worth mentioning:
+
+- The identifier of the resulting `table` may be specified via `name`, 
+which will default to `i_by_j` when masking element `i` by element `j`.
+
+- Instances of `i` that do not map to any instances of `j` (e.g., unassigned transcripts) will be assigned to a special "0" column in the resulting table.
+
+```{r mask-image-label}
+# average channel-wise pixel values by labels
+sp <- mask(sd, i="blobs_image", j="blobs_labels")
+se <- table(sp, "blobs_image_by_blobs_labels")
+assay(se)
+```
+
+```{r mask-point-shape}
+# count different point species in polygons
+sp <- mask(sd, i="blobs_points", j="blobs_polygons")
+se <- table(sp, "blobs_points_by_blobs_polygons")
+assay(se)
+```
+
+```{r mask-shape-shape, eval=FALSE}
+# average shape-level data by other shapes
+sp <- mask(sd, i="blobs_polygons", j="blobs_circles")
+```
+
+## Querying
+
+`query()` filters elements across all layers based on `table` metadata in
+`dplyr`-style syntax, where queries may be passed via the ellipsis (`...`):
+
+## Combining
+
+`combine()` can be used to merge two `SpatialData` objects into one (or many, 
+via `do.call(list(...), combine)`). Here, elements names will be made unique 
+across objects via `make.names()`, appending a suffix to the element names of 
+subsequent objects. Alternatively, names could be customize before combining.
+
+```{r combine}
+sp <- combine(sd, sd)
+cbind(
+    original=lengths(colnames(sd)),
+    combined=lengths(colnames(sp)))
+imageNames(sp)
+```
+
+## Coordinates
+  
+`centroids()` may be used to extract spatial coordinates for every instance in 
+a given element. This applies all layers except images and tables. Notably, for
+labels and shapes, the centroids of each region are returned (center of mass).
+
+```{r centroids}
+head(centroids(point(sd)))
+```
+
+`extent()` will obtain the range of an element's spatial coordinates in a
+target coordinate space. This can be done for one element, or object-wide 
+in order to obtain the largest extent across all elements in an object.
+  
+```{r}
+# object-wide
+xy <- extent(sd)
+unlist(xy)
+
+# one element
+xy <- extent(point(sd))
+unlist(xy)
+
+# with prior alignment to target coordinate space
+xy <- extent(label(sd))
+yx <- extent(label(sd), "scale")
+rbind(native=unlist(xy), scaled=unlist(yx))
 ```
 
 # Appendix
