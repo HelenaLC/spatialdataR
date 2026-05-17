@@ -7,6 +7,13 @@ It enables the representation, handling, and integration of diverse spatial omic
 using the [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) standard.
 For more details on the framework, see [Marconato et al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 
+## Resources
+
+- [SpatialData class](https://helenalc.github.io/SpatialData/articles/SpatialData.html) documentation.
+- [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot): Visualization capabilities.
+- [SpatialData.demo](https://helenalc.github.io/SpatialData.demo/): Biotechnology workflows.
+- [SpatialData.data](https://github.com/HelenaLC/SpatialData.data): Example `SpatialData`sets.
+
 ## Key features
 
 - Out-of-memory handling of images and labels using `ZarrArray` (via the [Rarr](https://bioconductor.org/packages/Rarr) package).
@@ -57,11 +64,6 @@ coordinate systems(5):
 - affine(1): blobs_labels
 - sequence(1): blobs_labels
 ```
-
-## Related Packages
-
-- [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot): Visualization tools for `SpatialData` objects.
-- [SpatialData.data](https://github.com/HelenaLC/SpatialData.data): Example datasets and data reading/writing utilities.
 
 ***
 
