@@ -1,0 +1,27 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/SpatialData.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/CTgraph.html</loc></url>
+<url><loc>/reference/CTutils.html</loc></url>
+<url><loc>/reference/SpatialData.html</loc></url>
+<url><loc>/reference/SpatialDataArray.html</loc></url>
+<url><loc>/reference/SpatialDataAttrs.html</loc></url>
+<url><loc>/reference/SpatialDataFrame.html</loc></url>
+<url><loc>/reference/blobs.html</loc></url>
+<url><loc>/reference/centroids.html</loc></url>
+<url><loc>/reference/combine.html</loc></url>
+<url><loc>/reference/crop.html</loc></url>
+<url><loc>/reference/extent.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/mask.html</loc></url>
+<url><loc>/reference/misc.html</loc></url>
+<url><loc>/reference/query.html</loc></url>
+<url><loc>/reference/readSpatialData.html</loc></url>
+<url><loc>/reference/reexports.html</loc></url>
+<url><loc>/reference/table-utils.html</loc></url>
+<url><loc>/reference/trans.html</loc></url>
+</urlset>
+
