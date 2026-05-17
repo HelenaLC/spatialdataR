@@ -101,7 +101,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{images}{SpatialData}(x)
 
-\S4method{labels}{SpatialData}(x)
+\S4method{labels}{SpatialData}(object)
 
 \S4method{points}{SpatialData}(x)
 
@@ -126,7 +126,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \item{tables}{list of \code{SingleCellExperiment}s}
 
-\item{x}{\code{SpatialData}}
+\item{x, object}{\code{SpatialData} object.}
 
 \item{name}{character string for extraction (see \code{?base::`$`}).}
 

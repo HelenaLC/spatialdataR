@@ -79,7 +79,8 @@ NULL
     type <- match.arg(type)
     if (is.null(data) || isTRUE(nrow(data) == 0)) {
         # return empty data.frame with geometry column
-        return(data.frame(geometry=I(list())))
+        fn <- switch(type, POINT=st_point, st_polygon)
+        return(st_sf(geometry=st_sfc(fn())[0], crs=NA))
     }
     if (is.data.frame(data) && !is(data, "sf")) {
         nms <- names(data)
@@ -98,6 +99,24 @@ NULL
     return(data)
 }
 
+#' @importFrom duckspatial ddbs_write_table
+#' @importFrom duckspatial as_duckspatial_df
+.duck <- \(data, name) {
+    # silent complaint re: missing CRS
+    suppressMessages( 
+        ddbs_write_table(
+            conn=.conn(),
+            data=data,
+            name=name,
+            overwrite=TRUE,
+            temp_view=FALSE))
+    as_duckspatial_df(
+        x=name, 
+        conn=.conn(), 
+        crs=NA_character_,
+        geom_col=attr(data, "sf_column"))
+}
+
 #' @export
 #' @rdname SpatialDataFrame
 #' @importFrom methods is
@@ -106,17 +125,14 @@ NULL
 #' @importFrom duckspatial as_duckspatial_df
 SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ik=NULL, fk=NULL, ...) {
     data <- .df_to_sf(data, "POINT")
-    # validate geometry type (must be points)
     if (isTRUE(nrow(data) > 0L)) {
         gt <- tryCatch(unique(st_geometry_type(data)), error=\(.) "n/a")
         if (!all(gt == "POINT")) stop(
             "only 'POINT' geometries supported; ",
             "found: ", paste(gt, collapse=", "))
-        # always ensure internal data is 'duckspatial_df'
-        if (!is(data, "duckspatial_df"))
-            data <- as_duckspatial_df(data, crs=NA_character_)
     }
-    # update 'spatialdata_attrs' if keys are provided
+    if (!is(data, "duckspatial_df")) 
+        data <- .duck(data, "sdPoint")
     za <- as.list(meta)
     if (is.null(za$spatialdata_attrs))
         za$spatialdata_attrs <- list()
@@ -128,7 +144,6 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
         stopifnot(fk %in% colnames(data))
         feature_key(za) <- fk
     }
-    # construct S4 object
     x <- .SpatialDataPoint(data=data, meta=SpatialDataAttrs(za), ...)
     metadata(x) <- metadata
     return(x)
@@ -138,25 +153,10 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
 #' @rdname SpatialDataFrame
 #' @importFrom methods is
 #' @importFrom S4Vectors metadata<-
-#' @importFrom duckspatial ddbs_write_table
-#' @importFrom duckspatial as_duckspatial_df
 SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=list(), ...) {
     data <- .df_to_sf(data, "POLYGON")
-    # always ensure internal data is 'duckspatial_df'
-    if (!is(data, "duckspatial_df") && isTRUE(nrow(data) > 0L)) {
-        suppressMessages( # silent complaint re: missing CRS
-        ddbs_write_table(
-            conn=.conn(),
-            data=data,
-            name="sdShape",
-            overwrite=TRUE,
-            temp_view=FALSE))
-        data <- as_duckspatial_df(
-            x="sdShape", 
-            conn=.conn(), 
-            crs=NA_character_,
-            geom_col=attr(data, "sf_column"))
-    }
+    if (!is(data, "duckspatial_df")) 
+        data <- .duck(data, "sdShape")
     x <- .SpatialDataShape(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
