@@ -183,6 +183,29 @@ colnames(d) <- seq_along(l)
 show(d)
 ```
 
+# Annotations
+
+For single-cell and spatial omics datasets, functional annotations are commonly
+stored as [AnnData](https://anndata.readthedocs.io) objects in Python. In R, we
+use `r BiocStyle::Biocpkg("anndataR")` [@Deconinck2025-anndataR] to read these 
+`.zarr`-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
+
+A `table` can link to one or more `label` or `shape` (but not other layers), 
+whereby internal metadata (`spatialdata_attrs`) are used to keep track of the
+element(s) and observations being annotated. This is handled internally so the 
+user needn't worry about it; however, we show it here for didactic purposes:
+
+```{r tables}
+# access annotation
+(se <- table(sd))
+
+# annotated region(s)
+region(se)
+    
+# annotated instance(s)
+instances(se)
+```
+
 # Transformations
 
 A key feature of the `SpatialData` framework is its handling of different 
@@ -221,29 +244,6 @@ b <- transform(a, "scale")
 
 # compare XY extents
 do.call(rbind, c(a=extent(a), b=extent(b)))
-```
-
-# Annotations
-
-For single-cell and spatial omics datasets, functional annotations are commonly
-stored as [AnnData](https://anndata.readthedocs.io) objects in Python. In R, we
-use `r BiocStyle::Biocpkg("anndataR")` [@Deconinck2025-anndataR] to read these 
-`.zarr`-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
-
-A `table` can link to one or more `label` or `shape` (but not other layers), 
-whereby internal metadata (`spatialdata_attrs`) are used to keep track of the
-element(s) and observations being annotated. This is handled internally so the 
-user needn't worry about it; however, we show it here for didactic purposes:
-
-```{r tables}
-# access annotation
-(se <- table(sd))
-
-# annotated region(s)
-region(se)
-    
-# annotated instance(s)
-instances(se)
 ```
 
 # Utilities
