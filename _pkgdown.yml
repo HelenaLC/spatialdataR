@@ -2,6 +2,16 @@ url: https://helenalc.github.io/SpatialData
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:  [intro, reference, articles, demos, news]
+    right: [search, github, lightswitch]
+  components:
+    demos:
+      text: Demos
+      href: https://helenalc.github.io/SpatialData.demo/
+      aria-label: Demos
+
 reference:
   - title: "Read SpatialData"
     contents:
