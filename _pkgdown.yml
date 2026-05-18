@@ -1,0 +1,15 @@
+url: https://helenalc.github.io/SpatialData
+template:
+  bootstrap: 5
+
+reference:
+  - title: "Read SpatialData"
+    contents:
+      - starts_with("read")
+  - title: "Methods for SpatialData objects or their components"
+    contents:
+      - -starts_with("read")
+      - -blobs
+  - title: "Example datasets"
+    contents:
+      - blobs
