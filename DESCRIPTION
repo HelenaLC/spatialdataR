@@ -92,6 +92,6 @@ Remotes:
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr
-URL: https://github.com/HelenaLC/SpatialData
+URL: https://helenalc.github.io/SpatialData/, https://github.com/HelenaLC/SpatialData
 BugReports: https://github.com/HelenaLC/SpatialData/issues
 Config/roxygen2/version: 8.0.0
