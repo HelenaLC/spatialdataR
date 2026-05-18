@@ -1,0 +1,282 @@
+# SpatialData
+
+[![Bioc
+Check](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+
+`SpatialData` provides an R interface to Python’s
+[SpatialData](https://spatialdata.scverse.org) framework. It enables the
+representation, handling, and integration of diverse spatial omics
+datasets using the [OME-NGFF (Next Generation File
+Format)](https://ngff.openmicroscopy.org) standard. For more details on
+the framework, see [Marconato et
+al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
+
+## Resources
+
+- [SpatialData
+  class](https://helenalc.github.io/SpatialData/articles/SpatialData.html)
+  documentation.
+- [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
+  Visualization capabilities.
+- [SpatialData.demo](https://helenalc.github.io/SpatialData.demo/):
+  Biotechnology workflows.
+- [SpatialData.data](https://github.com/HelenaLC/SpatialData.data):
+  Example `SpatialData`sets.
+
+## Key features
+
+- Out-of-memory handling of images and labels using `ZarrArray` (via the
+  [Rarr](https://bioconductor.org/packages/Rarr) package).
+- Points and shapes are managed using
+  [arrow](https://cran.r-project.org/package=arrow) or
+  [duckdb](https://cran.r-project.org/package=duckdb)-backed tables.
+- Functional annotations (e.g., gene expression) are represented as
+  `SingleCellExperiment` objects, integrated via
+  [anndataR](https://bioconductor.org/packages/anndataR).
+- A system for mapping data across multiple coordinate spaces, including
+  support for transformation graphs.
+
+## Installation
+
+``` r
+
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+
+# Install the development version from GitHub
+BiocManager::install("HelenaLC/SpatialData")
+```
+
+## Quick Start
+
+``` r
+
+library(SpatialData)
+zs <- system.file("extdata", "blobs.zarr", package="SpatialData")
+(sd <- readSpatialData(zs))
+```
+
+    class: SpatialData
+    - images(2):
+      - blobs_image (3,64,64)
+      - blobs_multiscale_image (3,64,64)
+    - labels(2):
+      - blobs_labels (64,64)
+      - blobs_multiscale_labels (64,64)
+    - points(1):
+      - blobs_points (200)
+    - shapes(3):
+      - blobs_circles (5,circle)
+      - blobs_multipolygons (2,polygon)
+      - blobs_polygons (5,polygon)
+    - tables(1):
+      - table (3,10) [blobs_labels]
+    coordinate systems(5):
+    - global(8): blobs_image
+      blobs_multiscale_image ... blobs_polygons
+      blobs_points
+    - scale(1): blobs_labels
+    - translation(1): blobs_labels
+    - affine(1): blobs_labels
+    - sequence(1): blobs_labels
+
+------------------------------------------------------------------------
+
+*Past and current contributors include (in alphabetical order): Vince
+Carey, Helena L. Crowell, Louise Deconinck, Yixing E. Dong, Hugo Gruson,
+Samuel Gunz, Artür Manukyan, Dario Righelli, Charlotte Soneson, Michael
+Stadler.*
+
+# Package index
+
+## Read SpatialData
+
+- [`readImage()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  [`readLabel()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  [`readPoint()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  [`readShape()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  [`readTable()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  [`readSpatialData()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+  : Reading \`SpatialData\`
+
+## Methods for SpatialData objects or their components
+
+- [`CTgraph(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTgraph(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTgraph(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTpath(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTpath(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTpath(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  [`CTplot()`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+  : Coord. trans. graph
+
+- [`axes(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTlist(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTdata(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTtype(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTname(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`axes(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTlist(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTtype(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTname(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTdata(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`CTname(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`rmvCT(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`rmvCT(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`addCT(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  [`addCT(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/CTutils.md)
+  : Coord. trans. utilities
+
+- [`SpatialData()`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `$`( ``*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `$<-`( ``*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`data(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`meta(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`rownames(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`colnames(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`layer(`*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`layer(`*`<SpatialData>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`element(`*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`element(`*`<SpatialData>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`element(`*`<SpatialData>`*`,`*`<missing>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`element(`*`<SpatialData>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `element<-`( ``*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`images(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`labels(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`table(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  : The \`SpatialData\` class
+
+- [`SpatialDataImage()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`SpatialDataLabel()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`dim(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`length(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`data_type(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`data_type(`*`<DelayedArray>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`channels(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`channels(`*`<SpatialDataImage>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`channels(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`` `[`( ``*`<SpatialDataImage>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`` `[`( ``*`<SpatialDataLabel>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  :
+
+  `SpatialDataArray`
+
+- [`SpatialDataAttrs()`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `$`( ``*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`feature_key(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`feature_key(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `feature_key<-`( ``*`<SpatialDataAttrs>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`region_key(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`region(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`regions(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `regions<-`( ``*`<SingleCellExperiment>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `regions<-`( ``*`<SingleCellExperiment>`*`,`*`<NULL>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instance_key(`*`<list>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instance_key(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instance_key(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instance_key(`*`<SpatialDataLabel>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `instance_key<-`( ``*`<SpatialDataAttrs>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `instance_key<-`( ``*`<SingleCellExperiment>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instances(`*`<SpatialDataLabel>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instances(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instances(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`instances(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`` `instances<-`( ``*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  : The \`SpatialDataAttrs\` class
+
+- [`SpatialDataPoint()`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`SpatialDataShape()`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`length(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`dim(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`names(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`as.data.frame(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`geom_type(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`pull(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`select(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`mutate(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`filter(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`` `[[`( ``*`<SpatialDataFrame>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`` `$`( ``*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`.DollarNames(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`` `$`( ``*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  [`` `[`( ``*`<SpatialDataFrame>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)
+  :
+
+  `SpatialDataFrame`
+
+- [`centroids(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
+  [`centroids(`*`<SpatialDataLabel>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
+  [`centroids(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
+  [`centroids(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
+  : Spatial element centroids
+
+- [`combine(`*`<SpatialData>`*`,`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
+  :
+
+  Combine two `SpatialData` objects
+
+- [`crop(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/crop.md)
+  [`crop(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/crop.md)
+  [`crop(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/crop.md)
+  : spatial cropping
+
+- [`extent(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/extent.md)
+  [`extent(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/extent.md)
+  [`extent(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/extent.md)
+  : Spatial element extent
+
+- [`mask(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/mask.md)
+  : Aggregate data across layers
+
+- [`show(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
+  [`show(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
+  [`show(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
+  [`show(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
+  : Miscellaneous \`SpatialData\` methods
+
+- [`query(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/query.md)
+  : queries
+
+- [`meta(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`hasTable(`*`<SpatialData>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`hasTable(`*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`getTable(`*`<SpatialData>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`getTable(`*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`setTable(`*`<SpatialData>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  [`setTable(`*`<SpatialData>`*`,`*`<character>`*`)`](https://helenalc.github.io/SpatialData/reference/table-utils.md)
+  :
+
+  `SpatialData` annotations
+
+- [`transform(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`sequence(`*`<SpatialDataElement>`*`,`*`<list>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`mirror(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`flip(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`flop(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`rotate(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`scale(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`translation(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`rotate(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`scale(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`translation(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  : Transformations
+
+## Example datasets
+
+- [`blobs`](https://helenalc.github.io/SpatialData/reference/blobs.md) :
+  \`SpatialData\` .zarr toy datasets
+
+# Articles
+
+### All vignettes
+
+- [Introduction to
+  \`SpatialData\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):
