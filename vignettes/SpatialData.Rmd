@@ -44,7 +44,7 @@ The Python implementation and core specifications can be found at the
 
 The core data structure is the `SpatialData` class, which organizes data 
 into 5 coordinated **layers: images, labels, points, shapes, and tables**. 
-Each layer is stored as a list of layer-specific objects that carry associated `SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific *.zattr*.
+Each layer is stored as a list of layer-specific objects that carry associated `SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and *zarr.json* for Zarr v3)
 Together, these layers provide a unified representation of spatial omics data, 
 combining raster, vector, and tabular data within a single coherent framework.
 
@@ -62,7 +62,7 @@ These are DuckDB-backed by a `duckspatial_df`, enabling efficient lazy handling.
 **Tables** store functional annotations or information that has been aggregated
 across layers (e.g., gene $\times$ cell data). They are currently represented 
 as in-memory `r BiocStyle::Biocpkg("SingleCellExperiment")` objects; delayed,
-*.zarr*-backed handling of assay data is under active development.
+Zarr-backed handling of assay data is under active development.
 
 ```{r schematic, echo=FALSE, fig.wide=TRUE}
 knitr::include_graphics("schematic.png")
@@ -70,7 +70,7 @@ knitr::include_graphics("schematic.png")
 
 # Handling
 
-`SpatialData` are represented on-disk as `.zarr` stores. The package provides
+`SpatialData` are represented on-disk as Zarr stores. The package provides
 the `readSpatialData()` function to ingest an entire store, although arguments
 to control which layers and elements to read or not to read are also available.
 
@@ -81,7 +81,7 @@ For this demonstration, we use a toy dataset included in the package:
 library(SpatialData)
 library(SingleCellExperiment)
 
-# path to 'spatialdata' .zarr store
+# path to 'spatialdata' Zarr store
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 
@@ -155,7 +155,7 @@ Every spatial element (tables excluded) is composed of two key slots:
   or a `duckspatial_df` for shapes/points.
   
 - `meta`: a `SpatialDataAttrs` object containing the OME-NGFF metadata 
-  retrieved from the *.zattrs* present in the original *.zarr* store.
+  retrieved from the zarr attributes present in the original Zarr store.
 
 We here demonstrate how to access these slots for a given element
 
@@ -188,7 +188,7 @@ show(d)
 For single-cell and spatial omics datasets, functional annotations are commonly
 stored as [AnnData](https://anndata.readthedocs.io) objects in Python. In R, we
 use `r BiocStyle::Biocpkg("anndataR")` [@Deconinck2025-anndataR] to read these 
-`.zarr`-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
+Zarr-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
 
 A `table` can link to one or more `label` or `shape` (but not other layers), 
 whereby internal metadata (`spatialdata_attrs`) are used to keep track of the
@@ -210,7 +210,7 @@ instances(se)
 
 A key feature of the `SpatialData` framework is its handling of different 
 coordinate systems. Each element can exist in multiple coordinate spaces 
-simultaneously, defined by transformations in its on-disk *.zattrs*.
+simultaneously, defined by transformations in its on-disk Zarr attributes.
 
 The relationships between different elements and their respective coordinate 
 spaces can be complex. `SpatialData` provides the `CTgraph()` and `CTplot()` 
