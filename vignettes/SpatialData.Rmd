@@ -44,7 +44,7 @@ The Python implementation and core specifications can be found at the
 
 The core data structure is the `SpatialData` class, which organizes data 
 into 5 coordinated **layers: images, labels, points, shapes, and tables**. 
-Each layer is stored as a list of layer-specific objects that carry associated `SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and `zarr.json` for Zarr v3)
+Each layer is stored as a list of layer-specific objects that carry associated `SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and *zarr.json* for Zarr v3)
 Together, these layers provide a unified representation of spatial omics data, 
 combining raster, vector, and tabular data within a single coherent framework.
 
