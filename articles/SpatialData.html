@@ -93,8 +93,9 @@ organizes data into 5 coordinated <strong>layers: images, labels,
 points, shapes, and tables</strong>. Each layer is stored as a list of
 layer-specific objects that carry associated
 <code>SpatialDataAttr</code> (<code>@meta</code> slot), which encode
-<code>spatialdata</code>-specific <em>.zattr</em>. Together, these
-layers provide a unified representation of spatial omics data, combining
+<code>spatialdata</code>-specific zarr attributes (<em>.zattr</em> for
+Zarr v2, and <em>zarr.json</em> for Zarr v3) Together, these layers
+provide a unified representation of spatial omics data, combining
 raster, vector, and tabular data within a single coherent framework.</p>
 <p><strong>Images/labels</strong> store raster-based data as
 multi-scale, multi-channel arrays (e.g., immunofluorescent images or
@@ -114,19 +115,18 @@ lazy handling.</p>
 that has been aggregated across layers (e.g., gene
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>×</mi><annotation encoding="application/x-tex">\times</annotation></semantics></math>
 cell data). They are currently represented as in-memory <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
-objects; delayed, <em>.zarr</em>-backed handling of assay data is under
-active development.</p>
+objects; delayed, Zarr-backed handling of assay data is under active
+development.</p>
 <p><img src="schematic.png" class="r-plt" alt="" width="730"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="handling">Handling<a class="anchor" aria-label="anchor" href="#handling"></a>
 </h2>
-<p><code>SpatialData</code> are represented on-disk as
-<code>.zarr</code> stores. The package provides the
-<code><a href="../reference/readSpatialData.html">readSpatialData()</a></code> function to ingest an entire store,
-although arguments to control which layers and elements to read or not
-to read are also available.</p>
+<p><code>SpatialData</code> are represented on-disk as Zarr stores. The
+package provides the <code><a href="../reference/readSpatialData.html">readSpatialData()</a></code> function to ingest
+an entire store, although arguments to control which layers and elements
+to read or not to read are also available.</p>
 <p>For this demonstration, we use a toy dataset included in the
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -134,7 +134,7 @@ package:</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">SpatialData</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SingleCellExperiment</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># path to 'spatialdata' .zarr store</span></span>
+<span><span class="co"># path to 'spatialdata' Zarr store</span></span>
 <span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blobs.zarr"</span><span class="op">)</span></span>
 <span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="va">zs</span>, package<span class="op">=</span><span class="st">"SpatialData"</span><span class="op">)</span></span>
 <span></span>
@@ -228,8 +228,8 @@ slots:</p>
 images/labels, or a <code>duckspatial_df</code> for
 shapes/points.</p></li>
 <li><p><code>meta</code>: a <code>SpatialDataAttrs</code> object
-containing the OME-NGFF metadata retrieved from the <em>.zattrs</em>
-present in the original <em>.zarr</em> store.</p></li>
+containing the OME-NGFF metadata retrieved from the zarr attributes
+present in the original Zarr store.</p></li>
 </ul>
 <p>We here demonstrate how to access these slots for a given element</p>
 <p><code>image</code> elements represent a special case, as they are
@@ -273,8 +273,7 @@ resolutions.</li>
 are commonly stored as <a href="https://anndata.readthedocs.io" class="external-link">AnnData</a> objects in Python. In
 R, we use <em><a href="https://bioconductor.org/packages/3.23/anndataR" class="external-link">anndataR</a></em>
 <span class="citation">(<span class="nocase">Deconinck et al.</span>
-2025)</span> to read these <code>.zarr</code>-backed
-<code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
+2025)</span> to read these Zarr-backed <code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
 <p>A <code>table</code> can link to one or more <code>label</code> or
 <code>shape</code> (but not other layers), whereby internal metadata
 (<code>spatialdata_attrs</code>) are used to keep track of the
@@ -310,7 +309,7 @@ didactic purposes:</p>
 <p>A key feature of the <code>SpatialData</code> framework is its
 handling of different coordinate systems. Each element can exist in
 multiple coordinate spaces simultaneously, defined by transformations in
-its on-disk <em>.zattrs</em>.</p>
+its on-disk Zarr attributes.</p>
 <p>The relationships between different elements and their respective
 coordinate spaces can be complex. <code>SpatialData</code> provides the
 <code><a href="../reference/CTgraph.html">CTgraph()</a></code> and <code><a href="../reference/CTgraph.html">CTplot()</a></code> functions to construct
