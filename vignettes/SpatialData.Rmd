@@ -62,7 +62,7 @@ These are DuckDB-backed by a `duckspatial_df`, enabling efficient lazy handling.
 **Tables** store functional annotations or information that has been aggregated
 across layers (e.g., gene $\times$ cell data). They are currently represented 
 as in-memory `r BiocStyle::Biocpkg("SingleCellExperiment")` objects; delayed,
-Zarr backed handling of assay data is under active development.
+Zarr-backed handling of assay data is under active development.
 
 ```{r schematic, echo=FALSE, fig.wide=TRUE}
 knitr::include_graphics("schematic.png")
@@ -188,7 +188,7 @@ show(d)
 For single-cell and spatial omics datasets, functional annotations are commonly
 stored as [AnnData](https://anndata.readthedocs.io) objects in Python. In R, we
 use `r BiocStyle::Biocpkg("anndataR")` [@Deconinck2025-anndataR] to read these 
-Zarr backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
+Zarr-backed `AnnData` as `r BiocStyle::Biocpkg("SingleCellExperiment")`(s).
 
 A `table` can link to one or more `label` or `shape` (but not other layers), 
 whereby internal metadata (`spatialdata_attrs`) are used to keep track of the
