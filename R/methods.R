@@ -128,7 +128,7 @@ setMethod("rownames", "SpatialData", \(x) {
 #' @export
 setMethod("colnames", "SpatialData", \(x) {
     names(.) <- . <- rownames(x)
-    lapply(., \(.) names(x[[.]]))
+    lapply(., \(.) names(attr(x, .)))
 })
 
 # layer ----
@@ -153,7 +153,7 @@ setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 #' @rdname SpatialData
 #' @export
 setMethod("element", c("SpatialData", "character"), 
-    \(x, i) x[[layer(x, i)]][[i]])
+    \(x, i) attr(x, layer(x, i))[[i]])
 
 #' @rdname SpatialData
 #' @export
@@ -172,29 +172,29 @@ setMethod("element", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 #' @export
 setReplaceMethod("element", 
     c("SpatialData", "character"), 
-    \(x, i, value) { x[[layer(x, i)]][[i]] <- value; x })
+    \(x, i, value) { attr(x, layer(x, i))[[i]] <- value; x })
 
 # get all ----
 
 #' @export
 #' @rdname SpatialData
-setMethod("images", "SpatialData", \(x) x$images)
+setMethod("images", "SpatialData", \(x) x@images)
 
 #' @export
 #' @rdname SpatialData
-setMethod("labels", "SpatialData", \(object) object$labels)
+setMethod("labels", "SpatialData", \(object) object@labels)
 
 #' @export
 #' @rdname SpatialData
-setMethod("points", "SpatialData", \(x) x$points)
+setMethod("points", "SpatialData", \(x) x@points)
 
 #' @export
 #' @rdname SpatialData
-setMethod("shapes", "SpatialData", \(x) x$shapes)
+setMethod("shapes", "SpatialData", \(x) x@shapes)
 
 #' @export
 #' @rdname SpatialData
-setMethod("tables", "SpatialData", \(x) x$tables)
+setMethod("tables", "SpatialData", \(x) x@tables)
 
 # get nms ----
 
@@ -206,7 +206,7 @@ NULL
 
 f <- \(.) setMethod(
     paste0(., "Names"), "SpatialData", 
-    \(x) names(x[[paste0(., "s")]]))
+    \(x) names(attr(x, paste0(., "s"))))
 for (. in one) eval(f(.), parent.env(environment()))
 
 # set nms ----
@@ -250,7 +250,7 @@ NULL
     y[[i]]
 }
 
-.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
+.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(attr(x, paste0(., "s")), i))
 for (. in one) eval(.set(.), parent.env(environment()))
 
 # set all ----
@@ -260,7 +260,7 @@ for (. in one) eval(.set(.), parent.env(environment()))
 #' @rdname SpatialData
 #' @export
 setReplaceMethod("[[", c("SpatialData", "numeric"), 
-    \(x, i, value) { x[[.LAYERS[i]]] <- value; x })
+    \(x, i, value) { attr(x, .LAYERS[i]) <- value; x })
 
 #' @rdname SpatialData
 #' @export
@@ -291,7 +291,7 @@ setReplaceMethod("[[", c("SpatialData", "character"),
 NULL
 
 f <- \(.) setReplaceMethod(., 
-    c("SpatialData", "list"), 
+    c("SpatialData", "ANY"), 
     \(x, value) {
         if (. != "tables") {
             old <- names(attr(x, .))

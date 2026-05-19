@@ -60,6 +60,9 @@ SpatialData <- \(images, labels, points, shapes, tables) {
     if (missing(shapes)) shapes <- list()
     if (missing(tables)) tables <- list()
     .SpatialData(
-        images=images, labels=labels, 
-        points=points, shapes=shapes, tables=tables)
+        images=do.call(sdImageList, as.list(images)), 
+        labels=do.call(sdLabelList, as.list(labels)), 
+        points=do.call(sdPointList, as.list(points)), 
+        shapes=do.call(sdShapeList, as.list(shapes)), 
+        tables=do.call(sdTableList, as.list(tables)))
 }

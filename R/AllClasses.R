@@ -1,16 +1,33 @@
 #' @importFrom methods setClass setClassUnion setOldClass
 
+ele_typ <- list(
+    Image="SpatialDataImage",
+    Label="SpatialDataLabel",
+    Point="SpatialDataPoint",
+    Shape="SpatialDataShape",
+    Table="SingleCellExperiment")
+
+for (ele in names(ele_typ)) {
+    cnm <- sprintf("sd%sList", ele)
+    typ <- ele_typ[[ele]]
+    setClass(cnm,
+        contains="SimpleList",
+        prototype=prototype(elementType=typ))
+    fun <- eval(substitute(\(...) new(.cnm, listData=list(...))), list(.cnm=cnm))
+    assign(cnm, fun, envir=parent.env(environment()))
+}
+
 #' @export
 #' @rdname SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",
     contains=c("list", "Annotated"),
     representation(
-        images="list",  # 'SpatialDataImage's
-        labels="list",  # 'SpatialDataLabel's
-        points="list",  # 'SpatialDataPoint's
-        shapes="list",  # 'SpatialDataShape's
-        tables="list")) # 'SingleCellExperiment's
+        images="sdImageList",
+        labels="sdLabelList",
+        points="sdPointList",
+        shapes="sdShapeList",
+        tables="sdTableList")) 
 
 .LAYERS <- `names<-`(. <- c("images","labels","points","shapes","tables"), .)
 .SpatialDataAttrs <- setClass("SpatialDataAttrs", contains="list")

@@ -28,6 +28,10 @@
 #' meta(image(sd, 2))
 NULL
 
+.show <- \(object) {
+    
+}
+
 #' @importFrom RBGL sp.between
 #' @importFrom S4Vectors coolcat
 #' @importFrom graph nodeData nodes

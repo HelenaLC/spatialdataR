@@ -53,7 +53,7 @@ test_that("element<-()", {
 
 test_that("get all", {
     for (f in paste0(fun, "s"))
-        expect_is(get(f)(x), "list")
+        expect_is(get(f)(x), "SimpleList")
 })
 
 test_that("get one", {
@@ -156,7 +156,7 @@ test_that("$", {
     mapply(i=paste0(fun, "s"), n=nms, t=typ, \(i, n, t) {
         # object-wide
         f <- parse(text=sprintf("x$%s", i))
-        expect_is(y <- eval(f), "list")
+        expect_is(y <- eval(f), "SimpleList")
         # element-wise
         expect_is(names(y), "character")
         expect_length(names(y), length(y))
