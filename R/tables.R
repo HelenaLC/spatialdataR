@@ -149,6 +149,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
 #' @export
 setMethod("setTable", c("SpatialData", "ANY"), \(x, i, ..., name=NULL, rk="rk", ik="ik") .invalid_i())
 
+# TODO: should this comment be removed ?
 # it seems pull below dispatches to arrow, and a warning on as_vector was being produced
 #' @rdname table-utils
 #' @importFrom methods as
