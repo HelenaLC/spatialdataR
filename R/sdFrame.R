@@ -74,7 +74,7 @@ NULL
 
 # new ----
 
-#' @importFrom sf st_sf st_sfc st_as_sf st_polygon
+#' @importFrom sf st_sf st_sfc st_as_sf st_point st_polygon
 .df_to_sf <- \(data, type=c("POINT", "POLYGON")) {
     type <- match.arg(type)
     if (is.null(data) || isTRUE(nrow(data) == 0)) {

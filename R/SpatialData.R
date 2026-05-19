@@ -3,7 +3,7 @@
 #' 
 #' @aliases data meta 
 #' @aliases layer element element<-
-#' @aliases image label point shape table,ANY-method
+#' @aliases image label point shape table
 #' @aliases images labels points shapes tables
 #' @aliases image<- label<- point<- shape<- table<-
 #' @aliases images<- labels<- points<- shapes<- tables<-
