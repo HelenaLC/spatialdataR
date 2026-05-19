@@ -59,7 +59,6 @@ Imports:
     dplyr,
     duckspatial,
     EBImage,
-    geoarrow,
     graph,
     Matrix,
     methods,
