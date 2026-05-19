@@ -230,7 +230,8 @@ for (. in one) eval(f(.), parent.env(environment()))
 # get one ----
 
 #' @name SpatialData
-#' @exportMethod image label point shape
+#' @importFrom BiocGenerics table
+#' @exportMethod image label point shape table
 NULL
 
 .get <- \(y, i) {
@@ -249,24 +250,8 @@ NULL
     y[[i]]
 }
 
-#' @export
-#' @name SpatialData
-#' @importFrom BiocGenerics table
-setMethod("table", "ANY", \(...) {
-    l <- list(...)
-    if (!is(l[[1]], "SpatialData"))
-        return(base::table(...))
-    n <- length(l)
-    i <- if (n == 1) 1 else l[[2]]
-    m <- length(i)
-    if (n > 2 || m > 1)
-        stop("too many arguments")
-    y <- l[[1]]$tables
-    .get(y, i)
-})
-
 .set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
-for (. in setdiff(one, "table")) eval(.set(.), parent.env(environment()))
+for (. in one) eval(.set(.), parent.env(environment()))
 
 # set all ----
 

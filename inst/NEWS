@@ -1,3 +1,7 @@
+changes in version 0.99.38
+
+- use BiocGenerics::table
+
 changes in version 0.99.37
 
 - fix note regarding internal '.mask' generic
