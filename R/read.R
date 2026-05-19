@@ -90,7 +90,6 @@ readPoint <- function(x, ...) {
 #' @rdname readSpatialData
 #' @importFrom Rarr read_zarr_attributes
 #' @importFrom duckspatial ddbs_open_dataset
-#' @import geoarrow
 #' @export
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)

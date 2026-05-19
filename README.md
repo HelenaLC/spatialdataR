@@ -17,7 +17,7 @@ For more details on the framework, see [Marconato et al. (2024)](https://doi.org
 ## Key features
 
 - Out-of-memory handling of images and labels using `ZarrArray` (via the [Rarr](https://bioconductor.org/packages/Rarr) package).
-- Points and shapes are managed using [arrow](https://cran.r-project.org/package=arrow) or [duckdb](https://cran.r-project.org/package=duckdb)-backed tables.
+- Points and shapes are managed using [duckdb](https://cran.r-project.org/package=duckdb)-backed tables.
 - Functional annotations (e.g., gene expression) are represented as `SingleCellExperiment` objects, integrated via [anndataR](https://bioconductor.org/packages/anndataR).
 - A system for mapping data across multiple coordinate spaces, including support for transformation graphs.
 
