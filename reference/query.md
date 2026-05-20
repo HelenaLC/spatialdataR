@@ -45,6 +45,8 @@ sd <- readSpatialData(zs)
 # filter by 'region' and propagate to shapes/points
 t <- table(sd)
 query(sd, i=1, region == region(t))
+#> Warning: arguments in '...' ignored
+#> Warning: arguments in '...' ignored
 #> class: SpatialData
 #> - images(0):
 #> - labels(1):

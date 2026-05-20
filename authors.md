@@ -32,13 +32,13 @@ Source:
 
 Crowell H, Manukyan A, Gruson H, Carey V, Soneson C, Stadler M, Gunz S,
 Dong Y, Righelli D, Deconinck L (2026). *SpatialData: Representation of
-Python's SpatialData in R*. R package version 0.99.37,
+Python's SpatialData in R*. R package version 0.99.38,
 <https://helenalc.github.io/SpatialData/>.
 
     @Manual{,
       title = {SpatialData: Representation of Python's SpatialData in R},
       author = {Helena L. Crowell and Artür Manukyan and Hugo Gruson and Vince Carey and Charlotte Soneson and Michael Stadler and Samuel Gunz and Yixing E. Dong and Dario Righelli and Louise Deconinck},
       year = {2026},
-      note = {R package version 0.99.37},
+      note = {R package version 0.99.38},
       url = {https://helenalc.github.io/SpatialData/},
     }
