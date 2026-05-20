@@ -78,9 +78,6 @@ shapes(x)
 # S4 method for class 'SpatialData'
 tables(x)
 
-# S4 method for class 'ANY'
-table(...)
-
 # S4 method for class 'SpatialData,numeric,ANY'
 x[[i]] <- value
 
