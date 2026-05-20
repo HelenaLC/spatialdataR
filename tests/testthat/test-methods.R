@@ -273,5 +273,9 @@ test_that("[,SpatialData", {
     n <- .n(y <- x[,-1])
     expect_equal(n, .n(x)-1)
     # infinite 'j'
-    expect_silent(y <- x[1, Inf])
+    i <- length(images(x))
+    n <- .n(y <- x[1, Inf])
+    m <- integer(5); m[1] <- 1
+    expect_equivalent(n, m)
+    expect_identical(image(y), image(x, i))
 })

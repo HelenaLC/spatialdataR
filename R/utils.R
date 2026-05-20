@@ -52,14 +52,14 @@
         }
         ts[[i]] <- t
     }
-    tables(x) <- ts
+    slot(x, "tables") <- ts
     return(x)
 }
 
 .sync_shapes_on_drop <- \(x, i) {
     # skip when there aren't any shapes
     if (!length(shapes(x))) return(x)
-    t <- table(x, i)
+    t <- tables(x)[[i]]
     for (j in region(t)) {
         # skip non-shape elements
         if (layer(x, j) != "shapes") next
@@ -68,7 +68,7 @@
         # match instances between them
         y <- y[match(instances(t), instances(y), nomatch=0)] 
         # return matching shape instances
-        shape(x, j) <- y
+        slot(x, "shapes")[[j]] <- y
     }
     return(x)
 }
@@ -98,6 +98,6 @@
     if (any(drop)) {
         ts <- ts[!drop]
     }
-    tables(x) <- ts
+    slot(x, "tables") <- ts
     return(x)
 }

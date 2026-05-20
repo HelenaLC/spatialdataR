@@ -48,9 +48,9 @@
 \alias{[[,SpatialData,character,ANY-method}
 \alias{data,ANY-method}
 \alias{meta,SpatialDataElement-method}
-\alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{rownames,SpatialData-method}
 \alias{colnames,SpatialData-method}
+\alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{layer,SpatialData,character-method}
 \alias{layer,SpatialData,ANY-method}
 \alias{element,SpatialData,character-method}
@@ -63,6 +63,7 @@
 \alias{points,SpatialData-method}
 \alias{shapes,SpatialData-method}
 \alias{tables,SpatialData-method}
+\alias{layer<-,SpatialData,character-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(
@@ -85,11 +86,11 @@ SpatialData(
 
 \S4method{meta}{SpatialDataElement}(x)
 
-\S4method{[}{SpatialData,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
-
 \S4method{rownames}{SpatialData}(x)
 
 \S4method{colnames}{SpatialData}(x)
+
+\S4method{[}{SpatialData,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 
 \S4method{layer}{SpatialData,character}(x, i)
 
@@ -118,6 +119,8 @@ SpatialData(
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
 \S4method{[[}{SpatialData,character,ANY}(x, i) <- value
+
+\S4method{layer}{SpatialData,character}(x, i) <- value
 }
 \arguments{
 \item{images}{list of \code{\link{SpatialDataImage}}s}

@@ -26,7 +26,7 @@
     prototype=prototype(elementType="SingleCellExperiment"))
 
 .sl <- S4Vectors:::new_SimpleList_from_list
-.ok <- \(x) length(x) == 1L && is.list(x[[1L]]) || is(x[[1L]], "SimpleList")
+.ok <- \(x) length(x) == 1L && (is.list(x[[1L]]) || is(x[[1L]], "SimpleList"))
 
 sdImageList <- \(...) {
     x <- list(...)
