@@ -53,16 +53,17 @@
 #' x[c(1, 2), list(1, c(1, 2))] # multiple
 #' 
 #' @export
-SpatialData <- \(images, labels, points, shapes, tables) {
-    if (missing(images)) images <- list()
-    if (missing(labels)) labels <- list()
-    if (missing(points)) points <- list()
-    if (missing(shapes)) shapes <- list()
-    if (missing(tables)) tables <- list()
+SpatialData <- \(
+    images=list(), 
+    labels=list(), 
+    points=list(), 
+    shapes=list(), 
+    tables=list())
+{
     .SpatialData(
-        images=do.call(sdImageList, as.list(images)), 
-        labels=do.call(sdLabelList, as.list(labels)), 
-        points=do.call(sdPointList, as.list(points)), 
-        shapes=do.call(sdShapeList, as.list(shapes)), 
-        tables=do.call(sdTableList, as.list(tables)))
+        images=sdImageList(images),
+        labels=sdLabelList(labels),
+        points=sdPointList(points),
+        shapes=sdShapeList(shapes),
+        tables=sdTableList(tables))
 }

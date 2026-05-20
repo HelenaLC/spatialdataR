@@ -65,7 +65,13 @@
 \alias{tables,SpatialData-method}
 \title{The `SpatialData` class}
 \usage{
-SpatialData(images, labels, points, shapes, tables)
+SpatialData(
+  images = list(),
+  labels = list(),
+  points = list(),
+  shapes = list(),
+  tables = list()
+)
 
 \S4method{$}{SpatialData}(x, name)
 

@@ -1,20 +1,61 @@
 #' @importFrom methods setClass setClassUnion setOldClass
 
-ele_typ <- list(
-    Image="SpatialDataImage",
-    Label="SpatialDataLabel",
-    Point="SpatialDataPoint",
-    Shape="SpatialDataShape",
-    Table="SingleCellExperiment")
+.sdImageList <- setClass(
+    Class="sdImageList",
+    contains="SimpleList",
+    prototype=prototype(elementType="SpatialDataImage"))
 
-for (ele in names(ele_typ)) {
-    cnm <- sprintf("sd%sList", ele)
-    typ <- ele_typ[[ele]]
-    setClass(cnm,
-        contains="SimpleList",
-        prototype=prototype(elementType=typ))
-    fun <- eval(substitute(\(...) new(.cnm, listData=list(...))), list(.cnm=cnm))
-    assign(cnm, fun, envir=parent.env(environment()))
+.sdLabelList <- setClass(
+    Class="sdLabelList",
+    contains="SimpleList",
+    prototype=prototype(elementType="SpatialDataLabel"))
+
+.sdPointList <- setClass(
+    Class="sdPointList",
+    contains="SimpleList",
+    prototype=prototype(elementType="SpatialDataPoint"))
+
+.sdShapeList <- setClass(
+    Class="sdShapeList",
+    contains="SimpleList",
+    prototype=prototype(elementType="SpatialDataShape"))
+
+.sdTableList <- setClass(
+    Class="sdTableList",
+    contains="SimpleList",
+    prototype=prototype(elementType="SingleCellExperiment"))
+
+.sl <- S4Vectors:::new_SimpleList_from_list
+.ok <- \(x) length(x) == 1L && is.list(x[[1L]]) || is(x[[1L]], "SimpleList")
+
+sdImageList <- \(...) {
+    x <- list(...)
+    if (.ok(x)) x <- x[[1L]]
+    .sl("sdImageList", as.list(x))
+}
+
+sdLabelList <- \(...) {
+    x <- list(...)
+    if (.ok(x)) x <- x[[1L]]
+    .sl("sdLabelList", as.list(x))
+}
+
+sdPointList <- \(...) {
+    x <- list(...)
+    if (.ok(x)) x <- x[[1L]]
+    .sl("sdPointList", as.list(x))
+}
+
+sdShapeList <- \(...) {
+    x <- list(...)
+    if (.ok(x)) x <- x[[1L]]
+    .sl("sdShapeList", as.list(x))
+}
+
+sdTableList <- \(...) {
+    x <- list(...)
+    if (.ok(x)) x <- x[[1L]]
+    .sl("sdTableList", as.list(x))
 }
 
 #' @export
