@@ -139,12 +139,14 @@ readSpatialData <- function(x,
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     
-    x <- Rarr:::.normalize_array_path(x) 
+    x <- Rarr:::.normalize_array_path(x)
     store_meta <- Rarr:::.read_consolidated_metadata(x)$metadata
-    # is.null(.$data_type) is a hack that works for both v2 and v3 Zarr stores, to keep only
-    # groups, but not arrays
-    # In v3, we could just do .$node_type == "group", but in v2, there is no node_type.
-    store_groups <- names(store_meta[vapply(store_meta, \(.) is.null(.$data_type), logical(1))])
+
+    # We have to treat v2 and v3 separately in the next 3 lines but we unify them again as `store_groups`.
+    store_groups_v3 <- store_meta[vapply(store_meta, \(.) !is.null(.$node_type) && .$node_type == "group", logical(1))]
+    store_groups_v2 <- store_meta[endsWith(names(store_meta), ".zgroup")]
+    names(store_groups_v2) <- dirname(names(store_groups_v2))
+    store_groups <- names(c(store_groups_v3, store_groups_v2))
     
     # helper for layer reading
     .readLayer <- \(l) {
