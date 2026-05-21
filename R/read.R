@@ -150,7 +150,6 @@ readSpatialData <- function(x,
     
     # helper for layer reading
     .readLayer <- \(l) {
-        message("  reading ", l, "...")
         j <- store_groups[startsWith(store_groups, paste0(l, "/"))]
         j <- setNames(
             paste0(x, j, "/", recycle0 = TRUE),
