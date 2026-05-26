@@ -1,2 +1,2 @@
 library(testthat)
-test_check("SpatialData")
+test_check("spatialdataR")
