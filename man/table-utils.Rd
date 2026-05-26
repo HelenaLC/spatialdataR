@@ -72,7 +72,7 @@ ignored if an instance key is already specified within element \code{i}).}
 \examples{
 library(SingleCellExperiment)
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 # check if element has a 'table'
