@@ -144,6 +144,9 @@ readSpatialData <- function(x,
     
     x <- Rarr:::.normalize_array_path(x)
     store_meta <- Rarr:::.read_consolidated_metadata(x)$metadata
+    if (is.null(store_meta)) {
+      store_meta <- Rarr::consolidate_metadata(x, action = "return")
+    }
 
     # We have to treat v2 and v3 separately in the next 3 lines but we unify them again as `store_groups`.
     store_groups_v3 <- store_meta[vapply(store_meta, \(.) !is.null(.$node_type) && .$node_type == "group", logical(1))]
