@@ -1,15 +1,15 @@
 # SpatialData
 
-[![Bioc Check](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+[![Bioc Check](https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
 
-`SpatialData` provides an R interface to Python's [SpatialData](https://spatialdata.scverse.org) framework. 
+`spatialdataR` provides an R interface to Python's [spatialdata](https://spatialdata.scverse.org) framework. 
 It enables the representation, handling, and integration of diverse spatial omics datasets 
 using the [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) standard.
 For more details on the framework, see [Marconato et al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 
 ## Resources
 
-- [SpatialData class](https://helenalc.github.io/SpatialData/articles/SpatialData.html) documentation.
+- [SpatialData class](https://helenalc.github.io/SpatialData/articles/spatialdataR.html) documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot): Visualization capabilities.
 - [SpatialData.demo](https://helenalc.github.io/SpatialData.demo/): Biotechnology workflows.
 - [SpatialData.data](https://github.com/HelenaLC/SpatialData.data): Example `SpatialData`sets.
@@ -28,14 +28,14 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 
 # Install the development version from GitHub
-BiocManager::install("HelenaLC/SpatialData")
+BiocManager::install("HelenaLC/spatialdataR")
 ```
 
 ## Quick Start
 
 ```r
-library(SpatialData)
-zs <- system.file("extdata", "blobs.zarr", package="SpatialData")
+library(spatialdataR)
+zs <- system.file("extdata", "blobs.zarr", package="spatialdataR")
 (sd <- readSpatialData(zs))
 ```
 
