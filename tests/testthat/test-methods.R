@@ -35,7 +35,7 @@ test_that("element()", {
     # valid
     expect_silent(element(x, 1))
     replicate(5, {
-        i <- sample(SpatialData:::.LAYERS, 1)
+        i <- sample(.LAYERS, 1)
         j <- sample(names(attr(x, i)), 1)
         expect_identical(x[[i]][[j]], element(x, j))
     })
@@ -57,7 +57,7 @@ test_that("get all", {
 })
 
 test_that("get one", {
-    env <- asNamespace("SpatialData")
+    env <- asNamespace("spatialdataR")
     # i=numeric
     mapply(f=fun, t=typ, \(f, t)
         expect_is(get(f, envir=env)(x, i=1), t))
@@ -85,7 +85,7 @@ obj <- list(
     tables=SingleCellExperiment())
 
 test_that("set all", {
-    for (. in SpatialData:::.LAYERS) {
+    for (. in .LAYERS) {
         y <- x; y[[.]] <- list()
         expect_length(y[[.]], 0)
         # character
@@ -115,10 +115,10 @@ test_that("set one", {
         # character
         x <- set(x, i=".", value=o)
         expect_true("." %in% nms(x))
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, "."), t)
+        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, "."), t)
         # numeric
         x <- set(x, i=1, value=o)
-        expect_is(get(f, envir=asNamespace("SpatialData"))(x, 1), t)
+        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, 1), t)
         # missing
         n <- \(.) length(get(paste0(f, "s"))(.))
         expect_silent(set(x, value=o))

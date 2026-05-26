@@ -114,7 +114,7 @@ test_that("mask,sdPoint,sdShape", {
     n0 <- t$n_instances["0"]
     
     # manually find points with NO intersections
-    ij <- SpatialData:::.mask_map(p, shape(x, j))
+    ij <- .mask_map(p, shape(x, j))
     is <- dplyr::collect(ij)$id_y
     nq <- length(unique(is))
     expect_equal(as.numeric(n0), np - nq)
