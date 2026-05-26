@@ -11,6 +11,6 @@ data were retrieved on Nov. 11th, 2024, from \href{https://github.com/scverse/sp
 }
 \examples{
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 (x <- readSpatialData(x))
 }
