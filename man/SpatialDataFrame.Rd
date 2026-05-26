@@ -111,7 +111,7 @@ Currently defined methods (here, \code{x} is an \code{SpatialDataFrame}):
 }
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 
 # points
 pa <- list.dirs(
