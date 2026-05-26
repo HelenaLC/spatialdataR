@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #' 
 #' # get path to 'i'th element in layer 'l'
 #' fn <- \(l, i=1) list.dirs(file.path(zs, l), recursive=FALSE)[i]
