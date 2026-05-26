@@ -1,14 +1,14 @@
 ---
-title: "Introduction to `SpatialData`"
+title: "Introduction to `spatialdataR`"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-package: "`r BiocStyle::pkg_ver('SpatialData')`"
+package: "`r BiocStyle::pkg_ver('spatialdataR')`"
 output:
   BiocStyle::html_document:
     toc: true
     toc_depth: 2
     toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Introduction to SpatialData}
+  %\VignetteIndexEntry{Introduction to spatialdataR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: "refs.bib"
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 
 ## Introduction
 
-The `r BiocStyle::Biocpkg("SpatialData")` package provides an R interface to the 
+The `r BiocStyle::Biocpkg("spatialdataR")` package provides an R interface to the 
 [SpatialData](https://spatialdata.scverse.org) framework, a unified ecosystem 
 for handling spatial omics data. Developed as part of the 
 [scverse](https://scverse.org) project [@Virshup2023-scverse], `SpatialData` aims to solve the 
