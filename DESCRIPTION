@@ -62,7 +62,7 @@ Imports:
     graph,
     Matrix,
     methods,
-    Rarr,
+    Rarr (>= 2.1.9),
     RBGL,
     rlang,
     sf,
@@ -87,7 +87,7 @@ biocViews:
     SingleCell,
     Spatial
 Remotes:
-    Huber-group-EMBL/Rarr@b0c8174
+    Bioconductor/ZarrArray#7
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr

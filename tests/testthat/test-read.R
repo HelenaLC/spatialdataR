@@ -11,6 +11,7 @@ test_that("readElement()", {
     for (l in names(typ)) {
         f <- paste0(toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
         y <- list.files(file.path(x, l), full.names=TRUE)[1]
+        y <- paste0(y, "/", recycle0 = TRUE)
         expect_is(get(paste0("read", f))(y), typ[l])
     }
 })

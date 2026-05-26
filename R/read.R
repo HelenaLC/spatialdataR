@@ -51,8 +51,15 @@ NULL
     # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
     # The name of the array is arbitrary with the ordering defined by
     # by the "multiscales" metadata, but is often a sequence starting at 0.
-    ds <- .validate_multiscales_paths(x, datasets(mdattr))
-    ds <- file.path(x, as.character(ds))
+    if (!any(startsWith(x, c("http://", "https://", "s3://")))) {
+      # Until we have a complete store interface (https://github.com/Huber-group-EMBL/Rarr/pull/176),
+      # only local objects can be fully validated.
+      ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    } else {
+      # For remote objects, we skip validation and assume that the datasets are in the expected location.
+      ds <- datasets(mdattr)
+    } 
+    ds <- paste0(x, ds)
     as <- lapply(ds, ZarrArray)
     list(array=as, mdattr=mdattr)
 }
@@ -77,7 +84,7 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    pq <- paste0(x, file.path("points.parquet", "part.0.parquet"))
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
     df <- ddbs_open_dataset(pq, conn=.conn()) |>
@@ -93,7 +100,8 @@ readPoint <- function(x, ...) {
 #' @export
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    # "shapes.parquet" currently hardcoded in SpatialData.io
+    pq <- paste0(x, "shapes.parquet")
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
 }
@@ -131,10 +139,23 @@ readSpatialData <- function(x,
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
     
+    x <- Rarr:::.normalize_array_path(x)
+    store_meta <- Rarr:::.read_consolidated_metadata(x)$metadata
+
+    # We have to treat v2 and v3 separately in the next 3 lines but we unify them again as `store_groups`.
+    store_groups_v3 <- store_meta[vapply(store_meta, \(.) !is.null(.$node_type) && .$node_type == "group", logical(1))]
+    store_groups_v2 <- store_meta[endsWith(names(store_meta), ".zgroup")]
+    names(store_groups_v2) <- dirname(names(store_groups_v2))
+    store_groups <- names(c(store_groups_v3, store_groups_v2))
+    
     # helper for layer reading
     .readLayer <- \(l) {
-        j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
-        names(j) <- basename(j)
+        j <- store_groups[startsWith(store_groups, paste0(l, "/"))]
+        j <- setNames(
+            paste0(x, j, "/", recycle0 = TRUE),
+            basename(j)
+        )
+        
         opt <- args[[l]]
         if (!isTRUE(opt)) {
             if (is.numeric(opt) && opt > (. <- length(j)))
@@ -143,8 +164,8 @@ readSpatialData <- function(x,
                 stop("couldn't find ", l, " of name", .)
             j <- j[opt]
         }
-        f <- get(paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1)))
-        lapply(j, \(.) do.call(f, list(.)))
+        reader <- get(paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1)))
+        lapply(j, reader)
     }
     
     names(ls) <- ls <- .LAYERS[!skip]
