@@ -1,5 +1,5 @@
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 test_that("CTgraph", {
@@ -11,13 +11,13 @@ test_that("CTgraph", {
     expect_is(g, "graph")
     # graph should contain node for
     # every element & transformation
-    ns <- lapply(setdiff(SpatialData:::.LAYERS, "tables"), 
+    ns <- lapply(setdiff(spatialdataR:::.LAYERS, "tables"), 
         \(l) lapply(names(x[[l]]), 
             \(e) c(paste0("_", e), CTname(x[[l]][[e]]))))
     ns <- sort(unique(unlist(ns)))
     expect_true(all(ns %in% sort(graph::nodes(g))))
     # element-wise
-    for (l in setdiff(SpatialData:::.LAYERS, "tables")) 
+    for (l in setdiff(spatialdataR:::.LAYERS, "tables")) 
         for (e in names(x[[l]])) {
             y <- x[[l]][[e]]
             g <- CTgraph(y)

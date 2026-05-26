@@ -1,5 +1,5 @@
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 
 test_that("readElement()", {
     typ <- c(

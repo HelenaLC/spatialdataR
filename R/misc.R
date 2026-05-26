@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' zs <- file.path("extdata", "blobs.zarr")
-#' zs <- system.file(zs, package="SpatialData")
+#' zs <- system.file(zs, package="spatialdataR")
 #' (sd <- readSpatialData(zs))
 #'
 #' # show element

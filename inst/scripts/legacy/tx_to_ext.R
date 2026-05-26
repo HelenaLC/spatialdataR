@@ -23,7 +23,7 @@
 #' @return \code{SpatialData} object. 
 #'   
 #' @examples
-#' src <- system.file("extdata", "blobs.zarr", package="SpatialData")
+#' src <- system.file("extdata", "blobs.zarr", package="spatialdataR")
 #' td <- tempfile()
 #' # TODO: for now this example converts to a zarr v3 so we comment out, 
 #' # check again later
