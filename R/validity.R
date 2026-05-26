@@ -81,7 +81,7 @@ setValidity2("SpatialDataLabel", .validateLabel)
 .validatePoint <- \(object) {
     msg <- c()
     cnt <- tryCatch(error=\(.) 0, as.integer(
-        pull(count(SpatialData::data(object)), "n")))
+        pull(count(spatialdataR::data(object)), "n")))
     if (!cnt) return(msg)
     if (!"geometry" %in% names(object)) 
         msg <- c(msg, "'SpatialDataPoint' missing 'geometry'.")
