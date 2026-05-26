@@ -2,7 +2,7 @@ require(sf, quietly=TRUE)
 require(SingleCellExperiment, quietly=TRUE)
 
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 test_that("crop,SpatialData", {
@@ -159,7 +159,7 @@ test_that("crop,sdShape w/ table", {
 })
 
 test_that(".box2rev works with real image and injected scale", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    path <- system.file("extdata", "blobs.zarr", package="spatialdataR")
     sd <- readSpatialData(path)
     img <- image(sd)
     
@@ -181,7 +181,7 @@ test_that(".box2rev works with real image and injected scale", {
 })
 
 test_that(".box2rev handles j as character", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    path <- system.file("extdata", "blobs.zarr", package="spatialdataR")
     sd <- readSpatialData(path)
     img <- image(sd)
     
@@ -198,7 +198,7 @@ test_that(".box2rev handles j as character", {
 })
 
 test_that(".box2rev works with identity (default)", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    path <- system.file("extdata", "blobs.zarr", package="spatialdataR")
     sd <- readSpatialData(path)
     img <- image(sd)
     
@@ -212,7 +212,7 @@ test_that(".box2rev works with identity (default)", {
 })
 
 test_that(".box2rev handles sequence transformation", {
-    path <- system.file("extdata", "blobs.zarr", package="SpatialData")
+    path <- system.file("extdata", "blobs.zarr", package="spatialdataR")
     sd <- readSpatialData(path)
     img <- image(sd)
     

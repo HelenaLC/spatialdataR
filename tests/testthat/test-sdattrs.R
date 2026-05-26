@@ -3,7 +3,7 @@ z <- list(v1="blobs.zarr", v3="blobs_v3.zarr")
 for (v in names(z)) {
 
     x <- file.path("extdata", z[[v]])
-    x <- system.file(x, package="SpatialData")
+    x <- system.file(x, package="spatialdataR")
     x <- readSpatialData(x)
 
     test_that(paste0(v, "-multiscales"), {

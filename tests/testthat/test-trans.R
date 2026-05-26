@@ -1,5 +1,5 @@
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 sd <- readSpatialData(zs, tables=FALSE)
 
 test_that("mirror,sdArray", {

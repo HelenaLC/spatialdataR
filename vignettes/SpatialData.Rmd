@@ -78,12 +78,12 @@ For this demonstration, we use a toy dataset included in the package:
 
 ```{r load}
 # dependencies
-library(SpatialData)
+library(spatialdataR)
 library(SingleCellExperiment)
 
 # path to 'spatialdata' Zarr store
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 
 # read as 'SpatialData' R object
 (sd <- readSpatialData(zs))

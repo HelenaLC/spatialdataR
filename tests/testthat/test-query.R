@@ -1,4 +1,4 @@
-zs <- system.file("extdata", "blobs.zarr", package="SpatialData")
+zs <- system.file("extdata", "blobs.zarr", package="spatialdataR")
 sd <- readSpatialData(zs)
 
 test_that("query() correctly filters SpatialData elements based on table annotations", {
