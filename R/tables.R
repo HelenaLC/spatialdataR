@@ -202,5 +202,5 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
         "'instances<-' have not been set on 'y'; ",
         "'ncol(y)' must match 'nrow(element(x, i))'")
     instances(y) <- instances(e)
-    SpatialData::`table<-`(x, i=name, value=y)
+    spatialdataR::`table<-`(x, i=name, value=y)
 })

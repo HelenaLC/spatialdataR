@@ -28,7 +28,7 @@ test_that("crop,.check_box", {
         list(xmin=0, xmax=1, ymin=0, ymax=1),
         list(xmin=-1, xmax=0, ymin=-1, ymax=0),
         list(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf))
-    for (. in q) expect_silent(SpatialData:::.check_box(.))
+    for (. in q) expect_silent(.check_box(.))
     # invalid
     q <- list(
         list(xmin=0, xmax=1, ymin=0),
@@ -36,7 +36,7 @@ test_that("crop,.check_box", {
         list(xmin=0, xmax=-1, ymin=0, ymax=-1),
         list(xmin=0, xmax=1, ymin=10, ymax=NA),
         list(xmin=Inf, xmax=-Inf, ymin=Inf, ymax=-Inf))
-    for (. in q) expect_error(SpatialData:::.check_box(.))
+    for (. in q) expect_error(.check_box(.))
 })
 
 test_that("crop,.check_pol", {
@@ -47,13 +47,13 @@ test_that("crop,.check_pol", {
         matrix(seq_len(4), 2, 2), # 2 rows
         rbind(c(1,1), c(2,2), c(3,3)), # open
         rbind(c(1,1), c(2,2), c(3,3), c(1,1)))
-    for (. in q) expect_silent(SpatialData:::.check_pol(.))
+    for (. in q) expect_silent(.check_pol(.))
     # invalid
     q <- list(
         matrix(seq_len(6), 2, 3), # wrong dim.
         `[<-`(m, i=1, j=1, value=Inf), # not finite
         `[<-`(m, i=1, j=1, value=NA))  # missing value
-    for (. in q) expect_error(SpatialData:::.check_pol(.))
+    for (. in q) expect_error(.check_pol(.))
 })
 
 test_that("crop,sdImage", {
@@ -171,7 +171,7 @@ test_that(".box2rev works with real image and injected scale", {
     meta(img) <- m
     
     y <- list(xmin=30, xmax=60, ymin=20, ymax=40)
-    z <- SpatialData:::.box2rev(img, y, j=1)
+    z <- .box2rev(img, y, j=1)
     
     # Expected: x/3, y/2
     expect_equal(unname(z$xmin), 10)
@@ -192,7 +192,7 @@ test_that(".box2rev handles j as character", {
     meta(img) <- m
     
     y <- list(xmin=30, xmax=60, ymin=20, ymax=40)
-    z <- SpatialData:::.box2rev(img, y, j="global")
+    z <- .box2rev(img, y, j="global")
     
     expect_equal(unname(z$xmin), 10)
 })
@@ -203,7 +203,7 @@ test_that(".box2rev works with identity (default)", {
     img <- image(sd)
     
     y <- list(xmin=10, xmax=50, ymin=10, ymax=50)
-    z <- SpatialData:::.box2rev(img, y, j=1)
+    z <- .box2rev(img, y, j=1)
     
     expect_equal(unname(z$xmin), 10)
     expect_equal(unname(z$xmax), 50)
@@ -232,7 +232,7 @@ test_that(".box2rev handles sequence transformation", {
     # (y_array * 2) + 10 = y_global => y_array = (y_global - 10) / 2
     
     y <- list(xmin=35, xmax=65, ymin=30, ymax=50)
-    z <- SpatialData:::.box2rev(img, y, j=1)
+    z <- .box2rev(img, y, j=1)
     
     expect_equal(unname(z$xmin), 10)
     expect_equal(unname(z$xmax), 20)

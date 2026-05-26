@@ -52,7 +52,7 @@ test_that("validity,sdShape", {
 
 test_that("validity,sdTable", {
     # valid
-    fn <- SpatialData:::.validateTables
+    fn <- .validateTables
     expect_length(fn(sd), 0)
     # invalid: not a SCE
     x <- sd
@@ -84,16 +84,16 @@ test_that("validity,SpatialDataAttrs", {
     za <- meta(label(sd, 1))
     ms <- as.list(za)$multiscales[[1]]
     # multiscales
-    fn <- SpatialData:::.validateAttrs_multiscales
+    fn <- .validateAttrs_multiscales
     expect_length(fn(as.list(za), c()), 0)
     expect_match(fn(list(), c()), "missing")
     # axes
-    fn <- SpatialData:::.validateAttrs_axes
+    fn <- .validateAttrs_axes
     expect_length(fn(ms, c()), 0)
     bad_ax <- ms; bad_ax$axes <- NULL
     expect_match(fn(bad_ax, c()), "missing")
     # coordinate transformations
-    fn <- SpatialData:::.validateAttrs_coordTrans
+    fn <- .validateAttrs_coordTrans
     expect_length(fn(ms, c()), 0)
     bad_ct <- ms; bad_ct$coordinateTransformations <- NULL
     expect_match(fn(bad_ct, c()), "missing")
