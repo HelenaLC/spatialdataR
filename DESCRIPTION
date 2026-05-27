@@ -86,8 +86,6 @@ biocViews:
     Transcriptomics, 
     SingleCell,
     Spatial
-Remotes:
-    Huber-group-EMBL/Rarr@b0c8174
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr
