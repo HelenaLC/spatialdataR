@@ -4,7 +4,7 @@
 
 ### Introduction
 
-The *[SpatialData](https://bioconductor.org/packages/3.24/SpatialData)*
+The *[SpatialData](https://bioconductor.org/packages/3.23/SpatialData)*
 package provides an R interface to the
 [SpatialData](https://spatialdata.scverse.org) framework, a unified
 ecosystem for handling spatial omics data. Developed as part of the
@@ -24,17 +24,16 @@ The core data structure is the `SpatialData` class, which organizes data
 into 5 coordinated **layers: images, labels, points, shapes, and
 tables**. Each layer is stored as a list of layer-specific objects that
 carry associated `SpatialDataAttr` (`@meta` slot), which encode
-`spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and
-*zarr.json* for Zarr v3) Together, these layers provide a unified
-representation of spatial omics data, combining raster, vector, and
-tabular data within a single coherent framework.
+`spatialdata`-specific *.zattr*. Together, these layers provide a
+unified representation of spatial omics data, combining raster, vector,
+and tabular data within a single coherent framework.
 
 **Images/labels** store raster-based data as multi-scale, multi-channel
 arrays (e.g., immunofluorescent images or segmentation masks). They are
 represented as `SpatialDataImage/Label` objects that, in turn, inherit
 from `SpatialDataArray`. These are backed by a list of `ZarrArray`s via
-*[Rarr](https://bioconductor.org/packages/3.24/Rarr)* and
-*[ZarrArray](https://bioconductor.org/packages/3.24/ZarrArray)*,
+*[Rarr](https://bioconductor.org/packages/3.23/Rarr)* and
+*[ZarrArray](https://bioconductor.org/packages/3.23/ZarrArray)*,
 enabling chunked, on-disk access.
 
 **Points/shapes** represent spatial coordinates and geometric regions
@@ -46,15 +45,15 @@ enabling efficient lazy handling.
 **Tables** store functional annotations or information that has been
 aggregated across layers (e.g., gene $`\times`$ cell data). They are
 currently represented as in-memory
-*[SingleCellExperiment](https://bioconductor.org/packages/3.24/SingleCellExperiment)*
-objects; delayed, Zarr-backed handling of assay data is under active
+*[SingleCellExperiment](https://bioconductor.org/packages/3.23/SingleCellExperiment)*
+objects; delayed, *.zarr*-backed handling of assay data is under active
 development.
 
 ![](schematic.png)
 
 ## Handling
 
-`SpatialData` are represented on-disk as Zarr stores. The package
+`SpatialData` are represented on-disk as `.zarr` stores. The package
 provides the
 [`readSpatialData()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
 function to ingest an entire store, although arguments to control which
@@ -68,7 +67,7 @@ For this demonstration, we use a toy dataset included in the package:
 library(SpatialData)
 library(SingleCellExperiment)
 
-# path to 'spatialdata' Zarr store
+# path to 'spatialdata' .zarr store
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="SpatialData")
 
@@ -173,7 +172,7 @@ Every spatial element (tables excluded) is composed of two key slots:
   `duckspatial_df` for shapes/points.
 
 - `meta`: a `SpatialDataAttrs` object containing the OME-NGFF metadata
-  retrieved from the zarr attributes present in the original Zarr store.
+  retrieved from the *.zattrs* present in the original *.zarr* store.
 
 We here demonstrate how to access these slots for a given element
 
@@ -215,9 +214,9 @@ show(d)
 For single-cell and spatial omics datasets, functional annotations are
 commonly stored as [AnnData](https://anndata.readthedocs.io) objects in
 Python. In R, we use
-*[anndataR](https://bioconductor.org/packages/3.24/anndataR)* (Deconinck
-et al. 2025) to read these Zarr-backed `AnnData` as
-*[SingleCellExperiment](https://bioconductor.org/packages/3.24/SingleCellExperiment)*(s).
+*[anndataR](https://bioconductor.org/packages/3.23/anndataR)* (Deconinck
+et al. 2025) to read these `.zarr`-backed `AnnData` as
+*[SingleCellExperiment](https://bioconductor.org/packages/3.23/SingleCellExperiment)*(s).
 
 A `table` can link to one or more `label` or `shape` (but not other
 layers), whereby internal metadata (`spatialdata_attrs`) are used to
@@ -264,7 +263,7 @@ instances(se)
 A key feature of the `SpatialData` framework is its handling of
 different coordinate systems. Each element can exist in multiple
 coordinate spaces simultaneously, defined by transformations in its
-on-disk Zarr attributes.
+on-disk *.zattrs*.
 
 The relationships between different elements and their respective
 coordinate spaces can be complex. `SpatialData` provides the
@@ -544,7 +543,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 - [SpatialData.data](https://github.com/HelenaLC/SpatialData.data):
   companion package with example datasets from different platforms,
   including use of
-  *[BiocFileCache](https://bioconductor.org/packages/3.24/BiocFileCache)*
+  *[BiocFileCache](https://bioconductor.org/packages/3.23/BiocFileCache)*
   for efficient data management.
 
 - [SpatialData.demo](https://github.com/HelenaLC/SpatialData.demo):
@@ -558,7 +557,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-05-18 r90063)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -580,44 +579,44 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] SingleCellExperiment_1.35.1 SummarizedExperiment_1.43.0
-    ##  [3] Biobase_2.73.1              GenomicRanges_1.65.0       
-    ##  [5] Seqinfo_1.3.0               IRanges_2.47.1             
-    ##  [7] S4Vectors_0.51.2            BiocGenerics_0.59.2        
-    ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           SpatialData_0.99.38        
-    ## [13] BiocStyle_2.41.0           
+    ##  [1] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
+    ##  [3] Biobase_2.72.0              GenomicRanges_1.64.0       
+    ##  [5] Seqinfo_1.2.0               IRanges_2.46.0             
+    ##  [7] S4Vectors_0.50.1            BiocGenerics_0.58.1        
+    ##  [9] generics_0.1.4              MatrixGenerics_1.24.0      
+    ## [11] matrixStats_1.5.0           SpatialData_0.99.37        
+    ## [13] BiocStyle_2.40.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_1.2.1    EBImage_4.55.0      blob_1.3.0         
+    ##  [1] tidyselect_1.2.1    EBImage_4.54.0      blob_1.3.0         
     ##  [4] dplyr_1.2.1         R.utils_2.13.0      bitops_1.0-9       
     ##  [7] fastmap_1.2.0       RCurl_1.98-1.18     duckdb_1.5.2       
     ## [10] digest_0.6.39       lifecycle_1.0.5     sf_1.1-1           
-    ## [13] paws.storage_0.9.0  magrittr_2.0.5      compiler_4.7.0     
-    ## [16] rlang_1.2.0         sass_0.4.10         tools_4.7.0        
-    ## [19] yaml_2.3.12         knitr_1.51          S4Arrays_1.13.0    
+    ## [13] paws.storage_0.9.0  magrittr_2.0.5      compiler_4.6.0     
+    ## [16] rlang_1.2.0         sass_0.4.10         tools_4.6.0        
+    ## [19] yaml_2.3.12         knitr_1.51          S4Arrays_1.12.0    
     ## [22] htmlwidgets_1.6.4   classInt_0.4-11     curl_7.1.0         
-    ## [25] reticulate_1.46.0   DelayedArray_0.39.2 KernSmooth_2.23-26 
+    ## [25] reticulate_1.46.0   DelayedArray_0.38.2 KernSmooth_2.23-26 
     ## [28] abind_1.4-8         withr_3.0.2         purrr_1.2.2        
-    ## [31] desc_1.4.3          R.oo_1.27.1         grid_4.7.0         
+    ## [31] desc_1.4.3          R.oo_1.27.1         grid_4.6.0         
     ## [34] e1071_1.7-17        cli_3.6.6           rmarkdown_2.31     
-    ## [37] crayon_1.5.3        ragg_1.5.2          DBI_1.3.0          
-    ## [40] cachem_1.1.0        proxy_0.4-29        BiocManager_1.30.27
-    ## [43] XVector_0.53.0      tiff_0.1-12         vctrs_0.7.3        
-    ## [46] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.46      
-    ## [49] fftwtools_0.9-11    RBGL_1.89.0         Rgraphviz_2.57.0   
-    ## [52] systemfonts_1.3.2   jpeg_0.1-11         locfit_1.5-9.12    
-    ## [55] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         
-    ## [58] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.8         
-    ## [61] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     
-    ## [64] htmltools_0.5.9     graph_1.91.0        dbplyr_2.5.2       
-    ## [67] R6_2.6.1            httr2_1.2.2         wk_0.9.5           
-    ## [70] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    ## [73] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.1.0  
-    ## [76] paws.common_0.8.9   bslib_0.11.0        class_7.3-23       
-    ## [79] uuid_1.2-2          Rcpp_1.1.1-1.1      SparseArray_1.13.2 
-    ## [82] anndataR_1.3.0      xfun_0.57           fs_2.1.0           
-    ## [85] pkgconfig_2.0.3
+    ## [37] crayon_1.5.3        ragg_1.5.2          proxy_0.4-29       
+    ## [40] DBI_1.3.0           cachem_1.1.0        BiocManager_1.30.27
+    ## [43] XVector_0.52.0      tiff_0.1-12         geoarrow_0.4.2     
+    ## [46] vctrs_0.7.3         Matrix_1.7-5        jsonlite_2.0.0     
+    ## [49] bookdown_0.46       fftwtools_0.9-11    RBGL_1.88.0        
+    ## [52] Rgraphviz_2.56.0    systemfonts_1.3.2   jpeg_0.1-11        
+    ## [55] locfit_1.5-9.12     jquerylib_0.1.4     units_1.0-1        
+    ## [58] glue_1.8.1          pkgdown_2.2.0       ZarrArray_1.0.0    
+    ## [61] Rarr_2.1.8          tibble_3.3.1        pillar_1.11.1      
+    ## [64] rappdirs_0.3.4      nanoarrow_0.8.0     htmltools_0.5.9    
+    ## [67] graph_1.90.0        dbplyr_2.5.2        R6_2.6.1           
+    ## [70] httr2_1.2.2         wk_0.9.5            textshaping_1.0.5  
+    ## [73] evaluate_1.0.5      lattice_0.22-9      R.methodsS3_1.8.2  
+    ## [76] png_0.1-9           duckspatial_1.1.0   paws.common_0.8.9  
+    ## [79] bslib_0.11.0        class_7.3-23        uuid_1.2-2         
+    ## [82] Rcpp_1.1.1-1.1      SparseArray_1.12.2  anndataR_1.2.0     
+    ## [85] xfun_0.57           fs_2.1.0            pkgconfig_2.0.3
 
 ### References
 

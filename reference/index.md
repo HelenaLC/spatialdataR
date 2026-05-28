@@ -60,6 +60,7 @@
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`table(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   : The \`SpatialData\` class

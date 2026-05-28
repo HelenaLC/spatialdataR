@@ -117,8 +117,8 @@ data(s)
 #> # Data backed by DuckDB (dbplyr lazy evaluation)
 #> # Use ddbs_collect() or st_as_sf() to materialize to sf
 #> #
-#> # Source:   table<temp_view_77b0bbaa_1f63_442c_9099_86a9561b36aa> [?? x 1]
-#> # Database: DuckDB 1.5.2 [unknown@Linux 6.17.0-1013-azure:R 4.7.0/:memory:]
+#> # Source:   table<temp_view_17b0d780_1576_4d1a_b11b_213532626712> [?? x 1]
+#> # Database: DuckDB 1.5.2 [unknown@Linux 6.17.0-1013-azure:R 4.6.0/:memory:]
 #>   geometry                                                                      
 #>   <wk_wkb>                                                                      
 #> 1 <POLYGON ((42.52463 32.27672, 39.52212 24.63317, 36.38277 25.66096, 42.52463 …
