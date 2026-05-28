@@ -3,7 +3,7 @@
 #' @title Transformations
 #' @aliases transform scale rotate translation flip flop mirror sequence
 #' 
-#' @param x,_data \code{SpatialData} element.
+#' @param x \code{SpatialData} element.
 #' @param i scalar integer or string; target coordinate space.
 #' @param t transformation data; exceptions: for \code{mirror}, controls
 #'   whether to perform \bold{v}ertical or \bold{h}orizontal reflection;
@@ -48,13 +48,13 @@
 #' y["shapes", c("rot", "wide", "left")]
 NULL
 
+#' @importFrom BiocGenerics transform
 #' @export
 #' @rdname trans
-setMethod("transform", "SpatialDataElement", \(`_data`, i=1, ...) {
+setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
     stopifnot(
         length(i) == 1, is.character(i) | 
         (is.numeric(i) && i == round(i)))
-    x <- `_data`
     if (is.character(i)) {
         i <- match.arg(i, CTname(x))
         i <- match(i, CTname(x))
