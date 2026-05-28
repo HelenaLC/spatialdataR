@@ -50,7 +50,6 @@ NULL
 
 #' @export
 #' @rdname trans
-#' @importFrom S4Vectors transform
 setMethod("transform", "SpatialDataElement", \(`_data`, i=1, ...) {
     stopifnot(
         length(i) == 1, is.character(i) | 
