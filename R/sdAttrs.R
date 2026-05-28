@@ -127,7 +127,10 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 # internal use only!
 #' @noRd 
 .zv <- \(x) {
-    v <- x$spatialdata_attrs$version
+    v <- x$ome$version %||%
+        x$omero$version %||%
+        x$multiscales[[1]]$version %||%
+        x$spatialdata_attrs$version
     if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
     ok <- length(v) == 1 && is.character(v) && v %in% sprintf("0.%d", seq_len(5))
     if (!ok) stop("invalid 'version' in 'spatialdata_attrs'; expected '0.x' where x is 1-5")
