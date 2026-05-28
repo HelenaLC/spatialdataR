@@ -8,7 +8,6 @@ setGeneric("point", \(x, ...) standardGeneric("point"))
 # get all ----
 
 setGeneric("images", \(x, ...) standardGeneric("images"))
-setGeneric("labels", \(object, ...) standardGeneric("labels"))
 setGeneric("shapes", \(x, ...) standardGeneric("shapes"))
 setGeneric("points", \(x, ...) standardGeneric("points"))
 setGeneric("tables", \(x, ...) standardGeneric("tables"))
