@@ -116,7 +116,7 @@ setMethod("data_type", "DelayedArray", \(x) {
 # internal use only!
 #' @noRd 
 .ch <- \(x) {
-    if (.zv(x) == "0.3") x <- x$ome
+    if (.zv(x) == "0.5") x <- x$ome
     unlist(x$omero$channels)
 }
 

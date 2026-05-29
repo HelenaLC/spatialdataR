@@ -219,7 +219,8 @@ setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
     if (is.null(multiscales(x))) {
         x[[ct]] <- new
     } else {
-        switch(.zv(x), 
+        switch( 
+            tryCatch(.zv(x), error=\(e) "9.9"), 
             "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
             x[[ms]][[1]][[ct]] <- new)
     }
