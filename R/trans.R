@@ -112,6 +112,8 @@ setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
 #' @importFrom BiocGenerics rotate
 #' @importFrom S4Vectors metadata<-
 setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
+    if (!requireNamespace("EBImage", quietly=TRUE))
+        stop("install 'EBImage' to use this function")
     # negate angle since 'EBImage' rotates clockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)

@@ -116,7 +116,9 @@ setMethod("data_type", "DelayedArray", \(x) {
 # internal use only!
 #' @noRd 
 .ch <- \(x) {
-    if (.zv(x) == "0.5") x <- x$ome
+    v <- tryCatch(.zv(x), error=\(e) NULL)
+    if (is.null(v)) return()
+    if (v == "0.5") x <- x$ome
     unlist(x$omero$channels)
 }
 
