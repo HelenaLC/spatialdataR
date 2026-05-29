@@ -57,9 +57,9 @@ setGeneric("CTgraph", \(x, ...) standardGeneric("CTgraph"))
 setGeneric("rmvCT", \(x, ...) standardGeneric("rmvCT"))
 setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 
-setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
-setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
-setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
+#setGeneric("scale", \(x, t, ...) standardGeneric("scale"))
+#setGeneric("rotate", \(x, t, ...) standardGeneric("rotate"))
+#setGeneric("sequence", \(x, t, ...) standardGeneric("sequence"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 setGeneric("flip", \(x, ...) standardGeneric("flip"))

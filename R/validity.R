@@ -49,7 +49,9 @@
 .validateImage <- \(object) {
     msg <- c()
     res <- length(object)
-    d <- length(dim(object))
+    axs <- axes(object)
+    typ <- vapply(axs, \(.) .$type, character(1))
+    d <- sum(typ != "time")
     for (k in seq_len(res)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
@@ -66,7 +68,9 @@ setValidity2("SpatialDataImage", .validateImage)
 .validateLabel <- \(object) {
     msg <- c()
     res <- length(object)
-    d <- length(axes(object))
+    axs <- axes(object)
+    typ <- vapply(axs, \(.) .$type, character(1))
+    d <- sum(typ == "space")
     for (k in seq_len(res)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(

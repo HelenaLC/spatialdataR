@@ -11,21 +11,21 @@
 \alias{mirror}
 \alias{sequence}
 \alias{transform,SpatialDataElement-method}
-\alias{sequence,SpatialDataElement,list-method}
+\alias{sequence,SpatialDataElement-method}
 \alias{mirror,SpatialDataArray-method}
 \alias{flip,SpatialDataArray-method}
 \alias{flop,SpatialDataArray-method}
-\alias{rotate,SpatialDataArray,numeric-method}
-\alias{scale,SpatialDataArray,numeric-method}
+\alias{rotate,SpatialDataArray-method}
+\alias{scale,SpatialDataArray-method}
 \alias{translation,SpatialDataArray,numeric-method}
-\alias{rotate,SpatialDataFrame,numeric-method}
-\alias{scale,SpatialDataFrame,numeric-method}
+\alias{rotate,SpatialDataFrame-method}
+\alias{scale,SpatialDataFrame-method}
 \alias{translation,SpatialDataFrame,numeric-method}
 \title{Transformations}
 \usage{
 \S4method{transform}{SpatialDataElement}(x, i = 1, ...)
 
-\S4method{sequence}{SpatialDataElement,list}(x, t, ..., rev = FALSE)
+\S4method{sequence}{SpatialDataElement}(x, t, ..., rev = FALSE)
 
 \S4method{mirror}{SpatialDataArray}(x, t = c("v", "h"), k = 1, ...)
 
@@ -33,15 +33,15 @@
 
 \S4method{flop}{SpatialDataArray}(x, k = 1, ...)
 
-\S4method{rotate}{SpatialDataArray,numeric}(x, t, k = 1, ..., rev = FALSE)
+\S4method{rotate}{SpatialDataArray}(x, t, k = 1, ..., rev = FALSE)
 
-\S4method{scale}{SpatialDataArray,numeric}(x, t, ...)
+\S4method{scale}{SpatialDataArray}(x, t, ...)
 
 \S4method{translation}{SpatialDataArray,numeric}(x, t, ...)
 
-\S4method{rotate}{SpatialDataFrame,numeric}(x, t, ...)
+\S4method{rotate}{SpatialDataFrame}(x, t, ...)
 
-\S4method{scale}{SpatialDataFrame,numeric}(x, t, ...)
+\S4method{scale}{SpatialDataFrame}(x, t, ...)
 
 \S4method{translation}{SpatialDataFrame,numeric}(x, t, ...)
 }
