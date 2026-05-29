@@ -220,7 +220,7 @@ setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
         x[[ct]] <- new
     } else {
         switch( 
-            tryCatch(.zv(x), error=\(e) "9.9"), 
+            tryCatch(.ome_ver(x), error=\(e) "9.9"), 
             "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
             x[[ms]][[1]][[ct]] <- new)
     }
