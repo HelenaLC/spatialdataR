@@ -58,7 +58,6 @@ Imports:
     DelayedArray,
     dplyr,
     duckspatial,
-    EBImage,
     graph,
     Matrix,
     methods,
@@ -73,8 +72,8 @@ Imports:
     ZarrArray
 Suggests:
     BiocStyle,
+    EBImage,
     knitr,
-    paws,
     Rgraphviz,
     testthat
 biocViews: 
