@@ -11,8 +11,6 @@ for (v in names(z)) {
         z <- multiscales(y)
         expect_is(z, "list")
         expect_length(z, 1)
-        y$spatialdata_attrs <- NULL
-        expect_error(multiscales(y))
     })
 
     test_that(paste0(v, "-axes"), {

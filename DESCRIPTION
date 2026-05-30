@@ -26,31 +26,7 @@ Authors@R: c(
     person("Vince", "Carey",
         role=c("aut"),
         email="stvjc@channing.harvard.edu",
-        comment=c(ORCID="0000-0003-4046-0063")),
-    person("Charlotte", "Soneson",
-        role=c("aut"),
-        email="charlotte.soneson@fmi.ch",
-        comment=c(ORCID="0000-0003-3833-2169")),
-    person("Michael", "Stadler",
-        role=c("aut"),
-        email="michael.stadler@fmi.ch",
-        comment=c(ORCID="0000-0002-2269-4934")),
-    person("Samuel", "Gunz",
-        role=c("aut"),
-        email="samuel.gunz@uzh.ch",
-        comment=c(ORCID="0000-0002-8909-0932")),
-    person("Yixing E.", "Dong",
-        role=c("aut"),
-        email="estelladong729@gmail.com",
-        comment=c(ORCID="0009-0003-5115-5686")),
-    person("Dario", "Righelli", 
-        role=c("aut"), 
-        email="dario.righelli@gmail.com",
-        comment=c(ORCID="0000-0003-1504-3583")),
-    person("Louise", "Deconinck",
-        role=c("aut"),
-        email="louise.deconinck@gmail.com",
-        comment=c(ORCID="0000-0001-8100-6823")))
+        comment=c(ORCID="0000-0003-4046-0063"))
 Imports:
     anndataR (>= 1.1.3),
     BiocGenerics,
@@ -58,7 +34,6 @@ Imports:
     DelayedArray,
     dplyr,
     duckspatial,
-    EBImage,
     graph,
     Matrix,
     methods,
@@ -73,8 +48,8 @@ Imports:
     ZarrArray
 Suggests:
     BiocStyle,
+    EBImage,
     knitr,
-    paws,
     Rgraphviz,
     testthat
 biocViews: 
