@@ -180,9 +180,8 @@ setMethod("mask_i_by_j",
     if (nrow(collect(head(ij, 1))) == 0)
         stop("found no intersections",
             " between shapes 'i' and 'j'")
-    id_x <- id_y <- NULL # R CMD check
-    is <- pull(ij, id_y) # elements in i
-    js <- pull(ij, id_x) # masks in j
+    is <- pull(ij, .data$id_y) # elements in i
+    js <- pull(ij, .data$id_x) # masks in j
     na <- setdiff(seq_along(i), is)
     # aggregation
     mx <- assay(table, assay)
