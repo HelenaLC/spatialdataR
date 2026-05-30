@@ -1,10 +1,10 @@
 # SpatialData
 
 [![Bioc
-Check](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+Check](https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
 
-`SpatialData` provides an R interface to Python’s
-[SpatialData](https://spatialdata.scverse.org) framework. It enables the
+`spatialdataR` provides an R interface to Python’s
+[spatialdata](https://spatialdata.scverse.org) framework. It enables the
 representation, handling, and integration of diverse spatial omics
 datasets using the [OME-NGFF (Next Generation File
 Format)](https://ngff.openmicroscopy.org) standard. For more details on
@@ -14,7 +14,7 @@ al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 ## Resources
 
 - [SpatialData
-  class](https://helenalc.github.io/SpatialData/articles/SpatialData.html)
+  class](https://helenalc.github.io/SpatialData/articles/spatialdataR.html)
   documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
   Visualization capabilities.
@@ -28,7 +28,6 @@ al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 - Out-of-memory handling of images and labels using `ZarrArray` (via the
   [Rarr](https://bioconductor.org/packages/Rarr) package).
 - Points and shapes are managed using
-  [arrow](https://cran.r-project.org/package=arrow) or
   [duckdb](https://cran.r-project.org/package=duckdb)-backed tables.
 - Functional annotations (e.g., gene expression) are represented as
   `SingleCellExperiment` objects, integrated via
@@ -44,15 +43,15 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 
 # Install the development version from GitHub
-BiocManager::install("HelenaLC/SpatialData")
+BiocManager::install("HelenaLC/spatialdataR")
 ```
 
 ## Quick Start
 
 ``` r
 
-library(SpatialData)
-zs <- system.file("extdata", "blobs.zarr", package="SpatialData")
+library(spatialdataR)
+zs <- system.file("extdata", "blobs.zarr", package="spatialdataR")
 (sd <- readSpatialData(zs))
 ```
 
@@ -132,7 +131,7 @@ Stadler.*
   [`` `$<-`( ``*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
-  [`data(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`data(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`meta(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`rownames(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
@@ -149,7 +148,6 @@ Stadler.*
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
-  [`table(`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   : The \`SpatialData\` class
@@ -257,15 +255,15 @@ Stadler.*
   `SpatialData` annotations
 
 - [`transform(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
-  [`sequence(`*`<SpatialDataElement>`*`,`*`<list>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`sequence(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   [`mirror(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   [`flip(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   [`flop(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
-  [`rotate(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
-  [`scale(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`rotate(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`scale(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   [`translation(`*`<SpatialDataArray>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
-  [`rotate(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
-  [`scale(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`rotate(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
+  [`scale(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   [`translation(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/SpatialData/reference/trans.md)
   : Transformations
 
@@ -279,4 +277,4 @@ Stadler.*
 ### All vignettes
 
 - [Introduction to
-  \`SpatialData\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):
+  \`spatialdataR\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):

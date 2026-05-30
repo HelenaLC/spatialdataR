@@ -3,4 +3,4 @@
 ### All vignettes
 
 - [Introduction to
-  \`SpatialData\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):
+  \`spatialdataR\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):

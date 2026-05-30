@@ -102,7 +102,7 @@ addCT(x, name, type = "identity", data = NULL)
 
 ``` r
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # view available target coordinate systems

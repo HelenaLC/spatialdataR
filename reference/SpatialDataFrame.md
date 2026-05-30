@@ -135,7 +135,7 @@ x[i, j, ..., drop = TRUE]
 
 ``` r
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 
 # points
 pa <- list.dirs(

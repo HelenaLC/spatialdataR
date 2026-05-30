@@ -27,8 +27,8 @@ x[[i, j, ...]]
 # S4 method for class 'SpatialData,character,ANY'
 x[[i, j, ...]]
 
-# S4 method for class 'ANY'
-data(...)
+# S4 method for class 'SpatialDataElement'
+data(x, k = 1, ...)
 
 # S4 method for class 'SpatialDataElement'
 meta(x)
@@ -77,9 +77,6 @@ shapes(x)
 
 # S4 method for class 'SpatialData'
 tables(x)
-
-# S4 method for class 'ANY'
-table(...)
 
 # S4 method for class 'SpatialData,numeric,ANY'
 x[[i]] <- value
@@ -151,7 +148,7 @@ x[[i]] <- value
 
 ``` r
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 (x <- readSpatialData(x))
 #> class: SpatialData
 #> - images(2):

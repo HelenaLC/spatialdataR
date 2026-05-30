@@ -6,9 +6,9 @@ Transformations
 
 ``` r
 # S4 method for class 'SpatialDataElement'
-transform(`_data`, i = 1, ...)
+transform(x, i = 1, ...)
 
-# S4 method for class 'SpatialDataElement,list'
+# S4 method for class 'SpatialDataElement'
 sequence(x, t, ..., rev = FALSE)
 
 # S4 method for class 'SpatialDataArray'
@@ -20,19 +20,19 @@ flip(x, k = 1, ...)
 # S4 method for class 'SpatialDataArray'
 flop(x, k = 1, ...)
 
-# S4 method for class 'SpatialDataArray,numeric'
+# S4 method for class 'SpatialDataArray'
 rotate(x, t, k = 1, ..., rev = FALSE)
 
-# S4 method for class 'SpatialDataArray,numeric'
+# S4 method for class 'SpatialDataArray'
 scale(x, t, ...)
 
 # S4 method for class 'SpatialDataArray,numeric'
 translation(x, t, ...)
 
-# S4 method for class 'SpatialDataFrame,numeric'
+# S4 method for class 'SpatialDataFrame'
 rotate(x, t, ...)
 
-# S4 method for class 'SpatialDataFrame,numeric'
+# S4 method for class 'SpatialDataFrame'
 scale(x, t, ...)
 
 # S4 method for class 'SpatialDataFrame,numeric'
@@ -41,6 +41,10 @@ translation(x, t, ...)
 
 ## Arguments
 
+- x:
+
+  `SpatialData` element.
+
 - i:
 
   scalar integer or string; target coordinate space.
@@ -48,10 +52,6 @@ translation(x, t, ...)
 - ...:
 
   option arguments passed to and from other methods.
-
-- x, \_data:
-
-  `SpatialData` element.
 
 - t:
 
@@ -77,7 +77,7 @@ translation(x, t, ...)
 
 ``` r
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # image

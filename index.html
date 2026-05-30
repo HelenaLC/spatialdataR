@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Representation of Python's SpatialData in R • SpatialData</title>
+<title>Representation of Python's spatialdata in R • spatialdataR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Representation of Python's SpatialData in R">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Representation of Python's spatialdata in R">
 <meta name="description" content="R interface to Python/scverses spatialdata framework for unified spatial omics data handling. Adheres to OME-NGFF standards, providing lazy, on-disk representations for multiscale images and labels (ZarrArray), as well as points and shapes (DuckDB-backed tables). Includes handling of coordinate transformation systems and spatial utilities for cropping, masking, and querying. Integrates tabular annotations as SingleCellExperiments (via anndataR'), enabling interoperable spatial omics workflows across R and Python.">
 <meta property="og:description" content="R interface to Python/scverses spatialdata framework for unified spatial omics data handling. Adheres to OME-NGFF standards, providing lazy, on-disk representations for multiscale images and labels (ZarrArray), as well as points and shapes (DuckDB-backed tables). Includes handling of coordinate transformation systems and spatial utilities for cropping, masking, and querying. Integrates tabular annotations as SingleCellExperiments (via anndataR'), enabling interoperable spatial omics workflows across R and Python.">
 </head>
@@ -20,9 +20,9 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="index.html">SpatialData</a>
+    <a class="navbar-brand me-2" href="index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.37</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.38</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,8 +31,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="articles/SpatialData.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/SpatialData.html">Introduction to `spatialdataR`</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -50,14 +55,14 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="spatialdata">SpatialData<a class="anchor" aria-label="anchor" href="#spatialdata"></a>
 </h1></div>
-<p><a href="https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml/badge.svg?branch=main&amp;event=push" alt="Bioc Check"></a></p>
-<p><code>SpatialData</code> provides an R interface to Python’s <a href="https://spatialdata.scverse.org" class="external-link">SpatialData</a> framework. It enables the representation, handling, and integration of diverse spatial omics datasets using the <a href="https://ngff.openmicroscopy.org" class="external-link">OME-NGFF (Next Generation File Format)</a> standard. For more details on the framework, see <a href="https://doi.org/10.1038/s41592-024-02212-x" class="external-link">Marconato et al. (2024)</a>.</p>
+<p><a href="https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&amp;event=push" alt="Bioc Check"></a></p>
+<p><code>spatialdataR</code> provides an R interface to Python’s <a href="https://spatialdata.scverse.org" class="external-link">spatialdata</a> framework. It enables the representation, handling, and integration of diverse spatial omics datasets using the <a href="https://ngff.openmicroscopy.org" class="external-link">OME-NGFF (Next Generation File Format)</a> standard. For more details on the framework, see <a href="https://doi.org/10.1038/s41592-024-02212-x" class="external-link">Marconato et al. (2024)</a>.</p>
 <div class="section level2">
 <h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
 </h2>
 <ul>
 <li>
-<a href="https://helenalc.github.io/SpatialData/articles/SpatialData.html">SpatialData class</a> documentation.</li>
+<a href="https://helenalc.github.io/SpatialData/articles/spatialdataR.html">SpatialData class</a> documentation.</li>
 <li>
 <a href="https://github.com/HelenaLC/SpatialData.plot" class="external-link">SpatialData.plot</a>: Visualization capabilities.</li>
 <li>
@@ -71,7 +76,7 @@
 </h2>
 <ul>
 <li>Out-of-memory handling of images and labels using <code>ZarrArray</code> (via the <a href="https://bioconductor.org/packages/Rarr" class="external-link">Rarr</a> package).</li>
-<li>Points and shapes are managed using <a href="https://cran.r-project.org/package=arrow" class="external-link">arrow</a> or <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>-backed tables.</li>
+<li>Points and shapes are managed using <a href="https://cran.r-project.org/package=duckdb" class="external-link">duckdb</a>-backed tables.</li>
 <li>Functional annotations (e.g., gene expression) are represented as <code>SingleCellExperiment</code> objects, integrated via <a href="https://bioconductor.org/packages/anndataR" class="external-link">anndataR</a>.</li>
 <li>A system for mapping data across multiple coordinate spaces, including support for transformation graphs.</li>
 </ul>
@@ -84,14 +89,14 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Install the development version from GitHub</span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"HelenaLC/SpatialData"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"HelenaLC/spatialdataR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">SpatialData</a></span><span class="op">)</span></span>
-<span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blobs.zarr"</span>, package<span class="op">=</span><span class="st">"SpatialData"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">spatialdataR</a></span><span class="op">)</span></span>
+<span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blobs.zarr"</span>, package<span class="op">=</span><span class="st">"spatialdataR"</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/readSpatialData.html">readSpatialData</a></span><span class="op">(</span><span class="va">zs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code>class: SpatialData
 - images(2):
@@ -139,7 +144,7 @@ coordinate systems(5):
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing SpatialData</a></li>
+<li><a href="authors.html#citation">Citing spatialdataR</a></li>
 </ul>
 </div>
 
@@ -150,12 +155,6 @@ coordinate systems(5):
 <li>Artür Manukyan <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-0441-9517" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Hugo Gruson <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4094-1476" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Vince Carey <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4046-0063" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Charlotte Soneson <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-3833-2169" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Michael Stadler <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-2269-4934" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Samuel Gunz <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-8909-0932" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Yixing E. Dong <br><small class="roles"> Author </small> <a href="https://orcid.org/0009-0003-5115-5686" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Dario Righelli <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1504-3583" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li>Louise Deconinck <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8100-6823" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -166,7 +165,7 @@ coordinate systems(5):
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Helena L. Crowell, Artür Manukyan, Hugo Gruson, Vince Carey, Charlotte Soneson, Michael Stadler, Samuel Gunz, Yixing E. Dong, Dario Righelli, Louise Deconinck.</p>
+  <p>Developed by Helena L. Crowell, Artür Manukyan, Hugo Gruson, Vince Carey.</p>
 </div>
 
 <div class="pkgdown-footer-right">

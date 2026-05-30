@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Introduction to `SpatialData` • SpatialData</title>
+<title>Introduction to `spatialdataR` • spatialdataR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to `SpatialData`">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to `spatialdataR`">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -18,9 +18,9 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">SpatialData</a>
+    <a class="navbar-brand me-2" href="../index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.37</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.38</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,8 +29,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item"><a class="nav-link" href="../articles/SpatialData.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/SpatialData.html">Introduction to `spatialdataR`</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -51,11 +56,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Introduction to `SpatialData`</h1>
+      <h1>Introduction to `spatialdataR`</h1>
             
-            <h4 data-toc-skip class="date">May 28, 2026</h4>
+            <h4 data-toc-skip class="date">May 30, 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/SpatialData/blob/v0.99-csama2026/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
       <div class="d-none name"><code>SpatialData.Rmd</code></div>
     </div>
 
@@ -72,7 +77,7 @@
 <div class="section level3">
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
-<p>The <em><a href="https://bioconductor.org/packages/3.23/SpatialData" class="external-link">SpatialData</a></em>
+<p>The <em><a href="https://bioconductor.org/packages/3.24/spatialdataR" class="external-link">spatialdataR</a></em>
 package provides an R interface to the <a href="https://spatialdata.scverse.org" class="external-link">SpatialData</a> framework, a
 unified ecosystem for handling spatial omics data. Developed as part of
 the <a href="https://scverse.org" class="external-link">scverse</a> project <span class="citation">(Virshup et al. 2023)</span>, <code>SpatialData</code>
@@ -93,16 +98,17 @@ organizes data into 5 coordinated <strong>layers: images, labels,
 points, shapes, and tables</strong>. Each layer is stored as a list of
 layer-specific objects that carry associated
 <code>SpatialDataAttr</code> (<code>@meta</code> slot), which encode
-<code>spatialdata</code>-specific <em>.zattr</em>. Together, these
-layers provide a unified representation of spatial omics data, combining
+<code>spatialdata</code>-specific zarr attributes (<em>.zattr</em> for
+Zarr v2, and <em>zarr.json</em> for Zarr v3) Together, these layers
+provide a unified representation of spatial omics data, combining
 raster, vector, and tabular data within a single coherent framework.</p>
 <p><strong>Images/labels</strong> store raster-based data as
 multi-scale, multi-channel arrays (e.g., immunofluorescent images or
 segmentation masks). They are represented as
 <code>SpatialDataImage/Label</code> objects that, in turn, inherit from
 <code>SpatialDataArray</code>. These are backed by a list of
-<code>ZarrArray</code>s via <em><a href="https://bioconductor.org/packages/3.23/Rarr" class="external-link">Rarr</a></em> and
-<em><a href="https://bioconductor.org/packages/3.23/ZarrArray" class="external-link">ZarrArray</a></em>,
+<code>ZarrArray</code>s via <em><a href="https://bioconductor.org/packages/3.24/Rarr" class="external-link">Rarr</a></em> and
+<em><a href="https://bioconductor.org/packages/3.24/ZarrArray" class="external-link">ZarrArray</a></em>,
 enabling chunked, on-disk access.</p>
 <p><strong>Points/shapes</strong> represent spatial coordinates and
 geometric regions (e.g., transcript locations or segmentation
@@ -113,30 +119,29 @@ lazy handling.</p>
 <p><strong>Tables</strong> store functional annotations or information
 that has been aggregated across layers (e.g., gene
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>×</mi><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-cell data). They are currently represented as in-memory <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
-objects; delayed, <em>.zarr</em>-backed handling of assay data is under
-active development.</p>
+cell data). They are currently represented as in-memory <em><a href="https://bioconductor.org/packages/3.24/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>
+objects; delayed, Zarr-backed handling of assay data is under active
+development.</p>
 <p><img src="schematic.png" class="r-plt" alt="" width="730"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="handling">Handling<a class="anchor" aria-label="anchor" href="#handling"></a>
 </h2>
-<p><code>SpatialData</code> are represented on-disk as
-<code>.zarr</code> stores. The package provides the
-<code><a href="../reference/readSpatialData.html">readSpatialData()</a></code> function to ingest an entire store,
-although arguments to control which layers and elements to read or not
-to read are also available.</p>
+<p><code>SpatialData</code> are represented on-disk as Zarr stores. The
+package provides the <code><a href="../reference/readSpatialData.html">readSpatialData()</a></code> function to ingest
+an entire store, although arguments to control which layers and elements
+to read or not to read are also available.</p>
 <p>For this demonstration, we use a toy dataset included in the
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># dependencies</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">SpatialData</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SingleCellExperiment</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">spatialdataR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/drisso/SingleCellExperiment" class="external-link">SingleCellExperiment</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># path to 'spatialdata' .zarr store</span></span>
+<span><span class="co"># path to 'spatialdata' Zarr store</span></span>
 <span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blobs.zarr"</span><span class="op">)</span></span>
-<span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="va">zs</span>, package<span class="op">=</span><span class="st">"SpatialData"</span><span class="op">)</span></span>
+<span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="va">zs</span>, package<span class="op">=</span><span class="st">"spatialdataR"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read as 'SpatialData' R object</span></span>
 <span><span class="op">(</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSpatialData.html">readSpatialData</a></span><span class="op">(</span><span class="va">zs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -228,8 +233,8 @@ slots:</p>
 images/labels, or a <code>duckspatial_df</code> for
 shapes/points.</p></li>
 <li><p><code>meta</code>: a <code>SpatialDataAttrs</code> object
-containing the OME-NGFF metadata retrieved from the <em>.zattrs</em>
-present in the original <em>.zarr</em> store.</p></li>
+containing the OME-NGFF metadata retrieved from the zarr attributes
+present in the original Zarr store.</p></li>
 </ul>
 <p>We here demonstrate how to access these slots for a given element</p>
 <p><code>image</code> elements represent a special case, as they are
@@ -271,10 +276,9 @@ resolutions.</li>
 </h2>
 <p>For single-cell and spatial omics datasets, functional annotations
 are commonly stored as <a href="https://anndata.readthedocs.io" class="external-link">AnnData</a> objects in Python. In
-R, we use <em><a href="https://bioconductor.org/packages/3.23/anndataR" class="external-link">anndataR</a></em>
+R, we use <em><a href="https://bioconductor.org/packages/3.24/anndataR" class="external-link">anndataR</a></em>
 <span class="citation">(<span class="nocase">Deconinck et al.</span>
-2025)</span> to read these <code>.zarr</code>-backed
-<code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.23/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
+2025)</span> to read these Zarr-backed <code>AnnData</code> as <em><a href="https://bioconductor.org/packages/3.24/SingleCellExperiment" class="external-link">SingleCellExperiment</a></em>(s).</p>
 <p>A <code>table</code> can link to one or more <code>label</code> or
 <code>shape</code> (but not other layers), whereby internal metadata
 (<code>spatialdata_attrs</code>) are used to keep track of the
@@ -283,7 +287,7 @@ so the user needn’t worry about it; however, we show it here for
 didactic purposes:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># access annotation</span></span>
-<span><span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SingleCellExperiment </span></span>
 <span><span class="co">## dim: 3 10 </span></span>
 <span><span class="co">## metadata(0):</span></span>
@@ -310,7 +314,7 @@ didactic purposes:</p>
 <p>A key feature of the <code>SpatialData</code> framework is its
 handling of different coordinate systems. Each element can exist in
 multiple coordinate spaces simultaneously, defined by transformations in
-its on-disk <em>.zattrs</em>.</p>
+its on-disk Zarr attributes.</p>
 <p>The relationships between different elements and their respective
 coordinate spaces can be complex. <code>SpatialData</code> provides the
 <code><a href="../reference/CTgraph.html">CTgraph()</a></code> and <code><a href="../reference/CTgraph.html">CTplot()</a></code> functions to construct
@@ -427,7 +431,7 @@ special “0” column in the resulting table.</p></li>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># average channel-wise pixel values by labels</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask.html">mask</a></span><span class="op">(</span><span class="va">sd</span>, i<span class="op">=</span><span class="st">"blobs_image"</span>, j<span class="op">=</span><span class="st">"blobs_labels"</span><span class="op">)</span></span>
-<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_image_by_blobs_labels"</span><span class="op">)</span></span>
+<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_image_by_blobs_labels"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 3 x 10 sparse Matrix of class "dgCMatrix"</span></span></code></pre>
 <pre><code><span><span class="co">##                                                                            </span></span>
@@ -441,7 +445,7 @@ special “0” column in the resulting table.</p></li>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># count different point species in polygons</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask.html">mask</a></span><span class="op">(</span><span class="va">sd</span>, i<span class="op">=</span><span class="st">"blobs_points"</span>, j<span class="op">=</span><span class="st">"blobs_polygons"</span><span class="op">)</span></span>
-<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_points_by_blobs_polygons"</span><span class="op">)</span></span>
+<span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_points_by_blobs_polygons"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 2 x 6 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">##          0 1 2 3 4 5</span></span>
@@ -540,7 +544,7 @@ control over each’s aesthetics, channel-mixing and auto-contrasting for
 images, transformations handling, etc.</p></li>
 <li><p><a href="https://github.com/HelenaLC/SpatialData.data" class="external-link">SpatialData.data</a>:
 companion package with example datasets from different platforms,
-including use of <em><a href="https://bioconductor.org/packages/3.23/BiocFileCache" class="external-link">BiocFileCache</a></em>
+including use of <em><a href="https://bioconductor.org/packages/3.24/BiocFileCache" class="external-link">BiocFileCache</a></em>
 for efficient data management.</p></li>
 <li><p><a href="https://github.com/HelenaLC/SpatialData.demo" class="external-link">SpatialData.demo</a>:
 companion repository with vignettes on analyzing datasets from different
@@ -552,7 +556,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 </h3>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2026-05-28 r90085)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -574,44 +578,42 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0</span></span>
-<span><span class="co">##  [3] Biobase_2.72.0              GenomicRanges_1.64.0       </span></span>
-<span><span class="co">##  [5] Seqinfo_1.2.0               IRanges_2.46.0             </span></span>
-<span><span class="co">##  [7] S4Vectors_0.50.1            BiocGenerics_0.58.1        </span></span>
-<span><span class="co">##  [9] generics_0.1.4              MatrixGenerics_1.24.0      </span></span>
-<span><span class="co">## [11] matrixStats_1.5.0           SpatialData_0.99.37        </span></span>
-<span><span class="co">## [13] BiocStyle_2.40.0           </span></span>
+<span><span class="co">##  [1] SingleCellExperiment_1.35.1 SummarizedExperiment_1.43.0</span></span>
+<span><span class="co">##  [3] Biobase_2.73.1              GenomicRanges_1.65.0       </span></span>
+<span><span class="co">##  [5] Seqinfo_1.3.0               IRanges_2.47.2             </span></span>
+<span><span class="co">##  [7] S4Vectors_0.51.3            BiocGenerics_0.59.6        </span></span>
+<span><span class="co">##  [9] generics_0.1.4              MatrixGenerics_1.25.0      </span></span>
+<span><span class="co">## [11] matrixStats_1.5.0           spatialdataR_0.99.38       </span></span>
+<span><span class="co">## [13] BiocStyle_2.41.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] tidyselect_1.2.1    EBImage_4.54.0      blob_1.3.0         </span></span>
-<span><span class="co">##  [4] dplyr_1.2.1         R.utils_2.13.0      bitops_1.0-9       </span></span>
-<span><span class="co">##  [7] fastmap_1.2.0       RCurl_1.98-1.18     duckdb_1.5.2       </span></span>
-<span><span class="co">## [10] digest_0.6.39       lifecycle_1.0.5     sf_1.1-1           </span></span>
-<span><span class="co">## [13] paws.storage_0.9.0  magrittr_2.0.5      compiler_4.6.0     </span></span>
-<span><span class="co">## [16] rlang_1.2.0         sass_0.4.10         tools_4.6.0        </span></span>
-<span><span class="co">## [19] yaml_2.3.12         knitr_1.51          S4Arrays_1.12.0    </span></span>
-<span><span class="co">## [22] htmlwidgets_1.6.4   classInt_0.4-11     curl_7.1.0         </span></span>
-<span><span class="co">## [25] reticulate_1.46.0   DelayedArray_0.38.2 KernSmooth_2.23-26 </span></span>
-<span><span class="co">## [28] abind_1.4-8         withr_3.0.2         purrr_1.2.2        </span></span>
-<span><span class="co">## [31] desc_1.4.3          R.oo_1.27.1         grid_4.6.0         </span></span>
-<span><span class="co">## [34] e1071_1.7-17        cli_3.6.6           rmarkdown_2.31     </span></span>
-<span><span class="co">## [37] crayon_1.5.3        ragg_1.5.2          proxy_0.4-29       </span></span>
-<span><span class="co">## [40] DBI_1.3.0           cachem_1.1.0        BiocManager_1.30.27</span></span>
-<span><span class="co">## [43] XVector_0.52.0      tiff_0.1-12         geoarrow_0.4.2     </span></span>
-<span><span class="co">## [46] vctrs_0.7.3         Matrix_1.7-5        jsonlite_2.0.0     </span></span>
-<span><span class="co">## [49] bookdown_0.46       fftwtools_0.9-11    RBGL_1.88.0        </span></span>
-<span><span class="co">## [52] Rgraphviz_2.56.0    systemfonts_1.3.2   jpeg_0.1-11        </span></span>
-<span><span class="co">## [55] locfit_1.5-9.12     jquerylib_0.1.4     units_1.0-1        </span></span>
-<span><span class="co">## [58] glue_1.8.1          pkgdown_2.2.0       ZarrArray_1.0.0    </span></span>
-<span><span class="co">## [61] Rarr_2.1.8          tibble_3.3.1        pillar_1.11.1      </span></span>
-<span><span class="co">## [64] rappdirs_0.3.4      nanoarrow_0.8.0     htmltools_0.5.9    </span></span>
-<span><span class="co">## [67] graph_1.90.0        dbplyr_2.5.2        R6_2.6.1           </span></span>
-<span><span class="co">## [70] httr2_1.2.2         wk_0.9.5            textshaping_1.0.5  </span></span>
-<span><span class="co">## [73] evaluate_1.0.5      lattice_0.22-9      R.methodsS3_1.8.2  </span></span>
-<span><span class="co">## [76] png_0.1-9           duckspatial_1.1.0   paws.common_0.8.9  </span></span>
-<span><span class="co">## [79] bslib_0.11.0        class_7.3-23        uuid_1.2-2         </span></span>
-<span><span class="co">## [82] Rcpp_1.1.1-1.1      SparseArray_1.12.2  anndataR_1.2.0     </span></span>
-<span><span class="co">## [85] xfun_0.57           fs_2.1.0            pkgconfig_2.0.3</span></span></code></pre>
+<span><span class="co">##  [1] tidyselect_1.2.1    grumpy_0.1.1        blob_1.3.0         </span></span>
+<span><span class="co">##  [4] dplyr_1.2.1         R.utils_2.13.0      fastmap_1.2.0      </span></span>
+<span><span class="co">##  [7] duckdb_1.5.2        digest_0.6.39       lifecycle_1.0.5    </span></span>
+<span><span class="co">## [10] sf_1.1-1            paws.storage_0.10.0 magrittr_2.0.5     </span></span>
+<span><span class="co">## [13] compiler_4.7.0      rlang_1.2.0         sass_0.4.10        </span></span>
+<span><span class="co">## [16] tools_4.7.0         yaml_2.3.12         knitr_1.51         </span></span>
+<span><span class="co">## [19] S4Arrays_1.13.0     htmlwidgets_1.6.4   classInt_0.4-11    </span></span>
+<span><span class="co">## [22] curl_7.1.0          reticulate_1.46.0   DelayedArray_0.39.3</span></span>
+<span><span class="co">## [25] abind_1.4-8         KernSmooth_2.23-26  withr_3.0.2        </span></span>
+<span><span class="co">## [28] purrr_1.2.2         desc_1.4.3          R.oo_1.27.1        </span></span>
+<span><span class="co">## [31] grid_4.7.0          e1071_1.7-17        cli_3.6.6          </span></span>
+<span><span class="co">## [34] rmarkdown_2.31      crayon_1.5.3        ragg_1.5.2         </span></span>
+<span><span class="co">## [37] DBI_1.3.0           cachem_1.1.0        proxy_0.4-29       </span></span>
+<span><span class="co">## [40] BiocManager_1.30.27 XVector_0.53.0      vctrs_0.7.3        </span></span>
+<span><span class="co">## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.46      </span></span>
+<span><span class="co">## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  </span></span>
+<span><span class="co">## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         </span></span>
+<span><span class="co">## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.16        </span></span>
+<span><span class="co">## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     </span></span>
+<span><span class="co">## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           </span></span>
+<span><span class="co">## [61] dbplyr_2.5.2        httr2_1.2.2         wk_0.9.5           </span></span>
+<span><span class="co">## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     </span></span>
+<span><span class="co">## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.1.0  </span></span>
+<span><span class="co">## [70] paws.common_0.8.9   bslib_0.11.0        class_7.3-23       </span></span>
+<span><span class="co">## [73] Rcpp_1.1.1-1.1      uuid_1.2-2          SparseArray_1.13.2 </span></span>
+<span><span class="co">## [76] anndataR_1.3.0      xfun_0.57           fs_2.1.0           </span></span>
+<span><span class="co">## [79] pkgconfig_2.0.3</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -645,7 +647,7 @@ Biotechnology</em> 41 (5): 604–6. <a href="https://doi.org/10.1038/s41587-023-
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Helena L. Crowell, Artür Manukyan, Hugo Gruson, Vince Carey, Charlotte Soneson, Michael Stadler, Samuel Gunz, Yixing E. Dong, Dario Righelli, Louise Deconinck.</p>
+  <p>Developed by Helena L. Crowell, Artür Manukyan, Hugo Gruson, Vince Carey.</p>
 </div>
 
 <div class="pkgdown-footer-right">

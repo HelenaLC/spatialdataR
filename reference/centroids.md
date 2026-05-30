@@ -41,7 +41,7 @@ A table (`data.frame` or `matrix`) of spatial coordinates (if
 
 ``` r
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 centroids(label(x))
