@@ -2,12 +2,8 @@
 #' @importFrom SingleCellExperiment int_metadata int_colData
 .validateTables <- \(object) {
     msg <- c()
-    sce <- \(.) is(., "SingleCellExperiment")
     for (i in seq_along(tables(object))) {
-        ok <- sce(se <- table(object, i))
-        if (!ok) msg <- c(msg, paste0(
-            i, "-th table is not a 'SingleCellExperiment'"))
-        if (!ok) next
+        se <- table(object, i)
         md <- int_metadata(se)$spatialdata_attrs
         nm <- c("region", "region_key", "instance_key")
         .nm <- sprintf("'%s'", paste(nm, collapse="/"))
@@ -37,7 +33,7 @@
         }
     }
     na <- setdiff(
-        unlist(lapply(tables(object), \(.) if (sce(.)) region(.))),
+        unlist(lapply(tables(object), region)),
         unlist(colnames(object)[setdiff(.LAYERS, "tables")])) # don't flip!
     if (length(na))
         msg <- c(msg, paste(
@@ -89,7 +85,7 @@ setValidity2("SpatialDataLabel", .validateLabel)
     cnt <- tryCatch(error=\(.) 0, as.integer(
         pull(count(spatialdataR::data(object)), "n")))
     if (!cnt) return(msg)
-    if (!"geometry" %in% names(object)) 
+    if (!"geometry" %in% names(object))
         msg <- c(msg, "'SpatialDataPoint' missing 'geometry'.")
     return(msg)
 }
@@ -98,7 +94,7 @@ setValidity2("SpatialDataPoint", .validatePoint)
 
 .validateShape <- \(object) {
     msg <- c()
-    if (!"geometry" %in% names(object)) 
+    if (!"geometry" %in% names(object))
         msg <- c(msg, "'SpatialDataShape' missing 'geometry'.")
     return(msg)
 }
@@ -118,10 +114,10 @@ setValidity2("SpatialDataShape", .validateShape)
         if (!all(vapply(x[[.]], \(y) is(y, typ[.]), logical(1))))
             msg <- c(msg, sprintf("'%s' should be a list of '%s'", ., typ[.]))
     # TODO: validate .zattrs across all layers
-    for (y in labels(x)) msg <- c(msg, .validateLabel(y))
-    for (y in images(x)) msg <- c(msg, .validateImage(y))
-    for (y in points(x)) msg <- c(msg, .validatePoint(y))
-    for (y in shapes(x)) msg <- c(msg, .validateShape(y))
+    for (y in as.list(labels(x))) msg <- c(msg, .validateLabel(y))
+    for (y in as.list(images(x))) msg <- c(msg, .validateImage(y))
+    for (y in as.list(points(x))) msg <- c(msg, .validatePoint(y))
+    for (y in as.list(shapes(x))) msg <- c(msg, .validateShape(y))
     msg <- c(msg, .validateTables(x))
     return(msg)
 }

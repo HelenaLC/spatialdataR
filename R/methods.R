@@ -6,7 +6,7 @@
 
 #' @exportMethod $
 #' @rdname SpatialData
-setMethod("$", "SpatialData", \(x, name) attr(x, name))
+setMethod("$", "SpatialData", \(x, name) slot(x, name))
 
 #' @exportMethod $<-
 #' @rdname SpatialData
@@ -21,7 +21,7 @@ setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
 
 #' @rdname SpatialData
 #' @export
-setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
+setMethod("[[", c("SpatialData", "character"), \(x, i, ...) slot(x, i))
 
 # data/meta ----
 
@@ -69,7 +69,7 @@ setReplaceMethod("meta", c("SpatialDataElement", "list"),
     if (isTRUE(i)) return(x)
     if (is.numeric(i) || is.logical(i)) i <- rownames(x)[i]
     if (anyNA(i)) stop("invalid 'i'")
-    for (. in setdiff(rownames(x), i)) attr(x, .) <- list()
+    for (l in setdiff(rownames(x), i)) layer(x, l) <- list()
     x
 }
 .sub_j <- \(x, j) {
@@ -122,8 +122,8 @@ setMethod("rownames", "SpatialData", \(x) {
 #' @importFrom BiocGenerics colnames
 #' @export
 setMethod("colnames", "SpatialData", \(x) {
-    names(.) <- . <- rownames(x)
-    lapply(., \(.) names(x[[.]]))
+    names(ls) <- ls <- rownames(x)
+    lapply(ls, \(l) names(x[[l]]))
 })
 
 # layer ----
@@ -136,7 +136,7 @@ setMethod("colnames", "SpatialData", \(x) {
 #' @export
 setMethod("layer", c("SpatialData", "character"), \(x, i) {
     match.arg(i, unlist(colnames(x)))
-    names(Filter(\(.) i %in% ., colnames(x)))
+    names(Filter(\(e) i %in% e, colnames(x)))
 })
 
 #' @rdname SpatialData
@@ -148,7 +148,7 @@ setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 #' @rdname SpatialData
 #' @export
 setMethod("element", c("SpatialData", "character"), 
-    \(x, i) x[[layer(x, i)]][[i]])
+    \(x, i) slot(x, layer(x, i))[[i]])
 
 #' @rdname SpatialData
 #' @export
@@ -199,10 +199,10 @@ all <- paste0(one <- c("image", "label", "point", "shape", "table"), "s")
 #' @exportMethod imageNames labelNames pointNames shapeNames tableNames
 NULL
 
-f <- \(.) setMethod(
-    paste0(., "Names"), "SpatialData", 
-    \(x) names(x[[paste0(., "s")]]))
-for (. in one) eval(f(.), parent.env(environment()))
+f <- \(e) setMethod(
+    paste0(e, "Names"), "SpatialData", 
+    \(x) names(x[[paste0(e, "s")]]))
+for (e in one) eval(f(e), parent.env(environment()))
 
 # set nms ----
 
@@ -210,17 +210,16 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod imageNames<- labelNames<- pointNames<- shapeNames<- tableNames<-
 NULL
 
-f <- \(.) setReplaceMethod(
-    paste0(., "Names"),
+f <- \(e) setReplaceMethod(
+    paste0(e, "Names"),
     c("SpatialData", "character"),
     \(x, value) {
-        stopifnot(!any(duplicated(value)), nchar(value) > 0)
-        old <- names(x[[paste0(., "s")]])
-        new <- names(x[[paste0(., "s")]]) <- value
-        if (. == "table") return(x)
-        .sync_tables_sdattrs(x, old, new)
+        stopifnot(!duplicated(value), nchar(value) > 0)
+        l <- paste0(e, "s")
+        names(x[[l]]) <- value
+        x
     })
-for (. in one) eval(f(.), parent.env(environment()))
+for (e in one) eval(f(e), parent.env(environment()))
 
 # get one ----
 
@@ -230,6 +229,7 @@ for (. in one) eval(f(.), parent.env(environment()))
 NULL
 
 .get <- \(y, i) {
+    if (!length(y)) return(NULL)
     if (is.numeric(i)) {
         if (i < 1 || !is.finite(i)) stop(
             "invalid 'i'; should be a ",
@@ -245,30 +245,25 @@ NULL
     y[[i]]
 }
 
-.set <- \(.) setMethod(., "SpatialData", \(x, i=1) .get(x[[paste0(., "s")]], i))
-for (. in one) eval(.set(.), parent.env(environment()))
+.set <- \(e) setMethod(e, "SpatialData", \(x, i=1) .get(x[[paste0(e, "s")]], i))
+for (e in one) eval(.set(e), parent.env(environment()))
 
 # set all ----
 
-# |_[[<- ----
+#' @name SpatialData
+#' @exportMethod images<- labels<- points<- shapes<- tables<-
+NULL
 
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("[[", c("SpatialData", "numeric"), 
-    \(x, i, value) { x[[.LAYERS[i]]] <- value; x })
-
-#' @rdname SpatialData
-#' @export
-setReplaceMethod("[[", c("SpatialData", "character"), 
-    \(x, i, value) {
-        l <- match.arg(i, .LAYERS)
+f <- \(l) setReplaceMethod(l, 
+    c("SpatialData", getSlots("SpatialData")[[l]]), 
+    \(x, value) {
         if (l != "tables") {
-            old <- names(attr(x, l))
+            old <- names(slot(x, l))
             new <- names(value)
             if (length(old) == length(new) && any(old != new))
                 x <- .sync_tables_sdattrs(x, old, new)
         }
-        attr(x, l) <- value
+        slot(x, l) <- value
         if (l != "tables") {
             x <- .sync_tables_on_drop(x)
         } else {
@@ -278,28 +273,48 @@ setReplaceMethod("[[", c("SpatialData", "character"),
         }
         x
     })
+for (l in all) eval(f(l), parent.env(environment()))
 
-# |_value=list ----
-
-#' @name SpatialData
-#' @exportMethod images<- labels<- points<- shapes<- tables<-
-NULL
-
-f <- \(.) setReplaceMethod(., 
+f <- \(l) setReplaceMethod(l, 
     c("SpatialData", "list"), 
     \(x, value) {
-        if (. != "tables") {
-            old <- names(attr(x, .))
-            new <- names(value)
-            if (length(old) == length(new) && any(old != new))
-                x <- .sync_tables_sdattrs(x, old, new)
-        }
-        attr(x, .) <- value
-        if (. != "tables")
-            x <- .sync_tables_on_drop(x)
-        x
+        set <- get(paste0(l, "<-"))
+        val <- get(getSlots("SpatialData")[[l]])(value)
+        set(x, val)
     })
-for (. in all) eval(f(.), parent.env(environment()))
+for (l in all) eval(f(l), parent.env(environment()))
+
+f <- \(l) setReplaceMethod(l, 
+    c("SpatialData", "NULL"), 
+    \(x, value) {
+        set <- get(paste0(l, "<-"))
+        set(x, list())
+    })
+for (l in all) eval(f(l), parent.env(environment()))
+
+# |_layer<- ----
+
+#' @export
+#' @rdname SpatialData
+setReplaceMethod("layer", 
+    c("SpatialData", "character", "ANY"), 
+    \(x, i, value) {
+        i <- match.arg(i, .LAYERS)
+        set <- get(paste0(i, "<-"))
+        set(x, value)
+    })
+
+# |_[[<- ----
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("[[", c("SpatialData", "numeric"), 
+    \(x, i, value) { `[[<-`(x, .LAYERS[i], value) })
+
+#' @rdname SpatialData
+#' @export
+setReplaceMethod("[[", c("SpatialData", "character"), 
+    \(x, i, value) { `layer<-`(x, i, value) })
 
 # set one ----
 
@@ -314,16 +329,17 @@ typ <- c(
     shape="SpatialDataShape", 
     table="SingleCellExperiment")
 
-f <- \(.) setReplaceMethod(., 
-    c("SpatialData", "character", typ[[.]]), 
+f <- \(e) setReplaceMethod(e, 
+    c("SpatialData", "character", typ[[e]]), 
     \(x, i, value) {
-        y <- attr(x, paste0(., "s"))
+        y <- slot(x, paste0(e, "s"))
         y[[i]] <- value
-        attr(x, paste0(., "s")) <- y
-        if (. == "table") x <- .sync_shapes_on_drop(x, i)
-        return(x)
+        set <- get(paste0(e, "s<-"))
+        x <- set(x, y)
+        if (e != "table") return(x)
+        .sync_shapes_on_drop(x, i)
     })
-for (. in one) eval(f(.), parent.env(environment()))
+for (e in one) eval(f(e), parent.env(environment()))
 
 # _i=numeric ----
 
@@ -331,15 +347,16 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod image<- label<- point<- shape<- table<-
 NULL
 
-f <- \(.) setReplaceMethod(., 
-    c("SpatialData", "numeric", typ[[.]]), 
-    \(x, i, value) { 
-        nms <- get(paste0(., "Names"))(x)
-        n <- length(get(paste0(., "s"))(x))
-        i <- ifelse(i > n, paste0(., n+1), nms[i])
-        get(paste0(., "<-"))(x=x, i=i, value=value)
+f <- \(e) setReplaceMethod(e, 
+    c("SpatialData", "numeric", typ[[e]]), 
+    \(x, i, ..., value) { 
+        nms <- get(paste0(e, "Names"))(x)
+        n <- length(get(paste0(e, "s"))(x))
+        i <- ifelse(i > n, paste0(e, n+1), nms[i])
+        set <- get(paste0(e, "<-"))
+        set(x, i, value=value)
     })
-for (. in one) eval(f(.), parent.env(environment()))
+for (e in one) eval(f(e), parent.env(environment()))
 
 # _i=missing ----
 
@@ -347,13 +364,13 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod image<- label<- point<- shape<- table<-
 NULL
 
-f <- \(.) setReplaceMethod(., 
-    c("SpatialData", "missing", typ[[.]]), 
-    \(x, i, value) { 
-        f <- get(paste0(., "<-"))
-        f(x=x, i=1, value=value)
-})
-for (. in one) eval(f(.), parent.env(environment()))
+f <- \(e) setReplaceMethod(e, 
+    c("SpatialData", "missing", typ[[e]]), 
+    \(x, i, ..., value) { 
+        set <- get(paste0(e, "<-"))
+        set(x, 1, value=value)
+    })
+for (e in one) eval(f(e), parent.env(environment()))
 
 # _v=NULL ----
 
@@ -361,21 +378,19 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod image<- label<- point<- shape<- table<-
 NULL
 
-f <- \(.) setReplaceMethod(., 
+f <- \(e) setReplaceMethod(e, 
     c("SpatialData", "ANY", "NULL"), 
-    \(x, i, value) {
+    \(x, i, ..., value) {
         if (missing(i)) i <- 1
-        l <- paste0(., "s")
-        y <- attr(x, l)
+        l <- paste0(e, "s")
+        y <- slot(x, l)
         if (is.numeric(i))
             i <- names(y)[i]
         y <- y[setdiff(names(y), i)]
         x[[l]] <- y
-        if (. != "table")
-            x <- .sync_tables_on_drop(x)
         x
     })
-for (. in one) eval(f(.), parent.env(environment()))
+for (e in one) eval(f(e), parent.env(environment()))
 
 # _v=ANY ----
 
@@ -383,8 +398,8 @@ for (. in one) eval(f(.), parent.env(environment()))
 #' @exportMethod image<- label<- point<- shape<- table<-
 NULL
 
-g <- \(.) sprintf("replacement value should be a '%s'", .)
-f <- \(.) setReplaceMethod(., 
+g <- \(e) sprintf("replacement value should be a '%s'", typ[[e]])
+f <- \(e) setReplaceMethod(e, 
     c("SpatialData", "ANY", "ANY"), 
-    \(x, i, value) stop(g(typ[[.]])))
-for (. in one) eval(f(.), parent.env(environment()))
+    \(x, i, ..., value) stop(g(e)))
+for (e in one) eval(f(e), parent.env(environment()))

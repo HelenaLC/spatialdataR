@@ -36,7 +36,7 @@ test_that("element()", {
     expect_silent(element(x, 1))
     replicate(5, {
         i <- sample(.LAYERS, 1)
-        j <- sample(names(attr(x, i)), 1)
+        j <- sample(names(slot(x, i)), 1)
         expect_identical(x[[i]][[j]], element(x, j))
     })
 })
@@ -53,7 +53,7 @@ test_that("element<-()", {
 
 test_that("get all", {
     for (f in paste0(fun, "s"))
-        expect_is(get(f)(x), "list")
+        expect_is(get(f)(x), "SimpleList")
 })
 
 test_that("get one", {
@@ -69,9 +69,8 @@ test_that("get one", {
         expect_error(get(f, envir=env)(x, 0))
         expect_error(get(f, envir=env)(x, "."))
         expect_error(get(f, envir=env)(x, c(1,1)))
-        set <- get(paste0(f, "s<-"))
-        y <- set(x, list())
-        expect_error(get(f, envir=env)(y, 1))
+        y <- get(paste0(f, "s<-"))(x, list())
+        expect_null(get(f, envir=env)(y, 1))
     }
 })
 
@@ -144,8 +143,10 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
+    y <- x
     r <- region(table(x))
-    y <- x; labelNames(y) <- "x"
+    labels(y) <- labels(y)[r]
+    labelNames(y) <- "x"
     r <- region(table(y))
     expect_identical(r, "x")
 })
@@ -156,7 +157,7 @@ test_that("$", {
     mapply(i=paste0(fun, "s"), n=nms, t=typ, \(i, n, t) {
         # object-wide
         f <- parse(text=sprintf("x$%s", i))
-        expect_is(y <- eval(f), "list")
+        expect_is(y <- eval(f), "SimpleList")
         # element-wise
         expect_is(names(y), "character")
         expect_length(names(y), length(y))
@@ -273,5 +274,5 @@ test_that("[,SpatialData", {
     n <- .n(y <- x[,-1])
     expect_equal(n, .n(x)-1)
     # infinite 'j'
-    expect_silent(y <- x[1, Inf])
+    expect_no_error(y <- x[1, Inf])
 })

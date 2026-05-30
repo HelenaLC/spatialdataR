@@ -63,9 +63,16 @@
 \alias{points,SpatialData-method}
 \alias{shapes,SpatialData-method}
 \alias{tables,SpatialData-method}
+\alias{layer<-,SpatialData,character-method}
 \title{The `SpatialData` class}
 \usage{
-SpatialData(images, labels, points, shapes, tables)
+SpatialData(
+  images = list(),
+  labels = list(),
+  points = list(),
+  shapes = list(),
+  tables = list()
+)
 
 \S4method{$}{SpatialData}(x, name)
 
@@ -108,6 +115,8 @@ SpatialData(images, labels, points, shapes, tables)
 \S4method{shapes}{SpatialData}(x)
 
 \S4method{tables}{SpatialData}(x)
+
+\S4method{layer}{SpatialData,character}(x, i) <- value
 
 \S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
 
