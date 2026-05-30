@@ -25,7 +25,7 @@ NULL
 setMethod("combine", c("SpatialData", "SpatialData"), \(x, y, ...) {
     # ensure element names are unique across objects
     old <- list(unlist(colnames(x)), unlist(colnames(y)))
-    idx <- rep.int(c(1, 2), vapply(old, length, integer(1)))
+    idx <- rep.int(c(1, 2), lengths(old))
     new <- split(make.unique(unlist(old)), idx)
     for (i in c(1, 2)) {
         # get input element names
