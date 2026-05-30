@@ -104,15 +104,6 @@ setValidity2("SpatialDataShape", .validateShape)
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
     msg <- c()
-    typ <- c(
-        images="SpatialDataImage",
-        labels="SpatialDataLabel",
-        points="SpatialDataPoint",
-        shapes="SpatialDataShape",
-        tables="SingleCellExperiment")
-    for (. in names(typ)) if (length(x[[.]]))
-        if (!all(vapply(x[[.]], \(y) is(y, typ[.]), logical(1))))
-            msg <- c(msg, sprintf("'%s' should be a list of '%s'", ., typ[.]))
     # TODO: validate .zattrs across all layers
     for (y in as.list(labels(x))) msg <- c(msg, .validateLabel(y))
     for (y in as.list(images(x))) msg <- c(msg, .validateImage(y))
