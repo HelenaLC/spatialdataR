@@ -39,12 +39,14 @@ query(x, ..., i = 1)
 
 ``` r
 zs <- file.path("extdata", "blobs.zarr")
-zs <- system.file(zs, package="SpatialData")
+zs <- system.file(zs, package="spatialdataR")
 sd <- readSpatialData(zs)
 
 # filter by 'region' and propagate to shapes/points
 t <- table(sd)
 query(sd, i=1, region == region(t))
+#> Warning: arguments in '...' ignored
+#> Warning: arguments in '...' ignored
 #> class: SpatialData
 #> - images(0):
 #> - labels(1):

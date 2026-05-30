@@ -71,7 +71,7 @@ CTplot(g, cex = 0.5, fac = 2, max = 10)
 
 ``` r
 x <- file.path("extdata", "blobs.zarr")
-x <- system.file(x, package="SpatialData")
+x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # object-wide
