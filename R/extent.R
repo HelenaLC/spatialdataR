@@ -29,7 +29,7 @@ NULL
 setMethod("extent", "SpatialData", \(x, i=1) {
     ex <- .lapplyLayer(x, extent, i=i)
     ex <- unlist(ex, recursive=FALSE)
-    xy <- do.call(rbind, lapply(ex, do.call, what=cbind))
+    xy <- do.call(rbind, lapply(ex, list2DF))
     list(x=range(xy[, 1]), y=range(xy[, 2]))
 })
 
