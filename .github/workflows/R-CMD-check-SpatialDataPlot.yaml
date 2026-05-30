@@ -1,0 +1,63 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, devel]
+  pull_request:
+
+name: check-SpatialData.Plot
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: HelenaLC/SpatialData.Plot
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+
+      # This step can be removed once SpatialData is on Bioconductor, and is removed from Remotes: in SpatialData.plot's DESCRIPTION.
+      - name: Avoid SpatialData version conflict
+        run: |
+          desc <- read.dcf("DESCRIPTION")
+          desc[, "Remotes"] <- sub("HelenaLC/SpatialData,\\s*", "", desc[, "Remotes"])
+          write.dcf(desc, "DESCRIPTION")
+        shell: Rscript {0}
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # Install SpatialData from the commit that triggered the workflow
+          extra-packages: |
+            any::rcmdcheck
+            HelenaLC/SpatialData@${{ github.sha }}
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          error-on: '"error"'
