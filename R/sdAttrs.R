@@ -126,17 +126,24 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 
 # internal use only!
 #' @noRd 
-.zv <- \(x) {
-    v <- x$spatialdata_attrs$version
+.ome_ver <- \(x) {
+    v <- 
+        x$multiscales[[1]]$version %||%
+        x$omero$version %||% 
+        x$ome$version
     if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
-    ok <- length(v) == 1 && is.character(v) && v %in% sprintf("0.%d", seq_len(5))
-    if (!ok) stop("invalid 'version' in 'spatialdata_attrs'; expected '0.x' where x is 1-5")
+    ok <- length(v) == 1 && is.character(v) && (v <- gsub("-.*", "", v)) %in% sprintf("0.%d", seq_len(6))
+    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-5")
     return(v)
 }
 
 # internal use only!
 #' @noRd 
-.ms <- \(x) switch(.zv(x), "0.3"=x$ome$multiscales, x$multiscales)
+.ms <- \(x) {
+    v <- tryCatch(.ome_ver(x), error=\(e) NULL)
+    if (is.null(v)) return()
+    switch(v, "0.5"=x$ome$multiscales, x$multiscales)
+}
 
 # internal use only!
 #' @noRd 
