@@ -48,11 +48,10 @@
 
 .validateImage <- \(object) {
     msg <- c()
-    res <- length(object)
     axs <- axes(object)
     typ <- vapply(axs, \(.) .$type, character(1))
     d <- sum(typ != "time")
-    for (k in seq_len(res)) {
+    for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
             "'SpatialDataImage' resolution", k, "is not ", d, "D"))
@@ -67,11 +66,10 @@ setValidity2("SpatialDataImage", .validateImage)
 #' @importFrom ZarrArray type
 .validateLabel <- \(object) {
     msg <- c()
-    res <- length(object)
     axs <- axes(object)
     typ <- vapply(axs, \(.) .$type, character(1))
     d <- sum(typ == "space")
-    for (k in seq_len(res)) {
+    for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
             "'SpatialDataLabel' resolution", k, "is not ", d, "D"))
@@ -85,22 +83,20 @@ setValidity2("SpatialDataLabel", .validateLabel)
 
 #' @importFrom dplyr count pull
 .validatePoint <- \(object) {
-    msg <- c()
     cnt <- tryCatch(error=\(.) 0, as.integer(
         pull(count(spatialdataR::data(object)), "n")))
-    if (!cnt) return(msg)
+    if (!cnt) return(NULL)
     if (!"geometry" %in% names(object)) 
-        msg <- c(msg, "'SpatialDataPoint' missing 'geometry'.")
-    return(msg)
+        return("'SpatialDataPoint' missing 'geometry'.")
+    return(NULL)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataPoint", .validatePoint)
 
 .validateShape <- \(object) {
-    msg <- c()
     if (!"geometry" %in% names(object)) 
-        msg <- c(msg, "'SpatialDataShape' missing 'geometry'.")
-    return(msg)
+        return("'SpatialDataShape' missing 'geometry'.")
+    return(NULL)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataShape", .validateShape)
