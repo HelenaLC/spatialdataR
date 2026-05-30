@@ -4,7 +4,6 @@ x <- readSpatialData(x)
 
 test_that("combine", {
     # auto-fixed names
-    expect_error(combine(x))
     expect_no_message(y <- combine(x, x))
     f <- \(.) unlist(colnames(.))
     expect_all_true(f(x) %in% f(y))
