@@ -56,8 +56,7 @@ test_that("validity,sdTable", {
     expect_length(fn(sd), 0)
     # invalid: not a SCE
     x <- sd
-    tables(x)[[1]] <- data.frame()
-    expect_error(validObject(x))
+    expect_error(tables(x)[[1]] <- matrix(1,2,3))
     
     # helper to update table's 'spatialdata_attrs'
     f <- \(x, i, j) {
