@@ -133,7 +133,7 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
         x$ome$version
     if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
     ok <- length(v) == 1 && is.character(v) && (v <- gsub("-.*", "", v)) %in% sprintf("0.%d", seq_len(6))
-    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-5")
+    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-6")
     return(v)
 }
 
