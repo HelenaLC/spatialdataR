@@ -46,7 +46,7 @@
 \alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
 \alias{[[,SpatialData,character,ANY-method}
-\alias{data,ANY-method}
+\alias{data,SpatialDataElement-method}
 \alias{meta,SpatialDataElement-method}
 \alias{[,SpatialData,ANY,ANY,ANY-method}
 \alias{rownames,SpatialData-method}
@@ -75,7 +75,7 @@ SpatialData(images, labels, points, shapes, tables)
 
 \S4method{[[}{SpatialData,character,ANY}(x, i, j, ...)
 
-\S4method{data}{ANY}(...)
+\S4method{data}{SpatialDataElement}(x, k = 1, ...)
 
 \S4method{meta}{SpatialDataElement}(x)
 

@@ -27,15 +27,10 @@ setMethod("[[", c("SpatialData", "character"), \(x, i, ...) attr(x, i))
 
 #' @export
 #' @rdname SpatialData
-setMethod("data", "ANY", \(...) {
-    l <- list(...)
-    x <- l[[1]]
-    if (!is(x, "SpatialDataElement")) 
-        return(utils::data(...))
-    if (!is(x, "SpatialDataArray")) 
-        return(x@data)
+#' @importFrom BiocGenerics data
+setMethod("data", "SpatialDataElement", \(x, k=1, ...) {
+    if (!is(x, "SpatialDataArray")) return(x@data)
     # return list of available scales
-    k <- if (length(l) == 1) 1 else l[[2]]
     if (is.null(k)) return(x@data)
     # should be a scalar positive integer
     ok <- length(k) == 1 && is.numeric(k) && k > 0 && k == round(k)

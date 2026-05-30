@@ -1,6 +1,7 @@
 changes in version 0.99.38
 
-- use BiocGenerics::table
+- make use of new BiocGenerics:
+  data,rotate,scale,sequence,table,transform
 
 changes in version 0.99.37
 
