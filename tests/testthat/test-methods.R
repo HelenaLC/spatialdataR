@@ -211,7 +211,9 @@ test_that("[,sdImage", {
     }
     i <- image(x, "blobs_image")
     # missing
-    expect_identical(i[,,,], i)
+    # TODO: what is the fourth argument, drop ? we do not need it
+    # expect_identical(i[,,,], i)
+    expect_identical(i[,,], i)
     # invalid
     expect_error(i["",,])
     expect_error(i[,"",])

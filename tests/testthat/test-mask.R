@@ -55,7 +55,9 @@ test_that("mask w/ transform", {
     b <- element(x, j)
     
     # misaligned
-    l <- list(1,.1,.1); t <- "scale"
+    # TODO: there are no scaling parameters for channels
+    # l <- list(1,.1,.1); t <- "scale"
+    l <- list(.1,.1); t <- "scale"
     a <- addCT(a, name=t, type=t, data=l)
     y <- x; y[[layer(y, i)]][[i]] <- a
     expect_error(mask(y, i, j, t))

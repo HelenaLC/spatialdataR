@@ -29,11 +29,11 @@
 
 \S4method{mirror}{SpatialDataArray}(x, t = c("v", "h"), k = 1, ...)
 
-\S4method{flip}{SpatialDataArray}(x, k = 1, ...)
+\S4method{flip}{SpatialDataArray}(x, ...)
 
-\S4method{flop}{SpatialDataArray}(x, k = 1, ...)
+\S4method{flop}{SpatialDataArray}(x, ...)
 
-\S4method{rotate}{SpatialDataArray}(x, t, k = 1, ..., rev = FALSE)
+\S4method{rotate}{SpatialDataArray}(x, t, ..., rev = FALSE)
 
 \S4method{scale}{SpatialDataArray}(x, t, ...)
 

@@ -45,7 +45,8 @@ Imports:
     SingleCellExperiment,
     SummarizedExperiment,
     SparseArray,
-    ZarrArray
+    ZarrArray,
+    ImageArray
 Suggests:
     BiocStyle,
     EBImage,

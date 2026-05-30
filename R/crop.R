@@ -168,7 +168,8 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     .check_box(y)
     z <- .box2rev(x, y, j)
     # offset current origin
-    wh <- metadata(x)$wh
+    # wh <- metadata(x)$wh
+    wh <- extent(x)
     if (!is.null(wh)) {
         z$xmin <- z$xmin - wh[[1]][1]
         z$xmax <- z$xmax - wh[[1]][1]

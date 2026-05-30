@@ -37,7 +37,7 @@ setMethod("extent", "SpatialData", \(x, i=1) {
 #' @rdname extent
 setMethod("extent", "SpatialDataArray", \(x, i=1) {
     x <- transform(x, i)
-    wh <- metadata(x)$wh %||% {
+    wh <- ImageArray::extent(data(x, NULL)) %||% {
         n <- length(d <- dim(x))
         if (n == 3) d <- d[-1]
         d <- rev(d)
