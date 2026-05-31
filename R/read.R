@@ -84,6 +84,7 @@ readPoint <- function(x, ...) {
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
+    attr(df, "source_path") <- pq
     SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
@@ -95,6 +96,7 @@ readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
+    attr(df, "source_path") <- pq
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
 }
 
