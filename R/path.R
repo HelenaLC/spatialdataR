@@ -28,19 +28,29 @@ NULL
 
 #' @export
 #' @rdname path
-setMethod("path", "SpatialDataArray", \(object, ...) 
-    dirname(ZarrArray::path(data(object))))
+#' @importFrom ZarrArray path
+setMethod("path", "SpatialDataArray", \(object, ...) {
+    pa <- tryCatch(path(data(object)), error=\(e) NULL)
+    if (is.null(pa)) return(NA_character_)
+    dirname(pa)
+})
 
 #' @export
 #' @rdname path
-setMethod("path", "SpatialDataFrame", \(object, ...) 
-    attr(data(object), "source_path"))
+setMethod("path", "SpatialDataFrame", \(object, ...) {
+    pa <- attr(data(object), "source_path")
+    if (is.null(pa)) return(NA_character_)
+    pa
+})
 
 #' @export
 #' @rdname path
 #' @importFrom SingleCellExperiment int_metadata
-setMethod("path", "SingleCellExperiment", \(object, ...) 
-    int_metadata(object)$source_path)
+setMethod("path", "SingleCellExperiment", \(object, ...) {
+    pa <- int_metadata(object)$source_path
+    if (is.null(pa)) return(NA_character_)
+    pa
+})
 
 #' @export
 #' @rdname path
