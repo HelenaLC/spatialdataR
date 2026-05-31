@@ -21,25 +21,39 @@
 #' 
 #' # object-wide
 #' path(sd)
-#' path(sd, "list")$labels
+#' path(sd, FALSE)$labels
 #' 
 #' @importFrom BiocGenerics path
 NULL
 
 #' @export
 #' @rdname path
-setMethod("path", "SpatialDataArray", \(object, ...) ZarrArray::path(data(object)))
+setMethod("path", "SpatialDataArray", \(object, ...) 
+    dirname(ZarrArray::path(data(object))))
 
 #' @export
 #' @rdname path
-setMethod("path", "SpatialDataFrame", \(object, ...) attr(data(object), "source_path"))
+setMethod("path", "SpatialDataFrame", \(object, ...) 
+    attr(data(object), "source_path"))
+
+#' @export
+#' @rdname path
+#' @importFrom SingleCellExperiment int_metadata
+setMethod("path", "SingleCellExperiment", \(object, ...) 
+    int_metadata(object)$source_path)
 
 #' @export
 #' @rdname path
 #' @importFrom dplyr tibble
 setMethod("path", "SpatialData", \(object, simplify=TRUE, ...) {
-    ps <- .lapplyLayer(object, path)
+    names(ls) <- ls <- rownames(object)
+    ps <- lapply(ls, \(l) {
+        names(es) <- es <- names(object[[l]])
+        lapply(es, \(e) path(object[[l]][[e]]))
+    })
+
     if (!simplify) return(ps)
+    
     do.call(rbind, lapply(names(ps), \(l) 
         do.call(rbind, lapply(names(ps[[l]]), \(e)
             tibble(layer = l, element = e, path = ps[[l]][[e]])

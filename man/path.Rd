@@ -4,12 +4,15 @@
 \alias{path}
 \alias{path,SpatialDataArray-method}
 \alias{path,SpatialDataFrame-method}
+\alias{path,SingleCellExperiment-method}
 \alias{path,SpatialData-method}
 \title{Retrieve \code{SpatialData} on-disk paths}
 \usage{
 \S4method{path}{SpatialDataArray}(object, ...)
 
 \S4method{path}{SpatialDataFrame}(object, ...)
+
+\S4method{path}{SingleCellExperiment}(object, ...)
 
 \S4method{path}{SpatialData}(object, simplify = TRUE, ...)
 }
@@ -39,6 +42,6 @@ path(shape(sd))
 
 # object-wide
 path(sd)
-path(sd, "list")$labels
+path(sd, FALSE)$labels
 
 }

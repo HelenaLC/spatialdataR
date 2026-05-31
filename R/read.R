@@ -108,12 +108,13 @@ readShape <- function(x, ...) {
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
 readTable <- function(x) {
     suppressWarnings({ # suppress warnings related to hidden files
-      sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
+        sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
     })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
     int_metadata(sce)[[nm]] <- md
+    int_metadata(sce)$source_path <- x
     metadata(sce)[[nm]] <- NULL
     # move these to 'int_colData'
     md <- unlist(md)
