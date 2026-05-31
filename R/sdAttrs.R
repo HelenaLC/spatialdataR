@@ -139,15 +139,11 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
 
 # internal use only!
 #' @noRd 
-.ms <- \(x) {
+setMethod("multiscales", "list", \(x) {
     v <- tryCatch(.ome_ver(x), error=\(e) NULL)
     if (is.null(v)) return()
     switch(v, "0.5"=x$ome$multiscales, x$multiscales)
-}
-
-# internal use only!
-#' @noRd 
-setMethod("multiscales", "list", .ms)
+})
 
 # internal use only!
 #' @noRd 

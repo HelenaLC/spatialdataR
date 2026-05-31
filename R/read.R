@@ -84,6 +84,7 @@ readPoint <- function(x, ...) {
         mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
+    attr(df, "source_path") <- pq
     SpatialDataPoint(data=df, meta=SpatialDataAttrs(md))
 }
 
@@ -95,6 +96,7 @@ readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     pq <- list.files(x, "\\.parquet$", full.names=TRUE)
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
+    attr(df, "source_path") <- pq
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
 }
 
@@ -106,12 +108,13 @@ readShape <- function(x, ...) {
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
 readTable <- function(x) {
     suppressWarnings({ # suppress warnings related to hidden files
-      sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
+        sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
     })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
     md <- metadata(sce)[[nm]]
     int_metadata(sce)[[nm]] <- md
+    int_metadata(sce)$source_path <- x
     metadata(sce)[[nm]] <- NULL
     # move these to 'int_colData'
     md <- unlist(md)
