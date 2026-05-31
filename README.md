@@ -9,7 +9,7 @@ For more details on the framework, see [Marconato et al. (2024)](https://doi.org
 
 ## Resources
 
-- [SpatialData class](https://helenalc.github.io/SpatialData/articles/spatialdataR.html) documentation.
+- [SpatialData class](https://helenalc.github.io/spatialdataR/articles/spatialdataR.html) documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot): Visualization capabilities.
 - [SpatialData.demo](https://helenalc.github.io/SpatialData.demo/): Biotechnology workflows.
 - [SpatialData.data](https://github.com/HelenaLC/SpatialData.data): Example `SpatialData`sets.

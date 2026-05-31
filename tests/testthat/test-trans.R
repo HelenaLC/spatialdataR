@@ -95,7 +95,7 @@ test_that("translation,labelArray", {
 
 test_that("trans,sdFrame", {
     .xy <- \(x) unname(as.matrix(centroids(x)[unlist(axes(x))]))
-    for (x in c(points(sd), shapes(sd))) {
+    for (x in c(as.list(points(sd)), as.list(shapes(sd)))) {
         n <- length(unlist(axes(x)))
         
         # identity
