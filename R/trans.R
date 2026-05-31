@@ -86,7 +86,8 @@ setMethod("sequence", "SpatialDataElement", \(x, t, ..., rev=FALSE) {
 .mirror <- \(x, t, k=1) {
     d <- length(dim(x)) == 3
     i <- if (d) c(1, 3, 2) else c(2, 1)
-    data(x) <- list(aperm(data(x, k), i))
+    # data(x) <- list(aperm(data(x, k), i))
+    data(x) <- ImageArray::aperm(data(x, NULL), perm = i)
     rotate(x, t, k=1)
 }
 
@@ -97,11 +98,13 @@ setMethod("mirror", "SpatialDataArray", \(x, t=c("v", "h"), k=1, ...)
 
 #' @export
 #' @rdname trans
-setMethod("flip", "SpatialDataArray", \(x, k=1, ...) .mirror(x, -90, k))
+setMethod("flip", "SpatialDataArray", \(x, ...) .mirror(x, 270))
+# TODO: allow -90 as angle in ImageArray
+# setMethod("flip", "SpatialDataArray", \(x, ...) .mirror(x, -90))
 
 #' @export
 #' @rdname trans
-setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
+setMethod("flop", "SpatialDataArray", \(x, ...) .mirror(x, 90))
 
 # rotation matrix to rotate points counter-clockwise through an angle 't'
 .R <- \(t) matrix(c(cos(t), -sin(t), sin(t), cos(t)), 2, 2)
@@ -111,58 +114,58 @@ setMethod("flop", "SpatialDataArray", \(x, k=1, ...) .mirror(x, 90, k))
 #' @importFrom methods as
 #' @importFrom BiocGenerics rotate
 #' @importFrom S4Vectors metadata<-
-setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
-    if (!requireNamespace("EBImage", quietly=TRUE))
-        stop("install 'EBImage' to use this function")
-    # negate angle since 'EBImage' rotates clockwise
+setMethod("rotate", "SpatialDataArray", \(x, t, ..., rev=FALSE) {
+  # complement angle with 360 to turn counterclockwise
     stopifnot(length(t) == 1, is.finite(t))
     if (t %% 360 == 0) return(x)
-    if (rev) t <- -t
-    if (length(d <- dim(data(x, k))) == 3) d <- d[-1]
-    metadata(x)$wh <- lapply(rev(d), \(.) c(c(0, .) %*% .R(t*pi/180)))
-    f <- \(.) EBImage::rotate(., -t) 
-    a <- f(aperm(as.array(data(x, k))))
-    metadata(x)$data_type <- data_type(x)
-    data(x) <- list(as(aperm(a), "SparseArray"))
+    if (rev) t <- 360-t
+    data(x) <- ImageArray::rotate(data(x, NULL), t)
     return(x)
 })
 
-.trans_a <- \(x, t, f=c("scale", "translation"), k=1, rev=FALSE) {
-    f <- match.arg(f)
-    n <- length(d <- dim(data(x, k)))
-    
-    # setup: identity, operator
-    map <- list(
-        ids=c(scale=1, translation=0),
-        ops=c(scale="*", translation="+"))
-    
-    # validation & identity check
-    stopifnot(is.numeric(t), is.finite(t), length(t) == n)
-    if (all(t == map$ids[f])) return(x)
-    if (rev) t <- if (f == "scale") 1/t else -t
-    
-    # project to spatial (XY) dims
-    if (n == 3) { t <- t[-1]; d <- d[-1] }
-    t <- rev(t); d <- rev(d)
-    
-    # update 'wh' metadata
-    wh <- metadata(x)$wh %||% list(c(0, d[1]), c(0, d[2]))
-    op <- get(map$ops[f])
-    metadata(x)$wh <- mapply(op, t, wh, SIMPLIFY=FALSE)
-    return(x)
+.trans_a_scale <- \(x, t, rev=FALSE) {
+  n <- length(d <- dim(x))
+  
+  # validation & identity check
+  stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
+  if (all(t == 0)) return(x)
+  
+  # scale
+  if (rev) t <- 1/t
+  
+  # project to spatial (XY) dims
+  if (n == 3) { d <- d[-1] }
+  t <- rev(t); d <- rev(d)
+  
+  data(x) <- ImageArray::scale(data(x, NULL), 
+                               output.dim = as.integer(round(d*t)))
+  x
 }
 
 #' @export
 #' @rdname trans
 #' @importFrom BiocGenerics scale
 setMethod("scale", "SpatialDataArray",
-    \(x, t, ...) .trans_a(x, t, "scale", ...))
+    \(x, t, ...) .trans_a_scale(x, t, ...))
 
+.trans_a_trans <- \(x, t, rev=FALSE) {
+
+  # validation & identity check
+  stopifnot(is.numeric(t), is.finite(t), length(t) == 2)
+  if (all(t == 0)) return(x)
+  
+  # project to spatial (XY) dims
+  t <- rev(t)
+
+  data(x) <- ImageArray::translation(data(x, NULL), shift = t)
+  x
+}
+  
 #' @export
 #' @rdname trans
 setMethod("translation", 
     c("SpatialDataArray", "numeric"), 
-    \(x, t, ...) .trans_a(x, t, "translation", ...))
+    \(x, t, ...) .trans_a_trans(x, t, ...))
 
 # point/shape ----
 

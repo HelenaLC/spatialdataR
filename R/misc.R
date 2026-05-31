@@ -88,9 +88,9 @@ setMethod("show", "SpatialData", .showSpatialData)
 
 #' @importFrom S4Vectors coolcat
 .showArray <- function(object) {
-    n.object <- length(object@data)
+    n.object <- length(levels(object@data))
     cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
+    scales <- vapply(levels(object@data), \(x) paste0(dim(x), collapse=","), character(1))
     coolcat("Scales (%d): (%s)", scales)
 }
 

@@ -168,7 +168,8 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     .check_box(y)
     z <- .box2rev(x, y, j)
     # offset current origin
-    wh <- metadata(x)$wh
+    # wh <- metadata(x)$wh
+    wh <- extent(x)
     if (!is.null(wh)) {
         z$xmin <- z$xmin - wh[[1]][1]
         z$xmax <- z$xmax - wh[[1]][1]
@@ -181,22 +182,14 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     z$ymin <- floor(max(z$ymin, 0))
     z$xmax <- ceiling(min(z$xmax, d[n]))
     z$ymax <- ceiling(min(z$ymax, d[n-1]))
-    # update origin
-    if (is.null(wh)) {
-        # set from bounding box
-        wh <- list(
-            c(z$xmin, z$xmax), 
-            c(z$ymin, z$ymax))
-    } else {
-        # offset current origin
-        wh[[1]] <- wh[[1]][1] + c(z$xmin, z$xmax)
-        wh[[2]] <- wh[[2]][1] + c(z$ymin, z$ymax)
-    }
-    metadata(x)$wh <- wh
     # subset array
     i <- seq(z$ymin+1, z$ymax)
     j <- seq(z$xmin+1, z$xmax) 
-    if (n == 3) x[, i, j] else x[i, j]
+    x <- if (n == 3) x[, i, j] else x[i, j]
+    # update origin
+    # TODO: what is the order of translation
+    x <- translation(x, t = c(z$ymin, z$xmin))
+    x
 })
 
 #' @export

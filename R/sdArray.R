@@ -67,8 +67,8 @@ NULL
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataImage(data=data, meta=meta, ...)
+SpatialDataImage <- function(data = list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataImage(data=as_imgarray(data, 3), meta=meta, ...)
     metadata(x) <- metadata
     return(x)
 }
@@ -77,10 +77,22 @@ SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    x <- .SpatialDataLabel(data=data, meta=meta, ...)
+SpatialDataLabel <- function(data = list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    x <- .SpatialDataLabel(data=as_imgarray(data, 2), meta=meta, ...)
     metadata(x) <- metadata
     return(x)
+}
+
+#' @noRd
+as_imgarray <- function(data, dim){
+  if(is(data, "ImageArray")){
+    data
+  } else {
+    if(!is.list(data))
+      data <- list(data)
+    ImageArray(levels = data, 
+               meta = list(axes = c(if(dim == 3) "c" else NULL, "y", "x")))
+  }
 }
 
 # utils ----
@@ -146,58 +158,11 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 # sub ----
 
-.check_jk <- \(x, .) {
-    if (isTRUE(x)) return()
-    tryCatch(
-        stopifnot(
-            is.numeric(x), x == round(x),
-            diff(range(x)) == length(x)-1,
-            (y <- abs(x)) == seq(min(y), max(y))
-        ),
-        error=\(e) stop(sprintf("invalid '%s'", .))
-    )
-}
-
 #' @exportMethod [
 #' @rdname SpatialDataArray
-#' @importFrom utils head tail
-setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
-    if (missing(i)) i <- TRUE
-    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
-    ijk <- list(i, j, k)
-    n <- length(data(x, NULL))
-    d <- dim(data(x))
-    data(x) <- lapply(seq_len(n), \(.) {
-        j <- if (isTRUE(j)) seq_len(d[2]) else j
-        k <- if (isTRUE(k)) seq_len(d[3]) else k
-        jk <- lapply(list(j, k), \(jk) {
-            fac <- 2^(.-1)
-            seq(floor(head(jk, 1)/fac), 
-                ceiling(tail(jk, 1)/fac))
-        })
-        data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
-    })
-    x
-})
-
-#' @exportMethod [
-#' @rdname SpatialDataArray
-#' @importFrom utils head tail
-setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
-    if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
-    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    n <- length(data(x, NULL))
-    d <- dim(data(x, 1))
-    data(x) <- lapply(seq_len(n), \(.) {
-        i <- if (isTRUE(i)) seq_len(d[1]) else i
-        j <- if (isTRUE(j)) seq_len(d[2]) else j
-        ij <- lapply(list(i, j), \(ij) {
-            fac <- 2^(.-1)
-            seq(floor(head(ij, 1)/fac), 
-                ceiling(tail(ij, 1)/fac))
-        })
-        data(x, .)[ij[[1]], ij[[2]], drop=FALSE]
-    })
+setMethod("[", "SpatialDataArray", \(x, i, j,..., drop=FALSE) {
+    cl <- sys.call()
+    cl[[2]] <- substitute(data(x, NULL))
+    data(x) <- eval(cl, parent.frame())
     x
 })

@@ -74,12 +74,18 @@ test_that("crop,sdImage", {
         xmin=dx <- 10, xmax=w <- 40,
         ymin=dy <- 10, ymax=h <- 40)
     expect_equal(dim(j <- crop(i, y)), c(3, 30, 30))
-    expect_equal(metadata(j)$wh, list(c(10, 40), c(10, 40)))
+    # TODO: there is no metadata anymore, use extent instead
+    # expect_equal(metadata(j)$wh, list(c(10, 40), c(10, 40)))
+    expect_equal(
+      extent(j), 
+      setNames(list(c(10, 40), c(10, 40)), c("x", "y"))
+    )
 })
 
 test_that("crop,sdImage w/ previous translation", {
     y <- list(xmin=7, xmax=8, ymin=77, ymax=78)
-    i <- translation(image(x), c(0, 77, 7))
+    # TODO: translation is two dimensional
+    i <- translation(image(x), c(77, 7))
     j <- crop(i, y)
     expect_equal(dim(j), c(3,1,1))
     expect_identical(data(i)[,1,1], data(j)[,1,1])

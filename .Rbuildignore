@@ -6,3 +6,5 @@ docs/
 vignettes/*html
 vignettes/*cache
 vignettes/*files
+^\.positai$
+^\.claude$
