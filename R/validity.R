@@ -118,26 +118,57 @@ setValidity2("SpatialData", .validateSpatialData)
 
 # TODO: version-specific .zattrs validation for all layers
 
+.ms <- \(x) x$multiscales[[1]] %||% x$ome$multiscales[[1]]
+
 .validateAttrs_multiscales <- \(x, msg) {
-    if (is.null(ms <- x$multiscales[[1]]))
-        msg <- c(msg, "missing 'multiscales'")
-    else {
-        # MUST contain
-        for (. in c("axes", "datasets"))
-            if (is.null(ms[[.]]))
-                msg <- c(msg, sprintf("missing 'multiscales$%s'", .))
+    if (is.null(ms <- .ms(x))) {
+        c(msg, "missing 'multiscales'")
+        return(msg)
     }
+    na <- setdiff(c("axes", "datasets"), names(ms))
+    msg <- c(msg, sprintf("missing 'multiscales$%s'", na))
     return(msg)
 }
+
+# https://ngff.openmicroscopy.org/0.5/#axes-md
 .validateAttrs_axes <- \(x, msg) {
+    msg <- c()
     if (!is.list(ax <- x$axes))
-        msg <- c(msg, "missing or non-list 'axes'")
-    ax <- ax[[1]]
-    if (is.null(ax$name))
-        msg <- c(msg, "missing 'axes$name'")
-    if (!is.null(ts <- ax$type))
-        if (!all(ts %in% c("space", "time", "channel")))
-            msg <- c(msg, "'axes$type' should be 'space/time/channel'")
+        msg <- c(msg, "missing or invalid 'multiscales$axes'; should be a list")
+    nm <- lapply(ax, names)
+    ns <- lengths(nm)
+    if (!all(ns == ns[1])) 
+        msg <- c(msg, "'multiscales$axes' list elements of unequal length")
+
+    # MUST contain 'name'
+    # - character string
+    # - unique across axiis
+    nms <- lapply(ax, \(.) .$name)
+    for (. in seq_along(ax)) {
+        nm <- ax[[.]]$name
+        ok <- length(nm) == 1 && is.character(nm) && nchar(nm) > 0
+        if (!ok) {
+            msg <- c(msg, paste0(
+                "missing or invalid multiscales$axes[[", ., "]]$name; ",
+                "should be a character string"))
+            nms <- nms[-.]
+        }
+    }
+    if (any(duplicated(unlist(nms)))) 
+        msg <- c(msg, paste0(
+            "found duplicated multiscales$axes[[", ., "]]$name; ",
+            "should be unique across axiis"))
+    
+    # MAY contain 'type'
+    ok <- c("space", "time", "channel")
+    for (. in seq_along(ax)) {
+        typ <- ax[[.]]$type
+        if (is.null(typ)) next
+        bad <- !isTRUE(typ %in% ok)
+        if (bad) msg <- c(msg, paste0(
+            "invalid multiscales$axes[[", ., "]]$type; ",
+            "should be one of: ", paste(ok, collapse=", ")))
+    }
     return(msg)
 }
 .validateAttrs_coordTrans <- \(x, msg) {
@@ -150,10 +181,11 @@ setValidity2("SpatialData", .validateSpatialData)
     return(msg)
 }
 .validateAttrsLabel <- \(x) {
+    x <- label(sd)
     msg <- c()
     za <- meta(x)
     msg <- .validateAttrs_multiscales(za, msg)
-    ms <- za$multiscales[[1]]
+    if (is.null(ms <- .ms(za))) return(msg)
     msg <- .validateAttrs_axes(ms, msg)
     msg <- .validateAttrs_coordTrans(ms, msg)
     return(msg)

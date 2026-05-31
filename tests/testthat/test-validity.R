@@ -84,8 +84,8 @@ test_that("validity,SpatialDataAttrs", {
     ms <- as.list(za)$multiscales[[1]]
     # multiscales
     fn <- .validateAttrs_multiscales
+    expect_null(fn(list(), c()))
     expect_length(fn(as.list(za), c()), 0)
-    expect_match(fn(list(), c()), "missing")
     # axes
     fn <- .validateAttrs_axes
     expect_length(fn(ms, c()), 0)

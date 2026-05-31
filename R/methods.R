@@ -1,3 +1,7 @@
+.invalid_layer <- paste("invalid 'i'; should be",
+    "an integer scalar in [1,5], or one of:", 
+    paste(sQuote(.LAYERS), collapse=","))
+
 #' @importFrom methods is setMethod callNextMethod setReplaceMethod
 
 #' @export
@@ -15,6 +19,7 @@ setReplaceMethod("$", "SpatialData", \(x, name, value) `[[<-`(x, i=name, value=v
 #' @export
 #' @rdname SpatialData
 setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
+    if (!i %in% seq_along(.LAYERS)) stop(.invalid_layer)
     i <- .LAYERS[i]
     callNextMethod(x, i)
 })
@@ -69,7 +74,7 @@ setReplaceMethod("meta", c("SpatialDataElement", "list"),
     if (isTRUE(i)) return(x)
     if (is.numeric(i) || is.logical(i)) i <- rownames(x)[i]
     if (anyNA(i)) stop("invalid 'i'")
-    for (l in setdiff(rownames(x), i)) layer(x, l) <- list()
+    for (l in setdiff(rownames(x), i)) x[[l]] <- list()
     x
 }
 .sub_j <- \(x, j) {
@@ -292,29 +297,37 @@ f <- \(l) setReplaceMethod(l,
     })
 for (l in all) eval(f(l), parent.env(environment()))
 
-# |_layer<- ----
+f <- \(l) setReplaceMethod(l, 
+    c("SpatialData", "ANY"), 
+    \(x, value) stop(
+        "invalid replacement value; should be ",
+        "NULL or list of layer conform elements"))
+for (l in all) eval(f(l), parent.env(environment()))
 
 #' @export
 #' @rdname SpatialData
-setReplaceMethod("layer", 
+setReplaceMethod("[[", 
     c("SpatialData", "character", "ANY"), 
-    \(x, i, value) {
+    \(x, i, value) { 
         i <- match.arg(i, .LAYERS)
-        set <- get(paste0(i, "<-"))
-        set(x, value)
+        f <- paste0(i, "<-")
+        do.call(f, list(x, value))
     })
-
-# |_[[<- ----
-
-#' @rdname SpatialData
 #' @export
-setReplaceMethod("[[", c("SpatialData", "numeric"), 
-    \(x, i, value) { `[[<-`(x, .LAYERS[i], value) })
-
 #' @rdname SpatialData
+setReplaceMethod("[[", 
+    c("SpatialData", "numeric", "ANY"), 
+    \(x, i, value) {
+        if (!i %in% seq_along(.LAYERS)) stop(.invalid_layer)
+        l <- .LAYERS[i]
+        x[[l]] <- value
+        x
+    })
 #' @export
-setReplaceMethod("[[", c("SpatialData", "character"), 
-    \(x, i, value) { `layer<-`(x, i, value) })
+#' @rdname SpatialData
+setReplaceMethod("[[", 
+    c("SpatialData", "ANY", "ANY"), 
+    \(x, i, value) stop(.invalid_layer))
 
 # set one ----
 
