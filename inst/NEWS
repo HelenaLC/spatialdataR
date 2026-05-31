@@ -2,6 +2,7 @@ changes in version 0.99.39
 
 - class revision: SpatialData slots were base::list, now prototyped 
   S4Vectors::SimpleList with layer-specific properties & validation
+- added 'path()' to retrieve on-disk paths of spatial data elements
 
 changes in version 0.99.38
 
