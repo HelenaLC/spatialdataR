@@ -1,3 +1,4 @@
+require(SingleCellExperiment, quietly=TRUE)
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="spatialdataR")
 sd <- readSpatialData(zs)
@@ -58,7 +59,7 @@ test_that("path,table", {
     expect_is(x, "character")
     expect_true(file.info(x)$isdir)
     
-    x <- path(SpatialDataPoint())
+    x <- path(SingleCellExperiment())
     expect_length(x, 1)
     expect_true(is.na(x))
     expect_is(x, "character")
