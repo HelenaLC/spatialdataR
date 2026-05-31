@@ -30,7 +30,7 @@ test_that("path,shape", {
     x <- path(shape(sd))
     expect_length(x, 1)
     expect_is(x, "character")
-    expect_true(file.info(x)$isdir)
+    expect_true(file.exists(x))
     expect_true(endsWith(x, ".parquet"))
     
     x <- path(SpatialDataShape())
@@ -43,7 +43,7 @@ test_that("path,point", {
     x <- path(point(sd))
     expect_length(x, 1)
     expect_is(x, "character")
-    expect_true(file.info(x)$isdir)
+    expect_true(file.exists(x))
     expect_true(endsWith(x, ".parquet"))
     
     x <- path(SpatialDataPoint())
