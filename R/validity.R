@@ -102,15 +102,13 @@ setValidity2("SpatialDataShape", .validateShape)
     lys <- get(l)(x)
     nms <- names(lys)
     typ <- class(lys)[[1]]
-    if (is.null(nms)) {
-        msg <- c(msg, sprintf("'%s' missing names", typ))
-    } else {
-        na <- nchar(nms) == 0
-        if (any(na)) {
-            msg <- c(msg, sprintf("'%s' elements %s missing names", typ, which(na)))
-        }
+    if (is.null(nms)) return(paste(typ, "missing names"))
+    na <- nchar(nms) == 0
+    if (any(na)) {
+        na <- paste(which(na), collapse=",")
+        return(paste(typ, "elements", na, "missing names"))
     }
-    return(msg)
+    return(NULL)
 }
 
 #' @importFrom methods is
