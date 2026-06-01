@@ -8,7 +8,7 @@ output:
     toc_depth: 2
     toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Introduction to spatialdataR}
+  %\VignetteIndexEntry{spatialdataR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: "refs.bib"
@@ -28,23 +28,25 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 
 ## Introduction
 
-The `r BiocStyle::Biocpkg("spatialdataR")` package provides an R interface to the 
-[SpatialData](https://spatialdata.scverse.org) framework, a unified ecosystem 
-for handling spatial omics data. Developed as part of the 
-[scverse](https://scverse.org) project [@Virshup2023-scverse], `SpatialData` aims to solve the 
-challenges of integrating diverse spatial datasets—including imaging, spatial 
-transcriptomics, and proteomics—by employing the 
+The `r BiocStyle::Biocpkg("spatialdataR")` package provides an R interface to 
+Python's [spatialdata](https://spatialdata.scverse.org) framework for unified 
+handling of spatial omics data, including tabular annotations, vector- and 
+raster-based components. Developed as part of the [scverse](https://scverse.org) 
+project [@Virshup2023-scverse], `spatialdata` aims to solve the challenges of 
+integrating diverse spatial datasets -- including  -- by employing the 
 [OME-NGFF (Next Generation File Format)](https://ngff.openmicroscopy.org) 
 standard [@Marconato2025-SpatialData].
 
-The Python implementation and core specifications can be found at the 
-[official SpatialData website](https://spatialdata.scverse.org).
+The Python implementation and core specifications are found at the
+[official `spatialdata` website](https://spatialdata.scverse.org).
 
 ## Representation
 
 The core data structure is the `SpatialData` class, which organizes data 
 into 5 coordinated **layers: images, labels, points, shapes, and tables**. 
-Each layer is stored as a list of layer-specific objects that carry associated `SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and *zarr.json* for Zarr v3)
+Each layer is stored as a list of layer-specific objects that carry associated 
+`SpatialDataAttr` (`@meta` slot), which encode `spatialdata`-specific 
+Zarr attributes (*.zattr* for Zarr v2, and *zarr.json* for Zarr v3).
 Together, these layers provide a unified representation of spatial omics data, 
 combining raster, vector, and tabular data within a single coherent framework.
 
@@ -240,7 +242,7 @@ in the correct order (e.g., `scale()` then `translation()`).
 a <- label(sd)
 
 # project into 'global'
-b <- transform(a, "scale")
+b <- spatialdataR::transform(a, "scale")
 
 # compare XY extents
 do.call(rbind, c(a=extent(a), b=extent(b)))
@@ -338,7 +340,7 @@ across objects via `make.names()`, appending a suffix to the element names of
 subsequent objects. Alternatively, names could be customize before combining.
 
 ```{r combine}
-sp <- combine(sd, sd)
+sp <- combine(list(foo=sd, bar=sd))
 cbind(
     original=lengths(colnames(sd)),
     combined=lengths(colnames(sp)))

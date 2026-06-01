@@ -147,6 +147,9 @@ specifying the element to extract from a given layer.}
 
 \item{...}{optional arguments passed to and from other methods.}
 
+\item{k}{scalar index specifying which scale to use; 
+\code{Inf} to use lowest available resolution.}
+
 \item{drop}{ignored.}
 }
 \value{

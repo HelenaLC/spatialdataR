@@ -1,3 +1,8 @@
+changes in version 0.99.41
+
+- fix vignette to call 'spatialdataR::transform()' explicitly
+- address R CMD check warnings re: undocumented arguments, undefined functions
+
 changes in version 0.99.40
 
 - validty & setters now assure that each layer is a completely named list
@@ -27,9 +32,12 @@ changes in version 0.99.36
 
 changes in version 0.99.35
 
-- class renaming
 - bug fix: 'centroids,shape' was previously 
   returning vertex coordinates for polygons
+- class renaming:
+  sdArray/Frame > SpatialDataArray/Frame,
+  Image/LabelArray > SpatialDataImage/Label,
+  Shape/PointFrame > SpatialDataShape/Point
 
 changes in version 0.99.34
 
