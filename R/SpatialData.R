@@ -29,6 +29,8 @@
 #' @param x,object \code{SpatialData} object.
 #' @param i,j character string, scalar or vector of indices
 #'   specifying the element to extract from a given layer.
+#' @param k scalar index specifying which scale to use; 
+#'   \code{Inf} to use lowest available resolution.
 #' @param drop ignored.
 #' @param name character string for extraction (see \code{?base::`$`}).
 #' @param value (list of) element(s) with layer-compliant object(s), 

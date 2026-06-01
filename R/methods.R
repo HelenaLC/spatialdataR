@@ -10,6 +10,7 @@
 
 #' @exportMethod $
 #' @rdname SpatialData
+#' @importFrom methods slot
 setMethod("$", "SpatialData", \(x, name) slot(x, name))
 
 #' @exportMethod $<-
@@ -24,8 +25,9 @@ setMethod("[[", c("SpatialData", "numeric"), \(x, i, ...) {
     callNextMethod(x, i)
 })
 
-#' @rdname SpatialData
 #' @export
+#' @rdname SpatialData
+#' @importFrom methods slot
 setMethod("[[", c("SpatialData", "character"), \(x, i, ...) slot(x, i))
 
 # data/meta ----
@@ -151,8 +153,9 @@ setMethod("layer", c("SpatialData", "ANY"), \(x, i) stop(.invalid_i))
 
 # element ----
 
-#' @rdname SpatialData
 #' @export
+#' @rdname SpatialData
+#' @importFrom methods slot
 setMethod("element", c("SpatialData", "character"), 
     \(x, i) slot(x, layer(x, i))[[i]])
 
@@ -260,6 +263,7 @@ for (e in one) eval(.set(e), parent.env(environment()))
 #' @exportMethod images<- labels<- points<- shapes<- tables<-
 NULL
 
+#' @importFrom methods slot slot<-
 f <- \(l) setReplaceMethod(l, 
     c("SpatialData", getSlots("SpatialData")[[l]]), 
     \(x, value) {
@@ -357,6 +361,7 @@ typ <- c(
     shape="SpatialDataShape", 
     table="SingleCellExperiment")
 
+#' @importFrom methods slot
 f <- \(e) setReplaceMethod(e, 
     c("SpatialData", "character", typ[[e]]), 
     \(x, i, value) {
@@ -406,6 +411,7 @@ for (e in one) eval(f(e), parent.env(environment()))
 #' @exportMethod image<- label<- point<- shape<- table<-
 NULL
 
+#' @importFrom methods slot
 f <- \(e) setReplaceMethod(e, 
     c("SpatialData", "ANY", "NULL"), 
     \(x, i, ..., value) {
