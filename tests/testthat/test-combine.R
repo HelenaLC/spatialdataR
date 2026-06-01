@@ -2,7 +2,7 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
-test_that("combine", {
+test_that("combine two SpatialData objects", {
     # auto-fixed names
     expect_no_message(y <- combine(x, x))
     f <- \(.) unlist(colnames(.))
@@ -37,4 +37,23 @@ test_that("combine", {
         expect_identical(c[[.]][[1]], a[[.]][[1]])
         expect_identical(c[[.]][[2]], b[[.]][[1]])
     }
+})
+
+test_that("combine length-2+ list of objects", {
+    # partially named
+    y <- combine(list(a=x, b=x, x))
+    old <- unlist(colnames(x))
+    new <- unlist(colnames(y))
+    expect_true(all(old %in% new))
+    expect_true(!any(duplicated(new)))
+    expect_true(all(paste0("a.", old) %in% new))
+    expect_true(all(paste0("b.", old) %in% new))
+    expect_length(new, 3*length(unlist(colnames(x))))
+    # unnamed
+    y <- combine(list(x, x))
+    new <- unlist(colnames(y))
+    expect_true(all(old %in% new))
+    expect_length(new, 2*length(old))
+    expect_true(!any(duplicated(new)))
+    expect_true(all(paste0(old, ".1") %in% new))
 })
