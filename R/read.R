@@ -146,8 +146,8 @@ readSpatialData <- function(x,
                 stop("couldn't find ", l, " of name", .)
             j <- j[opt]
         }
-        f <- get(paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1)))
-        lapply(j, \(.) do.call(f, list(.)))
+        f <- paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
+        lapply(j, f)
     }
     
     names(ls) <- ls <- .LAYERS[!skip]

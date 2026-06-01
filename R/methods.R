@@ -43,6 +43,7 @@ setMethod("data", "SpatialDataElement", \(x, k=1, ...) {
         "NULL or a scalar positive integer")
     # get number of available scales
     n <- length(x <- x@data)   
+    if (!length(x)) return(NULL)
     # input of Inf uses lowest
     if (is.infinite(k)) k <- n 
     # return specified scale
@@ -262,6 +263,20 @@ NULL
 f <- \(l) setReplaceMethod(l, 
     c("SpatialData", getSlots("SpatialData")[[l]]), 
     \(x, value) {
+        if (length(value)) {
+            nms <- names(value)
+            e <- gsub("s$", "", l)
+            if (is.null(nms)) {
+                nms <- paste0(e, seq_along(value))
+                names(value) <- nms
+            } else {
+                na <- nchar(nms) == 0
+                if (any(na)) {
+                    nms[na] <- paste0(e, which(na))
+                    names(value) <- nms
+                }
+            }
+        }
         if (l != "tables") {
             old <- names(slot(x, l))
             new <- names(value)
