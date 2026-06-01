@@ -168,8 +168,7 @@ SpatialDataShape <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
 #' @rdname SpatialDataFrame
 #' @importFrom dplyr tally pull
 setMethod("length", "SpatialDataFrame", \(x) { 
-    n <- NULL # R CMD check
-    suppressWarnings(dplyr::pull(dplyr::tally(data(x)), n))
+    suppressWarnings(dplyr::pull(dplyr::tally(data(x)), .data$n))
 })
 
 #' @export

@@ -44,11 +44,10 @@
 
 .validateImage <- \(object) {
     msg <- c()
-    res <- length(object)
     axs <- axes(object)
     typ <- vapply(axs, \(.) .$type, character(1))
     d <- sum(typ != "time")
-    for (k in seq_len(res)) {
+    for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
             "'SpatialDataImage' resolution", k, "is not ", d, "D"))
@@ -63,11 +62,10 @@ setValidity2("SpatialDataImage", .validateImage)
 #' @importFrom ZarrArray type
 .validateLabel <- \(object) {
     msg <- c()
-    res <- length(object)
     axs <- axes(object)
     typ <- vapply(axs, \(.) .$type, character(1))
     d <- sum(typ == "space")
-    for (k in seq_len(res)) {
+    for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
             "'SpatialDataLabel' resolution", k, "is not ", d, "D"))
@@ -81,29 +79,42 @@ setValidity2("SpatialDataLabel", .validateLabel)
 
 #' @importFrom dplyr count pull
 .validatePoint <- \(object) {
-    msg <- c()
-    cnt <- tryCatch(error=\(.) 0, as.integer(
-        pull(count(spatialdataR::data(object)), "n")))
-    if (!cnt) return(msg)
-    if (!"geometry" %in% names(object))
-        msg <- c(msg, "'SpatialDataPoint' missing 'geometry'.")
-    return(msg)
+    f <- \() pull(count(spatialdataR::data(object)), "n")
+    n <- tryCatch(error=\(.) 0, as.integer(f()))
+    if (!n) return(NULL)
+    if (!"geometry" %in% names(object)) 
+        return("'SpatialDataPoint' missing 'geometry'.")
+    return(NULL)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataPoint", .validatePoint)
 
 .validateShape <- \(object) {
-    msg <- c()
-    if (!"geometry" %in% names(object))
-        msg <- c(msg, "'SpatialDataShape' missing 'geometry'.")
-    return(msg)
+    if (!"geometry" %in% names(object)) 
+        return("'SpatialDataShape' missing 'geometry'.")
+    return(NULL)
 }
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataShape", .validateShape)
 
+.nm <- \(x, l) {
+    msg <- c()
+    lys <- get(l)(x)
+    nms <- names(lys)
+    typ <- class(lys)[[1]]
+    if (is.null(nms)) return(paste(typ, "missing names"))
+    na <- nchar(nms) == 0
+    if (any(na)) {
+        na <- paste(which(na), collapse=",")
+        return(paste(typ, "elements", na, "missing names"))
+    }
+    return(NULL)
+}
+
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
     msg <- c()
+    for (l in .LAYERS) msg <- c(msg, .nm(x, l))
     # TODO: validate .zattrs across all layers
     for (y in as.list(labels(x))) msg <- c(msg, .validateLabel(y))
     for (y in as.list(images(x))) msg <- c(msg, .validateImage(y))

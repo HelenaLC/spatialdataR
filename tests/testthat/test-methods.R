@@ -77,10 +77,18 @@ test_that("element()", {
 test_that("element<-()", {
     i <- vapply(colnames(x), \(.) .[1], character(1))
     for (. in i) {
-        y <- x; element(y, .) <- element(x, .)
-        expect_identical(element(y, .), element(x, .))
+        # clear
         y <- x; element(y, .) <- NULL
         expect_error(element(y, .))
+        # valid
+        y <- x; element(y, .) <- element(x, .)
+        expect_identical(element(y, .), element(x, .))
+        # invalid
+        es <- colnames(x)
+        ex <- unlist(es[layer(x, .)])
+        es <- setdiff(unlist(es), ex)
+        el <- element(x, sample(es, 1))
+        expect_error(element(x, .) <- el)
     }
 })
 
@@ -117,6 +125,17 @@ test_that("set all", {
         y[[.]][[2]] <- obj[[.]]
         expect_length(y[[.]], 2)
         expect_identical(y[[.]][[2]], obj[[.]])
+        # auto-naming to layer+index
+        y <- x; y[[.]] <- list(obj[[.]]) # all unnamed
+        expect_named(y[[.]])
+        expect_length(y[[.]], 1)
+        expect_is(y[[.]], "SimpleList")
+        expect_identical(names(y[[.]]), gsub("s$", "1", .))
+        y <- x; y[[.]] <- list(a=obj[[.]], obj[[.]], b=obj[[.]]) # one unnamed
+        expect_named(y[[.]])
+        expect_length(y[[.]], 3)
+        expect_is(y[[.]], "SimpleList")
+        expect_identical(names(y[[.]]), c("a", gsub("s$", "2", .), "b"))
     }
 })
 
@@ -131,17 +150,27 @@ test_that("set one", {
     }
     # value=in/valid
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
+        all <- get(paste0(f, "s"))
         set <- get(paste0(f, "<-"))
         nms <- get(paste0(f, "Names"))
+        n <- \(.) length(all(.))
         # character
-        x <- set(x, i=".", value=o)
-        expect_true("." %in% nms(x))
-        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, "."), t)
+        y <- set(x, i=".", value=o)
+        expect_true("." %in% nms(y))
+        expect_is(get(f)(y, "."), t)
         # numeric
-        x <- set(x, i=1, value=o)
-        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, 1), t)
+        y <- set(x, i=1, value=o)
+        expect_is(get(f)(y, 1), t)
+        # when index > number of elements,
+        # element name becomes layer+index
+        y <- set(x, i=n(x)+1, value=o)
+        i <- paste0(f, n(x)+1)
+        expect_true(i %in% nms(y))
+        expect_length(all(y), n(x)+1)
+        expect_identical(element(y, i), o)
+        z <- set(x, i=n(x)+2, value=o)
+        expect_identical(nms(y), nms(z))
         # missing
-        n <- \(.) length(get(paste0(f, "s"))(.))
         expect_silent(set(x, value=o))
         y <- set(x, value=NULL)
         expect_equal(n(y), n(x)-1)
