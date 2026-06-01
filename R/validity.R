@@ -101,9 +101,26 @@ setValidity2("SpatialDataPoint", .validatePoint)
 #' @importFrom S4Vectors setValidity2
 setValidity2("SpatialDataShape", .validateShape)
 
+.nm <- \(x, l) {
+    msg <- c()
+    lys <- get(l)(x)
+    nms <- names(lys)
+    typ <- class(lys)[[1]]
+    if (is.null(nms)) {
+        msg <- c(msg, sprintf("'%s' missing names", typ))
+    } else {
+        na <- nchar(nms) == 0
+        if (any(na)) {
+            msg <- c(msg, sprintf("'%s' elements %s missing names", typ, which(na)))
+        }
+    }
+    return(msg)
+}
+
 #' @importFrom methods is
 .validateSpatialData <- \(x) {
     msg <- c()
+    for (l in .LAYERS) msg <- c(msg, .nm(x, l))
     # TODO: validate .zattrs across all layers
     for (y in as.list(labels(x))) msg <- c(msg, .validateLabel(y))
     for (y in as.list(images(x))) msg <- c(msg, .validateImage(y))
