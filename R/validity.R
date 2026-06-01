@@ -192,7 +192,6 @@ setValidity2("SpatialData", .validateSpatialData)
     return(msg)
 }
 .validateAttrsLabel <- \(x) {
-    x <- label(sd)
     msg <- c()
     za <- meta(x)
     msg <- .validateAttrs_multiscales(za, msg)

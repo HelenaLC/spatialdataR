@@ -31,6 +31,7 @@
     return(x)
 }
 
+#' @importFrom methods slot<-
 .sync_tables_sdattrs <- \(x, old, new) {
     if (!length(ts <- tables(x))) return(x)
     for (i in seq_along(ts)) {
@@ -73,6 +74,7 @@
     return(x)
 }
 
+#' @importFrom methods slot<-
 .sync_tables_on_drop <- \(x) {
     if (!length(ts <- tables(x))) return(x)
     all_nms <- unlist(colnames(x)[.ls])

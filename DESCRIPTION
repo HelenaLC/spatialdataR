@@ -1,7 +1,7 @@
 Package: spatialdataR
 Title: Representation of Python's spatialdata in R
 Depends: R (>= 4.6)
-Version: 0.99.40
+Version: 0.99.41
 Description: R interface to Python/scverse's 'spatialdata' framework for 
     unified spatial omics data handling. Adheres to OME-NGFF standards, 
     providing lazy, on-disk representations for multiscale images and 
@@ -64,6 +64,6 @@ biocViews:
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr
-URL: https://helenalc.github.io/SpatialData/, https://github.com/HelenaLC/SpatialData
-BugReports: https://github.com/HelenaLC/SpatialData/issues
+BugReports: https://github.com/HelenaLC/spatialdataR/issues
+URL: https://helenalc.github.io/spatialdataR, https://github.com/HelenaLC/spatialdataR
 Config/roxygen2/version: 8.0.0
