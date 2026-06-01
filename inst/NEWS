@@ -1,3 +1,9 @@
+changes in version 0.99.40
+
+- validty & setters now assure that each layer is a completely named list
+- 'SpatialDataImage/Label()' now accept single array (previously required list)
+- simplified various code bits (e.g., using 'lengths()', 'seq_along()', etc.)
+
 changes in version 0.99.39
 
 - class revision: SpatialData slots were base::list, now prototyped 
