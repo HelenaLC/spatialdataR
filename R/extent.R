@@ -29,8 +29,8 @@ NULL
 setMethod("extent", "SpatialData", \(x, i=1) {
     ex <- .lapplyLayer(x, extent, i=i)
     ex <- unlist(ex, recursive=FALSE)
-    xy <- do.call(rbind, lapply(ex, do.call, what=cbind))
-    list(x=range(xy[, 1]), y=range(xy[, 2]))
+    xy <- dplyr::bind_rows(ex)
+    list(x=range(xy$x), y=range(xy$y))
 })
 
 #' @export

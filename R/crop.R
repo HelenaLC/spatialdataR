@@ -201,7 +201,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
-#' @importFrom dplyr pull
+#' @importFrom dplyr pull .data
 #' @importFrom duckspatial ddbs_intersects
 #' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
@@ -225,8 +225,7 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
     df <- data(transform(x, j))
     fd <- data(SpatialDataShape(fd))
     ok <- ddbs_intersects(df, fd, sparse=TRUE)
-    id_x <- NULL # R CMD check
-    x[pull(ok, id_x), ]
+    x[pull(ok, .data$id_x), ]
 })
 
 #' @export

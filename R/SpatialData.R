@@ -60,10 +60,8 @@ SpatialData <- \(
     shapes=list(), 
     tables=list())
 {
-    .SpatialData(
-        images=sdImageList(images),
-        labels=sdLabelList(labels),
-        points=sdPointList(points),
-        shapes=sdShapeList(shapes),
-        tables=sdTableList(tables))
+    sd <- .SpatialData()
+    for (l in .LAYERS)
+        sd[[l]] <- get(l)
+    return(sd)
 }
