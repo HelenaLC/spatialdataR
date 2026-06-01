@@ -67,7 +67,8 @@ NULL
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+SpatialDataImage <- \(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    if (is.array(data)) data <- list(data)
     x <- .SpatialDataImage(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)
@@ -77,7 +78,8 @@ SpatialDataImage <- function(data=list(), meta=SpatialDataAttrs(), metadata=list
 #' @rdname SpatialDataArray
 #' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataLabel <- function(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+SpatialDataLabel <- \(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    if (is.array(data)) data <- list(data)
     x <- .SpatialDataLabel(data=data, meta=meta, ...)
     metadata(x) <- metadata
     return(x)

@@ -52,7 +52,7 @@ NULL
 #' @rdname CTutils
 #' @export
 setMethod("axes", "SpatialDataAttrs", \(x, ...) {
-    ms <- .ms(x)
+    ms <- multiscales(x)
     if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
     return(x)
@@ -63,7 +63,7 @@ setMethod("axes", "SpatialDataAttrs", \(x, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
-    ms <- .ms(x)
+    ms <- multiscales(x)
     ct <- "coordinateTransformations"
     if (is.null(ms)) return(x[[ct]])
     ms[[1]][[ct]]

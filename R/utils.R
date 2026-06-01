@@ -52,7 +52,7 @@
         }
         ts[[i]] <- t
     }
-    tables(x) <- ts
+    slot(x, "tables") <- ts
     return(x)
 }
 
@@ -98,6 +98,6 @@
     if (any(drop)) {
         ts <- ts[!drop]
     }
-    tables(x) <- ts
+    slot(x, "tables") <- ts
     return(x)
 }

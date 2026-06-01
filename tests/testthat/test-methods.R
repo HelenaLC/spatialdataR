@@ -9,6 +9,37 @@ typ <- c("SpatialDataImage", "SpatialDataLabel", "SpatialDataShape", "SpatialDat
 
 # get ----
 
+test_that("get all", {
+    for (. in .LAYERS) {
+        y <- slot(x, .)
+        expect_identical(x[[.]], y)
+        expect_identical(x[[.LAYERS[.]]], y)
+    }
+    for (f in paste0(fun, "s"))
+        expect_is(get(f)(x), "SimpleList")
+    expect_error(x[[0]])
+    expect_error(x[[7]])
+    expect_error(x[["x"]])
+})
+
+test_that("get one", {
+    env <- asNamespace("spatialdataR")
+    # i=numeric
+    mapply(f=fun, t=typ, \(f, t)
+        expect_is(get(f, envir=env)(x, i=1), t))
+    # i=character
+    mapply(f=fun, t=typ, n=nms, \(f, t, n)
+        expect_is(get(f, envir=env)(x, i=n), t))
+    # i=invalid
+    for (f in fun) {
+        expect_error(get(f, envir=env)(x, 0))
+        expect_error(get(f, envir=env)(x, "."))
+        expect_error(get(f, envir=env)(x, c(1,1)))
+        y <- get(paste0(f, "s<-"))(x, list())
+        expect_null(get(f, envir=env)(y, 1))
+    }
+})
+
 test_that("layer()", {
     ok <- unlist(colnames(x))
     # invalid
@@ -33,10 +64,12 @@ test_that("element()", {
     expect_error(element(x, "."))
     expect_error(element(x, TRUE))
     # valid
-    expect_silent(element(x, 1))
+    expect_silent(a <- element(x))
+    expect_silent(b <- element(x, 1))
+    expect_identical(a, b)
     replicate(5, {
         i <- sample(.LAYERS, 1)
-        j <- sample(names(attr(x, i)), 1)
+        j <- sample(names(slot(x, i)), 1)
         expect_identical(x[[i]][[j]], element(x, j))
     })
 })
@@ -44,34 +77,18 @@ test_that("element()", {
 test_that("element<-()", {
     i <- vapply(colnames(x), \(.) .[1], character(1))
     for (. in i) {
-        y <- x; element(y, .) <- element(x, .)
-        expect_identical(element(y, .), element(x, .))
+        # clear
         y <- x; element(y, .) <- NULL
         expect_error(element(y, .))
-    }
-})
-
-test_that("get all", {
-    for (f in paste0(fun, "s"))
-        expect_is(get(f)(x), "list")
-})
-
-test_that("get one", {
-    env <- asNamespace("spatialdataR")
-    # i=numeric
-    mapply(f=fun, t=typ, \(f, t)
-        expect_is(get(f, envir=env)(x, i=1), t))
-    # i=character
-    mapply(f=fun, t=typ, n=nms, \(f, t, n)
-        expect_is(get(f, envir=env)(x, i=n), t))
-    # i=invalid
-    for (f in fun) {
-        expect_error(get(f, envir=env)(x, 0))
-        expect_error(get(f, envir=env)(x, "."))
-        expect_error(get(f, envir=env)(x, c(1,1)))
-        set <- get(paste0(f, "s<-"))
-        y <- set(x, list())
-        expect_error(get(f, envir=env)(y, 1))
+        # valid
+        y <- x; element(y, .) <- element(x, .)
+        expect_identical(element(y, .), element(x, .))
+        # invalid
+        es <- colnames(x)
+        ex <- unlist(es[layer(x, .)])
+        es <- setdiff(unlist(es), ex)
+        el <- element(x, sample(es, 1))
+        expect_error(element(x, .) <- el)
     }
 })
 
@@ -86,6 +103,15 @@ obj <- list(
 
 test_that("set all", {
     for (. in .LAYERS) {
+        # invalid
+        y <- x; expect_error(y[[.]] <- "ao")
+        y <- x; expect_error(y[[.]] <- 7777)
+        y <- x; expect_error(y[[.]] <- TRUE)
+        y <- x; expect_error(y[[987]] <- list())
+        y <- x; expect_error(y[["x"]] <- list())
+        # clear
+        y <- x; y[[.]] <- NULL
+        expect_length(y[[.]], 0)
         y <- x; y[[.]] <- list()
         expect_length(y[[.]], 0)
         # character
@@ -93,9 +119,23 @@ test_that("set all", {
         expect_length(y[[.]], 1)
         expect_identical(y[[.]][[1]], obj[[.]])
         # index
+        z <- x; z[[match(., .LAYERS)]] <- y[[.]]
+        expect_identical(z[[.]], y[[.]])
+        # element
         y[[.]][[2]] <- obj[[.]]
         expect_length(y[[.]], 2)
         expect_identical(y[[.]][[2]], obj[[.]])
+        # auto-naming to layer+index
+        y <- x; y[[.]] <- list(obj[[.]]) # all unnamed
+        expect_named(y[[.]])
+        expect_length(y[[.]], 1)
+        expect_is(y[[.]], "SimpleList")
+        expect_identical(names(y[[.]]), gsub("s$", "1", .))
+        y <- x; y[[.]] <- list(a=obj[[.]], obj[[.]], b=obj[[.]]) # one unnamed
+        expect_named(y[[.]])
+        expect_length(y[[.]], 3)
+        expect_is(y[[.]], "SimpleList")
+        expect_identical(names(y[[.]]), c("a", gsub("s$", "2", .), "b"))
     }
 })
 
@@ -110,17 +150,27 @@ test_that("set one", {
     }
     # value=in/valid
     mapply(f=fun, o=obj, t=typ, \(f, o, t) {
+        all <- get(paste0(f, "s"))
         set <- get(paste0(f, "<-"))
         nms <- get(paste0(f, "Names"))
+        n <- \(.) length(all(.))
         # character
-        x <- set(x, i=".", value=o)
-        expect_true("." %in% nms(x))
-        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, "."), t)
+        y <- set(x, i=".", value=o)
+        expect_true("." %in% nms(y))
+        expect_is(get(f)(y, "."), t)
         # numeric
-        x <- set(x, i=1, value=o)
-        expect_is(get(f, envir=asNamespace("spatialdataR"))(x, 1), t)
+        y <- set(x, i=1, value=o)
+        expect_is(get(f)(y, 1), t)
+        # when index > number of elements,
+        # element name becomes layer+index
+        y <- set(x, i=n(x)+1, value=o)
+        i <- paste0(f, n(x)+1)
+        expect_true(i %in% nms(y))
+        expect_length(all(y), n(x)+1)
+        expect_identical(element(y, i), o)
+        z <- set(x, i=n(x)+2, value=o)
+        expect_identical(nms(y), nms(z))
         # missing
-        n <- \(.) length(get(paste0(f, "s"))(.))
         expect_silent(set(x, value=o))
         y <- set(x, value=NULL)
         expect_equal(n(y), n(x)-1)
@@ -144,8 +194,10 @@ test_that("set nms", {
     y <- x; val <- letters[seq_along(images(x))]
     expect_silent(imageNames(y) <- val)
     expect_identical(imageNames(y), val)
+    y <- x
     r <- region(table(x))
-    y <- x; labelNames(y) <- "x"
+    labels(y) <- labels(y)[r]
+    labelNames(y) <- "x"
     r <- region(table(y))
     expect_identical(r, "x")
 })
@@ -156,7 +208,7 @@ test_that("$", {
     mapply(i=paste0(fun, "s"), n=nms, t=typ, \(i, n, t) {
         # object-wide
         f <- parse(text=sprintf("x$%s", i))
-        expect_is(y <- eval(f), "list")
+        expect_is(y <- eval(f), "SimpleList")
         # element-wise
         expect_is(names(y), "character")
         expect_length(names(y), length(y))
@@ -254,9 +306,14 @@ test_that("[,SpatialData", {
     n <- .n(y <- x[c(1, 2), list(1, j <- c(1, 2))])
     expect_true(all(n[j] == c(1, 2)))
     expect_true(all(n[-j] == 0))
+    for (l in rownames(x)) {
+        e <- names(x[[l]])
+        expect_no_error(y <- x[l, e[1]])
+    }
     # invalid
     expect_error(x[9,1])
     expect_error(x[1,9])
+    expect_error(x[1,"x"])
     # missing both
     expect_identical(x[,], x)
     # missing 'i'
@@ -273,5 +330,5 @@ test_that("[,SpatialData", {
     n <- .n(y <- x[,-1])
     expect_equal(n, .n(x)-1)
     # infinite 'j'
-    expect_silent(y <- x[1, Inf])
+    expect_no_error(y <- x[1, Inf])
 })
