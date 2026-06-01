@@ -168,6 +168,8 @@ test_that("set one", {
         expect_true(i %in% nms(y))
         expect_length(all(y), n(x)+1)
         expect_identical(element(y, i), o)
+        z <- set(x, i=n(x)+2, value=o)
+        expect_identical(nms(y), nms(z))
         # missing
         expect_silent(set(x, value=o))
         y <- set(x, value=NULL)
