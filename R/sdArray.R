@@ -133,7 +133,8 @@ setMethod("data_type", "DelayedArray", \(x) {
     if (v == "0.5") x <- x$ome
     # NOTE: can't use 'vapply' as we 
     # have encountered integer 'label's  
-    unlist(lapply(x$omero$channels, `[[`, "label"))
+    x <- x$omero$channels
+    x$label %||% unlist(lapply(x, `[[`, "label"))
 }
 
 #' @export
