@@ -63,6 +63,16 @@ NULL
 
 # new ----
 
+.new_sda <- \(type, data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+    if (is.array(data)) data <- list(data)
+    x <- new(type, data=data, meta=meta, ...)
+    metadata(x) <- metadata
+    return(x)
+}
+
+SpatialDataImage <- \(...) .new_sda("SpatialDataImage", ...)
+SpatialDataLabel <- \(...) .new_sda("SpatialDataLabel", ...)
+
 #' @export
 #' @rdname SpatialDataArray
 #' @importFrom methods new
@@ -160,46 +170,53 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
     )
 }
 
-#' @exportMethod [
-#' @rdname SpatialDataArray
-#' @importFrom utils head tail
-setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
-    if (missing(i)) i <- TRUE
-    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
-    ijk <- list(i, j, k)
-    n <- length(data(x, NULL))
-    d <- dim(data(x))
-    data(x) <- lapply(seq_len(n), \(.) {
-        j <- if (isTRUE(j)) seq_len(d[2]) else j
-        k <- if (isTRUE(k)) seq_len(d[3]) else k
-        jk <- lapply(list(j, k), \(jk) {
-            fac <- 2^(.-1)
-            seq(floor(head(jk, 1)/fac), 
-                ceiling(tail(jk, 1)/fac))
-        })
-        data(x, .)[i, jk[[1]], jk[[2]], drop=FALSE]
-    })
-    x
-})
+# https://github.com/Huber-group-EMBL/Rarr/blob/1795c676e2ac81a9ba2a592c7210cc59036544b6/R/utils.R#L74-L79
+.sub <- \(x, ix) rlang::inject(x[!!!ix, drop=FALSE])
 
 #' @exportMethod [
 #' @rdname SpatialDataArray
 #' @importFrom utils head tail
+.sub_sda <- \(x, yx, z=list()) {
+    #x <- label(sd); yx <- list(1:10, 1:10); z <- list()
+    # yx: spatial; z: channels
+    ls <- seq_along(data(x, NULL))
+    data(x) <- lapply(ls, \(l) {
+        sf <- 2^(l-1)   
+        rc <- tail(dim(data(x, l)), 2) 
+        # get spatial indices
+        .yx <- lapply(seq_along(yx), \(a) {
+            ix <- yx[[a]]
+            if (isTRUE(ix)) return(seq_len(rc[a]))
+            if (is.numeric(ix)) {
+                return(seq(
+                    floor(head(ix, 1)/sf),
+                    min(ceiling(tail(ix, 1)/sf), rc[a])))
+            }
+            ix 
+        })
+        # combine leading & spatial indices
+        ix <- c(z, .yx)
+        # (optional) prepend additional indices
+        nd <- length(dim(data(x)))
+        na <- nd-length(ix)
+        if (na > 0) {
+            na <- !logical(na)
+            ix <- c(as.list(na), ix)
+        }
+        .sub(data(x, l), ix)
+    })
+    x
+}
+
+setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
+    if (missing(i)) i <- TRUE
+    if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
+    if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
+    .sub_sda(x, yx=list(j, k), z=list(i))
+})
+
 setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    n <- length(data(x, NULL))
-    d <- dim(data(x, 1))
-    data(x) <- lapply(seq_len(n), \(.) {
-        i <- if (isTRUE(i)) seq_len(d[1]) else i
-        j <- if (isTRUE(j)) seq_len(d[2]) else j
-        ij <- lapply(list(i, j), \(ij) {
-            fac <- 2^(.-1)
-            seq(floor(head(ij, 1)/fac), 
-                ceiling(tail(ij, 1)/fac))
-        })
-        data(x, .)[ij[[1]], ij[[2]], drop=FALSE]
-    })
-    x
+    .sub_sda(x, yx=list(i, j), z=list())
 })

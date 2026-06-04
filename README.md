@@ -1,6 +1,6 @@
 # SpatialData
 
-[![Bioc Check](https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+[![R-universe](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml)
 
 `spatialdataR` provides an R interface to Python's [spatialdata](https://spatialdata.scverse.org) framework. 
 It enables the representation, handling, and integration of diverse spatial omics datasets 
