@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.38</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.42</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/SpatialData.html">Introduction to `spatialdataR`</a></li>
+<li><a class="dropdown-item" href="articles/SpatialData.html">spatialdataR</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
@@ -44,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/HelenaLC/SpatialData/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/HelenaLC/spatialdataR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -55,14 +55,14 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="spatialdata">SpatialData<a class="anchor" aria-label="anchor" href="#spatialdata"></a>
 </h1></div>
-<p><a href="https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&amp;event=push" alt="Bioc Check"></a></p>
+<p><a href="https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml" class="external-link"><img src="https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml/badge.svg?branch=main&amp;event=push" alt="R-universe"></a></p>
 <p><code>spatialdataR</code> provides an R interface to Python’s <a href="https://spatialdata.scverse.org" class="external-link">spatialdata</a> framework. It enables the representation, handling, and integration of diverse spatial omics datasets using the <a href="https://ngff.openmicroscopy.org" class="external-link">OME-NGFF (Next Generation File Format)</a> standard. For more details on the framework, see <a href="https://doi.org/10.1038/s41592-024-02212-x" class="external-link">Marconato et al. (2024)</a>.</p>
 <div class="section level2">
 <h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
 </h2>
 <ul>
 <li>
-<a href="https://helenalc.github.io/SpatialData/articles/spatialdataR.html">SpatialData class</a> documentation.</li>
+<a href="https://helenalc.github.io/spatialdataR/articles/spatialdataR.html" class="external-link">SpatialData class</a> documentation.</li>
 <li>
 <a href="https://github.com/HelenaLC/SpatialData.plot" class="external-link">SpatialData.plot</a>: Visualization capabilities.</li>
 <li>
@@ -95,7 +95,7 @@
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">spatialdataR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/spatialdataR" class="external-link">spatialdataR</a></span><span class="op">)</span></span>
 <span><span class="va">zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blobs.zarr"</span>, package<span class="op">=</span><span class="st">"spatialdataR"</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/readSpatialData.html">readSpatialData</a></span><span class="op">(</span><span class="va">zs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code>class: SpatialData
@@ -128,8 +128,8 @@ coordinate systems(5):
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/HelenaLC/SpatialData/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/HelenaLC/SpatialData/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/HelenaLC/spatialdataR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/HelenaLC/spatialdataR/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 

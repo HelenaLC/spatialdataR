@@ -1,7 +1,6 @@
 # SpatialData
 
-[![Bioc
-Check](https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+[![R-universe](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml)
 
 `spatialdataR` provides an R interface to Python’s
 [spatialdata](https://spatialdata.scverse.org) framework. It enables the
@@ -14,7 +13,7 @@ al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 ## Resources
 
 - [SpatialData
-  class](https://helenalc.github.io/SpatialData/articles/spatialdataR.html)
+  class](https://helenalc.github.io/spatialdataR/articles/spatialdataR.html)
   documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
   Visualization capabilities.
@@ -148,8 +147,9 @@ Stadler.*
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   : The \`SpatialData\` class
 
 - [`SpatialDataImage()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
@@ -161,8 +161,7 @@ Stadler.*
   [`channels(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataImage>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
-  [`` `[`( ``*`<SpatialDataImage>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
-  [`` `[`( ``*`<SpatialDataLabel>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`.sub_sda()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   :
 
   `SpatialDataArray`
@@ -216,7 +215,8 @@ Stadler.*
   [`centroids(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
   : Spatial element centroids
 
-- [`combine(`*`<SpatialData>`*`,`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
+- [`combine(`*`<list>`*`,`*`<missing>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
+  [`combine(`*`<SpatialData>`*`,`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
   :
 
   Combine two `SpatialData` objects
@@ -239,6 +239,14 @@ Stadler.*
   [`show(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
   [`show(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
   : Miscellaneous \`SpatialData\` methods
+
+- [`path(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  :
+
+  Retrieve `SpatialData` on-disk paths
 
 - [`query(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/query.md)
   : queries
@@ -276,5 +284,4 @@ Stadler.*
 
 ### All vignettes
 
-- [Introduction to
-  \`spatialdataR\`](https://helenalc.github.io/SpatialData/articles/SpatialData.md):
+- [spatialdataR](https://helenalc.github.io/SpatialData/articles/SpatialData.md):

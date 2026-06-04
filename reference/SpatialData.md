@@ -13,7 +13,13 @@ OME-NGFF (Next Generation File Format) standard. In R,
 ## Usage
 
 ``` r
-SpatialData(images, labels, points, shapes, tables)
+SpatialData(
+  images = list(),
+  labels = list(),
+  points = list(),
+  shapes = list(),
+  tables = list()
+)
 
 # S4 method for class 'SpatialData'
 x$name
@@ -78,10 +84,13 @@ shapes(x)
 # S4 method for class 'SpatialData'
 tables(x)
 
+# S4 method for class 'SpatialData,character,ANY'
+x[[i]] <- value
+
 # S4 method for class 'SpatialData,numeric,ANY'
 x[[i]] <- value
 
-# S4 method for class 'SpatialData,character,ANY'
+# S4 method for class 'SpatialData,ANY,ANY'
 x[[i]] <- value
 ```
 
@@ -135,6 +144,11 @@ x[[i]] <- value
 - ...:
 
   optional arguments passed to and from other methods.
+
+- k:
+
+  scalar index specifying which scale to use; `Inf` to use lowest
+  available resolution.
 
 - drop:
 
@@ -197,6 +211,7 @@ x[-4] # drop layer
 #> - affine(1): blobs_labels
 #> - sequence(1): blobs_labels
 x[4, -2] # drop element
+#> dropping table 'table' because all its annotated regions were removed
 #> class: SpatialData
 #> - images(0):
 #> - labels(0):
@@ -208,6 +223,7 @@ x[4, -2] # drop element
 #> coordinate systems(1):
 #> - global(2): blobs_circles blobs_polygons
 x["shapes", c(1, 3)] # subset layer
+#> dropping table 'table' because all its annotated regions were removed
 #> class: SpatialData
 #> - images(0):
 #> - labels(0):
