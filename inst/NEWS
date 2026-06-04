@@ -1,3 +1,8 @@
+changes in version 0.99.42
+
+- revised 'crop()' to adjust for array multiscales with scale factor != 1
+- revised subsetting to support >2/3D arrays (t & z dims. are protected)
+
 changes in version 0.99.41
 
 - fix vignette to call 'spatialdataR::transform()' explicitly

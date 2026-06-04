@@ -155,9 +155,11 @@ NULL
 
 #' @export
 #' @rdname crop
+#' @importFrom utils tail
 #' @importFrom methods is
 #' @importFrom sf st_bbox
 setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
+    #x <- label(sd); y <- bb; j <- 1
     if (is.matrix(y)) {
         y <- .check_pol(y)
         y <- st_bbox(st_polygon(list(y)))
@@ -193,11 +195,27 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
         wh[[2]] <- wh[[2]][1] + c(z$ymin, z$ymax)
     }
     metadata(x)$wh <- wh
+    # multi-scale adjustment
+    t <- .get_multiscale_scale(x)
+    tx <- tail(t, 1)
+    ty <- tail(t, 2)[1]
+    z$xmin <- floor(z$xmin/tx)
+    z$ymin <- floor(z$ymin/ty)
+    z$xmax <- ceiling(z$xmax/tx)
+    z$ymax <- ceiling(z$ymax/ty)
     # subset array
     i <- seq(z$ymin+1, z$ymax)
-    j <- seq(z$xmin+1, z$xmax) 
-    if (n == 3) x[, i, j] else x[i, j]
+    j <- seq(z$xmin+1, z$xmax)
+    ii <- is(x, "SpatialDataImage")
+    if (ii) x[, i, j] else x[i, j] 
 })
+
+.get_multiscale_scale <- \(x) {
+    ms <- multiscales(meta(x))[[1]]
+    ds <- ms$datasets[[1]]
+    ct <- ds$coordinateTransformations[[1]]
+    return(unlist(ct$scale))
+}
 
 #' @export
 #' @rdname crop
