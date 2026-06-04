@@ -13,7 +13,8 @@
 \alias{channels,SpatialDataAttrs-method}
 \alias{channels,SpatialDataImage-method}
 \alias{channels,SpatialDataElement-method}
-\alias{.sub_sda}
+\alias{[,SpatialDataImage,ANY,ANY,ANY-method}
+\alias{[,SpatialDataLabel,ANY,ANY,ANY-method}
 \title{\code{SpatialDataArray}}
 \usage{
 SpatialDataImage(
@@ -44,7 +45,9 @@ SpatialDataLabel(
 
 \S4method{channels}{SpatialDataElement}(x, ...)
 
-.sub_sda(x, yx, z = list())
+\S4method{[}{SpatialDataImage,ANY,ANY,ANY}(x, i, j, k, ..., drop = FALSE)
+
+\S4method{[}{SpatialDataLabel,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 }
 \arguments{
 \item{data}{list of \code{ZarrArray}s}

@@ -175,8 +175,6 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 # https://github.com/Huber-group-EMBL/Rarr/blob/1795c676e2ac81a9ba2a592c7210cc59036544b6/R/utils.R#L74-L79
 .sub <- \(x, ix) rlang::inject(x[!!!ix, drop=FALSE])
 
-#' @exportMethod [
-#' @rdname SpatialDataArray
 #' @importFrom utils head tail
 .sub_sda <- \(x, yx, z=list()) {
     #x <- label(sd); yx <- list(1:10, 1:10); z <- list()
@@ -210,6 +208,8 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
     x
 }
 
+#' @exportMethod [
+#' @rdname SpatialDataArray
 setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
@@ -217,6 +217,8 @@ setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
     .sub_sda(x, yx=list(j, k), z=list(i))
 })
 
+#' @exportMethod [
+#' @rdname SpatialDataArray
 setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
