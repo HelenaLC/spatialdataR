@@ -1,4 +1,4 @@
-# Introduction to \`spatialdataR\`
+# spatialdataR
 
 ## Preamble
 
@@ -6,18 +6,18 @@
 
 The
 *[spatialdataR](https://bioconductor.org/packages/3.24/spatialdataR)*
-package provides an R interface to the
-[SpatialData](https://spatialdata.scverse.org) framework, a unified
-ecosystem for handling spatial omics data. Developed as part of the
+package provides an R interface to Python’s
+[spatialdata](https://spatialdata.scverse.org) framework for unified
+handling of spatial omics data, including tabular annotations, vector-
+and raster-based components. Developed as part of the
 [scverse](https://scverse.org) project (Virshup et al. 2023),
-`SpatialData` aims to solve the challenges of integrating diverse
-spatial datasets—including imaging, spatial transcriptomics, and
-proteomics—by employing the [OME-NGFF (Next Generation File
-Format)](https://ngff.openmicroscopy.org) standard (Marconato et al.
-2025).
+`spatialdata` aims to solve the challenges of integrating diverse
+spatial datasets – including – by employing the [OME-NGFF (Next
+Generation File Format)](https://ngff.openmicroscopy.org) standard
+(Marconato et al. 2025).
 
-The Python implementation and core specifications can be found at the
-[official SpatialData website](https://spatialdata.scverse.org).
+The Python implementation and core specifications are found at the
+[official `spatialdata` website](https://spatialdata.scverse.org).
 
 ### Representation
 
@@ -25,8 +25,8 @@ The core data structure is the `SpatialData` class, which organizes data
 into 5 coordinated **layers: images, labels, points, shapes, and
 tables**. Each layer is stored as a list of layer-specific objects that
 carry associated `SpatialDataAttr` (`@meta` slot), which encode
-`spatialdata`-specific zarr attributes (*.zattr* for Zarr v2, and
-*zarr.json* for Zarr v3) Together, these layers provide a unified
+`spatialdata`-specific Zarr attributes (*.zattr* for Zarr v2, and
+*zarr.json* for Zarr v3). Together, these layers provide a unified
 representation of spatial omics data, combining raster, vector, and
 tabular data within a single coherent framework.
 
@@ -309,7 +309,7 @@ respective transformation(s). Under the hood, this involves:
 a <- label(sd)
 
 # project into 'global'
-b <- transform(a, "scale")
+b <- spatialdataR::transform(a, "scale")
 
 # compare XY extents
 do.call(rbind, c(a=extent(a), b=extent(b)))
@@ -453,7 +453,7 @@ could be customize before combining.
 
 ``` r
 
-sp <- combine(sd, sd)
+sp <- combine(list(foo=sd, bar=sd))
 cbind(
     original=lengths(colnames(sd)),
     combined=lengths(colnames(sp)))
@@ -471,8 +471,8 @@ cbind(
 imageNames(sp)
 ```
 
-    ## [1] "blobs_image"              "blobs_multiscale_image"  
-    ## [3] "blobs_image.1"            "blobs_multiscale_image.1"
+    ## [1] "foo.blobs_image"            "foo.blobs_multiscale_image"
+    ## [3] "bar.blobs_image"            "bar.blobs_multiscale_image"
 
 ### Coordinates
 
@@ -559,7 +559,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-05-28 r90085)
+    ## R Under development (unstable) (2026-06-02 r90096)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -586,7 +586,7 @@ sessionInfo()
     ##  [5] Seqinfo_1.3.0               IRanges_2.47.2             
     ##  [7] S4Vectors_0.51.3            BiocGenerics_0.59.6        
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           spatialdataR_0.99.38       
+    ## [11] matrixStats_1.5.0           spatialdataR_0.99.42       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
@@ -607,7 +607,7 @@ sessionInfo()
     ## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.46      
     ## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  
     ## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         
-    ## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.16        
+    ## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.17        
     ## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     
     ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
     ## [61] dbplyr_2.5.2        httr2_1.2.2         wk_0.9.5           
@@ -615,7 +615,7 @@ sessionInfo()
     ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.1.0  
     ## [70] paws.common_0.8.9   bslib_0.11.0        class_7.3-23       
     ## [73] Rcpp_1.1.1-1.1      uuid_1.2-2          SparseArray_1.13.2 
-    ## [76] anndataR_1.3.0      xfun_0.57           fs_2.1.0           
+    ## [76] anndataR_1.3.0      xfun_0.58           fs_2.1.0           
     ## [79] pkgconfig_2.0.3
 
 ### References

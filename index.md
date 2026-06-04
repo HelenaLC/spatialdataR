@@ -1,7 +1,6 @@
 # SpatialData
 
-[![Bioc
-Check](https://github.com/HelenaLC/spatialdataR/actions/workflows/check-bioc.yml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/SpatialData/actions/workflows/check-bioc.yml)
+[![R-universe](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml)
 
 `spatialdataR` provides an R interface to Python’s
 [spatialdata](https://spatialdata.scverse.org) framework. It enables the
@@ -14,7 +13,7 @@ al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 ## Resources
 
 - [SpatialData
-  class](https://helenalc.github.io/SpatialData/articles/spatialdataR.html)
+  class](https://helenalc.github.io/spatialdataR/articles/spatialdataR.html)
   documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
   Visualization capabilities.

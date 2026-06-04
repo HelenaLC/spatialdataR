@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Introduction to `spatialdataR` • spatialdataR</title>
+<title>spatialdataR • spatialdataR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to `spatialdataR`">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="spatialdataR">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.38</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.42</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/SpatialData.html">Introduction to `spatialdataR`</a></li>
+<li><a class="dropdown-item" href="../articles/SpatialData.html">spatialdataR</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
@@ -42,7 +42,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/HelenaLC/SpatialData/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/HelenaLC/spatialdataR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -56,11 +56,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Introduction to `spatialdataR`</h1>
+      <h1>spatialdataR</h1>
             
-            <h4 data-toc-skip class="date">May 30, 2026</h4>
+            <h4 data-toc-skip class="date">June 04, 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/SpatialData/blob/main/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/spatialdataR/blob/main/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
       <div class="d-none name"><code>SpatialData.Rmd</code></div>
     </div>
 
@@ -78,16 +78,14 @@
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
 <p>The <em><a href="https://bioconductor.org/packages/3.24/spatialdataR" class="external-link">spatialdataR</a></em>
-package provides an R interface to the <a href="https://spatialdata.scverse.org" class="external-link">SpatialData</a> framework, a
-unified ecosystem for handling spatial omics data. Developed as part of
-the <a href="https://scverse.org" class="external-link">scverse</a> project <span class="citation">(Virshup et al. 2023)</span>, <code>SpatialData</code>
-aims to solve the challenges of integrating diverse spatial
-datasets—including imaging, spatial transcriptomics, and proteomics—by
-employing the <a href="https://ngff.openmicroscopy.org" class="external-link">OME-NGFF (Next
-Generation File Format)</a> standard <span class="citation">(Marconato
-et al. 2025)</span>.</p>
-<p>The Python implementation and core specifications can be found at the
-<a href="https://spatialdata.scverse.org" class="external-link">official SpatialData
+package provides an R interface to Python’s <a href="https://spatialdata.scverse.org" class="external-link">spatialdata</a> framework for
+unified handling of spatial omics data, including tabular annotations,
+vector- and raster-based components. Developed as part of the <a href="https://scverse.org" class="external-link">scverse</a> project <span class="citation">(Virshup et al. 2023)</span>, <code>spatialdata</code>
+aims to solve the challenges of integrating diverse spatial datasets –
+including – by employing the <a href="https://ngff.openmicroscopy.org" class="external-link">OME-NGFF (Next Generation File
+Format)</a> standard <span class="citation">(Marconato et al.
+2025)</span>.</p>
+<p>The Python implementation and core specifications are found at the <a href="https://spatialdata.scverse.org" class="external-link">official <code>spatialdata</code>
 website</a>.</p>
 </div>
 <div class="section level3">
@@ -98,8 +96,8 @@ organizes data into 5 coordinated <strong>layers: images, labels,
 points, shapes, and tables</strong>. Each layer is stored as a list of
 layer-specific objects that carry associated
 <code>SpatialDataAttr</code> (<code>@meta</code> slot), which encode
-<code>spatialdata</code>-specific zarr attributes (<em>.zattr</em> for
-Zarr v2, and <em>zarr.json</em> for Zarr v3) Together, these layers
+<code>spatialdata</code>-specific Zarr attributes (<em>.zattr</em> for
+Zarr v2, and <em>zarr.json</em> for Zarr v3). Together, these layers
 provide a unified representation of spatial omics data, combining
 raster, vector, and tabular data within a single coherent framework.</p>
 <p><strong>Images/labels</strong> store raster-based data as
@@ -136,7 +134,7 @@ to read or not to read are also available.</p>
 package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># dependencies</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/SpatialData/">spatialdataR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/spatialdataR" class="external-link">spatialdataR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/drisso/SingleCellExperiment" class="external-link">SingleCellExperiment</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># path to 'spatialdata' Zarr store</span></span>
@@ -351,7 +349,7 @@ correct order (e.g., <code><a href="../reference/trans.html">scale()</a></code> 
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">label</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># project into 'global'</span></span>
-<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trans.html">transform</a></span><span class="op">(</span><span class="va">a</span>, <span class="st">"scale"</span><span class="op">)</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">spatialdataR</span><span class="fu">::</span><span class="fu"><a href="../reference/trans.html">transform</a></span><span class="op">(</span><span class="va">a</span>, <span class="st">"scale"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># compare XY extents</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a<span class="op">=</span><span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>, b<span class="op">=</span><span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -473,7 +471,7 @@ made unique across objects via <code><a href="https://rdrr.io/r/base/make.names.
 suffix to the element names of subsequent objects. Alternatively, names
 could be customize before combining.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/combine.html">combine</a></span><span class="op">(</span><span class="va">sd</span>, <span class="va">sd</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/combine.html">combine</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>foo<span class="op">=</span><span class="va">sd</span>, bar<span class="op">=</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
 <span>    original<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    combined<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -485,8 +483,8 @@ could be customize before combining.</p>
 <span><span class="co">## tables        1        2</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SpatialData.html">imageNames</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "blobs_image"              "blobs_multiscale_image"  </span></span>
-<span><span class="co">## [3] "blobs_image.1"            "blobs_multiscale_image.1"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "foo.blobs_image"            "foo.blobs_multiscale_image"</span></span>
+<span><span class="co">## [3] "bar.blobs_image"            "bar.blobs_multiscale_image"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="coordinates">Coordinates<a class="anchor" aria-label="anchor" href="#coordinates"></a>
@@ -556,7 +554,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 </h3>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R Under development (unstable) (2026-05-28 r90085)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2026-06-02 r90096)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -583,7 +581,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">##  [5] Seqinfo_1.3.0               IRanges_2.47.2             </span></span>
 <span><span class="co">##  [7] S4Vectors_0.51.3            BiocGenerics_0.59.6        </span></span>
 <span><span class="co">##  [9] generics_0.1.4              MatrixGenerics_1.25.0      </span></span>
-<span><span class="co">## [11] matrixStats_1.5.0           spatialdataR_0.99.38       </span></span>
+<span><span class="co">## [11] matrixStats_1.5.0           spatialdataR_0.99.42       </span></span>
 <span><span class="co">## [13] BiocStyle_2.41.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
@@ -604,7 +602,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.46      </span></span>
 <span><span class="co">## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  </span></span>
 <span><span class="co">## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         </span></span>
-<span><span class="co">## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.16        </span></span>
+<span><span class="co">## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.17        </span></span>
 <span><span class="co">## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     </span></span>
 <span><span class="co">## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           </span></span>
 <span><span class="co">## [61] dbplyr_2.5.2        httr2_1.2.2         wk_0.9.5           </span></span>
@@ -612,7 +610,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.1.0  </span></span>
 <span><span class="co">## [70] paws.common_0.8.9   bslib_0.11.0        class_7.3-23       </span></span>
 <span><span class="co">## [73] Rcpp_1.1.1-1.1      uuid_1.2-2          SparseArray_1.13.2 </span></span>
-<span><span class="co">## [76] anndataR_1.3.0      xfun_0.57           fs_2.1.0           </span></span>
+<span><span class="co">## [76] anndataR_1.3.0      xfun_0.58           fs_2.1.0           </span></span>
 <span><span class="co">## [79] pkgconfig_2.0.3</span></span></code></pre>
 </div>
 <div class="section level3">

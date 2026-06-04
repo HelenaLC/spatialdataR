@@ -57,11 +57,7 @@ channels(x, ...)
 # S4 method for class 'SpatialDataElement'
 channels(x, ...)
 
-# S4 method for class 'SpatialDataImage,ANY,ANY,ANY'
-x[i, j, k, ..., drop = FALSE]
-
-# S4 method for class 'SpatialDataLabel,ANY,ANY,ANY'
-x[i, j, ..., drop = FALSE]
+.sub_sda(x, yx, z = list())
 ```
 
 ## Arguments

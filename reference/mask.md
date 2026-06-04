@@ -137,37 +137,15 @@ x <- readSpatialData(x, tables=FALSE)
 # count points in shapes
 y <- mask(x, "blobs_points", "blobs_circles")
 tail(tables(y), 1)
-#> $blobs_points_by_blobs_circles
-#> class: SingleCellExperiment 
-#> dim: 2 6 
-#> metadata(0):
-#> assays(1): counts
-#> rownames(2): gene_a gene_b
-#> rowData names(0):
-#> colnames(6): 0 1 ... 4 5
-#> colData names(1): n_instances
-#> reducedDimNames(0):
-#> mainExpName: NULL
-#> altExpNames(0):
-#> 
+#> sdTableList of length 1
+#> names(1): blobs_points_by_blobs_circles
 
 # average image channels by labels
 y <- mask(x, "blobs_image", "blobs_labels")
 #> Missing 'how'; defaulting to 'mean'
 tail(tables(y), 1)
-#> $blobs_image_by_blobs_labels
-#> class: SingleCellExperiment 
-#> dim: 3 10 
-#> metadata(0):
-#> assays(1): mean
-#> rownames(3): 0 1 2
-#> rowData names(0):
-#> colnames(10): 3 4 ... 15 16
-#> colData names(0):
-#> reducedDimNames(0):
-#> mainExpName: NULL
-#> altExpNames(0):
-#> 
+#> sdTableList of length 1
+#> names(1): blobs_image_by_blobs_labels
 
 # TODO: shape,shape example
 ```

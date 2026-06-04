@@ -60,8 +60,9 @@
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<numeric>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
   : The \`SpatialData\` class
 
 - [`SpatialDataImage()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
@@ -73,8 +74,7 @@
   [`channels(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataImage>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
-  [`` `[`( ``*`<SpatialDataImage>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
-  [`` `[`( ``*`<SpatialDataLabel>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`.sub_sda()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   :
 
   `SpatialDataArray`
@@ -128,7 +128,8 @@
   [`centroids(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/centroids.md)
   : Spatial element centroids
 
-- [`combine(`*`<SpatialData>`*`,`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
+- [`combine(`*`<list>`*`,`*`<missing>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
+  [`combine(`*`<SpatialData>`*`,`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/combine.md)
   :
 
   Combine two `SpatialData` objects
@@ -151,6 +152,14 @@
   [`show(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
   [`show(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/SpatialData/reference/misc.md)
   : Miscellaneous \`SpatialData\` methods
+
+- [`path(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  [`path(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/path.md)
+  :
+
+  Retrieve `SpatialData` on-disk paths
 
 - [`query(`*`<SpatialData>`*`)`](https://helenalc.github.io/SpatialData/reference/query.md)
   : queries
