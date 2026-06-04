@@ -177,6 +177,7 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 #' @rdname SpatialDataArray
 #' @importFrom utils head tail
 .sub_sda <- \(x, yx, z=list()) {
+    #x <- label(sd); yx <- list(1:10, 1:10); z <- list()
     # yx: spatial; z: channels
     ls <- seq_along(data(x, NULL))
     data(x) <- lapply(ls, \(l) {
@@ -196,9 +197,12 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
         # combine leading & spatial indices
         ix <- c(z, .yx)
         # (optional) prepend additional indices
-        nd <- length(dim(data(x, 1)))
-        if ((na <- length(ix)-nd) > 0)
-            c(as.list(!logical(na)), ix)
+        nd <- length(dim(data(x)))
+        na <- nd-length(ix)
+        if (na > 0) {
+            na <- !logical(na)
+            ix <- c(as.list(na), ix)
+        }
         .sub(data(x, l), ix)
     })
     x
