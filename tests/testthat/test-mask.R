@@ -46,6 +46,12 @@ test_that("mask,sdImage,sdLabel", {
     expect_equivalent(
         assay(tables(y)[[2]]), 
         assay(tables(x)[[1]]))
+    
+    # no matching scale
+    .i <- image(x, "blobs_multiscale_image")
+    .i@data <- lapply(.i@data, \(.) .[,,-1])
+    .x <- x; image(.x, i) <- .i
+    expect_error(mask(.x, i, j))
 })
 
 test_that("mask w/ transform", {
@@ -58,7 +64,7 @@ test_that("mask w/ transform", {
     l <- list(1,.1,.1); t <- "scale"
     a <- addCT(a, name=t, type=t, data=l)
     y <- x; y[[layer(y, i)]][[i]] <- a
-    expect_error(mask(y, i, j, t))
+    expect_no_error(mask(y, i, j, t))
     
     # aligned
     l <- c(list(1), CTdata(b, t <- "scale"))
