@@ -57,7 +57,11 @@ channels(x, ...)
 # S4 method for class 'SpatialDataElement'
 channels(x, ...)
 
-.sub_sda(x, yx, z = list())
+# S4 method for class 'SpatialDataImage,ANY,ANY,ANY'
+x[i, j, k, ..., drop = FALSE]
+
+# S4 method for class 'SpatialDataLabel,ANY,ANY,ANY'
+x[i, j, ..., drop = FALSE]
 ```
 
 ## Arguments
@@ -135,8 +139,7 @@ readImage(fn("images"))
 #> Scales (3): (3,64,64 3,32,32 3,16,16)
 
 channels(x)
-#> label label label 
-#>     0     1     2 
+#> [1] 0 1 2
 dim(data(x, 1))   # highest res.
 #> [1]  3 64 64
 dim(data(x, Inf)) # lowest res.

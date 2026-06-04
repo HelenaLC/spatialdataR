@@ -74,7 +74,8 @@
   [`channels(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataImage>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   [`channels(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
-  [`.sub_sda()`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`` `[`( ``*`<SpatialDataImage>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
+  [`` `[`( ``*`<SpatialDataLabel>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)
   :
 
   `SpatialDataArray`
