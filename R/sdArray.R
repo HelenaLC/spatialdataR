@@ -177,8 +177,7 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 #' @rdname SpatialDataArray
 #' @importFrom utils head tail
 .sub_sda <- \(x, yx, z=list()) {
-    # yx: list of length 2 (yx)
-    # z:  additional dimensions (ct)
+    # yx: spatial; z: channels
     ls <- seq_along(data(x, NULL))
     data(x) <- lapply(ls, \(l) {
         sf <- 2^(l-1)   
@@ -196,9 +195,10 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
         })
         # combine leading & spatial indices
         ix <- c(z, .yx)
-        # (optional) prepend additional index for 'time'
+        # (optional) prepend additional indices
         nd <- length(dim(data(x, 1)))
-        if (length(ix) < nd) ix <- c(list(TRUE), ix)
+        if ((na <- length(ix)-nd) > 0)
+            c(as.list(!logical(na)), ix)
         .sub(data(x, l), ix)
     })
     x
@@ -208,11 +208,11 @@ setMethod("[", "SpatialDataImage", \(x, i, j, k, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
     if (missing(k)) k <- TRUE else if (isFALSE(k)) k <- 0 else .check_jk(k, "k")
-    .sub_sda(x, yx=list(j, k), z = list(i))
+    .sub_sda(x, yx=list(j, k), z=list(i))
 })
 
 setMethod("[", "SpatialDataLabel", \(x, i, j, ..., drop=FALSE) {
     if (missing(i)) i <- TRUE else if (isFALSE(i)) i <- 0 else .check_jk(i, "i")
     if (missing(j)) j <- TRUE else if (isFALSE(j)) j <- 0 else .check_jk(j, "j")
-    .sub_sda(x, yx=list(i, j), z = list())
+    .sub_sda(x, yx=list(i, j), z=list())
 })
