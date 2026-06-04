@@ -131,7 +131,9 @@ setMethod("data_type", "DelayedArray", \(x) {
     v <- tryCatch(.ome_ver(x), error=\(e) NULL)
     if (is.null(v)) return()
     if (v == "0.5") x <- x$ome
-    unlist(x$omero$channels)
+    # NOTE: can't use 'vapply' as we 
+    # have encountered integer 'label's  
+    unlist(lapply(x$omero$channels, `[[`, "label"))
 }
 
 #' @export
