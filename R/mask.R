@@ -93,20 +93,25 @@ setGeneric("mask_i_by_j", \(i, j, ...) standardGeneric("mask_i_by_j"))
 setMethod("mask_i_by_j", 
     c("SpatialDataImage", "SpatialDataLabel"), 
     \(i, j, how=NULL, ...) {
-    .wh <- \(.) {
-        ds <- dim(.); if (length(ds) == 3) ds <- ds[-1]
-        metadata(.)$wh %||% list(c(0, ds[2]), c(0, ds[1]))
-    }
-    stopifnot(
-        "image/label width mismatch"=.wh(i)[[1]] == .wh(j)[[1]],
-        "image/label height mismatch"=.wh(i)[[2]] == .wh(j)[[2]])
+    di <- lapply(data(i, NULL), dim)
+    dj <- lapply(data(j, NULL), dim)
+    ij <- outer(
+        seq_along(di),
+        seq_along(dj),
+        Vectorize(\(i, j) identical(tail(di[[i]], length(dj[[j]])), dj[[j]])))
+    ij <- which(ij, arr.ind=TRUE)
+    if (nrow(ij) == 0)
+        stop("couldn't find shared multiscales level between label/image;",
+            " need at least one data() pair with identical dimensions")
+    ki <- ij[1, 1]
+    kj <- ij[1, 2]
     if (is.null(how)) { 
         message("Missing 'how'; defaulting to 'mean'") 
         how <- "mean"
     }
-    .j <- as(data(j), "sparseVector")
+    .j <- as(data(j, kj), "sparseVector")
     .j <- as.vector(.j[ok <- .j > 0])
-    mx <- apply(data(i), 1, \(.i) {
+    mx <- apply(data(i, ki), 1, \(.i) {
         .i <- as(.i, "sparseVector")
         .i <- as.vector(.i[ok])
         tapply(.i, .j, how)
