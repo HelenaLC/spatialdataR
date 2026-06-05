@@ -93,32 +93,68 @@ setGeneric("mask_i_by_j", \(i, j, ...) standardGeneric("mask_i_by_j"))
 setMethod("mask_i_by_j", 
     c("SpatialDataImage", "SpatialDataLabel"), 
     \(i, j, how=NULL, ...) {
-    di <- lapply(data(i, NULL), dim)
-    dj <- lapply(data(j, NULL), dim)
-    ij <- outer(
-        seq_along(di),
-        seq_along(dj),
-        Vectorize(\(i, j) identical(tail(di[[i]], length(dj[[j]])), dj[[j]])))
-    ij <- which(ij, arr.ind=TRUE)
-    if (nrow(ij) == 0)
-        stop("couldn't find shared multiscales level between label/image;",
-            " need at least one data() pair with identical dimensions")
-    ki <- ij[1, 1]
-    kj <- ij[1, 2]
     if (is.null(how)) { 
         message("Missing 'how'; defaulting to 'mean'") 
         how <- "mean"
     }
-    .j <- as(data(j, kj), "sparseVector")
-    .j <- as.vector(.j[ok <- .j > 0])
-    mx <- apply(data(i, ki), 1, \(.i) {
-        .i <- as(.i, "sparseVector")
-        .i <- as.vector(.i[ok])
-        tapply(.i, .j, how)
-    })
-    colnames(mx) <- channels(i)
-    se <- SingleCellExperiment(list(t(mx)))
-    assayNames(se) <- how
+    # default to 1st matching scale
+    di <- lapply(data(i, NULL), dim)
+    dj <- lapply(data(j, NULL), dim)
+    ai <- axes(i, "type") == "space"
+    aj <- axes(j, "type") == "space"
+    ks <- outer(
+        seq_along(di),
+        seq_along(dj),
+        Vectorize(\(i, j) identical(di[[i]][ai], dj[[j]][aj])))
+    ks <- which(ks, arr.ind=TRUE)
+    if (nrow(ks) == 0)
+        stop("couldn't find shared multiscales level between label/image;",
+            " need at least one data() pair with identical dimensions")
+    di <- data(i, ks[1, 1])
+    dj <- data(j, ks[1, 2])
+    # utility to aggregate 'i' channels by instance in 'j'
+    agg <- \(di, dj, how) {
+        iv <- as(di, "sparseVector")
+        jv <- as(dj, "sparseVector")
+        jv <- as.vector(jv[ok <- jv > 0])
+        iv <- as.vector(iv[ok])
+        tapply(iv, jv, how)
+    }
+    # check for non-standard dimensions
+    tzi <- which(axes(i, "name") %in% c("t", "z"))
+    tzj <- which(axes(j, "name") %in% c("t", "z"))
+    if (length(tzi)) {
+        # get unique tz combinations
+        ai <- lapply(tzi, \(.) seq_len(dim(di)[.]))
+        ix <- as.list(rep(TRUE, length(dim(di))))
+        jx <- as.list(rep(TRUE, length(dim(dj))))
+        xx <- expand.grid(ai)
+        res <- apply(xx, 1, \(.) {
+            # subset to single tz pair
+            ix[tzi] <- .; jx[tzj] <- .
+            .di <- do.call(`[`, c(list(di), ix))
+            .dj <- do.call(`[`, c(list(dj), jx))
+            agg(.di, .dj, how)
+        }, simplify=FALSE)
+    } else {
+        res <- apply(di, 1, \(.di) agg(.di, dj, how))
+        res <- list(res)
+    }
+    # construct SCE: 
+    # data = tz combinations
+    # dim. = instances x channels
+    as <- lapply(res, \(.) `rownames<-`(t(.), channels(i)))
+    se <- SingleCellExperiment(as)
+    # construct assay names with pattern 'how_t0z0'
+    t <- "t" %in% axes(i, "name")
+    z <- "z" %in% axes(i, "name")
+    nm <- if (t && z) {
+        sprintf("t%sz%s", xx[,1], xx[,2])
+    } else if (t || z) {
+        paste0(c("t", "z")[which(c(t, z))], xx[,1])
+    }
+    nm <- if (is.null(nm)) how else paste0(how, "_", nm)
+    assayNames(se) <- nm
     return(se)
 })
 
