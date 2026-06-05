@@ -35,13 +35,11 @@ setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
 setMethod("centroids", "SpatialDataLabel", \(x,
     as=c("data.frame", "matrix")) {
     y <- data(x)
-    ax <- .get_space_ax(y)
-    if (length(dim(y)) > 2) {
-        # max-projection
-        ax <- match(c("y", "x"), axes(x, "name"))
-        y <- apply(y, ax, max)
-    }
     as <- match.arg(as)
+    ax <- .get_space_ax(x)
+    # max-projection
+    if (length(dim(y)) > 2) 
+        y <- apply(y, c(ax$y, ax$x), max)
     y <- as(y, "dgCMatrix")
     i <- summary(y)
     # flip dimensions so that columns=x, rows=y
