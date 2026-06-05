@@ -36,18 +36,34 @@ setMethod("centroids", "SpatialDataLabel", \(x,
     as=c("data.frame", "matrix")) {
     as <- match.arg(as)
     y <- data(x)
+    if (length(dim(y)) > 2) {
+        # max-projection
+        ax <- match(c("y", "x"), axes(x, "name"))
+        y <- apply(y, ax, max)
+    }
     y <- as(y, "dgCMatrix")
     i <- summary(y)
     # flip dimensions so that columns=x, rows=y
-    # TODO: should these be offset by 0.5?
     i[, c(1, 2)] <- i[, c(2, 1)]-0.5
     xy <- tapply(i[, -3], i[[3]], colMeans)
     xy <- do.call(rbind, xy)
     xy <- cbind(xy, as.integer(rownames(xy)))
     dimnames(xy) <- list(NULL, c("x", "y", "i"))
+    # multi-scale adjustment
+    sf <- .get_multiscale_scale(x)
+    xy[,1] <- xy[,1]*tail(sf, 1)
+    xy[,2] <- xy[,2]*tail(sf, 2)[1]
+    # offset
+    wh <- metadata(x)$wh
+    if (!is.null(wh)) {
+        xy[,1] <- xy[,1]+wh[[1]][1]
+        xy[,2] <- xy[,2]+wh[[2]][1]
+    }
+    # output
     if (as == "matrix") return(xy)
     xy <- as.data.frame(xy)
-    xy$i <- factor(xy$i); xy
+    xy$i <- factor(xy$i)
+    return(xy)
 })
 
 #' @export
