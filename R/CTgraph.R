@@ -76,13 +76,11 @@ setMethod("CTgraph", "ANY", \(x) stop("'x' should be a",
 .make_g <- \(md) {
     g <- .init_g()
     for (l in names(md)) for (e in names(md[[l]])) {
-        .md <- md[[l]][[e]]
-        ms <- multiscales(.md)
-        if (!is.null(ms)) .md <- ms[[1]]
         .e <- paste0("_", e)
         g <- addNode(.e, g)
         nodeData(g, .e, "type") <- "element"
-        ct <- .md$coordinateTransformations
+        ms <- .get_ms(md[[l]][[e]])
+        ct <- ms$coordinateTransformations
         for (i in seq_along(ct)) {
             n <- ct[[i]]$output$name
             if (!n %in% nodes(g)) {

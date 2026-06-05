@@ -56,16 +56,7 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     if (!length(ct)) stop(
         "can't mask; found no common ",
         "coordinates between 'i' and 'j'")
-    if (missing(k)) {
-        k <- 1
-    } else {
-        if (is.character(k)) {
-            k <- match.arg(k, ct)
-            k <- match(k, ct)
-        } else if (is.numeric(k)) {
-            stopifnot(k > 0, k <= length(ct))
-        }
-    }
+    k <- if (missing(k)) 1 else .resolve_id(k, ct)
     .i <- transform(.i, ct[k])
     .j <- transform(.j, ct[k])
     t <- tryCatch(error=\(.) NULL, getTable(x, i))
@@ -98,18 +89,7 @@ setMethod("mask_i_by_j",
         how <- "mean"
     }
     # default to 1st matching scale
-    di <- lapply(data(i, NULL), dim)
-    dj <- lapply(data(j, NULL), dim)
-    ai <- axes(i, "type") == "space"
-    aj <- axes(j, "type") == "space"
-    ks <- outer(
-        seq_along(di),
-        seq_along(dj),
-        Vectorize(\(i, j) identical(di[[i]][ai], dj[[j]][aj])))
-    ks <- which(ks, arr.ind=TRUE)
-    if (nrow(ks) == 0)
-        stop("couldn't find shared multiscales level between label/image;",
-            " need at least one data() pair with identical dimensions")
+    ks <- .get_ms_match(i, j)
     di <- data(i, ks[1, 1])
     dj <- data(j, ks[1, 2])
     # utility to aggregate 'i' channels by instance in 'j'
