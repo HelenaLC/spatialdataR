@@ -77,15 +77,7 @@ setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("CTdata", "SpatialDataAttrs", \(x, i=1, ...) {
-    stopifnot(length(i) == 1)
-    if (is.character(i)) {
-        match.arg(i, CTname(x))
-        i <- match(i, CTname(x))
-    } else if (is.numeric(i)) {
-        stopifnot(
-            i == round(i), 
-            i %in% seq_along(CTlist(x)))
-    } else stop("Invalid 'i'; should be a scalar character or integer")
+    i <- .resolve_id(i, CTname(x))
     t <- CTtype(x)[i]
     if (t != "sequence") 
         return(CTlist(x)[[i]][[t]])

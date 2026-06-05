@@ -10,6 +10,22 @@
     .GlobalEnv[[nm]]
 }
 
+# internal helper to resolve name/index to integer index
+.resolve_id <- \(i, ok, nm=deparse1(substitute(i))) {
+    nm <- sprintf("'%s'", nm)
+    if (is.character(i)) {
+        i <- match.arg(i, ok)
+        return(match(i, ok))
+    }
+    if (is.numeric(i) && i == round(i) && length(i) == 1) {
+        if (i < 1 || i > length(ok)) {
+            stop(sprintf("invalid %s index: %d (max: %d)", nm, i, length(ok)))
+        }
+        return(as.integer(i))
+    }
+    stop(sprintf("invalid %s; expected character or integer index", nm))
+}
+
 # internal helper for null-coalescing
 `%||%` <- \(a, b) if (is.null(a)) b else a
 

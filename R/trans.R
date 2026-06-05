@@ -52,13 +52,7 @@ NULL
 #' @rdname trans
 #' @importFrom BiocGenerics transform
 setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
-    stopifnot(
-        length(i) == 1, is.character(i) | 
-        (is.numeric(i) && i == round(i)))
-    if (is.character(i)) {
-        i <- match.arg(i, CTname(x))
-        i <- match(i, CTname(x))
-    }
+    i <- .resolve_id(i, CTname(x))
     f <- CTtype(x)[i]
     t <- CTdata(x, i)
     if (f == "sequence") {
