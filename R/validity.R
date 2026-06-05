@@ -44,9 +44,7 @@
 
 .validateImage <- \(object) {
     msg <- c()
-    axs <- axes(object)
-    typ <- vapply(axs, \(.) .$type, character(1))
-    d <- sum(typ != "time")
+    d <- length(axes(object))
     for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
@@ -62,9 +60,7 @@ setValidity2("SpatialDataImage", .validateImage)
 #' @importFrom ZarrArray type
 .validateLabel <- \(object) {
     msg <- c()
-    axs <- axes(object)
-    typ <- vapply(axs, \(.) .$type, character(1))
-    d <- sum(typ == "space")
+    d <- length(axes(object))
     for (k in seq_along(object)) {
         x <- data(object, k)
         if (length(dim(x)) != d) msg <- c(msg, paste(
