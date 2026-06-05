@@ -6,7 +6,7 @@ Coord. trans. utilities
 
 ``` r
 # S4 method for class 'SpatialDataAttrs'
-axes(x, ...)
+axes(x, y = NULL, ...)
 
 # S4 method for class 'SpatialDataAttrs'
 CTlist(x, ...)
@@ -21,7 +21,7 @@ CTtype(x, ...)
 CTname(x, ...)
 
 # S4 method for class 'SpatialDataElement'
-axes(x, ...)
+axes(x, y = NULL, ...)
 
 # S4 method for class 'SpatialDataElement'
 CTlist(x, ...)
@@ -56,6 +56,12 @@ addCT(x, name, type = "identity", data = NULL)
 - x:
 
   `SpatialData`, an element, or `SpatialDataAttrs`.
+
+- y:
+
+  NULL (default) returns a list where each element is an axis: a list
+  with name/type/unit (e.g., x/space/micrometer); `y="name/type/unit"`
+  extracts specific data over all axiis.
 
 - ...:
 
