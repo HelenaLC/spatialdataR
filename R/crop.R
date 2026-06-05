@@ -209,13 +209,6 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     if (ii) x[, i, j] else x[i, j] 
 })
 
-.get_multiscale_scale <- \(x) {
-    ms <- multiscales(meta(x))[[1]]
-    ds <- ms$datasets[[1]]
-    ct <- ds$coordinateTransformations[[1]]
-    return(unlist(ct$scale))
-}
-
 #' @export
 #' @rdname crop
 #' @importFrom dplyr pull .data

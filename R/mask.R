@@ -98,18 +98,7 @@ setMethod("mask_i_by_j",
         how <- "mean"
     }
     # default to 1st matching scale
-    di <- lapply(data(i, NULL), dim)
-    dj <- lapply(data(j, NULL), dim)
-    ai <- axes(i, "type") == "space"
-    aj <- axes(j, "type") == "space"
-    ks <- outer(
-        seq_along(di),
-        seq_along(dj),
-        Vectorize(\(i, j) identical(di[[i]][ai], dj[[j]][aj])))
-    ks <- which(ks, arr.ind=TRUE)
-    if (nrow(ks) == 0)
-        stop("couldn't find shared multiscales level between label/image;",
-            " need at least one data() pair with identical dimensions")
+    ks <- .get_multiscale_match(i, j)
     di <- data(i, ks[1, 1])
     dj <- data(j, ks[1, 2])
     # utility to aggregate 'i' channels by instance in 'j'
