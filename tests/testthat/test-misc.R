@@ -80,3 +80,19 @@ test_that("show(SpatialDataElement)", {
         paste(names(x), collapse=" "))
     fn(x, ok)
 })
+
+test_that("show(SpatialDataAttrs)", {
+    l <- list(image(sd), label(sd))
+    for (x in l) {
+        x <- meta(x)
+        ok <- c(
+            "class: SpatialDataAttrs",
+            sprintf("axes\\(%d\\):", length(axes(x))),
+            sprintf("coordTrans\\(%d\\):", length(CTlist(x))))
+        if (!is.null(chs <- channels(x))) 
+            ok <- c(ok, sprintf("channels\\(%d\\):", length(chs)))
+        if (!is.null(ms <- multiscales(x)[[1]]))
+            ok <- c(ok, sprintf("datasets\\(%d\\):", length(ms$datasets)))
+        fn(x, ok)
+    }
+})
