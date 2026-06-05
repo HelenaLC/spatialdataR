@@ -104,7 +104,16 @@
     return(x)
 }
 
-# multiscales
+# validation ----
+
+# validate OME version
+.val_ome_ver <- \(v) {
+    ok <- length(v) == 1 && is.character(v) && (v <- gsub("-.*", "", v)) %in% sprintf("0.%d", seq_len(6))
+    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-6")
+    return(v)
+}
+
+# multiscales ----
 
 .get_multiscale_scale <- \(x) {
     ms <- multiscales(meta(x))[[1]]

@@ -26,8 +26,8 @@ test_that("centroids,sdLabel", {
     n <- 7; m <- 8
     u <- array(runif(2*n*m), c(1, 5, n, m))
     v <- array(1L, c(5, n, m))
-    i <- SpatialDataImage(u, SpatialDataAttrs(zdim=TRUE, nchs=1))
-    l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", zdim=TRUE))
+    i <- SpatialDataImage(u, SpatialDataAttrs(dim=3, nch=1))
+    l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", dim=3))
     sd <- SpatialData(images=list(a=i), labels=list(b=l))
     sd <- expect_silent(mask(sd, "a", "b", how="mean"))
     expect_identical(as.numeric(assay(table(sd))), mean(u))

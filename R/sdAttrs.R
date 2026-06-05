@@ -15,7 +15,10 @@
 #' @param trans list of coordinate transformations; defaults to identity only.
 #' @param value character string (for one \code{region} and \code{_key}s), 
 #'   or vector (for many \code{region}s, \code{instances} and \code{regions}).
-#' @param ver character string; specified the .zarr version to comply with.
+#' @param ver character string; specifies the OME version to comply with.
+#' @param dim scalar integer in 2-4;
+#'   number of dimensions: 2 = XY, 3 adds Z, 4 adds T (time); 
+#'   when \code{type="image"}, C (channel) will be added (for any \code{dim}).
 #' @param nch scalar integer; how many channels should there be?
 #'   (ignored unless \code{type="frame"} and \code{label=FALSE}). 
 #' @param ... additional attributes (e.g., version, feature_key).
@@ -53,23 +56,27 @@
 #' 
 #' # constructor
 #' SpatialDataAttrs(type="frame")
-#' SpatialDataAttrs(type="image", nchs=7)
-#' SpatialDataAttrs(type="label", zdim=TRUE)
+#' SpatialDataAttrs(type="image", nch=7)
+#' SpatialDataAttrs(type="label", dim=3)
 #' 
 #' @export
 SpatialDataAttrs <- \(x, type=c("image", "label", "frame"), 
-    trans=NULL, ver="0.4", nchs=3, zdim=FALSE, tdim=FALSE, ...) 
+    trans=NULL, ver="0.4", dim=2, nch=3, ...) 
 {
+    stopifnot(
+        length(dim) == 1, is.numeric(dim), dim %in% seq(2, 4),
+        length(nch) == 1, is.numeric(nch), round(nch) == nch, nch > 0)
     if (!missing(x)) return(.SpatialDataAttrs(x))
     type <- match.arg(type)
-    ax <- .default_ax(type, zdim, tdim)
+    ver <- .val_ome_ver(ver)
+    ax <- .default_ax(type, dim)
     # transformations:
     ct <- trans %||% .default_ct(ax)
     # .zattrs list:
     if (type != "frame") {
         # default structure
         res <- list(
-            omero=list(channels=list(label=letters[seq_len(nchs)])),
+            omero=list(channels=list(label=letters[seq_len(nch)])),
             multiscales=list(list(
                 axes=ax,
                 version="0.4",
@@ -85,10 +92,7 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "frame"),
 }
 
 # Internal helper to generate OME-NGFF axes
-.default_ax <- \(type=c("image", "label", "frame"), zdim=FALSE, tdim=FALSE) {
-    stopifnot(
-        is.logical(zdim), length(zdim) == 1,
-        is.logical(tdim), length(tdim) == 1)
+.default_ax <- \(type=c("image", "label", "frame"), dim=2) {
     c <- list(name="c", type="channel")
     t <- list(name="t", type="time")
     z <- list(name="z", type="space")
@@ -98,14 +102,18 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "frame"),
         # xyzt for points/shapes
         frame={
             ax <- list(x, y)
-            if (zdim) ax <- c(ax, list(z))
-            if (tdim) ax <- c(ax, list(t))
+            if (dim > 2) {
+                ax <- c(ax, list(z))
+                if (dim > 3) ax <- c(ax, list(t))
+            }
         },
         # tczyx for images/labels
         {
             ax <- list(y, x)
-            if (zdim) ax <- c(list(z), ax)
-            if (tdim) ax <- c(list(t), ax)
+            if (dim > 2) {
+                ax <- c(list(z), ax)
+                if (dim > 3) ax <- c(list(t), ax)
+            }
             if (type == "image") ax <- c(list(c), ax)
         }
     )
@@ -135,8 +143,7 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
         x$omero$version %||% 
         x$ome$version
     if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
-    ok <- length(v) == 1 && is.character(v) && (v <- gsub("-.*", "", v)) %in% sprintf("0.%d", seq_len(6))
-    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-6")
+    v <- .val_ome_ver(v)
     return(v)
 }
 
@@ -151,9 +158,9 @@ setMethod("multiscales", "list", \(x) {
 # internal use only!
 #' @noRd 
 setMethod("datasets", "list", \(x, ...) {
-  vapply(multiscales(x)[[1]]$datasets, \(.){
-    .$path
-  }, character(1))
+    vapply(multiscales(x)[[1]]$datasets, \(.){
+        .$path
+    }, character(1))
 })
 
 # features ----

@@ -41,9 +41,8 @@ SpatialDataAttrs(
   type = c("image", "label", "frame"),
   trans = NULL,
   ver = "0.4",
-  nchs = 3,
-  zdim = FALSE,
-  tdim = FALSE,
+  dim = 2,
+  nch = 3,
   ...
 )
 
@@ -94,7 +93,14 @@ SpatialDataAttrs(
 
 \item{trans}{list of coordinate transformations; defaults to identity only.}
 
-\item{ver}{character string; specified the .zarr version to comply with.}
+\item{ver}{character string; specifies the OME version to comply with.}
+
+\item{dim}{scalar integer in 2-4;
+number of dimensions: 2 = XY, 3 adds Z, 4 adds T (time); 
+when \code{type="image"}, C (channel) will be added (for any \code{dim}).}
+
+\item{nch}{scalar integer; how many channels should there be?
+(ignored unless \code{type="frame"} and \code{label=FALSE}).}
 
 \item{...}{additional attributes (e.g., version, feature_key).}
 
@@ -104,9 +110,6 @@ SpatialDataAttrs(
 or vector (for many \code{region}s, \code{instances} and \code{regions}).}
 
 \item{label}{flag; when \code{type="frame"}, should attributes be for a label?}
-
-\item{nch}{scalar integer; how many channels should there be?
-(ignored unless \code{type="frame"} and \code{label=FALSE}).}
 }
 \value{
 character string
@@ -145,7 +148,7 @@ CTdata(z, "scale")
 
 # constructor
 SpatialDataAttrs(type="frame")
-SpatialDataAttrs(type="image", nchs=7)
-SpatialDataAttrs(type="label", zdim=TRUE)
+SpatialDataAttrs(type="image", nch=7)
+SpatialDataAttrs(type="label", dim=3)
 
 }
