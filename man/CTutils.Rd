@@ -26,7 +26,7 @@
 \alias{addCT,SpatialDataAttrs-method}
 \title{Coord. trans. utilities}
 \usage{
-\S4method{axes}{SpatialDataAttrs}(x, ...)
+\S4method{axes}{SpatialDataAttrs}(x, y = NULL, ...)
 
 \S4method{CTlist}{SpatialDataAttrs}(x, ...)
 
@@ -36,7 +36,7 @@
 
 \S4method{CTname}{SpatialDataAttrs}(x, ...)
 
-\S4method{axes}{SpatialDataElement}(x, ...)
+\S4method{axes}{SpatialDataElement}(x, y = NULL, ...)
 
 \S4method{CTlist}{SpatialDataElement}(x, ...)
 
@@ -58,6 +58,10 @@
 }
 \arguments{
 \item{x}{\code{SpatialData}, an element, or \code{SpatialDataAttrs}.}
+
+\item{y}{NULL (default) returns a list where each element is 
+an axis: a list with name/type/unit (e.g., x/space/micrometer);
+\code{y="name/type/unit"} extracts specific data over all axiis.}
 
 \item{...}{option arguments passed to and from other methods.}
 
