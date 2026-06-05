@@ -31,7 +31,7 @@ test_that("SpatialDataImage()", {
     expect_silent(SpatialDataImage(list()))
     expect_silent(SpatialDataImage(mat))
     expect_silent(SpatialDataImage(list(mat)))
-    expect_silent(SpatialDataImage(list(mat), SpatialDataAttrs()))
+    expect_silent(SpatialDataImage(list(mat), SpatialDataAttrs(type="image")))
     # multiscale
     dim <- lapply(c(20, 10, 5), \(.) c(3, rep(., 2)))
     lys <- lapply(dim, \(.) array(rgb(prod(.)), dim=.))
@@ -54,7 +54,7 @@ test_that("data(),SpatialDataImage", {
 
 test_that("SpatialDataLabel()", {
     val <- sample(seq_len(12), 20*20, replace=TRUE)
-    mat <- array(val, dim=c(20, 20, 20))
+    mat <- array(val, dim=c(20, 20))
     # invalid
     expect_error(SpatialDataLabel(mat, 1))
     expect_error(SpatialDataLabel(mat, list()))
@@ -62,15 +62,15 @@ test_that("SpatialDataLabel()", {
     expect_silent(SpatialDataLabel(list()))
     expect_silent(SpatialDataLabel(mat))
     expect_silent(SpatialDataLabel(list(mat)))
-    expect_silent(SpatialDataLabel(list(mat), SpatialDataAttrs()))
+    expect_silent(SpatialDataLabel(list(mat), SpatialDataAttrs(type="label")))
     # multiscale
-    dim <- lapply(c(20, 10, 5), \(.) rep(., 3))
+    dim <- lapply(c(20, 10, 5), \(.) rep(., 2))
     lys <- lapply(dim, \(.) array(sample(seq_len(12), prod(.), replace=TRUE), dim=.))
     expect_silent(SpatialDataLabel(lys))
 })
 
 test_that("data(),SpatialDataLabel", {
-    dim <- lapply(c(8, 4, 2), \(.) rep(., 3))
+    dim <- lapply(c(8, 4, 2), \(.) rep(., 2))
     lys <- lapply(dim, \(.) array(0L, dim=.))
     lab <- SpatialDataLabel(lys)
     for (. in seq_along(lys))

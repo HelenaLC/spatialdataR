@@ -53,34 +53,23 @@
 #' 
 #' # constructor
 #' SpatialDataAttrs(type="frame")
-#' SpatialDataAttrs(type="array")
-#' SpatialDataAttrs(type="array", nch=7)
-#' SpatialDataAttrs(type="array", label=TRUE)
+#' SpatialDataAttrs(type="image", nchs=7)
+#' SpatialDataAttrs(type="label", zdim=TRUE)
 #' 
 #' @export
-SpatialDataAttrs <- \(x, type=c("array", "frame"), 
-    label=FALSE, trans=NULL, ver="0.4", nch=3, ...) 
+SpatialDataAttrs <- \(x, type=c("image", "label", "frame"), 
+    trans=NULL, ver="0.4", nchs=3, zdim=FALSE, tdim=FALSE, ...) 
 {
     if (!missing(x)) return(.SpatialDataAttrs(x))
     type <- match.arg(type)
-    # axes:
-    # xy for points/shapes
-    ax <-  list(
-        list(name="x", type="space"), 
-        list(name="y", type="space"))
-    if (type == "array") {
-        # yx for labels
-        ax <- rev(ax)
-        # cyx for images
-        if (!label) ax <- c(list(list(name="c", type="channel")), ax)
-    }
+    ax <- .default_ax(type, zdim, tdim)
     # transformations:
     ct <- trans %||% .default_ct(ax)
     # .zattrs list:
-    if (type == "array") {
+    if (type != "frame") {
         # default structure
         res <- list(
-            omero=list(channels=list(label=letters[seq_len(nch)])),
+            omero=list(channels=list(label=letters[seq_len(nchs)])),
             multiscales=list(list(
                 axes=ax,
                 version="0.4",
@@ -96,17 +85,31 @@ SpatialDataAttrs <- \(x, type=c("array", "frame"),
 }
 
 # Internal helper to generate OME-NGFF axes
-.default_ax <- \(type=c("array", "frame")) {
-    switch(match.arg(type),
-        # cyx for images/labels
-        array=list(
-            list(name="c", type="channel"),
-            list(name="y", type="space"),
-            list(name="x", type="space")),
-        # xy for points/shapes
-        list(
-            list(name="x", type="space"),
-            list(name="y", type="space")))
+.default_ax <- \(type=c("image", "label", "frame"), zdim=FALSE, tdim=FALSE) {
+    stopifnot(
+        is.logical(zdim), length(zdim) == 1,
+        is.logical(tdim), length(tdim) == 1)
+    c <- list(name="c", type="channel")
+    t <- list(name="t", type="time")
+    z <- list(name="z", type="space")
+    y <- list(name="y", type="space")
+    x <- list(name="x", type="space")
+    switch(match.arg(type), 
+        # xyzt for points/shapes
+        frame={
+            ax <- list(x, y)
+            if (zdim) ax <- c(ax, list(z))
+            if (tdim) ax <- c(ax, list(t))
+        },
+        # tczyx for images/labels
+        {
+            ax <- list(y, x)
+            if (zdim) ax <- c(list(z), ax)
+            if (tdim) ax <- c(list(t), ax)
+            if (type == "image") ax <- c(list(c), ax)
+        }
+    )
+    return(ax)
 }
 
 # Internal helper to generate coordinate transformations

@@ -63,21 +63,10 @@ NULL
 
 # new ----
 
-.new_sda <- \(type, data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
-    if (is.array(data)) data <- list(data)
-    x <- new(type, data=data, meta=meta, ...)
-    metadata(x) <- metadata
-    return(x)
-}
-
-SpatialDataImage <- \(...) .new_sda("SpatialDataImage", ...)
-SpatialDataLabel <- \(...) .new_sda("SpatialDataLabel", ...)
-
 #' @export
 #' @rdname SpatialDataArray
-#' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataImage <- \(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+SpatialDataImage <- \(data=list(), meta=SpatialDataAttrs(type="image"), metadata=list(), ...) {
     if (is.array(data)) data <- list(data)
     x <- .SpatialDataImage(data=data, meta=meta, ...)
     metadata(x) <- metadata
@@ -86,9 +75,8 @@ SpatialDataImage <- \(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...
 
 #' @export
 #' @rdname SpatialDataArray
-#' @importFrom methods new
 #' @importFrom S4Vectors metadata<-
-SpatialDataLabel <- \(data=list(), meta=SpatialDataAttrs(), metadata=list(), ...) {
+SpatialDataLabel <- \(data=list(), meta=SpatialDataAttrs(type="label"), metadata=list(), ...) {
     if (is.array(data)) data <- list(data)
     x <- .SpatialDataLabel(data=data, meta=meta, ...)
     metadata(x) <- metadata
