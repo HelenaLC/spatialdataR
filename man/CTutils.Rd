@@ -36,7 +36,7 @@
 
 \S4method{CTname}{SpatialDataAttrs}(x, ...)
 
-\S4method{axes}{SpatialDataElement}(x, ...)
+\S4method{axes}{SpatialDataElement}(x, y = NULL, ...)
 
 \S4method{CTlist}{SpatialDataElement}(x, ...)
 

@@ -110,7 +110,7 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x), ...))
+setMethod("axes", "SpatialDataElement", \(x, y=NULL, ...) axes(meta(x), y, ...))
 
 #' @rdname CTutils
 #' @export
