@@ -34,13 +34,12 @@ setMethod("centroids", "ANY", \(x, ...) stop("'centroids' ",
 #' @importFrom Matrix summary
 setMethod("centroids", "SpatialDataLabel", \(x,
     as=c("data.frame", "matrix")) {
-    as <- match.arg(as)
     y <- data(x)
-    if (length(dim(y)) > 2) {
-        # max-projection
-        ax <- match(c("y", "x"), axes(x, "name"))
-        y <- apply(y, ax, max)
-    }
+    as <- match.arg(as)
+    ax <- .get_xy_axes(x)
+    # max-projection
+    if (length(dim(y)) > 2) 
+        y <- apply(y, c(ax$y, ax$x), max)
     y <- as(y, "dgCMatrix")
     i <- summary(y)
     # flip dimensions so that columns=x, rows=y
@@ -50,9 +49,9 @@ setMethod("centroids", "SpatialDataLabel", \(x,
     xy <- cbind(xy, as.integer(rownames(xy)))
     dimnames(xy) <- list(NULL, c("x", "y", "i"))
     # multi-scale adjustment
-    sf <- .get_multiscale_scale(x)
-    xy[,1] <- xy[,1]*tail(sf, 1)
-    xy[,2] <- xy[,2]*tail(sf, 2)[1]
+    sf <- .get_ms_scale(x)
+    xy[,1] <- xy[,1]*sf[ax$x]
+    xy[,2] <- xy[,2]*sf[ax$y]
     # offset
     wh <- metadata(x)$wh
     if (!is.null(wh)) {

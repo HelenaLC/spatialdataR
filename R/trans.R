@@ -52,13 +52,7 @@ NULL
 #' @rdname trans
 #' @importFrom BiocGenerics transform
 setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
-    stopifnot(
-        length(i) == 1, is.character(i) | 
-        (is.numeric(i) && i == round(i)))
-    if (is.character(i)) {
-        i <- match.arg(i, CTname(x))
-        i <- match(i, CTname(x))
-    }
+    i <- .resolve_id(i, CTname(x))
     f <- CTtype(x)[i]
     t <- CTdata(x, i)
     if (f == "sequence") {
@@ -129,7 +123,8 @@ setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
 
 .trans_a <- \(x, t, f=c("scale", "translation"), k=1, rev=FALSE) {
     f <- match.arg(f)
-    n <- length(d <- dim(data(x, k)))
+    d <- dim(data(x, k))
+    n <- length(d)
     
     # setup: identity, operator
     map <- list(
@@ -142,13 +137,18 @@ setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
     if (rev) t <- if (f == "scale") 1/t else -t
     
     # project to spatial (XY) dims
-    if (n == 3) { t <- t[-1]; d <- d[-1] }
-    t <- rev(t); d <- rev(d)
+    ax <- .get_xy_axes(x)
+    xy <- c(ax$x, ax$y)
+    .t <- t[xy]
+    .d <- d[xy]
+    # t <- t[c(ax$x, ax$y)]
+    # t <- rev(t); d <- rev(d)
+    # d <- rev(dim(data(x, k)))
     
     # update 'wh' metadata
-    wh <- metadata(x)$wh %||% list(c(0, d[1]), c(0, d[2]))
+    wh <- metadata(x)$wh %||% list(c(0, .d[1]), c(0, .d[2]))
     op <- get(map$ops[f])
-    metadata(x)$wh <- mapply(op, t, wh, SIMPLIFY=FALSE)
+    metadata(x)$wh <- mapply(op, .t, wh, SIMPLIFY=FALSE)
     return(x)
 }
 

@@ -45,5 +45,64 @@ for (v in names(z)) {
         expect_silent(z <- channels(y <- image(x)))
         expect_length(z, dim(y)[1])
     })
-
 }
+
+test_that(".val_ome_ver()", {
+    # invalid
+    expect_error(.val_ome_ver(1))
+    expect_error(.val_ome_ver(TRUE))
+    expect_error(.val_ome_ver("0.0"))
+    expect_error(.val_ome_ver("0.30"))
+    expect_error(.val_ome_ver(c("0.3", "0.4")))
+    # valid
+    expect_silent(.val_ome_ver(v <- "0.3-x"))
+    expect_silent(x <- .val_ome_ver(v <- "0.3"))
+    expect_is(x, "character")
+    expect_length(x, 1)
+    expect_identical(x, v)
+})
+test_that("SpatialDataAttrs()", {
+    # invalid
+    expect_error(SpatialDataAttrs(nch=0))
+    expect_error(SpatialDataAttrs(dim=7))
+    expect_error(SpatialDataAttrs(ver="0.0"))
+    expect_error(SpatialDataAttrs(type="bad"))
+    # 2-4D image
+    nms <- c("c", "t", "z", "y", "x")
+    for (d in seq(2, 4)) {
+        x <- SpatialDataAttrs(type="image", dim=d, nch=7)
+        ok <- if (d == 2) nms[-c(2,3)] else if (d == 3) nms[-2] else nms
+        # axes name
+        y <- axes(x, "name")
+        expect_length(y, 1+d)
+        expect_is(y, "character")
+        expect_identical(y, ok)
+        # axes type
+        y <- axes(x, "type")
+        expect_equal(sum(y == "time"), ifelse(d == 4, 1, 0))
+        expect_equal(sum(y == "space"), ifelse(d == 2, 2, 3))
+        expect_equal(sum(y == "channel"), 1)
+        # channels
+        y <- channels(x)
+        expect_length(y, 7)
+        expect_is(y, "character")
+        expect_all_true(!duplicated(y))
+    }
+    # 2-4D label
+    for (d in seq(2, 4)) {
+        x <- SpatialDataAttrs(type="label", dim=d)
+        y <- axes(x, "type")
+        expect_length(y, d)
+        expect_equal(sum(y == "time"), ifelse(d == 4, 1, 0))
+        expect_equal(sum(y == "space"), ifelse(d == 2, 2, 3))
+    }
+    # 3-4D shape/point
+    for (d in seq(2, 4)) {
+        x <- SpatialDataAttrs(type="frame", dim=d)
+        y <- axes(x, "type")
+        expect_length(y, d)
+        expect_null(channels(x))
+        expect_equal(sum(y == "time"), ifelse(d == 4, 1, 0))
+        expect_equal(sum(y == "space"), ifelse(d == 2, 2, 3))
+    }
+})
