@@ -42,7 +42,7 @@ test_that("validity,SpatialDataLabel", {
         x <- label(sd,1); x@data[[1]][1,1] <- v; expect_error(validObject(x))
         x <- label(sd,2); x@data[[2]][1,1] <- v; expect_error(validObject(x))
     }
-    expect_error(SpatialDataLabel(list(a <- array(integer(1), c(1,1,1)))))
+    expect_error(SpatialDataLabel(list(a <- array(integer(1), rep(1,7)))))
     x <- label(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- label(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })

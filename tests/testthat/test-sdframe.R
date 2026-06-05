@@ -83,7 +83,7 @@ test_that("filter", {
     n <- length(p <- point(x))
     expect_length(filter(p), n)
     expect_length(filter(p, genes == "x"), 0)
-    f <- \() filter(p, z == 1)
+    f <- \() filter(p, missing == 1)
     expect_error(show(f()))
 })
 
