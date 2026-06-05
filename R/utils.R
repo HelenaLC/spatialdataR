@@ -103,3 +103,25 @@
     slot(x, "tables") <- ts
     return(x)
 }
+
+# multiscales
+
+.get_multiscale_scale <- \(x) {
+    ms <- multiscales(meta(x))[[1]]
+    ds <- ms$datasets[[1]]
+    ct <- ds$coordinateTransformations[[1]]
+    return(unlist(ct$scale))
+}
+
+.get_multiscale_match <- \(x, y) {
+    ax <- axes(x, "type") == "space"
+    ay <- axes(y, "type") == "space"
+    dx <- lapply(data(x, NULL), \(d) dim(d)[ax])
+    dy <- lapply(data(y, NULL), \(d) dim(d)[ay])
+    ks <- outer(dx, dy, Vectorize(identical))
+    ks <- which(ks, arr.ind=TRUE)
+    if (nrow(ks) == 0)
+        stop("couldn't find shared multiscales level; need at",
+            " least one data() pair with identical dimensions")
+    return(ks)
+}
