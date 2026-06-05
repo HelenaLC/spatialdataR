@@ -45,10 +45,10 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"array"</span>, <span class="st">"frame"</span><span class="op">)</span>,</span>
-<span>  label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"image"</span>, <span class="st">"label"</span>, <span class="st">"frame"</span><span class="op">)</span>,</span>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ver <span class="op">=</span> <span class="st">"0.4"</span>,</span>
+<span>  dim <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  nch <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -126,16 +126,18 @@
 <dd><p>character string; either "array" (image/label) or "frame" (point/shape).</p></dd>
 
 
-<dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
-<dd><p>flag; when <code>type="frame"</code>, should attributes be for a label?</p></dd>
-
-
 <dt id="arg-trans">trans<a class="anchor" aria-label="anchor" href="#arg-trans"></a></dt>
 <dd><p>list of coordinate transformations; defaults to identity only.</p></dd>
 
 
 <dt id="arg-ver">ver<a class="anchor" aria-label="anchor" href="#arg-ver"></a></dt>
-<dd><p>character string; specified the .zarr version to comply with.</p></dd>
+<dd><p>character string; specifies the OME version to comply with.</p></dd>
+
+
+<dt id="arg-dim">dim<a class="anchor" aria-label="anchor" href="#arg-dim"></a></dt>
+<dd><p>scalar integer in 2-4;
+number of dimensions: 2 = XY, 3 adds Z, 4 adds T (time);
+when <code>type="image"</code>, C (channel) will be added (for any <code>dim</code>).</p></dd>
 
 
 <dt id="arg-nch">nch<a class="anchor" aria-label="anchor" href="#arg-nch"></a></dt>
@@ -154,6 +156,10 @@
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>character string (for one <code>region</code> and <code>_key</code>s),
 or vector (for many <code>region</code>s, <code>instances</code> and <code>regions</code>).</p></dd>
+
+
+<dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
+<dd><p>flag; when <code>type="frame"</code>, should attributes be for a label?</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -225,17 +231,7 @@ according to the specified type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - type: space space </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coordTrans(1):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - global: (identity)</span>
-<span class="r-in"><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span>type<span class="op">=</span><span class="st">"array"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataAttrs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> axes(3):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - name: c y x </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - type: channel space space </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coordTrans(1):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - global: (identity)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> datasets(1): 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - 0: (scale:[1,1])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> channels(3): a b c</span>
-<span class="r-in"><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span>type<span class="op">=</span><span class="st">"array"</span>, nch<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span>type<span class="op">=</span><span class="st">"image"</span>, nch<span class="op">=</span><span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataAttrs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> axes(3):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - name: c y x </span>
@@ -245,11 +241,11 @@ according to the specified type.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> datasets(1): 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - 0: (scale:[1,1])</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> channels(7): a b ... f g</span>
-<span class="r-in"><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span>type<span class="op">=</span><span class="st">"array"</span>, label<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">SpatialDataAttrs</span><span class="op">(</span>type<span class="op">=</span><span class="st">"label"</span>, dim<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataAttrs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> axes(2):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - name: y x </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - type: space space </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> axes(3):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - name: z y x </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - type: space space space </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> coordTrans(1):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - global: (identity)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> datasets(1): 0</span>

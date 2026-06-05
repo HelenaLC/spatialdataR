@@ -559,7 +559,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-06-03 r90099)
+    ## R Under development (unstable) (2026-06-04 r90104)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -602,21 +602,21 @@ sessionInfo()
     ## [28] purrr_1.2.2         desc_1.4.3          R.oo_1.27.1        
     ## [31] grid_4.7.0          e1071_1.7-17        cli_3.6.6          
     ## [34] rmarkdown_2.31      crayon_1.5.3        ragg_1.5.2         
-    ## [37] DBI_1.3.0           cachem_1.1.0        proxy_0.4-29       
-    ## [40] BiocManager_1.30.27 XVector_0.53.0      vctrs_0.7.3        
-    ## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.46      
-    ## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  
-    ## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         
-    ## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.1.17        
-    ## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     
-    ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
-    ## [61] dbplyr_2.5.2        httr2_1.2.2         wk_0.9.5           
-    ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.1.0  
-    ## [70] paws.common_0.8.9   bslib_0.11.0        class_7.3-23       
-    ## [73] Rcpp_1.1.1-1.1      uuid_1.2-2          SparseArray_1.13.2 
-    ## [76] anndataR_1.3.0      xfun_0.58           fs_2.1.0           
-    ## [79] pkgconfig_2.0.3
+    ## [37] otel_0.2.0          DBI_1.3.0           cachem_1.1.0       
+    ## [40] proxy_0.4-29        BiocManager_1.30.27 XVector_0.53.0     
+    ## [43] vctrs_0.7.3         Matrix_1.7-5        jsonlite_2.0.0     
+    ## [46] bookdown_0.46       RBGL_1.89.0         Rgraphviz_2.57.0   
+    ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
+    ## [52] glue_1.8.1          pkgdown_2.2.0       ZarrArray_1.1.0    
+    ## [55] Rarr_2.1.17         tibble_3.3.1        pillar_1.11.1      
+    ## [58] rappdirs_0.3.4      htmltools_0.5.9     graph_1.91.0       
+    ## [61] R6_2.6.1            dbplyr_2.5.2        httr2_1.2.2        
+    ## [64] wk_0.9.5            textshaping_1.0.5   evaluate_1.0.5     
+    ## [67] lattice_0.22-9      R.methodsS3_1.8.2   png_0.1-9          
+    ## [70] duckspatial_1.1.0   paws.common_0.8.9   bslib_0.11.0       
+    ## [73] class_7.3-23        Rcpp_1.1.1-1.1      uuid_1.2-2         
+    ## [76] SparseArray_1.13.2  anndataR_1.3.0      xfun_0.58          
+    ## [79] fs_2.1.0            pkgconfig_2.0.3
 
 ### References
 

@@ -7,10 +7,10 @@ The \`SpatialDataAttrs\` class
 ``` r
 SpatialDataAttrs(
   x,
-  type = c("array", "frame"),
-  label = FALSE,
+  type = c("image", "label", "frame"),
   trans = NULL,
   ver = "0.4",
+  dim = 2,
   nch = 3,
   ...
 )
@@ -87,17 +87,19 @@ instances(x) <- value
   character string; either "array" (image/label) or "frame"
   (point/shape).
 
-- label:
-
-  flag; when `type="frame"`, should attributes be for a label?
-
 - trans:
 
   list of coordinate transformations; defaults to identity only.
 
 - ver:
 
-  character string; specified the .zarr version to comply with.
+  character string; specifies the OME version to comply with.
+
+- dim:
+
+  scalar integer in 2-4; number of dimensions: 2 = XY, 3 adds Z, 4 adds
+  T (time); when `type="image"`, C (channel) will be added (for any
+  `dim`).
 
 - nch:
 
@@ -116,6 +118,10 @@ instances(x) <- value
 
   character string (for one `region` and `_key`s), or vector (for many
   `region`s, `instances` and `regions`).
+
+- label:
+
+  flag; when `type="frame"`, should attributes be for a label?
 
 ## Value
 
@@ -187,17 +193,7 @@ SpatialDataAttrs(type="frame")
 #> - type: space space 
 #> coordTrans(1):
 #> - global: (identity)
-SpatialDataAttrs(type="array")
-#> class: SpatialDataAttrs
-#> axes(3):
-#> - name: c y x 
-#> - type: channel space space 
-#> coordTrans(1):
-#> - global: (identity)
-#> datasets(1): 0
-#> - 0: (scale:[1,1])
-#> channels(3): a b c
-SpatialDataAttrs(type="array", nch=7)
+SpatialDataAttrs(type="image", nch=7)
 #> class: SpatialDataAttrs
 #> axes(3):
 #> - name: c y x 
@@ -207,11 +203,11 @@ SpatialDataAttrs(type="array", nch=7)
 #> datasets(1): 0
 #> - 0: (scale:[1,1])
 #> channels(7): a b ... f g
-SpatialDataAttrs(type="array", label=TRUE)
+SpatialDataAttrs(type="label", dim=3)
 #> class: SpatialDataAttrs
-#> axes(2):
-#> - name: y x 
-#> - type: space space 
+#> axes(3):
+#> - name: z y x 
+#> - type: space space space 
 #> coordTrans(1):
 #> - global: (identity)
 #> datasets(1): 0
