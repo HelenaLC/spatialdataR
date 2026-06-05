@@ -159,7 +159,6 @@ NULL
 #' @importFrom methods is
 #' @importFrom sf st_bbox
 setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
-    #x <- label(sd); y <- bb; j <- 1
     if (is.matrix(y)) {
         y <- .check_pol(y)
         y <- st_bbox(st_polygon(list(y)))
