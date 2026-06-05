@@ -120,6 +120,32 @@ setMethod("mask_i_by_j",
         iv <- as.vector(iv[ok])
         tapply(iv, jv, how)
     }
+    res <- if ("t" %in% axes(i, "name")) {
+        ts <- seq_len(dim(di)[1])
+        names(ts) <- paste0("t", ts)
+        ix <- as.list(!logical(length(dim(di))))
+        jx <- as.list(!logical(length(dim(dj))))
+        lapply(ts, \(t) {
+            ix[[1]] <- t; jx[[1]] <- t
+            .di <- do.call(`[`, c(list(di), ix))
+            .dj <- do.call(`[`, c(list(dj), jx))
+            agg(.di, .dj, how)
+        })
+    } else {
+        list(apply(di, 1, \(.di) agg(.di, dj, how)))
+    }
+    se <- SingleCellExperiment(lapply(res, t))
+    rownames(se) <- channels(i)
+    as <- assayNames(se)
+    as <- if (is.null(as)) {
+        how
+    } else {
+        paste0(how, "_", as)
+    }
+    assayNames(se) <- as
+    return(se)
+    
+
     # check for non-standard dimensions
     tzi <- which(axes(i, "name") %in% c("t", "z"))
     tzj <- which(axes(j, "name") %in% c("t", "z"))
@@ -143,8 +169,12 @@ setMethod("mask_i_by_j",
     # construct SCE: 
     # data = tz combinations
     # dim. = instances x channels
-    as <- lapply(res, \(.) `rownames<-`(t(.), channels(i)))
-    se <- SingleCellExperiment(as)
+    # if (length(dim(res[[1]])) == 1) {
+    #     nms <- list(NULL, names(res[[1]]))
+    #     res <- lapply(res, matrix, nrow=1, dimn=nms)
+    # }
+    se <- SingleCellExperiment(lapply(res, t))
+    rownames(se) <- channels(i)
     # construct assay names with pattern 'how_t0z0'
     t <- "t" %in% axes(i, "name")
     z <- "z" %in% axes(i, "name")
