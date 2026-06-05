@@ -195,7 +195,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     }
     metadata(x)$wh <- wh
     # multi-scale adjustment
-    t <- .get_multiscale_scale(x)
+    t <- .get_ms_scale(x)
     tx <- tail(t, 1)
     ty <- tail(t, 2)[1]
     z$xmin <- floor(z$xmin/tx)

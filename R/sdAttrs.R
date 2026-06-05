@@ -158,9 +158,8 @@ setMethod("multiscales", "list", \(x) {
 # internal use only!
 #' @noRd 
 setMethod("datasets", "list", \(x, ...) {
-    vapply(multiscales(x)[[1]]$datasets, \(.){
-        .$path
-    }, character(1))
+    ds <- .get_ms(x)$datasets
+    vapply(ds, \(.) .$path, character(1))
 })
 
 # features ----

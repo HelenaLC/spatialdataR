@@ -50,7 +50,7 @@ setMethod("centroids", "SpatialDataLabel", \(x,
     xy <- cbind(xy, as.integer(rownames(xy)))
     dimnames(xy) <- list(NULL, c("x", "y", "i"))
     # multi-scale adjustment
-    sf <- .get_multiscale_scale(x)
+    sf <- .get_ms_scale(x)
     xy[,1] <- xy[,1]*tail(sf, 1)
     xy[,2] <- xy[,2]*tail(sf, 2)[1]
     # offset

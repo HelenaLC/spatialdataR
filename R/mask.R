@@ -89,7 +89,7 @@ setMethod("mask_i_by_j",
         how <- "mean"
     }
     # default to 1st matching scale
-    ks <- .get_multiscale_match(i, j)
+    ks <- .get_ms_match(i, j)
     di <- data(i, ks[1, 1])
     dj <- data(j, ks[1, 2])
     # utility to aggregate 'i' channels by instance in 'j'

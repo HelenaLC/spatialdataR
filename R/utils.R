@@ -131,14 +131,31 @@
 
 # multiscales ----
 
-.get_multiscale_scale <- \(x) {
-    ms <- multiscales(meta(x))[[1]]
+# internal helper to get the 'active' metadata level
+# (drills into 'multiscales' if present, else returns the list itself)
+.get_ms <- \(x) {
+    # if 'x' is an element, get its attributes first
+    if (is(x, "SpatialDataElement")) x <- meta(x)
+    # check for 'multiscales' (handles OME version via 'multiscales()'
+    ms <- multiscales(x)
+    if (is.null(ms)) return(x)
+    # return the first (usually only) multiscale level's metadata;
+    # this contains the 'axes' & 'coordinateTransformations' we need
+    return(ms[[1]])
+}
+
+# get scale factors between 'multiscales' levels
+# (returns numeric vector, one value per dimension)
+.get_ms_scale <- \(x) {
+    ms <- .get_ms(x)
     ds <- ms$datasets[[1]]
     ct <- ds$coordinateTransformations[[1]]
     return(unlist(ct$scale))
 }
 
-.get_multiscale_match <- \(x, y) {
+# find indices with equal spatial extents
+# (returns array: rows = matches, cols = x/y indices)
+.get_ms_match <- \(x, y) {
     ax <- axes(x, "type") == "space"
     ay <- axes(y, "type") == "space"
     dx <- lapply(data(x, NULL), \(d) dim(d)[ax])

@@ -55,9 +55,8 @@ NULL
 #' @rdname CTutils
 #' @export
 setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
-    ms <- multiscales(x)
-    if (!is.null(ms)) x <- ms[[1]]
-    if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
+    x <- .get_ms(x)$axes
+    if (is.null(x)) stop("couldn't find 'axes'") 
     if (is.null(y)) return(x)
     y <- match.arg(y, c("name", "type", "unit"))
     vapply(x, `[[`, character(1), y)
@@ -68,10 +67,8 @@ setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
-    ms <- multiscales(x)
     ct <- "coordinateTransformations"
-    if (is.null(ms)) return(x[[ct]])
-    ms[[1]][[ct]]
+    .get_ms(x)[[ct]]
 })
 
 #' @rdname CTutils
