@@ -166,12 +166,14 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 #' @importFrom utils head tail
 .sub_sda <- \(x, yx, z=list()) {
-    #x <- label(sd); yx <- list(1:10, 1:10); z <- list()
-    # yx: spatial; z: channels
+    # yx: user-provided spatial slices (list of 2: y, x)
+    # z: user-provided channel slices (list of 1)
+    ax <- .get_space_ax(x)
     ls <- seq_along(data(x, NULL))
     data(x) <- lapply(ls, \(l) {
-        sf <- 2^(l-1)   
-        rc <- tail(dim(data(x, l)), 2) 
+        sf <- 2^(l-1) # scale factor for current level
+        ds <- dim(data(x, l))
+        rc <- ds[c(ax$y, ax$x)] # numbers rows/cols (YX)
         # get spatial indices
         .yx <- lapply(seq_along(yx), \(a) {
             ix <- yx[[a]]

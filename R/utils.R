@@ -120,6 +120,20 @@
     return(x)
 }
 
+# internal helper to resolve spatial (XY) axis indices
+.get_space_ax <- \(x) {
+    nm <- axes(x, "name")
+    ix <- match("x", nm)
+    iy <- match("y", nm)
+    # fallback: OME-NGFF usually places spatial dimensions at the end (YX)
+    if (is.na(ix) || is.na(iy)) {
+        n <- length(nm)
+        ix <- n
+        iy <- n-1
+    }
+    return(list(x=ix, y=iy))
+}
+
 # validation ----
 
 # validate OME version

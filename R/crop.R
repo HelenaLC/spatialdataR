@@ -106,10 +106,10 @@ NULL
         x=c(y$xmin, y$xmax, y$xmax, y$xmin, y$xmin),
         y=c(y$ymin, y$ymin, y$ymax, y$ymax, y$ymin),
         id=seq_len(5))
-    # get transformation for space j
-    if (is.numeric(j)) j <- CTname(x)[j]
-    ct <- CTlist(x)[[match(j, CTname(x))]]
-    # identify spatial axes
+    # get transformation for space 'j'
+    j <- .resolve_id(j, CTname(x))
+    ct <- CTlist(x)[[j]]
+    # helper to adapt transformation data to spatial (XY) dims
     axs <- axes(x)
     nms <- vapply(axs, \(.) .$name, character(1))
     ix <- match("x", nms)
@@ -119,11 +119,11 @@ NULL
         n <- length(nms)
         ix <- n; iy <- n-1
     }
-    # helper to adapt transformation data to spatial (XY) dims
+    ax <- .get_space_ax(x)
     .adapt <- \(t, type) {
         if (is.null(t)) return(NULL)
         if (type %in% c("scale", "translation"))
-            return(c(t[ix], t[iy]))
+            return(c(t[ax$x], t[ax$y]))
         if (type == "rotate") 
             return(t[1])
         return(t)
