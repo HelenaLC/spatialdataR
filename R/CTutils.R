@@ -3,6 +3,9 @@
 #' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
+#' @param y NULL (default) returns a list where each element is 
+#'   an axis: a list with name/type/unit (e.g., x/space/micrometer);
+#'   \code{y="name/type/unit"} extracts specific data over all axiis.
 #' @param i for \code{CTpath}, source node label; else, string or 
 #'   scalar integer giving the name or index of a coordinate space.
 #' @param name character(1); name of coordinate space
@@ -51,11 +54,13 @@ NULL
 
 #' @rdname CTutils
 #' @export
-setMethod("axes", "SpatialDataAttrs", \(x, ...) {
+setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
     ms <- multiscales(x)
     if (!is.null(ms)) x <- ms[[1]]
     if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
-    return(x)
+    if (is.null(y)) return(x)
+    y <- match.arg(y, c("name", "type", "unit"))
+    vapply(x, `[[`, character(1), y)
 })
 
 # CTlist/data/type/name() ----
@@ -105,7 +110,7 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
 
 #' @rdname CTutils
 #' @export
-setMethod("axes", "SpatialDataElement", \(x, ...) axes(meta(x), ...))
+setMethod("axes", "SpatialDataElement", \(x, y=NULL, ...) axes(meta(x), y, ...))
 
 #' @rdname CTutils
 #' @export
