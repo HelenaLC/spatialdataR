@@ -2,6 +2,11 @@ zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="spatialdataR")
 sd <- readSpatialData(zs)
 
+fn <- \(x, y) {
+    z <- paste(capture.output(show(x)), collapse="\n")
+    for (. in y) expect_match(z, .)
+}
+
 test_that("show(SpatialData)", {
     # element counts
     ni <- length(imageNames(sd))
@@ -11,10 +16,9 @@ test_that("show(SpatialData)", {
     nt <- length(tableNames(sd))
     
     # coordinate systems
-    g <- CTgraph(sd)
-    typ <- graph::nodeData(g, graph::nodes(g), "type")
-    xyz <- graph::nodeData(g, graph::nodes(g), "type") == "space"
-    cs <- graph::nodes(g)[xyz]
+    cg <- CTgraph(sd)
+    ts <- graph::nodeData(cg, graph::nodes(cg), "type")
+    cs <- graph::nodes(cg)[ts == "space"]
     nc <- length(cs)
     
     # expected patterns 
@@ -34,12 +38,45 @@ test_that("show(SpatialData)", {
     # add coordinate systems with element counts
     for (c in cs) {
         # check connectivity b/w spatial elements & coordinate systems
-        pa <- suppressWarnings(RBGL::sp.between(g, paste0("_", el), c))
+        pa <- suppressWarnings(RBGL::sp.between(cg, paste0("_", el), c))
         n <- sum(vapply(pa, \(.) !is.na(.$length), logical(1)))
         ok <- c(ok, sprintf("- %s\\(%d\\):", c, n))
     }
+    fn(sd, ok)
+})
+
+test_that("show(SpatialDataElement)", {
+    # image
+    x <- image(sd, 1)
+    ok <- c(
+        "class:  SpatialDataImage",
+        sprintf("Scales \\(%d\\):", length(data(x, NULL))),
+        sprintf("(%s)", paste(dim(x), collapse=",")))
+    fn(x, ok)
     
-    # capture show & match against patterns
-    out <- paste(capture.output(show(sd)), collapse="\n")
-    for (. in ok) expect_match(out, .)
+    # label
+    x <- label(sd, 1)
+    ok <- c(
+        "class:  SpatialDataLabel",
+        sprintf("Scales \\(%d\\):", length(data(x, NULL))),
+        sprintf("(%s)", paste(dim(x), collapse=",")))
+    fn(x, ok)
+    
+    # point
+    x <- point(sd, 1)
+    ok <- c(
+        "class: SpatialDataPoint",
+        sprintf("count: %d", length(x)),
+        sprintf("data\\(%d\\):", length(names(x))),
+        paste(names(x), collapse=" "))
+    fn(x, ok)
+    
+    # shape
+    x <- shape(sd, 1)
+    ok <- c(
+        "class: SpatialDataShape",
+        sprintf("count: %d", length(x)),
+        sprintf("data\\(%d\\):", length(names(x))),
+        paste(names(x), collapse=" "))
+    fn(x, ok)
 })
