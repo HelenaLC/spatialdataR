@@ -2,6 +2,27 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
+test_that("axes", {
+    es <- list(image(x), label(x))
+    for (e in es) {
+        z <- axes(e)
+        d <- length(dim(e))
+        expect_is(z, "list")
+        expect_length(z, d)
+        expect_error(axes(e, "bad"))
+        # name
+        expect_silent(z <- axes(e, "name"))
+        expect_is(z, "character")
+        expect_length(z, d)
+        expect_in(z, c("t","c","z","y","x"))
+        # type
+        expect_silent(z <- axes(e, "type"))
+        expect_is(z, "character")
+        expect_length(z, d)
+        expect_in(z, c("time","channel","space"))
+    }
+})
+
 .CTtype <- c(
     "identity", "scale", "rotate", 
     "translation", "affine", "sequence")

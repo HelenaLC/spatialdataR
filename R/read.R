@@ -136,15 +136,13 @@ readSpatialData <- function(x,
     
     # helper for layer reading
     .readLayer <- \(l) {
+        # 'j' are the paths on disk, 'nms' are their basenames
         j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
-        names(j) <- basename(j)
+        nms <- names(j) <- basename(j)
         opt <- args[[l]]
         if (!isTRUE(opt)) {
-            if (is.numeric(opt) && opt > (. <- length(j)))
-                stop("'", l, "=", opt, "', but only ", ., " elements found")
-            if (is.character(opt) && length(. <- setdiff(opt, basename(j))))
-                stop("couldn't find ", l, " of name", .)
-            j <- j[opt]
+            # validate each requested element
+            j <- j[vapply(opt, .resolve_id, integer(1), ok=nms, nm=l)]
         }
         f <- paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
         lapply(j, f)

@@ -55,9 +55,8 @@ NULL
 #' @rdname CTutils
 #' @export
 setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
-    ms <- multiscales(x)
-    if (!is.null(ms)) x <- ms[[1]]
-    if (is.null(x <- x$axes)) stop("couldn't find 'axes'") 
+    x <- .get_ms(x)$axes
+    if (is.null(x)) stop("couldn't find 'axes'") 
     if (is.null(y)) return(x)
     y <- match.arg(y, c("name", "type", "unit"))
     vapply(x, `[[`, character(1), y)
@@ -68,24 +67,14 @@ setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
-    ms <- multiscales(x)
     ct <- "coordinateTransformations"
-    if (is.null(ms)) return(x[[ct]])
-    ms[[1]][[ct]]
+    .get_ms(x)[[ct]]
 })
 
 #' @rdname CTutils
 #' @export
 setMethod("CTdata", "SpatialDataAttrs", \(x, i=1, ...) {
-    stopifnot(length(i) == 1)
-    if (is.character(i)) {
-        match.arg(i, CTname(x))
-        i <- match(i, CTname(x))
-    } else if (is.numeric(i)) {
-        stopifnot(
-            i == round(i), 
-            i %in% seq_along(CTlist(x)))
-    } else stop("Invalid 'i'; should be a scalar character or integer")
+    i <- .resolve_id(i, CTname(x))
     t <- CTtype(x)[i]
     if (t != "sequence") 
         return(CTlist(x)[[i]][[t]])

@@ -19,14 +19,14 @@
 \usage{
 SpatialDataImage(
   data = list(),
-  meta = SpatialDataAttrs(),
+  meta = SpatialDataAttrs(type = "image"),
   metadata = list(),
   ...
 )
 
 SpatialDataLabel(
   data = list(),
-  meta = SpatialDataAttrs(),
+  meta = SpatialDataAttrs(type = "label"),
   metadata = list(),
   ...
 )
