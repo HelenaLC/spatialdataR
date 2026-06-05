@@ -119,7 +119,7 @@ NULL
         n <- length(nms)
         ix <- n; iy <- n-1
     }
-    ax <- .get_space_ax(x)
+    ax <- .get_xy_axes(x)
     .adapt <- \(t, type) {
         if (is.null(t)) return(NULL)
         if (type %in% c("scale", "translation"))

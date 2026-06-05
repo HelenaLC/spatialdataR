@@ -168,7 +168,7 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 .sub_sda <- \(x, yx, z=list()) {
     # yx: user-provided spatial slices (list of 2: y, x)
     # z: user-provided channel slices (list of 1)
-    ax <- .get_space_ax(x)
+    ax <- .get_xy_axes(x)
     ls <- seq_along(data(x, NULL))
     data(x) <- lapply(ls, \(l) {
         sf <- 2^(l-1) # scale factor for current level

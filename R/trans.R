@@ -137,7 +137,7 @@ setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
     if (rev) t <- if (f == "scale") 1/t else -t
     
     # project to spatial (XY) dims
-    ax <- .get_space_ax(x)
+    ax <- .get_xy_axes(x)
     xy <- c(ax$x, ax$y)
     .t <- t[xy]
     .d <- d[xy]

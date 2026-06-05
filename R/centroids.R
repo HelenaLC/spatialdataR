@@ -36,7 +36,7 @@ setMethod("centroids", "SpatialDataLabel", \(x,
     as=c("data.frame", "matrix")) {
     y <- data(x)
     as <- match.arg(as)
-    ax <- .get_space_ax(x)
+    ax <- .get_xy_axes(x)
     # max-projection
     if (length(dim(y)) > 2) 
         y <- apply(y, c(ax$y, ax$x), max)

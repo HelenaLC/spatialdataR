@@ -121,7 +121,7 @@
 }
 
 # internal helper to resolve spatial (XY) axis indices
-.get_space_ax <- \(x) {
+.get_xy_axes <- \(x) {
     nm <- axes(x, "name")
     ix <- match("x", nm)
     iy <- match("y", nm)
