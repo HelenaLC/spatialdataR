@@ -144,48 +144,6 @@ setMethod("mask_i_by_j",
     }
     assayNames(se) <- as
     return(se)
-    
-
-    # check for non-standard dimensions
-    tzi <- which(axes(i, "name") %in% c("t", "z"))
-    tzj <- which(axes(j, "name") %in% c("t", "z"))
-    if (length(tzi)) {
-        # get unique tz combinations
-        ai <- lapply(tzi, \(.) seq_len(dim(di)[.]))
-        ix <- as.list(rep(TRUE, length(dim(di))))
-        jx <- as.list(rep(TRUE, length(dim(dj))))
-        xx <- expand.grid(ai)
-        res <- apply(xx, 1, \(.) {
-            # subset to single tz pair
-            ix[tzi] <- .; jx[tzj] <- .
-            .di <- do.call(`[`, c(list(di), ix))
-            .dj <- do.call(`[`, c(list(dj), jx))
-            agg(.di, .dj, how)
-        }, simplify=FALSE)
-    } else {
-        res <- apply(di, 1, \(.di) agg(.di, dj, how))
-        res <- list(res)
-    }
-    # construct SCE: 
-    # data = tz combinations
-    # dim. = instances x channels
-    # if (length(dim(res[[1]])) == 1) {
-    #     nms <- list(NULL, names(res[[1]]))
-    #     res <- lapply(res, matrix, nrow=1, dimn=nms)
-    # }
-    se <- SingleCellExperiment(lapply(res, t))
-    rownames(se) <- channels(i)
-    # construct assay names with pattern 'how_t0z0'
-    t <- "t" %in% axes(i, "name")
-    z <- "z" %in% axes(i, "name")
-    nm <- if (t && z) {
-        sprintf("t%sz%s", xx[,1], xx[,2])
-    } else if (t || z) {
-        paste0(c("t", "z")[which(c(t, z))], xx[,1])
-    }
-    nm <- if (is.null(nm)) how else paste0(how, "_", nm)
-    assayNames(se) <- nm
-    return(se)
 })
 
 .mask_map <- \(i, j) {
@@ -195,7 +153,6 @@ setMethod("mask_i_by_j",
         "POINT"=mutate(data(j), geometry=ST_Buffer(geometry, radius)), 
         data(j))
     ddbs_intersects(df_j, data(i), sparse=TRUE)
-        
 }
 
 #' @noRd
