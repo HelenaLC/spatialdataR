@@ -1,5 +1,5 @@
 #' @importFrom S4Vectors SimpleList
-#' @importFrom methods setClass setClassUnion setOldClass
+#' @importFrom methods new setClass setClassUnion setOldClass
 
 .sdLayerList <- setClass(
     Class="sdLayerList", 

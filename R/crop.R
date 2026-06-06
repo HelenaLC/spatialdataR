@@ -107,7 +107,7 @@ NULL
         y=c(y$ymin, y$ymin, y$ymax, y$ymax, y$ymin),
         id=seq_len(5))
     # get transformation for space 'j'
-    j <- .resolve_id(j, CTname(x))
+    j <- .val_id(j, CTname(x))
     ct <- CTlist(x)[[j]]
     # helper to adapt transformation data to spatial (XY) dims
     axs <- axes(x)
@@ -253,35 +253,8 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
     z <- do.call("SpatialData", z)
     tables(z) <- tables(x)
-    # filter tables for remaining region(s)/instance(s)
-    rs <- unlist(colnames(z))
-    ts <- lapply(tables(z), \(t) {
-        # filter for remaining element(s)
-        t <- t[, regions(t) %in% rs]
-        region(t) <- intersect(region(t), rs)
-        # table's regions-instances
-        df <- data.frame(
-            r=regions(t), 
-            i=instances(t),
-            keep=seq_len(ncol(t)))
-        # for each annotated element
-        rs <- intersect(region(t), unlist(colnames(z)))
-        is <- lapply(rs, \(r) {
-            # subset look-up
-            df <- df[df$r == r, ]
-            e <- element(z, r)
-            if (is(e, "SpatialDataShape")) {
-                # element's regions-instances
-                ik <- instance_key(t)
-                i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
-                fd <- data.frame(r, i)
-                # return table indices in element
-                right_join(df, fd, names(fd))$keep
-            } else df$keep
-        })
-        # subset table instances
-        t <- t[, unlist(is)]
-    })
-    tables(z) <- ts
+    # filter table instances
+    z <- .sync_tables_on_crop(z)
     return(z)
 })
+
