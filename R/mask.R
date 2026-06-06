@@ -79,8 +79,8 @@ setGeneric("mask_i_by_j", \(i, j, ...) standardGeneric("mask_i_by_j"))
 #' @noRd
 #' @importFrom methods as
 #' @importFrom Matrix sparseVector
-#' @importFrom SummarizedExperiment assayNames<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom SummarizedExperiment assayNames assayNames<-
 setMethod("mask_i_by_j", 
     c("SpatialDataImage", "SpatialDataLabel"), 
     \(i, j, how=NULL, ...) {
