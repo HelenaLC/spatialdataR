@@ -142,7 +142,7 @@ readSpatialData <- function(x,
         opt <- args[[l]]
         if (!isTRUE(opt)) {
             # validate each requested element
-            j <- j[vapply(opt, .resolve_id, integer(1), ok=nms, nm=l)]
+            j <- j[vapply(opt, .val_id, integer(1), ok=nms, nm=l)]
         }
         f <- paste0("read", toupper(substr(l, 1, 1)), substr(l, 2, nchar(l)-1))
         lapply(j, f)

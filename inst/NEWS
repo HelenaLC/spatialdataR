@@ -1,7 +1,15 @@
+changes in version 0.99.43
+
+- revised validity to allow 4D data (time dimension)
+- revised 'mask()' to support 4D, returning one sheet per timepoint
+- revised 'SpatialDataAttrs()' to generate attributes for any dimensions
+- refactored functions for spatial axiis, multiscales & tables handling
+- added unit tests for 'show()', >2D support, table synchronization
+
 changes in version 0.99.42
 
+- revised subsetting to support >2D arrays (t & z dims. are protected)
 - revised 'crop()' to adjust for array multiscales with scale factor != 1
-- revised subsetting to support >2/3D arrays (t & z dims. are protected)
 
 changes in version 0.99.41
 
