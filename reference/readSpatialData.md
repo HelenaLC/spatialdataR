@@ -116,7 +116,7 @@ data(s)
 #> # Data backed by DuckDB (dbplyr lazy evaluation)
 #> # Use ddbs_collect() or st_as_sf() to materialize to sf
 #> #
-#> # Source:   table<temp_view_1a46690b_7ff1_4a5d_86ea_e82880fcae3a> [?? x 1]
+#> # Source:   table<temp_view_edeaeb7b_a5bf_4fa8_9a18_0b978cab6033> [?? x 1]
 #> # Database: DuckDB 1.5.2 [unknown@Linux 6.17.0-1015-azure:R 4.7.0/:memory:]
 #>   geometry                                                                      
 #>   <wk_wkb>                                                                      
