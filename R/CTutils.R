@@ -74,7 +74,7 @@ setMethod("CTlist", "SpatialDataAttrs", \(x, ...) {
 #' @rdname CTutils
 #' @export
 setMethod("CTdata", "SpatialDataAttrs", \(x, i=1, ...) {
-    i <- .resolve_id(i, CTname(x))
+    i <- .val_id(i, CTname(x))
     t <- CTtype(x)[i]
     if (t != "sequence") 
         return(CTlist(x)[[i]][[t]])

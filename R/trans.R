@@ -52,7 +52,7 @@ NULL
 #' @rdname trans
 #' @importFrom BiocGenerics transform
 setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
-    i <- .resolve_id(i, CTname(x))
+    i <- .val_id(i, CTname(x))
     f <- CTtype(x)[i]
     t <- CTdata(x, i)
     if (f == "sequence") {

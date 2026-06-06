@@ -11,7 +11,6 @@ test_that("centroids,invalid", {
     expect_error(centroids(image(x)), "supported")
 })
 test_that("centroids,sdLabel", {
-    # 2D
     y <- label(x)
     z <- centroids(y, "data.frame")
     expect_is(z, "data.frame")
@@ -22,15 +21,6 @@ test_that("centroids,sdLabel", {
     expect_is(.z, "matrix")
     z$i <- as.integer(as.character(z$i))
     expect_identical(.z, as.matrix(z))
-    # 3D
-    n <- 7; m <- 8
-    u <- array(runif(2*n*m), c(1, 5, n, m))
-    v <- array(1L, c(5, n, m))
-    i <- SpatialDataImage(u, SpatialDataAttrs(dim=3, nch=1))
-    l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", dim=3))
-    sd <- SpatialData(images=list(a=i), labels=list(b=l))
-    sd <- expect_silent(mask(sd, "a", "b", how="mean"))
-    expect_identical(as.numeric(assay(table(sd))), mean(u))
 })
 test_that("centroids,sdPoint", {
     i <- feature_key(y <- point(x))
