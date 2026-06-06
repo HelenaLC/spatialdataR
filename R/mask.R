@@ -56,7 +56,7 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     if (!length(ct)) stop(
         "can't mask; found no common ",
         "coordinates between 'i' and 'j'")
-    k <- if (missing(k)) 1 else .resolve_id(k, ct)
+    k <- if (missing(k)) 1 else .val_id(k, ct)
     .i <- transform(.i, ct[k])
     .j <- transform(.j, ct[k])
     t <- tryCatch(error=\(.) NULL, getTable(x, i))

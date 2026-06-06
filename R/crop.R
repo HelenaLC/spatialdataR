@@ -107,7 +107,7 @@ NULL
         y=c(y$ymin, y$ymin, y$ymax, y$ymax, y$ymin),
         id=seq_len(5))
     # get transformation for space 'j'
-    j <- .resolve_id(j, CTname(x))
+    j <- .val_id(j, CTname(x))
     ct <- CTlist(x)[[j]]
     # helper to adapt transformation data to spatial (XY) dims
     axs <- axes(x)

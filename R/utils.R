@@ -1,3 +1,23 @@
+# internal helper for null-coalescing
+`%||%` <- \(a, b) if (is.null(a)) b else a
+
+# internal helpers for object-wide iteration 
+# across spatial elements (excluding tables)
+.ls <- .LAYERS[.LAYERS != "tables"]
+
+.lapplyLayer <- \(x, FUN, ...) {
+    lapply(.ls, \(l) lapply(x[[l]], FUN, ...))
+}
+
+.lapplyElement <- \(x, FUN, ...) {
+    for (l in .ls) {
+        for (e in names(x[[l]])) {
+            x[[l]][[e]] <- FUN(x[[l]][[e]], ...)
+        }
+    }
+    return(x)
+}
+
 # get/make DuckDB connection
 #' @importFrom DBI dbIsValid
 #' @importFrom duckspatial ddbs_create_conn
@@ -10,39 +30,21 @@
     .GlobalEnv[[nm]]
 }
 
-# internal helper to resolve name/index to integer index
-.resolve_id <- \(i, ok, nm=deparse1(substitute(i))) {
-    nm <- sprintf("'%s'", nm)
-    if (is.character(i)) {
-        i <- match.arg(i, ok)
-        return(match(i, ok))
-    }
-    if (is.numeric(i) && i == round(i) && length(i) == 1) {
-        if (i < 1 || i > length(ok)) {
-            stop(sprintf("invalid %s index: %d (max: %d)", nm, i, length(ok)))
-        }
-        return(as.integer(i))
-    }
-    stop(sprintf("invalid %s; expected character or integer index", nm))
-}
+# tables ----
 
-# internal helper for null-coalescing
-`%||%` <- \(a, b) if (is.null(a)) b else a
-
-# internal helpers for object-wide iteration 
-# across spatial elements (excluding tables)
-
-.ls <- .LAYERS[.LAYERS != "tables"]
-
-.lapplyLayer <- \(x, FUN, ...) {
-    lapply(.ls, \(l) lapply(x[[l]], FUN, ...))
-}
-
-.lapplyElement <- \(x, FUN, ...) {
-    for (l in .ls) {
-        for (e in names(x[[l]])) {
-            x[[l]][[e]] <- FUN(x[[l]][[e]], ...)
-        }
+.sync_shapes_on_drop <- \(x, i) {
+    # skip when there aren't any shapes
+    if (!length(shapes(x))) return(x)
+    t <- table(x, i)
+    for (j in region(t)) {
+        # skip non-shape elements
+        if (layer(x, j) != "shapes") next
+        # get element 'y' annotated by table 't'
+        y <- element(x, j)
+        # match instances between them
+        y <- y[match(instances(t), instances(y), nomatch=0)] 
+        # return matching shape instances
+        shape(x, j) <- y
     }
     return(x)
 }
@@ -70,23 +72,6 @@
         ts[[i]] <- t
     }
     slot(x, "tables") <- ts
-    return(x)
-}
-
-.sync_shapes_on_drop <- \(x, i) {
-    # skip when there aren't any shapes
-    if (!length(shapes(x))) return(x)
-    t <- table(x, i)
-    for (j in region(t)) {
-        # skip non-shape elements
-        if (layer(x, j) != "shapes") next
-        # get element 'y' annotated by table 't'
-        y <- element(x, j)
-        # match instances between them
-        y <- y[match(instances(t), instances(y), nomatch=0)] 
-        # return matching shape instances
-        shape(x, j) <- y
-    }
     return(x)
 }
 
@@ -171,6 +156,22 @@
 }
 
 # validation ----
+
+# internal helper to verify & resolve name/index to index
+.val_id <- \(i, ok, nm=deparse1(substitute(i))) {
+    nm <- sprintf("'%s'", nm)
+    if (is.character(i)) {
+        i <- match.arg(i, ok)
+        return(match(i, ok))
+    }
+    if (is.numeric(i) && i == round(i) && length(i) == 1) {
+        if (i < 1 || i > length(ok)) {
+            stop(sprintf("invalid %s index: %d (max: %d)", nm, i, length(ok)))
+        }
+        return(as.integer(i))
+    }
+    stop(sprintf("invalid %s; expected character or integer index", nm))
+}
 
 # validate OME version
 .val_ome_ver <- \(v) {
