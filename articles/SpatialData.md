@@ -586,7 +586,7 @@ sessionInfo()
     ##  [5] Seqinfo_1.3.0               IRanges_2.47.2             
     ##  [7] S4Vectors_0.51.3            BiocGenerics_0.59.6        
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           spatialdataR_0.99.42       
+    ## [11] matrixStats_1.5.0           spatialdataR_0.99.43       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
