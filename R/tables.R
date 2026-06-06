@@ -182,8 +182,8 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     if (!. %in% c("labels", "shapes"))
         stop("can't add 'table' for", .)
     
-    if (is.null(region_key(y))) region_key(y) <- rk
-    if (is.null(instance_key(y))) instance_key(y) <- ik
+    region_key(y) <- region_key(y) %||% rk
+    instance_key(y) <- instance_key(y) %||% ik
     
     if (is.null(region(y))) {
         regions(y) <- i
