@@ -92,6 +92,26 @@ test_that("crop,sdLabel", {
     expect_equal(dim(m <- crop(l, y)), c(h, w))
 })
 
+test_that("crop input 'y' .to_sf()", {
+    ok <- \(x) {
+        expect_is(x, "sf")
+        expect_identical(names(x), "geometry")
+        expect_no_error(SpatialDataShape(x))
+        expect_equal(as.integer(st_bbox(x)), c(0,-1,2,1))
+    }
+    # from matrix
+    m <- matrix(c(0,-1, 2,-1, 2,1, 0,1, 0,-1), ncol=2, byrow=TRUE)
+    ok(.to_sf(m))
+    # from 'sf(c)'
+    y <- st_sfc(st_polygon(list(m)))
+    ok(.to_sf(st_sf(y)))
+    ok(.to_sf(y))
+    # from 'bbox'
+    y <- list(xmin=0, xmax=2, ymin=-1, ymax=1)
+    ok(.to_sf(st_bbox(unlist(y))))
+    ok(.to_sf(y))
+})
+
 test_that("crop-box,sdPoint", {
     n <- length(p <- point(x))
     # this shouldn't do anything

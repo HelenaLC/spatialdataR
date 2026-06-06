@@ -209,31 +209,35 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     if (ii) x[, i, j] else x[i, j] 
 })
 
+#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
+.to_sf <- \(x) {
+    if (inherits(x, "sf")) {
+        y <- x
+        st_geometry(y) <- "geometry"
+    } else if (inherits(x, "sfc")) {
+        y <- st_sf(geometry=x)
+    } else if (inherits(x, "sfg")) {
+        y <- st_sf(geometry=st_sfc(x))
+    } else if (inherits(x, "bbox")) {
+        y <- st_sf(geometry=st_as_sfc(x))
+    } else if (is.matrix(x)) {
+        x <- .check_pol(x)
+        y <- st_sf(geometry=st_sfc(st_polygon(list(x))))
+    } else { 
+        .check_box(x)
+        y <- st_sf(geometry=st_as_sfc(st_bbox(unlist(x))))
+    }
+    return(y)
+}
+
 #' @export
 #' @rdname crop
 #' @importFrom dplyr pull .data
 #' @importFrom duckspatial ddbs_intersects
-#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
-    if (inherits(y, "sf")) {
-        fd <- y
-        st_geometry(fd) <- "geometry"
-    } else if (inherits(y, "sfc")) {
-        fd <- st_sf(geometry=y)
-    } else if (inherits(y, "sfg")) {
-        fd <- st_sf(geometry=st_sfc(y))
-    } else if (inherits(y, "bbox")) {
-        fd <- st_sf(geometry=st_as_sfc(y))
-    } else if (is.matrix(y)) {
-        mx <- .check_pol(y)
-        fd <- st_sf(geometry=st_sfc(st_polygon(list(mx))))
-    } else {
-        # bounding box
-        .check_box(y)
-        fd <- st_sf(geometry=st_as_sfc(st_bbox(unlist(y))))
-    }
+    y <- .to_sf(y)
     df <- data(transform(x, j))
-    fd <- data(SpatialDataShape(fd))
+    fd <- data(SpatialDataShape(y))
     ok <- ddbs_intersects(df, fd, sparse=TRUE)
     x[pull(ok, .data$id_x), ]
 })
