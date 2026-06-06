@@ -1,0 +1,86 @@
+---
+title: "R/Python Interoperability`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: "`r BiocStyle::pkg_ver('spatialdataR')`"
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Introduction to spatialdataR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: "refs.bib"
+---
+
+<!-- <style type="text/css"> -->
+<!-- .smaller { -->
+<!--   font-size: 10px -->
+<!-- } -->
+<!-- </style> -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
+```
+
+# spatialdataR vs scverse/spatialdata
+
+## Read/Access
+
+| | SpatialData (Bioconductor) | scverse/spatialdata |
+| ----------------------- | -------------- | -------------- |
+| read     | `library(SpatialData)`<br>`sd <- readSpatialData("blobs.zarr")` | `import spatialdata as sdata`<br>`sd = sdata.read_zarr("blobs.zarr")` |
+| element accession | `sd$images$blobs_image` <br>`image(sd, "blobs_image")` <br>`sd$images[[1]]` <br>`image(sd, 1)` | `sd.images["blobs_image"]`<br>`sd.get("blobs_image")`<br>`sd["blobs_image"]` | 
+| merge SpatialData objects | `combine(sd, sd)` | `from spatialdata import concatenate`<br>`concatenate({"s1": sd, "s2": sd})` |
+
+## Coord. Systems and transformations
+
+|           | SpatialData (Bioconductor) | scverse/spatialdata |
+| ---------- | -------------- | -------------- |
+| coordinate systems | `CTname(sd)` | `sd.coordinate_systems` |
+| coordinate systems (per element) |  `CTname(image(sd,"blobs_image"))` | `from spatialdata.transformations import get_transformation`<br> `get_transformation(sd.images["blobs_image"], get_all=True)`) |
+| transformations | `CTtype(image(sd,"blobs_image"))` | `get_transformation(sd.images["blobs_image"])` |
+| transform | `transform(sd$labels$blobs_labels, i="scale")` | `from spatialdata import transform` <br> `transform(sd.labels["blobs_labels"], to_coordinate_system="scale")` |
+
+## Operations
+
+|           | SpatialData (Bioconductor) | scverse/spatialdata |
+| ---------- | -------------- | -------------- |
+| extent | `extent(sd)` <br> `extent(x$images$blobs_image)`| `get_extent(sd)` <br> `get_extent(sdata.images["blobs_image"])` |
+| crop | `crop(sd, bbox)` <br> `crop(sd, poly)` <br> `crop(image(sd)), bbox)` <br> `crop(image(sd)), poly)`| `sd.query.bounding_box(...)` <br> `sd.query.polygon(...)` <br> <br> `from spatialdata import bounding_box_query, polygon_query` <br> `bounding_box_query(sd.images[["blobs_image"]], ...)` <br> `polygon_query(sd.images[["blobs_image"]], ...)`
+| query | `extent(sd)` <br> `extent(x$images$blobs_image)`| `get_extent(sd)` <br> `get_extent(sdata.images["blobs_image"])` |
+
+## Integration
+
+|           | SpatialData (Bioconductor) | scverse/spatialdata |
+| ---------- | -------------- | -------------- |
+| transfer data across elements | `mask(sd, i="blobs_image", j="blobs_labels")` | `sd.aggregate(values="blobs_image", by="blobs_labels", agg_func="mean")` |
+
+## Scratch
+
+-------------------------------------------------------------
+ Centered   Default           Right Left
+  Header    Aligned         Aligned Aligned
+----------- ------- --------------- -------------------------
+   First    row                12.0 Example of a row that
+                                    spans multiple lines.
+
+  Second    row                 5.0 Here's another one. Note
+                                    the blank line between
+                                    rows.
+-------------------------------------------------------------
+
+---------------------------------------------
+             spatialdataR            spatialdata
+             (Bioconductor)          (scverse)
+---------- ------------------------- --------------- 
+read         `library(SpatialData)`  sd
+
+element      `library(SpatialData)`  sd
+accession
+
+merge        `library(SpatialData)`  sd
+SpatialData
+objects 
+---------------------------------------------
