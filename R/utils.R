@@ -120,6 +120,42 @@
     return(x)
 }
 
+#' @importFrom dplyr right_join
+.sync_tables_on_crop <- \(x) {
+    # filter tables for remaining region(s)/instance(s)
+    rs <- unlist(colnames(x))
+    ts <- lapply(tables(x), \(t) {
+        # filter for remaining element(s)
+        t <- t[, regions(t) %in% rs]
+        region(t) <- intersect(region(t), rs)
+        # table's regions-instances
+        df <- data.frame(
+            r=regions(t), 
+            i=instances(t),
+            keep=seq_len(ncol(t)))
+        # for each annotated element
+        rs <- intersect(region(t), unlist(colnames(x)))
+        is <- lapply(rs, \(r) {
+            # subset look-up
+            e <- element(x, r)
+            df <- df[df$r == r, ]
+            # keep all for labels
+            lb <- is(e, "SpatialDataLabel")
+            if (lb) return(df$keep)
+            # element's regions-instances
+            ik <- instance_key(t)
+            i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
+            fd <- data.frame(r, i)
+            # return table indices in element
+            right_join(df, fd, names(fd))$keep
+        })
+        # subset table instances
+        t <- t[, unlist(is)]
+    })
+    tables(x) <- ts
+    return(x)
+}
+
 # internal helper to resolve spatial (XY) axis indices
 .get_xy_axes <- \(x) {
     nm <- axes(x, "name")
