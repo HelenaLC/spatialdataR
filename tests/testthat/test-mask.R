@@ -52,6 +52,28 @@ test_that("mask,sdImage,sdLabel", {
     .i@data <- lapply(.i@data, \(.) .[,,-1])
     .x <- x; image(.x, i) <- .i
     expect_error(mask(.x, i, j))
+    
+    # 3D
+    z <- 5; n <- 7; m <- 8
+    u <- array(runif(z*n*m), c(1, z, n, m))
+    v <- array(1L, c(z, n, m))
+    i <- SpatialDataImage(u, SpatialDataAttrs(dim=3, nch=1))
+    l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", dim=3))
+    sd <- SpatialData(images=list(a=i), labels=list(b=l))
+    sd <- expect_silent(mask(sd, "a", "b", how="mean"))
+    expect_identical(as.numeric(assay(table(sd))), mean(u))
+    
+    # 4D
+    t <- 4; z <- 5; n <- 7; m <- 8
+    u <- array(runif(t*z*n*m), c(t, 1, z, n, m))
+    v <- array(sample(9, t*z*n*m, TRUE), c(t, z, n, m))
+    i <- SpatialDataImage(u, SpatialDataAttrs(dim=4, nch=1))
+    l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", dim=4))
+    sd <- SpatialData(images=list(a=i), labels=list(b=l))
+    sd <- expect_silent(mask(sd, "a", "b", how="mean"))
+    se <- table(sd)
+    expect_length(assays(se), t)
+    expect_equal(dim(se), c(1,9))
 })
 
 test_that("mask w/ transform", {
@@ -152,6 +174,9 @@ test_that("mask,sdShape,sdShape", {
     bb <- st_as_sfc(bb)
     bb <- st_sf(geometry=bb)
     y <- SpatialDataShape(bb)
+    
+    # default to 'sum' with a message
+    expect_message(mask(y, i, j))
     
     # missing table
     shape(x, j <- "box") <- y
