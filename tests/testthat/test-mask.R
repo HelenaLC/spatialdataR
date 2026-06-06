@@ -66,14 +66,22 @@ test_that("mask,sdImage,sdLabel", {
     # 4D
     t <- 4; z <- 5; n <- 7; m <- 8
     u <- array(runif(t*z*n*m), c(t, 1, z, n, m))
-    v <- array(sample(9, t*z*n*m, TRUE), c(t, z, n, m))
+    v <- array(sample(9L, t*z*n*m, TRUE), c(t, z, n, m))
     i <- SpatialDataImage(u, SpatialDataAttrs(dim=4, nch=1))
     l <- SpatialDataLabel(v, SpatialDataAttrs(type="label", dim=4))
     sd <- SpatialData(images=list(a=i), labels=list(b=l))
     sd <- expect_silent(mask(sd, "a", "b", how="mean"))
     se <- table(sd)
+    # should get one sheet per timepoint
     expect_length(assays(se), t)
     expect_equal(dim(se), c(1,9))
+    # verify that aggregation went right
+    se <- table(mask(sd, "a", "b", how="sum"))
+    for (t in seq_along(assays(se)))
+        for (i in seq_len(ncol(se))) {
+            n <- (v[t,,,] == i) %*% drop(u)[t,,,]
+            expect_equal(as.numeric(n), assay(se, t)[i])
+        }
 })
 
 test_that("mask w/ transform", {
@@ -175,9 +183,6 @@ test_that("mask,sdShape,sdShape", {
     bb <- st_sf(geometry=bb)
     y <- SpatialDataShape(bb)
     
-    # default to 'sum' with a message
-    expect_message(mask(y, i, j))
-    
     # missing table
     shape(x, j <- "box") <- y
     expect_error(mask(x, i, j))
@@ -204,4 +209,7 @@ test_that("mask,sdShape,sdShape", {
         expect_equal(dim(sf), c(7,2))
         expect_identical(assay(sf)[,"1"], fun(mx))
     }
+    
+    # default to 'sum' with a message
+    expect_message(mask(y, i, j))
 })
