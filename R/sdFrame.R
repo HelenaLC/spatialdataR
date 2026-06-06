@@ -77,7 +77,7 @@ NULL
 #' @importFrom sf st_sf st_sfc st_as_sf st_point st_polygon
 .df_to_sf <- \(data, type=c("POINT", "POLYGON")) {
     type <- match.arg(type)
-    if (is.null(data) || isTRUE(nrow(data) == 0)) {
+    if (isTRUE(NROW(data) == 0)) {
         # return empty data.frame with geometry column
         fn <- switch(type, POINT=st_point, st_polygon)
         return(st_sf(geometry=st_sfc(fn())[0], crs=NA))
@@ -134,8 +134,7 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     if (!is(data, "duckspatial_df")) 
         data <- .duck(data, "sdPoint")
     za <- as.list(meta)
-    if (is.null(za$spatialdata_attrs))
-        za$spatialdata_attrs <- list()
+    za$spatialdata_attrs <- za$spatialdata_attrs %||% list()
     if (!is.null(ik)) {
         stopifnot(ik %in% colnames(data))
         instance_key(za) <- ik
