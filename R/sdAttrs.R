@@ -216,8 +216,7 @@ setMethod("regions", "SingleCellExperiment", \(x) {
 #' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
     stopifnot(all(nchar(value) > 0, na.rm=TRUE))
-    if (is.null(rk <- region_key(x))) 
-        rk <- region_key(x) <- "region"
+    rk <- region_key(x) <- region_key(x) %||% "region"
     int_metadata(x)$spatialdata_attrs[[rk]] <- sort(unique(value))
     return(x)
 })
@@ -237,7 +236,7 @@ setReplaceMethod("region", c("SingleCellExperiment", "NULL"), \(x, value) {
 setReplaceMethod("regions", c("SingleCellExperiment", "character"), \(x, value) {
     stopifnot(length(value) %in% c(1, ncol(x)))
     stopifnot(all(nchar(value) > 0, na.rm=TRUE))
-    if (is.null(rk <- region_key(x))) region_key(x) <- "region"
+    rk <- region_key(x) <- region_key(x) %||% "region"
     int_metadata(x)$spatialdata_attrs[[rk]] <- sort(unique(value))
     int_colData(x)[[rk]] <- value
     return(x)
@@ -314,9 +313,7 @@ setMethod("instances", "SingleCellExperiment", \(x) {
 #' @rdname SpatialDataAttrs
 #' @importFrom SingleCellExperiment int_colData<-
 setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
-    ik <- instance_key(x)
-    if (is.null(ik)) 
-        ik <- "instance_id"
+    ik <- instance_key(x) %||% "instance_id"
     int_colData(x)[[ik]] <- value
     return(x)
 })

@@ -57,8 +57,7 @@ setMethod("combine", c("list", "missing"), \(x, y, ...) {
     # get current element names
     old <- lapply(x, \(z) unlist(colnames(z)))
     # get list names; if missing, use empty strings
-    if (is.null(nms <- names(x))) 
-        nms <- character(length(x))
+    nms <- names(x) %||% character(length(x))
     # prepend list names to element names where available
     new <- lapply(seq_along(x), \(i) {
         if (nms[i] == "") return(old[[i]])
