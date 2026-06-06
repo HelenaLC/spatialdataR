@@ -240,7 +240,6 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
-#' @importFrom dplyr right_join
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
     # crop elements that share coordinate space 'j'
