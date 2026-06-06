@@ -209,6 +209,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     if (ii) x[, i, j] else x[i, j] 
 })
 
+#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 .to_sf <- \(x) {
     if (inherits(x, "sf")) {
         y <- x
@@ -222,8 +223,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     } else if (is.matrix(x)) {
         x <- .check_pol(x)
         y <- st_sf(geometry=st_sfc(st_polygon(list(x))))
-    } else {
-        # bounding box
+    } else { 
         .check_box(x)
         y <- st_sf(geometry=st_as_sfc(st_bbox(unlist(x))))
     }
@@ -234,7 +234,6 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
 #' @rdname crop
 #' @importFrom dplyr pull .data
 #' @importFrom duckspatial ddbs_intersects
-#' @importFrom sf st_sf st_sfc st_as_sfc st_bbox st_polygon st_geometry<-
 setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
     y <- .to_sf(y)
     df <- data(transform(x, j))
