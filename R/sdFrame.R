@@ -134,8 +134,7 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="frame"), metadata=l
     if (!is(data, "duckspatial_df")) 
         data <- .duck(data, "sdPoint")
     za <- as.list(meta)
-    if (is.null(za$spatialdata_attrs))
-        za$spatialdata_attrs <- list()
+    za$spatialdata_attrs <- za$spatialdata_attrs %||% list()
     if (!is.null(ik)) {
         stopifnot(ik %in% colnames(data))
         instance_key(za) <- ik
