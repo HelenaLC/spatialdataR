@@ -109,16 +109,6 @@ NULL
     # get transformation for space 'j'
     j <- .val_id(j, CTname(x))
     ct <- CTlist(x)[[j]]
-    # helper to adapt transformation data to spatial (XY) dims
-    axs <- axes(x)
-    nms <- vapply(axs, \(.) .$name, character(1))
-    ix <- match("x", nms)
-    iy <- match("y", nms)
-    if (is.na(ix) || is.na(iy)) {
-        # default to last two (YX)
-        n <- length(nms)
-        ix <- n; iy <- n-1
-    }
     ax <- .get_xy_axes(x)
     .adapt <- \(t, type) {
         if (is.null(t)) return(NULL)
