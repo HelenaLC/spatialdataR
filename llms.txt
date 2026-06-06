@@ -13,7 +13,7 @@ al. (2024)](https://doi.org/10.1038/s41592-024-02212-x).
 ## Resources
 
 - [SpatialData
-  class](https://helenalc.github.io/spatialdataR/articles/spatialdataR.html)
+  class](https://helenalc.github.io/spatialdataR/articles/SpatialData.html)
   documentation.
 - [SpatialData.plot](https://github.com/HelenaLC/SpatialData.plot):
   Visualization capabilities.
