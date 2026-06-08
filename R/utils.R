@@ -191,11 +191,15 @@
 
 # get scale factors between 'multiscales' levels
 # (returns numeric vector, one value per dimension)
-.get_ms_scale <- \(x) {
+.get_ms_scale <- \(x, i=1) {
     ms <- .get_ms(x)
-    ds <- ms$datasets[[1]]
-    ct <- ds$coordinateTransformations[[1]]
-    return(unlist(ct$scale))
+    ds <- ms$datasets
+    sf <- lapply(ds, \(.) {
+        ct <- .$coordinateTransformations[[1]]
+        unlist(ct$scale)
+    })
+    if (is.null(i)) return(sf)
+    if (length(i) == 1) sf[[i]] else sf[i]
 }
 
 # find indices with equal spatial extents
