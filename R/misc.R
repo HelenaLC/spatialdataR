@@ -86,16 +86,31 @@ NULL
 #' @rdname misc
 setMethod("show", "SpatialData", .showSpatialData)
 
+.csv <- \(x) paste(x, collapse=",")
+.csv_one <- \(x) sprintf("(%s)", .csv(x))
+.csv_all <- \(x) vapply(x, .csv_one, character(1))
+
 #' @importFrom S4Vectors coolcat
-.showArray <- function(object) {
-    n.object <- length(object@data)
-    cat("class: ", class(object), ifelse(n.object > 1, "(MultiScale)", ""),"\n")
-    scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
-    coolcat("Scales (%d): (%s)", scales)
+.showLabel <- function(object) {
+    x <- axes(object, "name")
+    x <- sprintf("(%sd: %s)", length(x), paste(x, collapse=""))
+    cat("class:", class(object), x, "\n")
+    x <- .csv_all(lapply(object@data, dim))
+    coolcat("levels(%d): %s", x)
+    x <- .csv_all(.get_ms_scale(object, NULL))
+    coolcat("scales(%d): %s", x)
+}
+.showImage <- function(object) {
+    .showLabel(object)
+    x <- channels(object)
+    cat(sprintf("channels(%s): (%s)", length(x), .csv(x)), "\n")
 }
 
 #' @rdname misc
-setMethod("show", "SpatialDataArray", .showArray)
+setMethod("show", "SpatialDataLabel", .showLabel)
+
+#' @rdname misc
+setMethod("show", "SpatialDataImage", .showImage)
 
 #' @importFrom S4Vectors coolcat
 .showPoint <- function(object) {
