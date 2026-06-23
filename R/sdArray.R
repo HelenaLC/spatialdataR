@@ -120,7 +120,8 @@ setMethod("data_type", "DelayedArray", \(x) {
     if (is.null(v)) return()
     if (v == "0.5") x <- x$ome
     # NOTE: can't use 'vapply' as we 
-    # have encountered integer 'label's  
+    # have encountered integer 'label's
+    # Tracked in https://github.com/scverse/spatialdata/issues/1136
     x <- x$omero$channels
     x$label %||% unlist(lapply(x, `[[`, "label"))
 }
