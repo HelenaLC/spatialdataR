@@ -73,6 +73,9 @@ CTplot(g, cex = 0.5, fac = 2, max = 10)
 x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
+#> duckdb: caching downloaded extensions in the package library:
+#> ℹ /home/runner/work/_temp/Library/duckdb/extensions
+#> ℹ This is removed when the package is re-installed; see `?duckdb_storage` to choose a different location.
 
 # object-wide
 g <- CTgraph(x)

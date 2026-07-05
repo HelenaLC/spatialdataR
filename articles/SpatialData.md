@@ -559,7 +559,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-06-04 r90104)
+    ## R Under development (unstable) (2026-06-21 r90185)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -584,39 +584,39 @@ sessionInfo()
     ##  [1] SingleCellExperiment_1.35.1 SummarizedExperiment_1.43.0
     ##  [3] Biobase_2.73.1              GenomicRanges_1.65.0       
     ##  [5] Seqinfo_1.3.0               IRanges_2.47.2             
-    ##  [7] S4Vectors_0.51.3            BiocGenerics_0.59.6        
+    ##  [7] S4Vectors_0.51.5            BiocGenerics_0.59.9        
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
     ## [11] matrixStats_1.5.0           spatialdataR_0.99.43       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_1.2.1    grumpy_0.1.1        blob_1.3.0         
-    ##  [4] dplyr_1.2.1         R.utils_2.13.0      fastmap_1.2.0      
-    ##  [7] duckdb_1.5.2        digest_0.6.39       lifecycle_1.0.5    
-    ## [10] sf_1.1-1            paws.storage_0.10.0 magrittr_2.0.5     
-    ## [13] compiler_4.7.0      rlang_1.2.0         sass_0.4.10        
-    ## [16] tools_4.7.0         yaml_2.3.12         knitr_1.51         
-    ## [19] S4Arrays_1.13.0     htmlwidgets_1.6.4   classInt_0.4-11    
-    ## [22] curl_7.1.0          reticulate_1.46.0   DelayedArray_0.39.3
-    ## [25] abind_1.4-8         KernSmooth_2.23-26  withr_3.0.2        
-    ## [28] purrr_1.2.2         desc_1.4.3          R.oo_1.27.1        
-    ## [31] grid_4.7.0          e1071_1.7-17        cli_3.6.6          
-    ## [34] rmarkdown_2.31      crayon_1.5.3        ragg_1.5.2         
-    ## [37] otel_0.2.0          DBI_1.3.0           cachem_1.1.0       
-    ## [40] proxy_0.4-29        BiocManager_1.30.27 XVector_0.53.0     
-    ## [43] vctrs_0.7.3         Matrix_1.7-5        jsonlite_2.0.0     
-    ## [46] bookdown_0.46       RBGL_1.89.0         Rgraphviz_2.57.0   
-    ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
-    ## [52] glue_1.8.1          pkgdown_2.2.0       ZarrArray_1.1.0    
-    ## [55] Rarr_2.1.17         tibble_3.3.1        pillar_1.11.1      
-    ## [58] rappdirs_0.3.4      htmltools_0.5.9     graph_1.91.0       
-    ## [61] R6_2.6.1            dbplyr_2.5.2        httr2_1.2.2        
-    ## [64] wk_0.9.5            textshaping_1.0.5   evaluate_1.0.5     
-    ## [67] lattice_0.22-9      R.methodsS3_1.8.2   png_0.1-9          
-    ## [70] duckspatial_1.1.0   paws.common_0.8.9   bslib_0.11.0       
-    ## [73] class_7.3-23        Rcpp_1.1.1-1.1      uuid_1.2-2         
-    ## [76] SparseArray_1.13.2  anndataR_1.3.0      xfun_0.58          
-    ## [79] fs_2.1.0            pkgconfig_2.0.3
+    ##  [1] tidyselect_1.2.1    blob_1.3.0          dplyr_1.2.1        
+    ##  [4] R.utils_2.13.0      fastmap_1.2.0       duckdb_1.5.4.2     
+    ##  [7] digest_0.6.39       lifecycle_1.0.5     sf_1.1-1           
+    ## [10] paws.storage_0.10.0 magrittr_2.0.5      compiler_4.7.0     
+    ## [13] rlang_1.3.0         sass_0.4.10         tools_4.7.0        
+    ## [16] yaml_2.3.12         knitr_1.51          S4Arrays_1.13.0    
+    ## [19] htmlwidgets_1.6.4   classInt_0.4-11     curl_7.1.0         
+    ## [22] reticulate_1.46.0   DelayedArray_0.39.3 abind_1.4-8        
+    ## [25] KernSmooth_2.23-26  withr_3.0.3         purrr_1.2.2        
+    ## [28] desc_1.4.3          R.oo_1.27.1         grid_4.7.0         
+    ## [31] e1071_1.7-17        cli_3.6.6           rmarkdown_2.31     
+    ## [34] crayon_1.5.3        ragg_1.5.2          otel_0.2.0         
+    ## [37] DBI_1.3.0           cachem_1.1.0        proxy_0.4-29       
+    ## [40] BiocManager_1.30.27 XVector_0.53.0      vctrs_0.7.3        
+    ## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.47      
+    ## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  
+    ## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         
+    ## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.0.1         
+    ## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     
+    ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
+    ## [61] dbplyr_2.6.0        httr2_1.2.3         wk_0.9.5           
+    ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
+    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.2.1  
+    ## [70] paws.common_0.8.10  bslib_0.11.0        class_7.3-23       
+    ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.2 
+    ## [76] anndataR_1.3.0      xfun_0.59           fs_2.1.0           
+    ## [79] pkgconfig_2.0.3
 
 ### References
 
