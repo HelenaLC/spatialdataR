@@ -345,9 +345,18 @@ sp <- mask(sd, i="blobs_polygons", j="blobs_circles")
 ## Querying
 
 `query()` filters elements across all layers based on `table` metadata in
-`dplyr`-style syntax, where queries may be passed via the ellipsis (`...`):
+`dplyr`-style syntax, where queries may be passed via the ellipsis (`...`).
+Here, we demonstrate a simple example where we mock up some `table` metadata
+and filter for instances of `foo == "A"`; note that this retains only `table` 
+observations matching our criterion *and* drops any other elements/layers.
 
-TODO
+```{r query}
+se <- table(sd)
+se$foo <- sample(c("A", "B"), ncol(se), replace=TRUE)
+sp <- `table<-`(sd, value=se)
+(sp <- query(sp, foo == "A"))
+table(sp)$foo
+```
 
 ## Combining
 
