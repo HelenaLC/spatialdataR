@@ -335,16 +335,6 @@ setReplaceMethod("[[",
 #' @export
 #' @rdname SpatialData
 setReplaceMethod("[[", 
-    c("SpatialData", "numeric", "ANY"), 
-    \(x, i, value) {
-        if (!i %in% seq_along(.LAYERS)) stop(.invalid_layer)
-        l <- .LAYERS[i]
-        x[[l]] <- value
-        x
-    })
-#' @export
-#' @rdname SpatialData
-setReplaceMethod("[[", 
     c("SpatialData", "ANY", "ANY"), 
     \(x, i, value) stop(.invalid_layer))
 
