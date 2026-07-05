@@ -2,4 +2,4 @@
 
 ### All vignettes
 
-- [spatialdataR](https://helenalc.github.io/SpatialData/articles/SpatialData.md):
+- [spatialdataR](https://helenalc.github.io/spatialdataR/articles/SpatialData.md):

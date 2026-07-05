@@ -7,7 +7,7 @@ logic and propagates the result to all associated spatial elements
 (i.e., only instances present in the filtered table are kept).
 
 For spatial cropping, see
-[`crop`](https://helenalc.github.io/SpatialData/reference/crop.md).
+[`crop`](https://helenalc.github.io/spatialdataR/reference/crop.md).
 
 ## Usage
 

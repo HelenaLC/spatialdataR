@@ -4,7 +4,7 @@ The `SpatialDataImage` and `-Label` classes represent elements from a
 `SpatialData`'s `images/` and `labels/` layers, respectively. In both
 cases, these are represented as a `ZarrArray` (`data` slot), and
 associated with .zattrs represented as
-[`SpatialDataAttrs`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+[`SpatialDataAttrs`](https://helenalc.github.io/spatialdataR/reference/SpatialDataAttrs.md)
 (`meta` slot); a list of `metadata` stores other arbitrary info.
 
 Currently defined methods (here, `x` is a `SpatialDataArray`):
@@ -72,7 +72,7 @@ x[i, j, ..., drop = FALSE]
 
 - meta:
 
-  [`SpatialDataAttrs`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`SpatialDataAttrs`](https://helenalc.github.io/spatialdataR/reference/SpatialDataAttrs.md)
 
 - metadata:
 

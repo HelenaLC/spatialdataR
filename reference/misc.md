@@ -1,7 +1,7 @@
 # Miscellaneous \`SpatialData\` methods
 
 Miscellaneous methods (e.g., `show`) for the
-[`SpatialData`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+[`SpatialData`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
 class and its elements.
 
 ## Usage
@@ -24,7 +24,7 @@ show(object)
 
 - object:
 
-  [`SpatialData`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`SpatialData`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   object or one of its elements, i.e., a
   `SpatialDataImage/Label/Point/Shape`.
 

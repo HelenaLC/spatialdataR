@@ -2,6 +2,26 @@
 
 ## Preamble
 
+### Installation
+
+``` r
+
+ok <- require("BiocManager", quietly=TRUE)
+if (!ok) install.packages("BiocManager")
+BiocManager::install("spatialdataR")
+```
+
+Two companion packages, provide a variety of example datasets as well as
+visualization capabilities. These are still under active development,
+but can be installed from GitHub until their release through
+Bioconductor via:
+
+``` r
+
+BiocManager::install("HelenaLC/SpatialData.data") # example datasets
+BiocManager::install("HelenaLC/SpatialData.plot") # visualization
+```
+
 ### Introduction
 
 The
@@ -57,7 +77,7 @@ development.
 
 `SpatialData` are represented on-disk as Zarr stores. The package
 provides the
-[`readSpatialData()`](https://helenalc.github.io/SpatialData/reference/readSpatialData.md)
+[`readSpatialData()`](https://helenalc.github.io/spatialdataR/reference/readSpatialData.md)
 function to ingest an entire store, although arguments to control which
 layers and elements to read or not to read are also available.
 
@@ -143,7 +163,6 @@ imageNames(sd)
 
 # alternative ways 
 # (using list-style)
-names(sd[[1]])
 names(sd$images)
 names(sd[["images"]])
 ```
@@ -180,7 +199,7 @@ We here demonstrate how to access these slots for a given element
 
 `image` elements represent a special case, as they are stored as a list
 of `ZarrArray`s (one per multi-scale resolution). For them,
-[`data()`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+[`data()`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
 provides an additional argument `k` that specifies which resolution to
 retrieve:
 
@@ -269,9 +288,9 @@ on-disk Zarr attributes.
 
 The relationships between different elements and their respective
 coordinate spaces can be complex. `SpatialData` provides the
-[`CTgraph()`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+[`CTgraph()`](https://helenalc.github.io/spatialdataR/reference/CTgraph.md)
 and
-[`CTplot()`](https://helenalc.github.io/SpatialData/reference/CTgraph.md)
+[`CTplot()`](https://helenalc.github.io/spatialdataR/reference/CTgraph.md)
 functions to construct and visualize a directed graph of these
 relationships:
 
@@ -288,7 +307,7 @@ CTplot(g)
 ![](SpatialData_files/figure-html/ct-graph-1.png)
 
 The
-[`transform()`](https://helenalc.github.io/SpatialData/reference/trans.md)
+[`transform()`](https://helenalc.github.io/spatialdataR/reference/trans.md)
 function resolves the necessary steps to project an element into a
 target coordinate system by traversing this graph, and applying the
 respective transformation(s). Under the hood, this involves:
@@ -299,9 +318,9 @@ respective transformation(s). Under the hood, this involves:
 
 2.  Applying the appropriate transformation function(s) in the correct
     order (e.g.,
-    [`scale()`](https://helenalc.github.io/SpatialData/reference/trans.md)
+    [`scale()`](https://helenalc.github.io/spatialdataR/reference/trans.md)
     then
-    [`translation()`](https://helenalc.github.io/SpatialData/reference/trans.md)).
+    [`translation()`](https://helenalc.github.io/spatialdataR/reference/trans.md)).
 
 ``` r
 
@@ -325,8 +344,8 @@ do.call(rbind, c(a=extent(a), b=extent(b)))
 
 ### Cropping
 
-[`crop()`](https://helenalc.github.io/SpatialData/reference/crop.md) may
-be used to subset elements – across all layers – according to a
+[`crop()`](https://helenalc.github.io/spatialdataR/reference/crop.md)
+may be used to subset elements – across all layers – according to a
 *spatial* bounding box or polygon. This region may be supplied in
 different ways, including as a `SpatialDataShape`. In addition, the
 following are okay:
@@ -366,7 +385,7 @@ points(point(sq)$geometry, col="red")
 
 ### Masking
 
-[`mask()`](https://helenalc.github.io/SpatialData/reference/mask.md)
+[`mask()`](https://helenalc.github.io/spatialdataR/reference/mask.md)
 aggregates data between elements and across layers, with support for
 masking of points by images by labels, points by shapes, and shapes by
 shapes:
@@ -434,16 +453,47 @@ sp <- mask(sd, i="blobs_polygons", j="blobs_circles")
 
 ### Querying
 
-[`query()`](https://helenalc.github.io/SpatialData/reference/query.md)
+[`query()`](https://helenalc.github.io/spatialdataR/reference/query.md)
 filters elements across all layers based on `table` metadata in
 `dplyr`-style syntax, where queries may be passed via the ellipsis
-(`...`):
+(`...`). Here, we demonstrate a simple example where we mock up some
+`table` metadata and filter for instances of `foo == "A"`; note that
+this retains only `table` observations matching our criterion *and*
+drops any other elements/layers.
 
-TODO
+``` r
+
+se <- table(sd)
+se$foo <- sample(c("A", "B"), ncol(se), replace=TRUE)
+sp <- `table<-`(sd, value=se)
+(sp <- query(sp, foo == "A"))
+```
+
+    ## class: SpatialData
+    ## - images(0):
+    ## - labels(1):
+    ##   - blobs_labels (64,64)
+    ## - points(0):
+    ## - shapes(0):
+    ## - tables(1):
+    ##   - table (3,4) [blobs_labels]
+    ## coordinate systems(5):
+    ## - global(1): blobs_labels
+    ## - scale(1): blobs_labels
+    ## - translation(1): blobs_labels
+    ## - affine(1): blobs_labels
+    ## - sequence(1): blobs_labels
+
+``` r
+
+table(sp)$foo
+```
+
+    ## [1] "A" "A" "A" "A"
 
 ### Combining
 
-[`combine()`](https://helenalc.github.io/SpatialData/reference/combine.md)
+[`combine()`](https://helenalc.github.io/spatialdataR/reference/combine.md)
 can be used to merge two `SpatialData` objects into one (or many, via
 `do.call(list(...), combine)`). Here, elements names will be made unique
 across objects via
@@ -476,7 +526,7 @@ imageNames(sp)
 
 ### Coordinates
 
-[`centroids()`](https://helenalc.github.io/SpatialData/reference/centroids.md)
+[`centroids()`](https://helenalc.github.io/spatialdataR/reference/centroids.md)
 may be used to extract spatial coordinates for every instance in a given
 element. This applies all layers except images and tables. Notably, for
 labels and shapes, the centroids of each region are returned (center of
@@ -495,7 +545,7 @@ head(centroids(point(sd)))
     ## 5 13  6 gene_b
     ## 6 33 61 gene_b
 
-[`extent()`](https://helenalc.github.io/SpatialData/reference/extent.md)
+[`extent()`](https://helenalc.github.io/spatialdataR/reference/extent.md)
 will obtain the range of an element’s spatial coordinates in a target
 coordinate space. This can be done for one element, or object-wide in
 order to obtain the largest extent across all elements in an object.
@@ -586,7 +636,7 @@ sessionInfo()
     ##  [5] Seqinfo_1.3.0               IRanges_2.47.2             
     ##  [7] S4Vectors_0.51.5            BiocGenerics_0.59.9        
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           spatialdataR_0.99.43       
+    ## [11] matrixStats_1.5.0           spatialdataR_0.99.44       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):

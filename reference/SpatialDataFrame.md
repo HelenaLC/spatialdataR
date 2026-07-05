@@ -4,7 +4,7 @@ The `SpatialDataPoint` and `-Shape` classes represent elements from a
 `SpatialData`'s `points/` and `shapes/` layers, respectively. In both
 cases, these are represented as a `duckspatial_df` (`data` slot), and
 associated with .zattrs represented as
-[`SpatialDataAttrs`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+[`SpatialDataAttrs`](https://helenalc.github.io/spatialdataR/reference/SpatialDataAttrs.md)
 (`meta` slot); a list of `metadata` stores other arbitrary info.
 
 Currently defined methods (here, `x` is an `SpatialDataFrame`):
@@ -94,7 +94,7 @@ x[i, j, ..., drop = TRUE]
 
 - meta:
 
-  [`SpatialDataAttrs`](https://helenalc.github.io/SpatialData/reference/SpatialDataAttrs.md)
+  [`SpatialDataAttrs`](https://helenalc.github.io/spatialdataR/reference/SpatialDataAttrs.md)
 
 - metadata:
 

@@ -24,7 +24,7 @@ mask(
 
 - x:
 
-  [`SpatialData`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`SpatialData`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   object.
 
 - i, j:

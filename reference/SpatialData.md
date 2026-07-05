@@ -87,9 +87,6 @@ tables(x)
 # S4 method for class 'SpatialData,character,ANY'
 x[[i]] <- value
 
-# S4 method for class 'SpatialData,numeric,ANY'
-x[[i]] <- value
-
 # S4 method for class 'SpatialData,ANY,ANY'
 x[[i]] <- value
 ```
@@ -99,22 +96,22 @@ x[[i]] <- value
 - images:
 
   list of
-  [`SpatialDataImage`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)s
+  [`SpatialDataImage`](https://helenalc.github.io/spatialdataR/reference/SpatialDataArray.md)s
 
 - labels:
 
   list of
-  [`SpatialDataLabel`](https://helenalc.github.io/SpatialData/reference/SpatialDataArray.md)s
+  [`SpatialDataLabel`](https://helenalc.github.io/spatialdataR/reference/SpatialDataArray.md)s
 
 - points:
 
   list of
-  [`SpatialDataPoint`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)s
+  [`SpatialDataPoint`](https://helenalc.github.io/spatialdataR/reference/SpatialDataFrame.md)s
 
 - shapes:
 
   list of
-  [`SpatialDataShape`](https://helenalc.github.io/SpatialData/reference/SpatialDataFrame.md)s
+  [`SpatialDataShape`](https://helenalc.github.io/spatialdataR/reference/SpatialDataFrame.md)s
 
 - tables:
 

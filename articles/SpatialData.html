@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.43</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.44</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
 <li><a class="dropdown-item" href="../articles/SpatialData.html">spatialdataR</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://helenalc.github.io/SpatialData.demo/" aria-label="Demos">Demos</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -74,6 +74,21 @@
 <div class="section level2">
 <h2 id="preamble">Preamble<a class="anchor" aria-label="anchor" href="#preamble"></a>
 </h2>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ok</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">"BiocManager"</a></span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">ok</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"spatialdataR"</span><span class="op">)</span></span></code></pre></div>
+<p>Two companion packages, provide a variety of example datasets as well
+as visualization capabilities. These are still under active development,
+but can be installed from GitHub until their release through
+Bioconductor via:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"HelenaLC/SpatialData.data"</span><span class="op">)</span> <span class="co"># example datasets</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"HelenaLC/SpatialData.plot"</span><span class="op">)</span> <span class="co"># visualization</span></span></code></pre></div>
+</div>
 <div class="section level3">
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
@@ -132,9 +147,9 @@ an entire store, although arguments to control which layers and elements
 to read or not to read are also available.</p>
 <p>For this demonstration, we use a toy dataset included in the
 package:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># dependencies</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/spatialdataR" class="external-link">spatialdataR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://helenalc.github.io/spatialdataR">spatialdataR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/drisso/SingleCellExperiment" class="external-link">SingleCellExperiment</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># path to 'spatialdata' Zarr store</span></span>
@@ -178,7 +193,7 @@ elements within each layers. For convenience, frequently needed accessor
 functions are provided as well.</p>
 <p>We here demonstrate various equivalent ways of accessing a layer or
 element:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># preferred way</span></span>
 <span><span class="co"># (using accessor)</span></span>
 <span><span class="fu"><a href="../reference/SpatialData.html">image</a></span><span class="op">(</span><span class="va">sd</span>, <span class="fl">1</span><span class="op">)</span></span>
@@ -194,14 +209,13 @@ element:</p>
 <span><span class="va">sd</span><span class="op">$</span><span class="va">images</span><span class="op">[[</span><span class="st">"blobs_image"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>Similarly, the following are equivalent ways of retrieving element
 names:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># preferred way </span></span>
 <span><span class="co"># (using accessor)</span></span>
 <span><span class="fu"><a href="../reference/SpatialData.html">imageNames</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># alternative ways </span></span>
 <span><span class="co"># (using list-style)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sd</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sd</span><span class="op">$</span><span class="va">images</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sd</span><span class="op">[[</span><span class="st">"images"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -212,7 +226,7 @@ names:</p>
 <code>[</code>, which can be used to drop layers, or elements within
 layers. Note that the following operations are not in-place, but return
 a <code>SpatialData</code> object with fewer layers/elements:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># keep image-layer only</span></span>
 <span><span class="va">sd</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">sd</span><span class="op">[</span><span class="st">"images"</span><span class="op">]</span></span>
@@ -248,7 +262,7 @@ argument <code>k</code> that specifies which resolution to retrieve:</p>
 <code>k=NULL</code> retrieves the full list of available
 resolutions.</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get multi-scale image</span></span>
 <span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">image</a></span><span class="op">(</span><span class="va">sd</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
@@ -283,7 +297,7 @@ R, we use <em><a href="https://bioconductor.org/packages/3.24/anndataR" class="e
 element(s) and observations being annotated. This is handled internally
 so the user needn’t worry about it; however, we show it here for
 didactic purposes:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># access annotation</span></span>
 <span><span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SingleCellExperiment </span></span>
@@ -297,11 +311,11 @@ didactic purposes:</p>
 <span><span class="co">## reducedDimNames(0):</span></span>
 <span><span class="co">## mainExpName: NULL</span></span>
 <span><span class="co">## altExpNames(0):</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># annotated region(s)</span></span>
 <span><span class="fu"><a href="../reference/SpatialDataAttrs.html">region</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "blobs_labels"</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># annotated instance(s)</span></span>
 <span><span class="fu"><a href="../reference/SpatialDataAttrs.html">instances</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##  [1]  3  4  5  8 10 11 12 13 15 16</span></span></code></pre>
@@ -328,7 +342,7 @@ represent individual elements.</li>
 <strong>edges</strong> represent the transformations required to
 align an element.</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CTgraph.html">CTgraph</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/CTgraph.html">CTplot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SpatialData_files/figure-html/ct-graph-1.png" class="r-plt" alt="" width="576"></p>
@@ -344,7 +358,7 @@ y-coordinates); and,</p></li>
 correct order (e.g., <code><a href="../reference/trans.html">scale()</a></code> then
 <code><a href="../reference/trans.html">translation()</a></code>).</p></li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get element </span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">label</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span></span>
@@ -377,7 +391,7 @@ irrelevant).</p></li>
 <code><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">sf::st_sfc()</a></code> object, or a two-column matrix of XY
 coordinates (at least 3 rows = triangle).</p></li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># bounding box</span></span>
 <span><span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>xmin<span class="op">=</span><span class="op">-</span><span class="cn">Inf</span>, xmax<span class="op">=</span><span class="cn">Inf</span>, ymin<span class="op">=</span><span class="fl">20</span>, ymax<span class="op">=</span><span class="fl">40</span><span class="op">)</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/crop.html">crop</a></span><span class="op">(</span><span class="va">sd</span>, <span class="va">xy</span><span class="op">)</span></span>
@@ -426,7 +440,7 @@ specified via <code>name</code>, which will default to
 <code>j</code> (e.g., unassigned transcripts) will be assigned to a
 special “0” column in the resulting table.</p></li>
 </ul>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># average channel-wise pixel values by labels</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask.html">mask</a></span><span class="op">(</span><span class="va">sd</span>, i<span class="op">=</span><span class="st">"blobs_image"</span>, j<span class="op">=</span><span class="st">"blobs_labels"</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_image_by_blobs_labels"</span><span class="op">)</span></span>
@@ -440,7 +454,7 @@ special “0” column in the resulting table.</p></li>
 <span><span class="co">## 0 0.0225221691 0.134730899 0.10671244</span></span>
 <span><span class="co">## 1 0.2252634943 0.071093576 0.07564495</span></span>
 <span><span class="co">## 2 0.0002233054 0.006969089 0.09928612</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># count different point species in polygons</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask.html">mask</a></span><span class="op">(</span><span class="va">sd</span>, i<span class="op">=</span><span class="st">"blobs_points"</span>, j<span class="op">=</span><span class="st">"blobs_polygons"</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sp</span>, <span class="st">"blobs_points_by_blobs_polygons"</span><span class="op">)</span></span>
@@ -449,7 +463,7 @@ special “0” column in the resulting table.</p></li>
 <span><span class="co">##          0 1 2 3 4 5</span></span>
 <span><span class="co">## gene_a  87 . . 1 2 .</span></span>
 <span><span class="co">## gene_b 105 2 . 1 . 2</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># average shape-level data by other shapes</span></span>
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mask.html">mask</a></span><span class="op">(</span><span class="va">sd</span>, i<span class="op">=</span><span class="st">"blobs_polygons"</span>, j<span class="op">=</span><span class="st">"blobs_circles"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -458,8 +472,33 @@ special “0” column in the resulting table.</p></li>
 </h3>
 <p><code><a href="../reference/query.html">query()</a></code> filters elements across all layers based on
 <code>table</code> metadata in <code>dplyr</code>-style syntax, where
-queries may be passed via the ellipsis (<code>...</code>):</p>
-<p>TODO</p>
+queries may be passed via the ellipsis (<code>...</code>). Here, we
+demonstrate a simple example where we mock up some <code>table</code>
+metadata and filter for instances of <code>foo == "A"</code>; note that
+this retains only <code>table</code> observations matching our criterion
+<em>and</em> drops any other elements/layers.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
+<span><span class="va">se</span><span class="op">$</span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu">`table&lt;-`</span><span class="op">(</span><span class="va">sd</span>, value<span class="op">=</span><span class="va">se</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query.html">query</a></span><span class="op">(</span><span class="va">sp</span>, <span class="va">foo</span> <span class="op">==</span> <span class="st">"A"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## class: SpatialData</span></span>
+<span><span class="co">## - images(0):</span></span>
+<span><span class="co">## - labels(1):</span></span>
+<span><span class="co">##   - blobs_labels (64,64)</span></span>
+<span><span class="co">## - points(0):</span></span>
+<span><span class="co">## - shapes(0):</span></span>
+<span><span class="co">## - tables(1):</span></span>
+<span><span class="co">##   - table (3,4) [blobs_labels]</span></span>
+<span><span class="co">## coordinate systems(5):</span></span>
+<span><span class="co">## - global(1): blobs_labels</span></span>
+<span><span class="co">## - scale(1): blobs_labels</span></span>
+<span><span class="co">## - translation(1): blobs_labels</span></span>
+<span><span class="co">## - affine(1): blobs_labels</span></span>
+<span><span class="co">## - sequence(1): blobs_labels</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/SpatialData.html">table</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">$</span><span class="va">foo</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "A" "A" "A" "A"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="combining">Combining<a class="anchor" aria-label="anchor" href="#combining"></a>
@@ -470,7 +509,7 @@ queries may be passed via the ellipsis (<code>...</code>):</p>
 made unique across objects via <code><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names()</a></code>, appending a
 suffix to the element names of subsequent objects. Alternatively, names
 could be customize before combining.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/combine.html">combine</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>foo<span class="op">=</span><span class="va">sd</span>, bar<span class="op">=</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
 <span>    original<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -481,7 +520,7 @@ could be customize before combining.</p>
 <span><span class="co">## points        1        2</span></span>
 <span><span class="co">## shapes        3        6</span></span>
 <span><span class="co">## tables        1        2</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/SpatialData.html">imageNames</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "foo.blobs_image"            "foo.blobs_multiscale_image"</span></span>
 <span><span class="co">## [3] "bar.blobs_image"            "bar.blobs_multiscale_image"</span></span></code></pre>
@@ -493,7 +532,7 @@ could be customize before combining.</p>
 for every instance in a given element. This applies all layers except
 images and tables. Notably, for labels and shapes, the centroids of each
 region are returned (center of mass).</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/centroids.html">centroids</a></span><span class="op">(</span><span class="fu"><a href="../reference/SpatialData.html">point</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    x  y  genes</span></span>
 <span><span class="co">## 1  6 48 gene_b</span></span>
@@ -506,19 +545,19 @@ region are returned (center of mass).</p>
 coordinates in a target coordinate space. This can be done for one
 element, or object-wide in order to obtain the largest extent across all
 elements in an object.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># object-wide</span></span>
 <span><span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">xy</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## x1 x2 y1 y2 </span></span>
 <span><span class="co">##  0 64  0 64</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># one element</span></span>
 <span><span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="fu"><a href="../reference/SpatialData.html">point</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">xy</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## x1 x2 y1 y2 </span></span>
 <span><span class="co">##  1 62  1 62</span></span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># with prior alignment to target coordinate space</span></span>
 <span><span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="fu"><a href="../reference/SpatialData.html">label</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">yx</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extent.html">extent</a></span><span class="op">(</span><span class="fu"><a href="../reference/SpatialData.html">label</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span>, <span class="st">"scale"</span><span class="op">)</span></span>
@@ -552,7 +591,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <div class="section level3">
 <h3 class="unnumbered smaller" id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h3>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R Under development (unstable) (2026-06-21 r90185)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
@@ -581,7 +620,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">##  [5] Seqinfo_1.3.0               IRanges_2.47.2             </span></span>
 <span><span class="co">##  [7] S4Vectors_0.51.5            BiocGenerics_0.59.9        </span></span>
 <span><span class="co">##  [9] generics_0.1.4              MatrixGenerics_1.25.0      </span></span>
-<span><span class="co">## [11] matrixStats_1.5.0           spatialdataR_0.99.43       </span></span>
+<span><span class="co">## [11] matrixStats_1.5.0           spatialdataR_0.99.44       </span></span>
 <span><span class="co">## [13] BiocStyle_2.41.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>

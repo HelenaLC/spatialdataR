@@ -22,7 +22,7 @@ path(object, simplify = TRUE, ...)
 
 - object:
 
-  [`SpatialData`](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+  [`SpatialData`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   object or one of its elements.
 
 - ...:
@@ -36,7 +36,7 @@ path(object, simplify = TRUE, ...)
 ## Value
 
 for single elements, a character string; for
-[SpatialData](https://helenalc.github.io/SpatialData/reference/SpatialData.md)
+[SpatialData](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
 objects, if `simplify=TRUE` (default), a `tibble` where rows=elements
 and columns=layers/elements/paths. if `simplify=FALSE`, a depth-3 list
 where levels=layers/elements/paths.
