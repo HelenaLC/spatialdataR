@@ -65,7 +65,6 @@ sdTableList <- \(...) {
     .sl("sdTableList", as.list(x))
 }
 
-#' @export
 #' @rdname SpatialData
 .SpatialData <- setClass(
     Class="SpatialData",
