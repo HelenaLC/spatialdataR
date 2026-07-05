@@ -118,8 +118,6 @@ SpatialData(
 
 \S4method{[[}{SpatialData,character,ANY}(x, i) <- value
 
-\S4method{[[}{SpatialData,numeric,ANY}(x, i) <- value
-
 \S4method{[[}{SpatialData,ANY,ANY}(x, i) <- value
 }
 \arguments{
