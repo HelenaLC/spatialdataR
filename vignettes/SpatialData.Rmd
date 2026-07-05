@@ -26,6 +26,23 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 
 # Preamble
 
+## Installation
+
+```{r eval=FALSE}
+ok <- require("BiocManager", quietly=TRUE)
+if (!ok) install.packages("BiocManager")
+BiocManager::install("spatialdataR")
+```
+
+Two companion packages, provide a variety of example datasets as well as 
+visualization capabilities. These are still under active development, but 
+can be installed from GitHub until their release through Bioconductor via:
+
+```{r eval=FALSE}
+BiocManager::install("HelenaLC/SpatialData.data") # example datasets
+BiocManager::install("HelenaLC/SpatialData.plot") # visualization
+```
+
 ## Introduction
 
 The `r BiocStyle::Biocpkg("spatialdataR")` package provides an R interface to 
