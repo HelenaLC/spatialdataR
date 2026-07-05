@@ -145,7 +145,6 @@ imageNames(sd)
 
 # alternative ways 
 # (using list-style)
-names(sd[[1]])
 names(sd$images)
 names(sd[["images"]])
 ```
