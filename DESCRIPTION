@@ -29,7 +29,7 @@ Authors@R: c(
         comment=c(ORCID="0000-0003-4046-0063")))
 Imports:
     anndataR (>= 1.1.3),
-    BiocGenerics,
+    BiocGenerics (>= 0.59.6),
     DBI,
     DelayedArray,
     dplyr,
