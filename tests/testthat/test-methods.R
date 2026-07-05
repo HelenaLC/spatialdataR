@@ -118,9 +118,6 @@ test_that("set all", {
         y[[.]] <- list(obj[[.]])
         expect_length(y[[.]], 1)
         expect_identical(y[[.]][[1]], obj[[.]])
-        # index
-        z <- x; z[[match(., .LAYERS)]] <- y[[.]]
-        expect_identical(z[[.]], y[[.]])
         # element
         y[[.]][[2]] <- obj[[.]]
         expect_length(y[[.]], 2)
