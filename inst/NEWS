@@ -1,3 +1,10 @@
+changes in version 0.99.44
+
+- fixed package down URL per package name change
+- require minimal 'BiocGenerics' version
+- remove '[[,SpatialData,numeric' method
+- added 'query()' example in vignette
+
 changes in version 0.99.43
 
 - revised validity to allow 4D data (time dimension)
