@@ -41,7 +41,7 @@ As a rule of thumb, please start with a brainstorming issue if you are consideri
     The title of your PR should briefly describe the change.
     The body of your PR should contain `Fixes #issue-number`.
 
-*  For user-facing changes, add a bullet to the top of `NEWS.md` (i.e. just below the first header). Follow the style described in <https://style.tidyverse.org/news.html>.
+*  Summarize key changes in `NEWS.md` (i.e. just below the first header). See existing entries for inspiration on length, depth, and style.
 
 ### Code style
 
