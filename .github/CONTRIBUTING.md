@@ -45,6 +45,10 @@ As a rule of thumb, please start with a brainstorming issue if you are consideri
 
 ### Code style
 
+* We follow the [Bioconductor coding style guide](https://contributions.bioconductor.org/r-code.html#r-code-development). In particular, it differs from other popular style guide on the following points:
+  * Indents are 4 spaces
+  * Function and variable names use camelCase
+
 *  We use [roxygen2](https://cran.r-project.org/package=roxygen2), with [Markdown syntax](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html), for documentation.  
 
 *  We use [testthat](https://cran.r-project.org/package=testthat) for unit tests. 
