@@ -1,4 +1,4 @@
-# SpatialData
+# spatialdataR
 
 [![R-universe](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml/badge.svg?branch=main&event=push)](https://github.com/HelenaLC/spatialdataR/actions/workflows/r-universe.yaml)
 

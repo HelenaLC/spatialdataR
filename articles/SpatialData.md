@@ -632,16 +632,16 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] SingleCellExperiment_1.35.1 SummarizedExperiment_1.43.0
-    ##  [3] Biobase_2.73.1              GenomicRanges_1.65.0       
+    ##  [3] Biobase_2.73.1              GenomicRanges_1.65.1       
     ##  [5] Seqinfo_1.3.0               IRanges_2.47.2             
-    ##  [7] S4Vectors_0.51.5            BiocGenerics_0.59.9        
+    ##  [7] S4Vectors_0.51.5            BiocGenerics_0.59.10       
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
     ## [11] matrixStats_1.5.0           spatialdataR_0.99.44       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1    blob_1.3.0          dplyr_1.2.1        
-    ##  [4] R.utils_2.13.0      fastmap_1.2.0       duckdb_1.5.4.2     
+    ##  [4] R.utils_2.13.0      fastmap_1.2.0       duckdb_1.5.4.3     
     ##  [7] digest_0.6.39       lifecycle_1.0.5     sf_1.1-1           
     ## [10] paws.storage_0.10.0 magrittr_2.0.5      compiler_4.7.0     
     ## [13] rlang_1.3.0         sass_0.4.10         tools_4.7.0        
@@ -657,16 +657,15 @@ sessionInfo()
     ## [43] Matrix_1.7-5        jsonlite_2.0.0      bookdown_0.47      
     ## [46] RBGL_1.89.0         Rgraphviz_2.57.0    systemfonts_1.3.2  
     ## [49] jquerylib_0.1.4     units_1.0-1         glue_1.8.1         
-    ## [52] pkgdown_2.2.0       ZarrArray_1.1.0     Rarr_2.0.1         
-    ## [55] tibble_3.3.1        pillar_1.11.1       rappdirs_0.3.4     
-    ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
-    ## [61] dbplyr_2.6.0        httr2_1.2.3         wk_0.9.5           
-    ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.22-9     
-    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.2.1  
-    ## [70] paws.common_0.8.10  bslib_0.11.0        class_7.3-23       
-    ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.2 
-    ## [76] anndataR_1.3.0      xfun_0.59           fs_2.1.0           
-    ## [79] pkgconfig_2.0.3
+    ## [52] pkgdown_2.2.1       ZarrArray_1.0.0     Rarr_2.0.1         
+    ## [55] tibble_3.3.1        pillar_1.11.1       htmltools_0.5.9    
+    ## [58] graph_1.91.0        R6_2.6.1            dbplyr_2.6.0       
+    ## [61] httr2_1.3.0         wk_0.9.5            textshaping_1.0.5  
+    ## [64] evaluate_1.0.5      lattice_0.22-9      R.methodsS3_1.8.2  
+    ## [67] png_0.1-9           duckspatial_1.2.1   paws.common_0.8.10 
+    ## [70] bslib_0.11.0        class_7.3-23        Rcpp_1.1.2         
+    ## [73] uuid_1.2-2          SparseArray_1.13.2  anndataR_1.3.0     
+    ## [76] xfun_0.60           fs_2.1.0            pkgconfig_2.0.3
 
 ### References
 
