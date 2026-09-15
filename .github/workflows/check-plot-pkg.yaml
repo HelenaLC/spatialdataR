@@ -37,6 +37,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
+          extra-repositories: 'https://bioc.r-universe.dev'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
