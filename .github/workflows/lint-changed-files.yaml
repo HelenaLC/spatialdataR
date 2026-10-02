@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_BIOC_VERSION: "3.24"
     steps:
       - uses: actions/checkout@v7
         with:
@@ -34,6 +35,7 @@ jobs:
         with:
           use-public-rspm: true
           r-version: 'devel'
+          extra-repositories: 'https://bioc.r-universe.dev'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
