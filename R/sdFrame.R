@@ -129,7 +129,7 @@ SpatialDataPoint <- \(data=NULL, meta=SpatialDataAttrs(type="point"), metadata=l
         gt <- tryCatch(unique(st_geometry_type(data)), error=\(.) "n/a")
         if (!all(gt == "POINT")) stop(
             "only 'POINT' geometries supported; ",
-            "found: ", paste(gt, collapse=", "))
+            "found: ", toString(gt))
     }
     if (!is(data, "duckspatial_df")) 
         data <- .duck(data, "sdPoint")

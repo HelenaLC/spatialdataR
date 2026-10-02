@@ -38,7 +38,7 @@
     if (length(na))
         msg <- c(msg, paste(
             "table region(s) not found in any layer:",
-            paste(sprintf("'%s'", na), collapse=", ")))
+            toString(sprintf("'%s'", na))))
     return(msg)
 }
 
@@ -174,7 +174,7 @@ setValidity2("SpatialData", .validateSpatialData)
         bad <- !isTRUE(typ %in% ok)
         if (bad) msg <- c(msg, paste0(
             "invalid multiscales$axes[[", ., "]]$type; ",
-            "should be one of: ", paste(ok, collapse=", ")))
+            "should be one of: ", toString(ok)))
     }
     return(msg)
 }

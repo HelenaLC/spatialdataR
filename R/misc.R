@@ -143,7 +143,7 @@ setMethod("show", "SpatialDataShape", .showShape)
         if (l$type == "sequence") {
             l$transformations |>
                 vapply(\(.) h(.), character(1)) |>
-                paste(collapse=", ")
+                toString()
         } else {
             h(l)
         }

@@ -250,7 +250,7 @@ NULL
     }
     if (!i %in% names(y)) stop(
         "invalid 'i'; should be one of: ",
-        paste(names(y), collapse=", "))
+        toString(names(y)))
     y[[i]]
 }
 

@@ -95,7 +95,7 @@
             # sync 'region' metadata
             region(t) <- keep_regs
             ts[[i]] <- t
-            message(sprintf("filtering table '%s' to remaining regions: %s", names(ts)[i], paste(keep_regs, collapse=", ")))
+            message(sprintf("filtering table '%s' to remaining regions: %s", names(ts)[i], toString(keep_regs)))
         }
     }
     if (any(drop)) {
