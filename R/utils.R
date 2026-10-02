@@ -1,6 +1,3 @@
-# internal helper for null-coalescing
-`%||%` <- \(a, b) if (is.null(a)) b else a
-
 # internal helpers for object-wide iteration 
 # across spatial elements (excluding tables)
 .ls <- .LAYERS[.LAYERS != "tables"]
