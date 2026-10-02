@@ -75,7 +75,7 @@ NULL
     cat(sprintf("coordinate systems(%s):\n", n))
     for (c in nodes(g)[i]) {
         pa <- suppressWarnings(sp.between(g, paste0("_", e), c))
-        ss <- strsplit(gsub("^_", "", names(pa)), ":")
+        ss <- strsplit(gsub("^_", "", names(pa)), ":", fixed=TRUE)
         ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
             paste0("- ", c, "(%d): %s"),
