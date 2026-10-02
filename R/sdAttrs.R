@@ -78,7 +78,12 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
     # transformations:
     ct <- trans %||% .default_ct(ax)
     # zarr attributes list:
-    if (!type %in% c("point", "shape")) {
+    if (type %in% c("point", "shape")) {
+        res <- list(
+          axes=.ax_names(ax), # point and shape take only names
+          coordinateTransformations=ct
+        )
+    } else {
         # datasets:
         ds <- .default_ds(.ax_names(ax)) 
         # default structure
@@ -101,12 +106,6 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
                  )
         )
         if (ver == "0.3") res <- list(ome=res)
-    } else {
-        # points/shapes
-        res <- list(
-          axes=.ax_names(ax), # point and shape take only names
-          coordinateTransformations=ct
-        )
     }
     res$spatialdata_attrs <- list(version=ver)
     SpatialDataAttrs(res)
