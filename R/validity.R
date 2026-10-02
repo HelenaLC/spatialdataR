@@ -99,7 +99,7 @@ setValidity2("SpatialDataShape", .validateShape)
     nms <- names(lys)
     typ <- class(lys)[[1]]
     if (is.null(nms)) return(paste(typ, "missing names"))
-    na <- nchar(nms) == 0
+    na <- !nzchar(nms)
     if (any(na)) {
         na <- paste(which(na), collapse=",")
         return(paste(typ, "elements", na, "missing names"))
@@ -153,7 +153,7 @@ setValidity2("SpatialData", .validateSpatialData)
     nms <- lapply(ax, \(.) .$name)
     for (. in seq_along(ax)) {
         nm <- ax[[.]]$name
-        ok <- length(nm) == 1 && is.character(nm) && nchar(nm) > 0
+        ok <- length(nm) == 1 && is.character(nm) && nzchar(nm)
         if (!ok) {
             msg <- c(msg, paste0(
                 "missing or invalid multiscales$axes[[", ., "]]$name; ",
