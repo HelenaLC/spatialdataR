@@ -161,7 +161,7 @@ setValidity2("SpatialData", .validateSpatialData)
             nms <- nms[-.]
         }
     }
-    if (any(duplicated(unlist(nms)))) 
+    if (anyDuplicated(unlist(nms)) > 0) 
         msg <- c(msg, paste0(
             "found duplicated multiscales$axes[[", ., "]]$name; ",
             "should be unique across axiis"))
