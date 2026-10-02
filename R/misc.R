@@ -90,7 +90,7 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showArray <- function(object) {
     n <- length(object@data)
     cat("class:", class(object), if (n > 1) "(MultiScale)" else "", "\n")
-    scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
+    scales <- vapply(object@data, \(x) paste(dim(x), collapse=","), character(1))
     coolcat("Scales (%d): (%s)", scales)
 }
 
