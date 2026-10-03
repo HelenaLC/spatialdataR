@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,    r: 'devel'}
+          # macos is skipped for now because of issues with installing system dependencies
+#          - {os: macos-latest,    r: 'devel'}
           - {os: windows-latest,  r: 'devel'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
     env:
