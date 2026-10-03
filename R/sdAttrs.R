@@ -78,7 +78,12 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
     # transformations:
     ct <- trans %||% .default_ct(ax)
     # zarr attributes list:
-    if (!type %in% c("point", "shape")) {
+    if (type %in% c("point", "shape")) {
+        res <- list(
+          axes=.ax_names(ax), # point and shape take only names
+          coordinateTransformations=ct
+        )
+    } else {
         # datasets:
         ds <- .default_ds(.ax_names(ax)) 
         # default structure
@@ -101,12 +106,6 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
                  )
         )
         if (ver == "0.3") res <- list(ome=res)
-    } else {
-        # points/shapes
-        res <- list(
-          axes=.ax_names(ax), # point and shape take only names
-          coordinateTransformations=ct
-        )
     }
     res$spatialdata_attrs <- list(version=ver)
     SpatialDataAttrs(res)
@@ -247,7 +246,7 @@ setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 #' @noRd
 #' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region_key", c("SingleCellExperiment", "character"), \(x, value) {
-    stopifnot(length(value) == 1, nchar(value) > 0)
+    stopifnot(length(value) == 1, nzchar(value))
     int_metadata(x)$spatialdata_attrs$region_key <- value
     return(x)
 })
@@ -277,7 +276,7 @@ setMethod("regions", "SingleCellExperiment", \(x) {
 #' @noRd
 #' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region", c("SingleCellExperiment", "character"), \(x, value) {
-    stopifnot(all(nchar(value) > 0, na.rm=TRUE))
+    stopifnot(all(nzchar(value), na.rm=TRUE))
     if (is.null(rk <- region_key(x))) 
         rk <- region_key(x) <- "region"
     int_metadata(x)$spatialdata_attrs[[rk]] <- sort(unique(value))
@@ -298,7 +297,7 @@ setReplaceMethod("region", c("SingleCellExperiment", "NULL"), \(x, value) {
 #' @importFrom SingleCellExperiment int_colData<-
 setReplaceMethod("regions", c("SingleCellExperiment", "character"), \(x, value) {
     stopifnot(length(value) %in% c(1, ncol(x)))
-    stopifnot(all(nchar(value) > 0, na.rm=TRUE))
+    stopifnot(all(nzchar(value) > 0, na.rm=TRUE))
     if (is.null(rk <- region_key(x))) region_key(x) <- "region"
     int_metadata(x)$spatialdata_attrs[[rk]] <- sort(unique(value))
     int_colData(x)[[rk]] <- value

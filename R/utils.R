@@ -1,6 +1,3 @@
-# internal helper for null-coalescing
-`%||%` <- \(a, b) if (is.null(a)) b else a
-
 # internal helpers for object-wide iteration 
 # across spatial elements (excluding tables)
 .ls <- .LAYERS[.LAYERS != "tables"]
@@ -95,7 +92,7 @@
             # sync 'region' metadata
             region(t) <- keep_regs
             ts[[i]] <- t
-            message(sprintf("filtering table '%s' to remaining regions: %s", names(ts)[i], paste(keep_regs, collapse=", ")))
+            message(sprintf("filtering table '%s' to remaining regions: %s", names(ts)[i], toString(keep_regs)))
         }
     }
     if (any(drop)) {

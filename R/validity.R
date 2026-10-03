@@ -38,7 +38,7 @@
     if (length(na))
         msg <- c(msg, paste(
             "table region(s) not found in any layer:",
-            paste(sprintf("'%s'", na), collapse=", ")))
+            toString(sprintf("'%s'", na))))
     return(msg)
 }
 
@@ -99,7 +99,7 @@ setValidity2("SpatialDataShape", .validateShape)
     nms <- names(lys)
     typ <- class(lys)[[1]]
     if (is.null(nms)) return(paste(typ, "missing names"))
-    na <- nchar(nms) == 0
+    na <- !nzchar(nms)
     if (any(na)) {
         na <- paste(which(na), collapse=",")
         return(paste(typ, "elements", na, "missing names"))
@@ -153,7 +153,7 @@ setValidity2("SpatialData", .validateSpatialData)
     nms <- lapply(ax, \(.) .$name)
     for (. in seq_along(ax)) {
         nm <- ax[[.]]$name
-        ok <- length(nm) == 1 && is.character(nm) && nchar(nm) > 0
+        ok <- length(nm) == 1 && is.character(nm) && nzchar(nm)
         if (!ok) {
             msg <- c(msg, paste0(
                 "missing or invalid multiscales$axes[[", ., "]]$name; ",
@@ -161,7 +161,7 @@ setValidity2("SpatialData", .validateSpatialData)
             nms <- nms[-.]
         }
     }
-    if (any(duplicated(unlist(nms)))) 
+    if (anyDuplicated(unlist(nms)) > 0) 
         msg <- c(msg, paste0(
             "found duplicated multiscales$axes[[", ., "]]$name; ",
             "should be unique across axiis"))
@@ -174,7 +174,7 @@ setValidity2("SpatialData", .validateSpatialData)
         bad <- !isTRUE(typ %in% ok)
         if (bad) msg <- c(msg, paste0(
             "invalid multiscales$axes[[", ., "]]$type; ",
-            "should be one of: ", paste(ok, collapse=", ")))
+            "should be one of: ", toString(ok)))
     }
     return(msg)
 }

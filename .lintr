@@ -1,0 +1,34 @@
+linters: linters_with_tags(
+    tags = NULL,
+    exclude_tags = "style",
+    pipe_consistency_linter(pipe = "|>"),
+    nonportable_path_linter = NULL,
+    undesirable_function_linter(
+      modify_defaults(
+        default_undesirable_functions,
+        citEntry = "use the more modern bibentry() function",
+        mapply = NULL,
+        library = NULL # too many false positive in too many files
+      )
+    ),
+    object_overwrite_linter = NULL,
+    unnecessary_lambda_linter = NULL,
+    stopifnot_all_linter = NULL,
+    namespace_linter = NULL,
+    if_not_else_linter = NULL
+  )
+exclusions: list(
+    "tests/testthat.R" = list(
+      unused_import_linter = Inf
+    ),
+    "tests" = list(
+      undesirable_function_linter = Inf
+    ),
+    "data-raw" = list(
+      missing_package_linter = Inf,
+      namespace_linter = Inf
+    ),
+    "vignettes" = list(
+      unused_import_linter = Inf
+    )
+  )

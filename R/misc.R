@@ -75,7 +75,7 @@ NULL
     cat(sprintf("coordinate systems(%s):\n", n))
     for (c in nodes(g)[i]) {
         pa <- suppressWarnings(sp.between(g, paste0("_", e), c))
-        ss <- strsplit(gsub("^_", "", names(pa)), ":")
+        ss <- strsplit(gsub("^_", "", names(pa)), ":", fixed=TRUE)
         ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
             paste0("- ", c, "(%d): %s"),
@@ -90,7 +90,7 @@ setMethod("show", "SpatialData", .showSpatialData)
 .showArray <- function(object) {
     n <- length(object@data)
     cat("class:", class(object), if (n > 1) "(MultiScale)" else "", "\n")
-    scales <- vapply(object@data, \(x) paste0(dim(x), collapse=","), character(1))
+    scales <- vapply(object@data, \(x) paste(dim(x), collapse=","), character(1))
     coolcat("Scales (%d): (%s)", scales)
 }
 
@@ -143,7 +143,7 @@ setMethod("show", "SpatialDataShape", .showShape)
         if (l$type == "sequence") {
             l$transformations |>
                 vapply(\(.) h(.), character(1)) |>
-                paste(collapse=", ")
+                toString()
         } else {
             h(l)
         }
