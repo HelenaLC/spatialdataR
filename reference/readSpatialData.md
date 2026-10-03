@@ -117,7 +117,7 @@ data(s)
 #> # Use ddbs_collect() or st_as_sf() to materialize to sf
 #> #
 #> # A query:  ?? x 1
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.7.0/:memory:]
+#> # Database: DuckDB 1.5.6 [unknown@Linux 6.17.0-1022-azure:R 4.7.0/:memory:]
 #>   geometry                                                                      
 #>   <wk_wkb>                                                                      
 #> 1 <POLYGON ((42.52463 32.27672, 39.52212 24.63317, 36.38277 25.66096, 42.52463 …
