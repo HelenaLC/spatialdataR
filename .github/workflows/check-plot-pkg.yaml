@@ -44,7 +44,7 @@ jobs:
       - name: Install system dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install fftw
+          brew install fftw jpeg
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
