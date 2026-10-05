@@ -246,7 +246,7 @@ setMethod("region_key", "SingleCellExperiment", \(x) meta(x)$region_key)
 #' @noRd
 #' @importFrom SingleCellExperiment int_metadata<-
 setReplaceMethod("region_key", c("SingleCellExperiment", "character"), \(x, value) {
-    stopifnot(length(value) == 1, nzchar(value))
+    stopifnot(length(value) == 1, nzchar(value), !is.na(value))
     int_metadata(x)$spatialdata_attrs$region_key <- value
     return(x)
 })

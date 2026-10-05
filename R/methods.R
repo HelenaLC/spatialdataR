@@ -223,7 +223,7 @@ f <- \(e) setReplaceMethod(
     paste0(e, "Names"),
     c("SpatialData", "character"),
     \(x, value) {
-        stopifnot(!duplicated(value), nzchar(value))
+        stopifnot(!duplicated(value), nzchar(value), !is.na(value))
         l <- paste0(e, "s")
         names(x[[l]]) <- value
         x
