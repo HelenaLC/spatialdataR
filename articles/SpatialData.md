@@ -609,7 +609,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-10-02 r90631)
+    ## R Under development (unstable) (2026-10-05 r90641)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
@@ -658,12 +658,12 @@ sessionInfo()
     ## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   
     ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
     ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.7    
-    ## [55] Rarr_2.1.43         tibble_3.3.1        pillar_1.11.1      
+    ## [55] Rarr_2.1.44         tibble_3.3.1        pillar_1.11.1      
     ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
     ## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           
     ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     
     ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.2.1  
-    ## [70] paws.common_0.8.10  bslib_0.12.0        class_7.3-24       
+    ## [70] paws.common_0.9.0   bslib_0.12.0        class_7.3-24       
     ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.4 
     ## [76] anndataR_1.2.2      xfun_0.61           fs_2.1.0           
     ## [79] pkgconfig_2.0.3
