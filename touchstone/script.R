@@ -34,4 +34,15 @@ touchstone::benchmark_run(
   n = 20
 )
 
+touchstone::benchmark_run(
+  {
+    library(spatialdataR)
+    x <- readSpatialData(
+      system.file("extdata", "blobs_v3.zarr", package = "spatialdataR")
+    )
+  },
+  show = show(x),
+  n = 20
+)
+
 touchstone::benchmark_analyze()
