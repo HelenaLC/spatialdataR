@@ -53,10 +53,11 @@ NULL
     cat(sprintf("- points(%s):\n", length(p)))
     cat(sprintf("  - %s (%s)\n", p, d), sep="")
     # shapes
-    nc <- vapply(shapes(object), ncol, numeric(1))
+    d <- vapply(shapes(object), dim, numeric(2))
+    nr <- d[1, ]
+    nc <- d[2, ]
     geom <- c("circle", "polygon")[(nc == 1) + 1L]
-    d <- vapply(shapes(object), nrow, numeric(1))
-    d <- paste(d, unname(geom), sep=",")
+    d <- paste(nr, unname(geom), sep=",")
     cat(sprintf("- shapes(%s):\n", length(s)))
     cat(sprintf("  - %s (%s)\n", s, d), sep="")
     # tables
