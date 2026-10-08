@@ -127,12 +127,12 @@ test_that("set all", {
         expect_named(y[[.]])
         expect_length(y[[.]], 1)
         expect_s4_class(y[[.]], "SimpleList")
-        expect_identical(names(y[[.]]), gsub("s$", "1", .))
+        expect_identical(names(y[[.]]), sub("s$", "1", .))
         y <- x; y[[.]] <- list(a=obj[[.]], obj[[.]], b=obj[[.]]) # one unnamed
         expect_named(y[[.]])
         expect_length(y[[.]], 3)
         expect_s4_class(y[[.]], "SimpleList")
-        expect_identical(names(y[[.]]), c("a", gsub("s$", "2", .), "b"))
+        expect_identical(names(y[[.]]), c("a", sub("s$", "2", .), "b"))
     }
 })
 

@@ -23,7 +23,7 @@ test_that("SpatialData()", {
         expect_named(x[[l]])
         expect_length(x[[l]], 1)
         expect_s4_class(x[[l]], "SimpleList")
-        expect_identical(names(x[[l]]), gsub("s$", 1, l))
+        expect_identical(names(x[[l]]), sub("s$", "1", l))
     }
 })
 

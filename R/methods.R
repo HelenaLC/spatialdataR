@@ -269,7 +269,7 @@ f <- \(l) setReplaceMethod(l,
     \(x, value) {
         if (length(value)) {
             nms <- names(value)
-            e <- gsub("s$", "", l)
+            e <- sub("s$", "", l)
             if (is.null(nms)) {
                 nms <- paste0(e, seq_along(value))
                 names(value) <- nms
