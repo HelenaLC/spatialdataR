@@ -8,3 +8,4 @@ vignettes/*cache
 vignettes/*files
 ^codecov\.yml$
 ^\.lintr$
+touchstone/
