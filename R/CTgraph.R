@@ -45,11 +45,7 @@ NULL
 #' @rdname CTgraph
 #' @export
 setMethod("CTgraph", "SpatialData", \(x) {
-    names(ls) <- ls <- setdiff(.LAYERS, "tables")
-    md <- lapply(ls, \(l) {
-        names(es) <- es <- names(x[[l]])
-        lapply(es, \(e) meta(x[[l]][[e]]))
-    })
+    md <- .lapplyLayer(x, \(e) meta(e))
     .make_g(md)
 })
 

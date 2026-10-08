@@ -99,24 +99,13 @@ setMethod("show", "SpatialData", .showSpatialData)
 setMethod("show", "SpatialDataArray", .showArray)
 
 #' @importFrom S4Vectors coolcat
-.showPoint <- function(object) {
-    cat("class: SpatialDataPoint\n")
+.showFrame <- function(object) {
+    cat("class: ", class(object)[1], "\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
 
-#' @rdname misc
-setMethod("show", "SpatialDataPoint", .showPoint)
-
-#' @importFrom S4Vectors coolcat
-.showShape <- function(object) {
-    cat("class: SpatialDataShape\n")
-    cat("count:", length(object), "\n")
-    coolcat("data(%d): %s\n", names(object))
-}
-
-#' @rdname misc
-setMethod("show", "SpatialDataShape", .showShape)
+setMethod("show", "SpatialDataFrame", .showFrame)
 
 #' @importFrom S4Vectors coolcat
 .showAttrs <- function(object) {
