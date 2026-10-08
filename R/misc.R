@@ -100,7 +100,7 @@ setMethod("show", "SpatialDataArray", .showArray)
 
 #' @importFrom S4Vectors coolcat
 .showFrame <- function(object) {
-    cat("class: ", class(object)[1], "\n")
+    cat("class:", class(object)[1], "\n")
     cat("count:", length(object), "\n")
     coolcat("data(%d): %s\n", names(object))
 }
