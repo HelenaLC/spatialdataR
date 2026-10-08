@@ -100,6 +100,17 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$output$name, character(1))
 })
 
+#' @rdname CTutils
+#' @export
+setMethod("CTunit", "SpatialDataAttrs", \(x, ...) {
+    lapply(CTlist(x), \(.) {
+        ax <- .$output$axes
+        setNames(
+            lapply(ax, \(.) .$unit),
+            vapply(ax, \(.) .$name, character(1))) 
+    }) |> setNames(CTname(x))
+})
+
 # SpatialDataElement ----
 
 #' @rdname CTutils
@@ -113,6 +124,10 @@ setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x), ...))
 #' @rdname CTutils
 #' @export
 setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTunit", "SpatialDataElement", \(x, ...) CTunit(meta(x), ...))
 
 #' @rdname CTutils
 #' @export
