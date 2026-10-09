@@ -136,6 +136,7 @@ readSpatialData <- function(x,
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
 
+    x <- Rarr:::.normalize_array_path(x)
     store_meta <- read_zarr_consolidated_metadata(x, consolidate = "missing")
     
     # helper for layer reading
