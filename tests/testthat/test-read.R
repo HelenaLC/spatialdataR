@@ -34,3 +34,21 @@ test_that("readSpatialData()", {
         expect_silent(do.call(readSpatialData, b))
     }
 })
+
+test_that("read from S3", {
+    x <- readSpatialData(
+        "https://s3.embl.de/csama2026/BC_xenium_sdata_AL_LR.zarr/", tables = FALSE
+    )
+    expect_s4_class(x, "SpatialData")
+    expect_length(images(x), 2)
+    expect_length(labels(x), 0)
+    expect_length(points(x), 1)
+    expect_length(shapes(x), 2)
+    expect_length(tables(x), 0)
+
+    # Reading element works and returns the same
+    img <- readImage(
+        "https://s3.embl.de/csama2026/BC_xenium_sdata_AL_LR.zarr/images/he_image"
+    )
+    expect_identical(img, images(x)[[1]])
+})
