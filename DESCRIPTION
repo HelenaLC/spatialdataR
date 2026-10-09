@@ -1,7 +1,7 @@
 Package: spatialdataR
 Title: Representation of Python's spatialdata in R
 Depends: R (>= 4.6)
-Version: 0.99.44
+Version: 0.99.45
 Description: R interface to Python/scverse's 'spatialdata' framework for 
     unified spatial omics data handling. Adheres to OME-NGFF standards, 
     providing lazy, on-disk representations for multiscale images and 
@@ -33,6 +33,7 @@ Imports:
     DBI,
     DelayedArray,
     dplyr,
+    duckdb,
     duckspatial,
     graph,
     Matrix,
@@ -66,5 +67,5 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 BugReports: https://github.com/HelenaLC/spatialdataR/issues
 URL: https://helenalc.github.io/spatialdataR, https://github.com/HelenaLC/spatialdataR
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
 Config/testthat/edition: 3
