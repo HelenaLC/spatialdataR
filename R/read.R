@@ -107,8 +107,12 @@ readShape <- function(x, ...) {
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
 readTable <- function(x) {
-    suppressWarnings({ # suppress warnings related to hidden files
-        sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
+    # suppress warnings related to hidden files
+    # obsm['spatial'] is removed since anndataR does not ingest it
+    suppressWarnings({
+        sce <- anndataR::read_zarr(x, 
+                                   as="SingleCellExperiment",
+                                   reducedDims_mapping = c("spatial" = NULL))
     })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
