@@ -1,3 +1,7 @@
+changes in version 0.99.45
+
+- added read support from S3 object storage for "images", "labels", "points", "shapes" elements
+
 changes in version 0.99.44
 
 - fixed package down URL per package name change
