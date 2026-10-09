@@ -52,7 +52,7 @@ NULL
     # The name of the array is arbitrary with the ordering defined by
     # by the "multiscales" metadata, but is often a sequence starting at 0.
     ds <- .validate_multiscales_paths(x, datasets(mdattr))
-    ds <- paste0(x, ds, recycle0 = TRUE)
+    ds <- file.path(x, ds)
     as <- lapply(ds, ZarrArray)
     list(array=as, mdattr=mdattr)
 }
@@ -77,7 +77,7 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    pq <- paste0(x, file.path("points.parquet", "part.0.parquet"))
+    pq <- file.path(x, "points.parquet", "part.0.parquet")
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
     df <- ddbs_open_dataset(pq, conn=.conn()) |>
@@ -95,7 +95,7 @@ readPoint <- function(x, ...) {
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
     # "shapes.parquet" currently hardcoded in SpatialData.io
-    pq <- paste0(x, "shapes.parquet")
+    pq <- file.path(x, "shapes.parquet")
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     attr(df, "source_path") <- pq
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
@@ -145,7 +145,7 @@ readSpatialData <- function(x,
         # The regex catches only the first level of elements in the layer, 
         # e.g. "images/dapi", "images/morphology", etc.
         j <- grepv(paste0("^", l, "/[^/]+$"), names(store_meta))
-        j <- paste0(x, j, "/", recycle0 = TRUE)
+        j <- paste0(x, j, recycle0 = TRUE)
         nms <- names(j) <- basename(j)
         opt <- args[[l]]
         if (!isTRUE(opt)) {
