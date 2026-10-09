@@ -90,6 +90,13 @@ test_that("CTtype", {
     expect_length(y, 5)
     expect_true(all(y %in% .CTtype))
 })
+test_that("CTunit", {
+    z <- CTunit(y <- image(x))
+    expect_type(z, "list")
+    l <- vapply(z, length, integer(1))
+    expect_all_equal(l, length(dim(y)))
+    expect_identical(names(z), CTname(y))
+})
 test_that("CTname,element", {
     y <- CTname(label(x))
     expect_type(y, "character")
