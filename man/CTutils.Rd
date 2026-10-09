@@ -6,6 +6,7 @@
 \alias{CTlist}
 \alias{CTname}
 \alias{CTtype}
+\alias{CTunit}
 \alias{CTdata}
 \alias{addCT}
 \alias{rmvCT}

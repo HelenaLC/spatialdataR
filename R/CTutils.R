@@ -1,6 +1,6 @@
 #' @name CTutils
 #' @title Coord. trans. utilities
-#' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
+#' @aliases axes CTlist CTname CTtype CTunit CTdata addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
 #' @param y NULL (default) returns a list where each element is 
