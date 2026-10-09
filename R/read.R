@@ -51,8 +51,15 @@ NULL
     # https://ngff.openmicroscopy.org/specifications/0.5/index.html#images
     # The name of the array is arbitrary with the ordering defined by
     # by the "multiscales" metadata, but is often a sequence starting at 0.
-    ds <- .validate_multiscales_paths(x, datasets(mdattr))
-    ds <- file.path(x, as.character(ds))
+    if (!any(startsWith(x, c("http://", "https://", "s3://")))) {
+      # Until we have a complete store interface (https://github.com/Huber-group-EMBL/Rarr/pull/176),
+      # only local objects can be fully validated.
+      ds <- .validate_multiscales_paths(x, datasets(mdattr))
+    } else {
+      # For remote objects, we skip validation and assume that the datasets are in the expected location.
+      ds <- datasets(mdattr)
+    } 
+    ds <- paste0(x, ds)
     as <- lapply(ds, ZarrArray)
     list(array=as, mdattr=mdattr)
 }
@@ -77,7 +84,7 @@ readLabel <- function(x, ...) {
 #' @importFrom dplyr sql
 #' @export
 readPoint <- function(x, ...) {
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    pq <- paste0(x, file.path("points.parquet", "part.0.parquet"))
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
     df <- ddbs_open_dataset(pq, conn=.conn()) |>
@@ -94,7 +101,8 @@ readPoint <- function(x, ...) {
 #' @export
 readShape <- function(x, ...) {
     md <- read_zarr_attributes(x)
-    pq <- list.files(x, "\\.parquet$", full.names=TRUE)
+    # "shapes.parquet" currently hardcoded in SpatialData.io
+    pq <- paste0(x, "shapes.parquet")
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     attr(df, "source_path") <- pq
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
@@ -127,17 +135,23 @@ readTable <- function(x) {
 }
 
 #' @rdname readSpatialData
+#' @importFrom Rarr read_zarr_consolidated_metadata
 #' @export
 readSpatialData <- function(x,
     images=TRUE, labels=TRUE, points=TRUE,
     shapes=TRUE, tables=TRUE) {
     args <- as.list(environment())[.LAYERS]
     skip <- vapply(args, isFALSE, logical(1))
+
+    store_meta <- read_zarr_consolidated_metadata(x, consolidate = "missing")
     
     # helper for layer reading
     .readLayer <- \(l) {
         # 'j' are the paths on disk, 'nms' are their basenames
-        j <- list.dirs(file.path(x, l), recursive=FALSE, full.names=TRUE)
+        # The regex catches only the first level of elements in the layer, 
+        # e.g. "images/dapi", "images/morphology", etc.
+        j <- grepv(paste0("^", l, "/[^/]+$"), names(store_meta))
+        j <- paste0(x, j, "/", recycle0 = TRUE)
         nms <- names(j) <- basename(j)
         opt <- args[[l]]
         if (!isTRUE(opt)) {
