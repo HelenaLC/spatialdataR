@@ -33,6 +33,7 @@ Imports:
     DBI,
     DelayedArray,
     dplyr,
+    duckdb,
     duckspatial,
     graph,
     Matrix,

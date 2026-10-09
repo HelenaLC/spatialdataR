@@ -36,6 +36,8 @@ test_that("readSpatialData()", {
 })
 
 test_that("read from S3", {
+    skip_if_not(httpfs_available)
+    
     x <- readSpatialData(
         "https://s3.embl.de/csama2026/BC_xenium_sdata_AL_LR.zarr/", tables = FALSE
     )
