@@ -4,17 +4,11 @@
 \alias{misc}
 \alias{show,SpatialData-method}
 \alias{show,SpatialDataArray-method}
-\alias{show,SpatialDataPoint-method}
-\alias{show,SpatialDataShape-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
 \S4method{show}{SpatialDataArray}(object)
-
-\S4method{show}{SpatialDataPoint}(object)
-
-\S4method{show}{SpatialDataShape}(object)
 }
 \arguments{
 \item{object}{\code{\link{SpatialData}} object or one of its elements,
