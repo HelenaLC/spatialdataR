@@ -144,9 +144,9 @@ readSpatialData <- function(x,
         # 'j' are the paths on disk, 'nms' are their basenames
         # The regex catches only the first level of elements in the layer, 
         # e.g. "images/dapi", "images/morphology", etc.
-        j <- paste0("^", l, "/[^/]+$") |> # nolint: absolute_path_linter.
-            grepv(names(store_meta)) 
-        j <- paste0(x, j, recycle0 = TRUE)
+        j <- paste0("^", l, "/[^/]+$") # nolint: absolute_path_linter.
+        j <- grepv(j, names(store_meta)) 
+        j <- paste0(x, j, recycle0=TRUE)
         nms <- names(j) <- basename(j)
         opt <- args[[l]]
         if (!isTRUE(opt)) {

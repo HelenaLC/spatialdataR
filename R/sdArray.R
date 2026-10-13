@@ -139,15 +139,13 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 # compares metadata dataset paths to arrays on disk
 .validate_multiscales_paths <- function(x, ds) {
-    exist <- Rarr:::.store_check_exist(
-        paste0(x, "/"),
-        ds, 
-        s3_client = Rarr:::.create_s3_client(x)
-    )
-    if (!all(exist))
-        warning("Invalid 'SpatialData' image or label:",
-                " metadata does not match the names of Zarr arrays")
-    return(ds[exist])
+    ok <- Rarr:::.store_check_exist(
+        paste0(x, "/"), ds, 
+        Rarr:::.create_s3_client(x))
+    if (!all(ok)) warning(
+        "Invalid 'SpatialData' image or label: ",
+        "metadata does not match the names of Zarr arrays")
+    return(ds[ok])
 }
 
 # sub ----
