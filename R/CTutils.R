@@ -220,8 +220,8 @@ setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
     } else {
         switch( 
             tryCatch(.ome_ver(x), error=\(e) "9.9"), 
-            "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
-            x[[ms]][[1]][[ct]] <- new)
+            "0.4"=x[[ms]][[1]][[ct]] <- new,
+            x$ome[[ms]][[1]][[ct]] <- new)
     }
     return(x)
 })
