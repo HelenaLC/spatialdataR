@@ -92,6 +92,8 @@ element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)}
   transformation data (e.g., scalar numeric for rotation)
 \item \code{CTlist}: list;
   list of transformation specifications per OME-NGFF spec
+\item \code{CTunit}: list of lists;
+  for each transformation, the unit of each axis
 \item \code{add/rmvCT}: 
   \code{SpatialDataElement} or \code{SpatialDataAttrs} 
   with transformation(s) added/removed
