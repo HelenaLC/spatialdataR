@@ -268,8 +268,24 @@ setMethod("[", c("SpatialDataFrame", "ANY", "ANY"), \(x, i, j, ...) {
         if (is.character(j)) j <- match(j, names(x))
         if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
         data(x) <- data(x) |> 
-            filter(row_number() %in% i) |>
+            .pseudo_slice(i) |>
             select(all_of(j))
     }
     return(x)
 })
+
+# dbplyr doesn't provide a slice method for lazy_tbl, as documented, so we
+# implement our own pseudo-slice function.
+# If the indices are contiguous, we use dplyr::between(), which is converted to
+# the much more efficient SQL BETWEEN operator, otherwise we use %in%, which is
+# converted to IN, which gets super slow for large numbers of indices.
+.pseudo_slice <- \(d, i) {
+    i <- sort(unique(i[!is.na(i)]))
+    if (length(i) == 0L) return(dplyr::filter(d, FALSE))
+    lo <- i[1]
+    hi <- i[length(i)]
+    if (length(i) == hi - lo + 1)
+        return(dplyr::filter(d, dplyr::between(
+            dplyr::row_number(), .env$lo, .env$hi)))
+    dplyr::filter(d, dplyr::row_number() %in% .env$i)
+}
