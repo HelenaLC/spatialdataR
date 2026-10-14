@@ -5,6 +5,7 @@ changes in version 0.99.45
 - code style and efficiency improvements
 - added read support from S3 object storage for
   "images", "labels", "points", "shapes" elements
+- added new 'CTunit()' helper function
 
 changes in version 0.99.44
 
