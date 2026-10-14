@@ -39,9 +39,11 @@
         # get element 'y' annotated by table 't'
         y <- element(x, j)
         # match instances between them
-        y <- y[match(instances(t), instances(y), nomatch=0)] 
+        m <- match(instances(t), instances(y), nomatch=0)
+        # avoid copy when nothing to drop
+        if (identical(m, seq_along(m)) && length(m) == length(y)) next
         # return matching shape instances
-        shape(x, j) <- y
+        shape(x, j) <- y[m]
     }
     return(x)
 }
