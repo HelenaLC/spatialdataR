@@ -264,6 +264,8 @@ setMethod("[", c("SpatialDataFrame", "ANY", "ANY"), \(x, i, j, ...) {
     } else {
         if (is.numeric(i) && any(i < 0)) 
             stop("negative row-subsetting not supported")
+        if (is.numeric(i) && anyDuplicated(i) > 0) 
+            warning("duplicated row-subsetting not supported")
         if (is.logical(i)) i <- seq_len(nrow(x))[i]
         if (is.character(j)) j <- match(j, names(x))
         if (missing(j) || isTRUE(j)) j <- seq_len(ncol(x))
