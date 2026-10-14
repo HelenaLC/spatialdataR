@@ -142,7 +142,7 @@ pa <- list.dirs(
   file.path(zs, "points"), 
   recursive=FALSE, full.names=TRUE)
 (x <- readPoint(pa))
-#> class: SpatialDataPoint
+#> class: SpatialDataPoint 
 #> count: 200 
 #> data(4): genes instance_id __null_dask_index__ geometry
 
@@ -165,7 +165,7 @@ pa <- list.dirs(
 
 # circles
 (x <- readShape(pa[1]))
-#> class: SpatialDataShape
+#> class: SpatialDataShape 
 #> count: 5 
 #> data(2): geometry radius
 length(x)
@@ -175,7 +175,7 @@ x$radius
 
 # polygons
 (y <- readShape(pa[2]))
-#> class: SpatialDataShape
+#> class: SpatialDataShape 
 #> count: 2 
 #> data(1): geometry
 df <- as.data.frame(y)
@@ -184,7 +184,7 @@ plot(df, col=seq(nrow(df)))
 
 # multi-polygons
 (z <- readShape(pa[3]))
-#> class: SpatialDataShape
+#> class: SpatialDataShape 
 #> count: 5 
 #> data(1): geometry
 df <- as.data.frame(z)

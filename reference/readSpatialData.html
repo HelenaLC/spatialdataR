@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">spatialdataR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.44</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.45</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Reading `SpatialData`</h1>
-      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/spatialdataR/blob/main/R/read.R" class="external-link"><code>R/read.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/HelenaLC/spatialdataR/blob/devel/R/read.R" class="external-link"><code>R/read.R</code></a></small>
       <div class="d-none name"><code>readSpatialData.Rd</code></div>
     </div>
 
@@ -134,7 +134,7 @@ or <code>SingleCellExperiment</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">readPoint</span><span class="op">(</span><span class="fu">fn</span><span class="op">(</span><span class="st">"points"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataPoint</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataPoint </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> count: 200 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> data(4): genes instance_id __null_dask_index__ geometry</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -147,7 +147,7 @@ or <code>SingleCellExperiment</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 gene_b           5                   5 POINT (33 61)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">readShape</span><span class="op">(</span><span class="fu">fn</span><span class="op">(</span><span class="st">"shapes"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataShape</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataShape </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> count: 5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> data(1): geometry</span>
 <span class="r-in"><span><span class="fu"><a href="SpatialData.html">data</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span></span>

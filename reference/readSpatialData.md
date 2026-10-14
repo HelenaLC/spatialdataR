@@ -91,7 +91,7 @@ channels(i)
 #> [1] 0 1 2
 
 (p <- readPoint(fn("points")))
-#> class: SpatialDataPoint
+#> class: SpatialDataPoint 
 #> count: 200 
 #> data(4): genes instance_id __null_dask_index__ geometry
 as.data.frame(head(p))
@@ -104,7 +104,7 @@ as.data.frame(head(p))
 #> 6 gene_b           5                   5 POINT (33 61)
 
 (s <- readShape(fn("shapes")))
-#> class: SpatialDataShape
+#> class: SpatialDataShape 
 #> count: 5 
 #> data(1): geometry
 data(s)

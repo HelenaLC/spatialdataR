@@ -22,6 +22,18 @@ BiocManager::install("HelenaLC/SpatialData.data") # example datasets
 BiocManager::install("HelenaLC/SpatialData.plot") # visualization
 ```
 
+If working with remote datasets stored on S3 compatible storage, the
+`duckdb` **httpfs** extension needs to be installed like so:
+
+``` r
+
+library(duckspatial)
+library(duckdb)
+conn <- duckdb::dbConnect(duckdb::duckdb())
+ddbs_install(conn, extension="httpfs")
+duckdb::dbDisconnect(conn)
+```
+
 ### Introduction
 
 The
@@ -476,7 +488,7 @@ sp <- `table<-`(sd, value=se)
     ## - points(0):
     ## - shapes(0):
     ## - tables(1):
-    ##   - table (3,4) [blobs_labels]
+    ##   - table (3,7) [blobs_labels]
     ## coordinate systems(5):
     ## - global(1): blobs_labels
     ## - scale(1): blobs_labels
@@ -489,7 +501,7 @@ sp <- `table<-`(sd, value=se)
 table(sp)$foo
 ```
 
-    ## [1] "A" "A" "A" "A"
+    ## [1] "A" "A" "A" "A" "A" "A" "A"
 
 ### Combining
 
@@ -609,7 +621,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-10-06 r90643)
+    ## R Under development (unstable) (2026-10-12 r90666)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
@@ -636,7 +648,7 @@ sessionInfo()
     ##  [5] Seqinfo_1.3.2               IRanges_2.47.5             
     ##  [7] S4Vectors_0.51.10           BiocGenerics_0.59.12       
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           spatialdataR_0.99.44       
+    ## [11] matrixStats_1.5.0           spatialdataR_0.99.45       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
@@ -658,14 +670,14 @@ sessionInfo()
     ## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   
     ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
     ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.7    
-    ## [55] Rarr_2.1.45         tibble_3.3.1        pillar_1.11.1      
+    ## [55] Rarr_2.1.46         tibble_3.3.1        pillar_1.11.1      
     ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
     ## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           
     ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     
-    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.2.1  
+    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.3.0  
     ## [70] paws.common_0.9.0   bslib_0.12.0        class_7.3-24       
     ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.4 
-    ## [76] anndataR_1.2.2      xfun_0.61           fs_2.1.0           
+    ## [76] anndataR_1.3.2      xfun_0.61           fs_2.1.0           
     ## [79] pkgconfig_2.0.3
 
 ### References

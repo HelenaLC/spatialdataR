@@ -69,11 +69,11 @@ label(sd)
 #> class: SpatialDataLabel  
 #> Scales (1): (64,64)
 point(sd)
-#> class: SpatialDataPoint
+#> class: SpatialDataPoint 
 #> count: 200 
 #> data(4): genes instance_id __null_dask_index__ geometry
 shape(sd)
-#> class: SpatialDataShape
+#> class: SpatialDataShape 
 #> count: 5 
 #> data(2): geometry radius
 
