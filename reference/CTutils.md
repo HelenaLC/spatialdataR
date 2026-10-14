@@ -20,6 +20,9 @@ CTtype(x, ...)
 # S4 method for class 'SpatialDataAttrs'
 CTname(x, ...)
 
+# S4 method for class 'SpatialDataAttrs'
+CTunit(x, ...)
+
 # S4 method for class 'SpatialDataElement'
 axes(x, y = NULL, ...)
 
@@ -28,6 +31,9 @@ CTlist(x, ...)
 
 # S4 method for class 'SpatialDataElement'
 CTtype(x, ...)
+
+# S4 method for class 'SpatialDataElement'
+CTunit(x, ...)
 
 # S4 method for class 'SpatialDataElement'
 CTname(x, ...)
@@ -97,6 +103,9 @@ addCT(x, name, type = "identity", data = NULL)
 
 - `CTlist`: list; list of transformation specifications per OME-NGFF
   spec
+
+- `CTunit`: list of lists; for each transformation, the unit of each
+  axis
 
 - `add/rmvCT`: `SpatialDataElement` or `SpatialDataAttrs` with
   transformation(s) added/removed

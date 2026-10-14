@@ -58,6 +58,9 @@
 <span><span class="co"># S4 method for class 'SpatialDataAttrs'</span></span>
 <span><span class="fu">CTname</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S4 method for class 'SpatialDataAttrs'</span></span>
+<span><span class="fu">CTunit</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for class 'SpatialDataElement'</span></span>
 <span><span class="fu">axes</span><span class="op">(</span><span class="va">x</span>, y <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -66,6 +69,9 @@
 <span></span>
 <span><span class="co"># S4 method for class 'SpatialDataElement'</span></span>
 <span><span class="fu">CTtype</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SpatialDataElement'</span></span>
+<span><span class="fu">CTunit</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SpatialDataElement'</span></span>
 <span><span class="fu">CTname</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -136,6 +142,8 @@ element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)</p></
   transformation data (e.g., scalar numeric for rotation)</p></li>
 <li><p><code>CTlist</code>: list;
   list of transformation specifications per OME-NGFF spec</p></li>
+<li><p><code>CTunit</code>: list of lists;
+  for each transformation, the unit of each axis</p></li>
 <li><p><code>add/rmvCT</code>:
   <code>SpatialDataElement</code> or <code>SpatialDataAttrs</code>
   with transformation(s) added/removed</p></li>
