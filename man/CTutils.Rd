@@ -108,14 +108,14 @@ x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # view available target coordinate systems
-CTname(z <- meta(label(x)))
+CTname(y <- label(x))
 
 # add
-addCT(z, "scale", "scale", c(12, 34)) # overwrite
-CTname(addCT(z, "new", "translation", c(12, 34)))
+CTname(addCT(y, "new", "translation", c(12, 34))) 
+CTdata(addCT(y, "scale", "scale", c(12, 34)), "scale") # overwrite
 
 # rmv
-CTname(rmvCT(z, 2))        # by index
-CTname(rmvCT(z, "scale"))  # by name
-CTname(rmvCT(z, "global")) # identity is protected
+CTname(rmvCT(y, 2))        # by index
+CTname(rmvCT(y, "scale"))  # by name
+CTname(rmvCT(y, "global")) # identity is protected
 }
