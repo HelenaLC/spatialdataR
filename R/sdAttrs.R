@@ -118,6 +118,8 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
     z <- list(name="z", type="space")
     y <- list(name="y", type="space")
     x <- list(name="x", type="space")
+    # note: 'unit' field is currently not populated;
+    # Python defaults to 'unit="unit"' when missing
     switch(match.arg(type), 
         # xyz for points/shapes
         point=,
@@ -169,15 +171,15 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
     paths <- paste0(seq_along(scale_factors) - 1)
     mapply(\(p,s) {
         list(
-            coordinateTransformations = list(
+            coordinateTransformations=list(
                 list(
                     scale=lapply(
                         axes,
                         \(.) if(. == "c") 1 else s),
-                    type = "scale"
+                    type="scale"
                 )
             ),
-            path = p
+            path=p
         )
     }, paths, scale_factors, USE.NAMES=FALSE, SIMPLIFY=FALSE)
 }

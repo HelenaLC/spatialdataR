@@ -26,7 +26,6 @@
 \alias{rmvCT,SpatialDataElement-method}
 \alias{rmvCT,SpatialDataAttrs-method}
 \alias{addCT,SpatialDataElement-method}
-\alias{addCT,SpatialDataAttrs-method}
 \title{Coord. trans. utilities}
 \usage{
 \S4method{axes}{SpatialDataAttrs}(x, y = NULL, ...)
@@ -60,8 +59,6 @@
 \S4method{rmvCT}{SpatialDataAttrs}(x, i)
 
 \S4method{addCT}{SpatialDataElement}(x, name, type = "identity", data = NULL)
-
-\S4method{addCT}{SpatialDataAttrs}(x, name, type = "identity", data = NULL)
 }
 \arguments{
 \item{x}{\code{SpatialData}, an element, or \code{SpatialDataAttrs}.}
