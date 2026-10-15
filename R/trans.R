@@ -122,7 +122,11 @@ setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
 })
 
 .trans_a <- \(x, t, f=c("scale", "translation"), k=1, rev=FALSE) {
-    f <- match.arg(f)
+    tryCatch(
+        f <- match.arg(f),
+        error=\(e) stop(
+            "Only 'scale' and 'translation' transformations ",
+            "are currently supported for images and labels."))
     d <- dim(data(x, k))
     n <- length(d)
     
@@ -141,9 +145,6 @@ setMethod("rotate", "SpatialDataArray", \(x, t, k=1, ..., rev=FALSE) {
     xy <- c(ax$x, ax$y)
     .t <- t[xy]
     .d <- d[xy]
-    # t <- t[c(ax$x, ax$y)]
-    # t <- rev(t); d <- rev(d)
-    # d <- rev(dim(data(x, k)))
     
     # update 'wh' metadata
     wh <- metadata(x)$wh %||% list(c(0, .d[1]), c(0, .d[2]))
@@ -170,11 +171,14 @@ setMethod("translation",
 #' @importFrom rlang call2 !!
 .trans_f <- \(x, t, f=c("scale", "rotate", "translation"), rev=FALSE) {
     ST_Scale <- ST_Rotate <- ST_Translate <- radius <- NULL # R CMD check
-    
-    f <- match.arg(f)
-    n <- length(axes(x))
+    tryCatch(
+        f <- match.arg(f),
+        error=\(e) stop(
+            "Only 'scale', 'rotate' and 'translation' transformations ",
+            "are currently supported for points and shapes."))
     
     # setup: length, identity, function
+    n <- length(axes(x))
     map <- list(
         len=c(scale=n, rotate=1, translation=n),
         ids=c(scale=1, rotate=0, translation=0),
