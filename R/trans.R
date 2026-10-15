@@ -185,7 +185,6 @@ setMethod("translation",
             translation="ST_Translate"))
 
     # validation
-    print(dim(t))
     if (f != "affine") {
         stopifnot(length(t) == map$len[f]) 
     } else {
