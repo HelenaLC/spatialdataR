@@ -100,6 +100,12 @@ sce <- getTable(x, i="blobs_labels")
 head(colData(sce))
 #> DataFrame with 6 rows and 0 columns
 meta(sce)
+#> $`encoding-type`
+#> [1] "anndata"
+#> 
+#> $`encoding-version`
+#> [1] "0.1.0"
+#> 
 #> $instance_key
 #> [1] "instance_id"
 #> 
@@ -108,6 +114,12 @@ meta(sce)
 #> 
 #> $region_key
 #> [1] "region"
+#> 
+#> $`spatialdata-encoding-type`
+#> [1] "ngff:regions_table"
+#> 
+#> $version
+#> [1] "0.1"
 #> 
 
 # get values from 'table'
