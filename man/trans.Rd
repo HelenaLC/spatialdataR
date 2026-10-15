@@ -6,6 +6,7 @@
 \alias{scale}
 \alias{rotate}
 \alias{translation}
+\alias{affine}
 \alias{flip}
 \alias{flop}
 \alias{mirror}
@@ -21,6 +22,7 @@
 \alias{rotate,SpatialDataFrame-method}
 \alias{scale,SpatialDataFrame-method}
 \alias{translation,SpatialDataFrame,numeric-method}
+\alias{affine,SpatialDataFrame,matrix-method}
 \title{Transformations}
 \usage{
 \S4method{transform}{SpatialDataElement}(x, i = 1, ...)
@@ -44,6 +46,8 @@
 \S4method{scale}{SpatialDataFrame}(x, t, ...)
 
 \S4method{translation}{SpatialDataFrame,numeric}(x, t, ...)
+
+\S4method{affine}{SpatialDataFrame,matrix}(x, t, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} element.}

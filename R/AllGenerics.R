@@ -61,6 +61,7 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
 setGeneric("flop", \(x, ...) standardGeneric("flop"))
 setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
+setGeneric("affine", \(x, t, ...) standardGeneric("affine"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 # sda ----

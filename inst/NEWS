@@ -1,3 +1,8 @@
+changes in version 0.99.47
+
+- support 'affine' coordinate transformations for
+  point/shape elements via 'duckspatial::ST_affine'
+
 changes in version 0.99.46
 
 - update installation instructions per Bioc acceptance
