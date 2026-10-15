@@ -107,10 +107,10 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
 setMethod("CTunit", "SpatialDataAttrs", \(x, ...) {
     lapply(CTlist(x), \(.) {
         ax <- .$output$axes
-        setNames(
+        `names<-`(
             lapply(ax, \(.) .$unit),
-            vapply(ax, \(.) .$name, character(1))) 
-    }) |> setNames(CTname(x))
+            vapply(ax, \(.) .$name, character(1)))
+    }) |> `names<-`(CTname(x))
 })
 
 # SpatialDataElement ----
