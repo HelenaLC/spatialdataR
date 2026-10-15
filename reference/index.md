@@ -151,8 +151,6 @@
 
 - [`show(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/misc.md)
   [`show(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/spatialdataR/reference/misc.md)
-  [`show(`*`<SpatialDataPoint>`*`)`](https://helenalc.github.io/spatialdataR/reference/misc.md)
-  [`show(`*`<SpatialDataShape>`*`)`](https://helenalc.github.io/spatialdataR/reference/misc.md)
   : Miscellaneous \`SpatialData\` methods
 
 - [`path(`*`<SpatialDataArray>`*`)`](https://helenalc.github.io/spatialdataR/reference/path.md)
@@ -188,6 +186,7 @@
   [`rotate(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
   [`scale(`*`<SpatialDataFrame>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
   [`translation(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
+  [`affine(`*`<SpatialDataFrame>`*`,`*`<matrix>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
   : Transformations
 
 ## Example datasets

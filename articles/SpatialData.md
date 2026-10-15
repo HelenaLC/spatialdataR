@@ -618,7 +618,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-10-13 r90668)
+    ## R Under development (unstable) (2026-10-14 r90673)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
@@ -645,7 +645,7 @@ sessionInfo()
     ##  [5] Seqinfo_1.3.2               IRanges_2.47.5             
     ##  [7] S4Vectors_0.51.10           BiocGenerics_0.59.12       
     ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
-    ## [11] matrixStats_1.5.0           spatialdataR_0.99.46       
+    ## [11] matrixStats_1.5.0           spatialdataR_0.99.47       
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):

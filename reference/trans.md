@@ -37,6 +37,9 @@ scale(x, t, ...)
 
 # S4 method for class 'SpatialDataFrame,numeric'
 translation(x, t, ...)
+
+# S4 method for class 'SpatialDataFrame,matrix'
+affine(x, t, ...)
 ```
 
 ## Arguments

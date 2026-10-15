@@ -12,12 +12,6 @@ show(object)
 
 # S4 method for class 'SpatialDataArray'
 show(object)
-
-# S4 method for class 'SpatialDataPoint'
-show(object)
-
-# S4 method for class 'SpatialDataShape'
-show(object)
 ```
 
 ## Arguments
