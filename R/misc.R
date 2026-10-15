@@ -28,6 +28,7 @@
 #' meta(image(sd, 2))
 NULL
 
+
 #' @importFrom RBGL sp.between
 #' @importFrom S4Vectors coolcat
 #' @importFrom graph nodeData nodes
@@ -38,58 +39,54 @@ NULL
     p <- pointNames(object)
     s <- shapeNames(object)
     t <- tableNames(object)
-    # images
-    if (length(i)) {
-        d <- lapply(images(object), dim)
-        d <- lapply(d, paste, collapse=",")
-        cat(sprintf("- images(%s):\n", length(i)))
-        cat(sprintf("  - %s (%s)\n", i, d), sep="")
+    # maximum elements shown per layer;
+    # override via 'options(SpatialData.show.max=...)'
+    n <- getOption("SpatialData.show.max", 5L)
+    # print up to 'n' items with descriptions; 
+    # append ellipsis when truncated
+    .cat <- function(type, nms, descs) {
+        total <- length(nms)
+        cat(sprintf("- %s(%d):\n", type, total))
+        shown <- seq_len(min(total, n))
+        cat(sprintf("  - %s (%s)\n", nms[shown], descs[shown]), sep="")
+        if (total > n) cat("    ...\n")
     }
-    # labels
-    if (length(l)) {
-        d <- lapply(labels(object), dim)
-        d <- lapply(d, paste, collapse=",")
-        cat(sprintf("- labels(%s):\n", length(l)))
-        cat(sprintf("  - %s (%s)\n", l, d), sep="")
-    }
+    # images & labels
+    if (length(i)) coolcat("- images(%d): %s\n", i)
+    if (length(l)) coolcat("- labels(%d): %s\n", l)
     # points
-    if (length(p)) {
-        d <- lengths(points(object))
-        cat(sprintf("- points(%s):\n", length(p)))
-        cat(sprintf("  - %s (%s)\n", p, d), sep="")
-    }
+    if (length(p)) .cat("points", p, as.character(lengths(points(object))))
     # shapes
     if (length(s)) {
-        d <- vapply(shapes(object), dim, numeric(2))
-        nr <- d[1, ]
-        nc <- d[2, ]
+        dm <- vapply(shapes(object), dim, numeric(2))
+        nr <- dm[1, ]
+        nc <- dm[2, ]
         geom <- c("circle", "polygon")[(nc == 1) + 1L]
-        d <- paste(nr, unname(geom), sep=",")
-        cat(sprintf("- shapes(%s):\n", length(s)))
-        cat(sprintf("  - %s (%s)\n", s, d), sep="")
+        .cat("shapes", s, paste(nr, unname(geom), sep=","))
     }
-    # tables
+    # tables (special: each entry also shows the region)
     if (length(t)) {
-        d <- lapply(tables(object), dim)
-        d <- lapply(d, paste, collapse=",")
-        cat(sprintf("- tables(%s):\n", length(t)))
-        for (. in seq_along(t)) {
+        total <- length(t)
+        d <- vapply(tables(object), \(x) paste(dim(x), collapse=","), character(1))
+        cat(sprintf("- tables(%d):\n", total))
+        for (. in seq_len(min(total, n))) {
             r <- paste(region(table(object, t[.])), collapse=",")
             cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
         }
+        if (total > n) cat("    ...\n")
     }
     # spaces
     e <- c(i, l, s, p)
     g <- CTgraph(object)
-    t <- nodeData(g, nodes(g), "type")
-    n <- sum(i <- (t == "space"))
-    cat(sprintf("coordinate systems(%s):\n", n))
-    for (c in nodes(g)[i]) {
-        pa <- suppressWarnings(sp.between(g, paste0("_", e), c))
+    node_types <- nodeData(g, nodes(g), "type")
+    is_space <- node_types == "space"
+    cat(sprintf("coordinate systems(%d):\n", sum(is_space)))
+    for (cs in nodes(g)[is_space]) {
+        pa <- suppressWarnings(sp.between(g, paste0("_", e), cs))
         ss <- strsplit(sub("^_", "", names(pa)), ":", fixed=TRUE)
         ss <- ss[vapply(pa, \(.) !is.na(.$length), logical(1))]
         coolcat(
-            paste0("- ", c, "(%d): %s"),
+            paste0("- ", cs, "(%d): %s"),
             vapply(ss, \(.) .[1], character(1)))
     }
 }
