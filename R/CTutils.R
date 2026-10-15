@@ -197,9 +197,10 @@ setMethod("addCT", "SpatialDataElement",
         is.character(type), length(type) == 1)
     y <- meta(x)
     .check_ct(y, type, data)
+    dim <- length(dim(x))
     axes <- .default_ax(
-        type=tolower(sub("^SpatialData", "", class(x)[1])),
-        dim=length(dim(x)))
+        type=. <- tolower(sub("^SpatialData", "", class(x)[1])),
+        dim=if (. == "image") dim-1 else dim) # ignore 'channel'
     new <- .default_ct(axes)[[1]]
     new$type <- type
     new$output$name <- name
