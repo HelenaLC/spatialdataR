@@ -109,14 +109,10 @@ shape(y, "wide") <- scale(shape(y), c(1.2, 1))
 shape(y, "left") <- translation(shape(y), c(-5, 0))
 y["shapes", c("rot", "wide", "left")]
 #> class: SpatialData
-#> - images(0):
-#> - labels(0):
-#> - points(0):
 #> - shapes(3):
 #>   - rot (5,circle)
 #>   - wide (5,circle)
 #>   - left (5,circle)
-#> - tables(0):
 #> coordinate systems(1):
 #> - global(3): rot wide left
 ```

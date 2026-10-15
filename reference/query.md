@@ -46,11 +46,8 @@ sd <- readSpatialData(zs)
 t <- table(sd)
 query(sd, i=1, region == region(t))
 #> class: SpatialData
-#> - images(0):
 #> - labels(1):
 #>   - blobs_labels (64,64)
-#> - points(0):
-#> - shapes(0):
 #> - tables(1):
 #>   - table (3,10) [blobs_labels]
 #> coordinate systems(5):

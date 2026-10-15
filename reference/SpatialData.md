@@ -197,7 +197,6 @@ x[-4] # drop layer
 #>   - blobs_multiscale_labels (64,64)
 #> - points(1):
 #>   - blobs_points (200)
-#> - shapes(0):
 #> - tables(1):
 #>   - table (3,10) [blobs_labels]
 #> coordinate systems(5):
@@ -210,25 +209,17 @@ x[-4] # drop layer
 x[4, -2] # drop element
 #> dropping table 'table' because all its annotated regions were removed
 #> class: SpatialData
-#> - images(0):
-#> - labels(0):
-#> - points(0):
 #> - shapes(2):
 #>   - blobs_circles (5,circle)
 #>   - blobs_polygons (5,polygon)
-#> - tables(0):
 #> coordinate systems(1):
 #> - global(2): blobs_circles blobs_polygons
 x["shapes", c(1, 3)] # subset layer
 #> dropping table 'table' because all its annotated regions were removed
 #> class: SpatialData
-#> - images(0):
-#> - labels(0):
-#> - points(0):
 #> - shapes(2):
 #>   - blobs_circles (5,circle)
 #>   - blobs_polygons (5,polygon)
-#> - tables(0):
 #> coordinate systems(1):
 #> - global(2): blobs_circles blobs_polygons
 x[c(1, 2), list(1, c(1, 2))] # multiple
@@ -238,9 +229,6 @@ x[c(1, 2), list(1, c(1, 2))] # multiple
 #> - labels(2):
 #>   - blobs_labels (64,64)
 #>   - blobs_multiscale_labels (64,64)
-#> - points(0):
-#> - shapes(0):
-#> - tables(0):
 #> coordinate systems(5):
 #> - global(3): blobs_image blobs_labels blobs_multiscale_labels
 #> - scale(1): blobs_labels

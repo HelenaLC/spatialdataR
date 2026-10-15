@@ -78,7 +78,6 @@ crop(sd, y, j="global")
 #>   - blobs_circles (5,circle)
 #>   - blobs_multipolygons (2,polygon)
 #>   - blobs_polygons (5,polygon)
-#> - tables(0):
 #> coordinate systems(5):
 #> - global(8): blobs_image blobs_multiscale_image ... blobs_polygons
 #>   blobs_points
