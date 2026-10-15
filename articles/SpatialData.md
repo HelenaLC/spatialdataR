@@ -18,7 +18,7 @@ Bioconductor via:
 
 ``` r
 
-BiocManager::install("HelenaLC/SpatialData.data") # example datasets
+BiocManager::install("SpatialData.data") # example datasets
 BiocManager::install("HelenaLC/SpatialData.plot") # visualization
 ```
 
@@ -621,7 +621,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-10-13 r90668)
+    ## R Under development (unstable) (2026-10-14 r90673)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
