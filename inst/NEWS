@@ -2,6 +2,7 @@ changes in version 0.99.46
 
 - update installation instructions per Bioc acceptance
 - reduce code duplication around ome attribute nesting
+- skip non-represented layers in 'show,SpatialData'
 
 changes in version 0.99.45
 

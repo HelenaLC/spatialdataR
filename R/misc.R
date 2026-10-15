@@ -39,34 +39,44 @@ NULL
     s <- shapeNames(object)
     t <- tableNames(object)
     # images
-    d <- lapply(images(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- images(%s):\n", length(i)))
-    cat(sprintf("  - %s (%s)\n", i, d), sep="")
+    if (length(i)) {
+        d <- lapply(images(object), dim)
+        d <- lapply(d, paste, collapse=",")
+        cat(sprintf("- images(%s):\n", length(i)))
+        cat(sprintf("  - %s (%s)\n", i, d), sep="")
+    }
     # labels
-    d <- lapply(labels(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- labels(%s):\n", length(l)))
-    cat(sprintf("  - %s (%s)\n", l, d), sep="")
+    if (length(l)) {
+        d <- lapply(labels(object), dim)
+        d <- lapply(d, paste, collapse=",")
+        cat(sprintf("- labels(%s):\n", length(l)))
+        cat(sprintf("  - %s (%s)\n", l, d), sep="")
+    }
     # points
-    d <- lengths(points(object))
-    cat(sprintf("- points(%s):\n", length(p)))
-    cat(sprintf("  - %s (%s)\n", p, d), sep="")
+    if (length(p)) {
+        d <- lengths(points(object))
+        cat(sprintf("- points(%s):\n", length(p)))
+        cat(sprintf("  - %s (%s)\n", p, d), sep="")
+    }
     # shapes
-    d <- vapply(shapes(object), dim, numeric(2))
-    nr <- d[1, ]
-    nc <- d[2, ]
-    geom <- c("circle", "polygon")[(nc == 1) + 1L]
-    d <- paste(nr, unname(geom), sep=",")
-    cat(sprintf("- shapes(%s):\n", length(s)))
-    cat(sprintf("  - %s (%s)\n", s, d), sep="")
+    if (length(s)) {
+        d <- vapply(shapes(object), dim, numeric(2))
+        nr <- d[1, ]
+        nc <- d[2, ]
+        geom <- c("circle", "polygon")[(nc == 1) + 1L]
+        d <- paste(nr, unname(geom), sep=",")
+        cat(sprintf("- shapes(%s):\n", length(s)))
+        cat(sprintf("  - %s (%s)\n", s, d), sep="")
+    }
     # tables
-    d <- lapply(tables(object), dim)
-    d <- lapply(d, paste, collapse=",")
-    cat(sprintf("- tables(%s):\n", length(t)))
-    for (. in seq_along(t)) {
-        r <- paste(region(table(object, t[.])), collapse=",")
-        cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+    if (length(t)) {
+        d <- lapply(tables(object), dim)
+        d <- lapply(d, paste, collapse=",")
+        cat(sprintf("- tables(%s):\n", length(t)))
+        for (. in seq_along(t)) {
+            r <- paste(region(table(object, t[.])), collapse=",")
+            cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+        }
     }
     # spaces
     e <- c(i, l, s, p)
