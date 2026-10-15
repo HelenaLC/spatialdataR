@@ -50,7 +50,7 @@ test_that("show(SpatialDataElement)", {
     x <- image(sd, 1)
     ok <- c(
         "class: SpatialDataImage",
-        sprintf("Scales \\(%d\\):", length(data(x, NULL))),
+        sprintf("levels\\(%d\\):", length(data(x, NULL))),
         sprintf("(%s)", paste(dim(x), collapse=",")))
     fn(x, ok)
     
@@ -58,7 +58,7 @@ test_that("show(SpatialDataElement)", {
     x <- label(sd, 1)
     ok <- c(
         "class: SpatialDataLabel",
-        sprintf("Scales \\(%d\\):", length(data(x, NULL))),
+        sprintf("levels\\(%d\\):", length(data(x, NULL))),
         sprintf("(%s)", paste(dim(x), collapse=",")))
     fn(x, ok)
     
