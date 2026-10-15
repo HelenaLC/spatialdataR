@@ -42,6 +42,7 @@ Imports:
     RBGL,
     rlang,
     sf,
+    stats,
     S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,

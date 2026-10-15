@@ -103,14 +103,15 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
 })
 
 #' @rdname CTutils
+#' @importFrom stats setNames
 #' @export
 setMethod("CTunit", "SpatialDataAttrs", \(x, ...) {
     lapply(CTlist(x), \(.) {
         ax <- .$output$axes
-        `names<-`(
+        setNames(
             lapply(ax, \(.) .$unit),
             vapply(ax, \(.) .$name, character(1)))
-    }) |> `names<-`(CTname(x))
+    }) |> setNames(CTname(x))
 })
 
 # SpatialDataElement ----

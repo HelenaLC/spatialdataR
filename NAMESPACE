@@ -242,6 +242,7 @@ importFrom(sf,
   st_sf,
   st_sfc
 )
+importFrom(stats,setNames)
 importFrom(utils,
   .DollarNames,
   head,
