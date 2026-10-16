@@ -66,12 +66,8 @@ sd <- readSpatialData(zs, tables=FALSE)
 y <- list(xmin=10, xmax=50, ymin=10, ymax=50)
 crop(sd, y, j="global")
 #> class: SpatialData
-#> - images(2):
-#>   - blobs_image (3,40,40)
-#>   - blobs_multiscale_image (3,40,40)
-#> - labels(2):
-#>   - blobs_labels (40,40)
-#>   - blobs_multiscale_labels (40,40)
+#> - images(2): blobs_image blobs_multiscale_image
+#> - labels(2): blobs_labels blobs_multiscale_labels
 #> - points(1):
 #>   - blobs_points (92)
 #> - shapes(3):

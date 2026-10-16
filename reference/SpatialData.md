@@ -162,12 +162,8 @@ x <- file.path("extdata", "blobs.zarr")
 x <- system.file(x, package="spatialdataR")
 (x <- readSpatialData(x))
 #> class: SpatialData
-#> - images(2):
-#>   - blobs_image (3,64,64)
-#>   - blobs_multiscale_image (3,64,64)
-#> - labels(2):
-#>   - blobs_labels (64,64)
-#>   - blobs_multiscale_labels (64,64)
+#> - images(2): blobs_image blobs_multiscale_image
+#> - labels(2): blobs_labels blobs_multiscale_labels
 #> - points(1):
 #>   - blobs_points (200)
 #> - shapes(3):
@@ -189,12 +185,8 @@ x <- system.file(x, package="spatialdataR")
 # (images, labels, points, shapes, tables)
 x[-4] # drop layer
 #> class: SpatialData
-#> - images(2):
-#>   - blobs_image (3,64,64)
-#>   - blobs_multiscale_image (3,64,64)
-#> - labels(2):
-#>   - blobs_labels (64,64)
-#>   - blobs_multiscale_labels (64,64)
+#> - images(2): blobs_image blobs_multiscale_image
+#> - labels(2): blobs_labels blobs_multiscale_labels
 #> - points(1):
 #>   - blobs_points (200)
 #> - tables(1):
@@ -224,11 +216,8 @@ x["shapes", c(1, 3)] # subset layer
 #> - global(2): blobs_circles blobs_polygons
 x[c(1, 2), list(1, c(1, 2))] # multiple
 #> class: SpatialData
-#> - images(1):
-#>   - blobs_image (3,64,64)
-#> - labels(2):
-#>   - blobs_labels (64,64)
-#>   - blobs_multiscale_labels (64,64)
+#> - images(1): blobs_image
+#> - labels(2): blobs_labels blobs_multiscale_labels
 #> coordinate systems(5):
 #> - global(3): blobs_image blobs_labels blobs_multiscale_labels
 #> - scale(1): blobs_labels

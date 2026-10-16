@@ -110,12 +110,8 @@ zs <- system.file(zs, package="spatialdataR")
 ```
 
     ## class: SpatialData
-    ## - images(2):
-    ##   - blobs_image (3,64,64)
-    ##   - blobs_multiscale_image (3,64,64)
-    ## - labels(2):
-    ##   - blobs_labels (64,64)
-    ##   - blobs_multiscale_labels (64,64)
+    ## - images(2): blobs_image blobs_multiscale_image
+    ## - labels(2): blobs_labels blobs_multiscale_labels
     ## - points(1):
     ##   - blobs_points (200)
     ## - shapes(3):
@@ -482,8 +478,7 @@ sp <- `table<-`(sd, value=se)
 ```
 
     ## class: SpatialData
-    ## - labels(1):
-    ##   - blobs_labels (64,64)
+    ## - labels(1): blobs_labels
     ## - tables(1):
     ##   - table (3,7) [blobs_labels]
     ## coordinate systems(5):
@@ -667,7 +662,7 @@ sessionInfo()
     ## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   
     ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
     ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.7    
-    ## [55] Rarr_2.1.47         tibble_3.3.1        pillar_1.11.1      
+    ## [55] Rarr_2.1.48         tibble_3.3.1        pillar_1.11.1      
     ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
     ## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           
     ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     

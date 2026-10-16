@@ -58,7 +58,7 @@
 
       <h1>spatialdataR</h1>
             
-            <h4 data-toc-skip class="date">October 15, 2026</h4>
+            <h4 data-toc-skip class="date">October 16, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/HelenaLC/spatialdataR/blob/devel/vignettes/SpatialData.Rmd" class="external-link"><code>vignettes/SpatialData.Rmd</code></a></small>
       <div class="d-none name"><code>SpatialData.Rmd</code></div>
@@ -168,12 +168,8 @@ package:</p>
 <span><span class="co"># read as 'SpatialData' R object</span></span>
 <span><span class="op">(</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSpatialData.html">readSpatialData</a></span><span class="op">(</span><span class="va">zs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SpatialData</span></span>
-<span><span class="co">## - images(2):</span></span>
-<span><span class="co">##   - blobs_image (3,64,64)</span></span>
-<span><span class="co">##   - blobs_multiscale_image (3,64,64)</span></span>
-<span><span class="co">## - labels(2):</span></span>
-<span><span class="co">##   - blobs_labels (64,64)</span></span>
-<span><span class="co">##   - blobs_multiscale_labels (64,64)</span></span>
+<span><span class="co">## - images(2): blobs_image blobs_multiscale_image</span></span>
+<span><span class="co">## - labels(2): blobs_labels blobs_multiscale_labels</span></span>
 <span><span class="co">## - points(1):</span></span>
 <span><span class="co">##   - blobs_points (200)</span></span>
 <span><span class="co">## - shapes(3):</span></span>
@@ -492,8 +488,7 @@ this retains only <code>table</code> observations matching our criterion
 <span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu">`table&lt;-`</span><span class="op">(</span><span class="va">sd</span>, value<span class="op">=</span><span class="va">se</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query.html">query</a></span><span class="op">(</span><span class="va">sp</span>, <span class="va">foo</span> <span class="op">==</span> <span class="st">"A"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SpatialData</span></span>
-<span><span class="co">## - labels(1):</span></span>
-<span><span class="co">##   - blobs_labels (64,64)</span></span>
+<span><span class="co">## - labels(1): blobs_labels</span></span>
 <span><span class="co">## - tables(1):</span></span>
 <span><span class="co">##   - table (3,7) [blobs_labels]</span></span>
 <span><span class="co">## coordinate systems(5):</span></span>
@@ -648,7 +643,7 @@ platforms, including transcriptomics and proteomics.</p></li>
 <span><span class="co">## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   </span></span>
 <span><span class="co">## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        </span></span>
 <span><span class="co">## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.7    </span></span>
-<span><span class="co">## [55] Rarr_2.1.47         tibble_3.3.1        pillar_1.11.1      </span></span>
+<span><span class="co">## [55] Rarr_2.1.48         tibble_3.3.1        pillar_1.11.1      </span></span>
 <span><span class="co">## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           </span></span>
 <span><span class="co">## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           </span></span>
 <span><span class="co">## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     </span></span>
