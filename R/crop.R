@@ -237,13 +237,12 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 #' @rdname crop
 setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
-    # crop elements that share coordinate space 'j'
+    # crop elements that share coordinate space 'j'.
+    # other elements are untouched
     z <- .lapplyLayer(x, \(.) {
         if (j %in% CTname(.)) {
             crop(., y, j=j)
-        } else list()
-        # FIXME: do we want to drop or leave untouched the elements that do not
-        # share the coordinate space?
+        } else .
     }) 
     z <- do.call("SpatialData", c(z, list("tables" = as.list(tables(x)))))
     # drop elements without content
