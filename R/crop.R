@@ -242,11 +242,13 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
         if (j %in% CTname(.)) {
             crop(., y, j=j)
         } else list()
+        # FIXME: do we want to drop or leave untouched the elements that do not
+        # share the coordinate space?
     }) 
-    # drop elements without content
-    z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
     z <- do.call("SpatialData", z)
     tables(z) <- tables(x)
+    # drop elements without content
+    z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
     # filter table instances
     z <- .sync_tables_on_crop(z)
     return(z)
