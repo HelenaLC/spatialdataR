@@ -245,8 +245,7 @@ setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
         # FIXME: do we want to drop or leave untouched the elements that do not
         # share the coordinate space?
     }) 
-    z <- do.call("SpatialData", z)
-    tables(z) <- tables(x)
+    z <- do.call("SpatialData", c(z, list("tables" = as.list(tables(x)))))
     # drop elements without content
     z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
     # filter table instances
