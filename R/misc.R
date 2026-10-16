@@ -95,12 +95,12 @@ NULL
 setMethod("show", "SpatialData", .showSpatialData)
 
 .showArrayDims <- \(.) sprintf("(%s)", paste(dim(.), collapse=" "))
-.showCoordTrans <- \(.) coolcat("coords(%d): %s", CTname(object))
+.showCoordTrans <- \(.) coolcat("coords(%d): %s", CTname(.))
 
 .showArray <- function(object) {
     nd <- length(ax <- axes(object, "name"))
-    cat("class:", class(object), sprintf("(%sd:%s)\n", nd, paste(ax, collapse="")))
-    coolcat("scales(%d): %s", vapply(object@data, .showArrayDims, character(1)))
+    cat("class:", class(object), sprintf("[%sd:%s]\n", nd, paste(ax, collapse="")))
+    coolcat("scales(%d): %s", vapply(data(object, NULL), .showArrayDims, character(1)))
     .showCoordTrans(object)
 }
 
@@ -115,37 +115,50 @@ setMethod("show", "SpatialDataArray", .showArray)
 #' @rdname misc
 setMethod("show", "SpatialDataImage", .showImage)
 
-.showFrame <- function(object) {
-    cat(sprintf("class: %s (%d)\n", class(object)[1], length(object)))
+.showPoint <- function(object) {
+    cat(sprintf("class: %s (%d) [%s]\n", class(object)[1], length(object), .axes(list(object))))
+    coolcat("names(%d): %s\n", names(object))
+    .showCoordTrans(object)
+}
+
+.showShape <- function(object) {
+    cat(sprintf("class: %s (%d, %s) [%s]\n", class(object)[1], length(object), .geom(list(object)), .axes(list(object))))
     coolcat("names(%d): %s\n", names(object))
     .showCoordTrans(object)
 }
 
 #' @rdname misc
-setMethod("show", "SpatialDataFrame", .showFrame)
+setMethod("show", "SpatialDataPoint", .showPoint)
+
+#' @rdname misc
+setMethod("show", "SpatialDataShape", .showShape)
 
 .dims <- \(.) vapply(., \(.) paste(vapply(data(., NULL), .showArrayDims, character(1)), collapse=" "), character(1))
-.geom <- \(.) c("polygon", "circle")[1L+("radius" %in% names(.))]
+.geom <- \(.) vapply(., \(.) c("polygon", "circle")[1L+("radius" %in% names(.))], character(1))
+.axes <- \(.) {
+    axes <- vapply(., \(.) paste(axes(., "name"), collapse=""), character(1))
+    ndim <- vapply(axes, nchar, integer(1))
+    sprintf("%dd:%s", ndim, axes)
+}
 
 .showImages <- function(object) {
     cat(sprintf("class: %s\n", class(object)))
-    axes <- vapply(object, \(.) paste(axes(., "name"), collapse=""), character(1))
-    cat(sprintf("- %s [axes: %s, dims: %s]\n", names(object), axes, .dims(object)), sep="")
+    cat(sprintf("- %s [%s]\n", names(object), .axes(object)), sep="")
 }
-.showLabels <- function(object) {
-    cat(sprintf("class: %s\n", class(object)))
-    cat(sprintf("- %s [dims: %s]\n", names(object), .dims(object)), sep="")
-}
+.showLabels <- function(object) { .showImages(object) }
+#     cat(sprintf("class: %s\n", class(object)))
+#     cat(sprintf("- %s [dims: %s]\n", names(object), .dims(object)), sep="")
+# }
 .showPoints <- function(object) {
     cat(sprintf("class: %s\n", class(object)))
     n <- vapply(object, length, integer(1))
-    cat(sprintf("- %s [nobs: %s]\n", names(object), n), sep="")
+    cat(sprintf("- %s (%d) [%s]\n", names(object), n, .axes(object)), sep="")
     
 }
 .showShapes <- function(object) {
     cat(sprintf("class: %s\n", class(object)))
-    cat(sprintf("- %s [nobs: %s, geom: %s)\n", names(object), length(object), .geom(object)), sep="")
-    
+    n <- vapply(object, length, integer(1))
+    cat(sprintf("- %s (%d,%s) [%s]\n", names(object), n, .geom(object), .axes(object)), sep="")
 }
 
 #' @rdname misc
