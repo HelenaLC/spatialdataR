@@ -26,11 +26,11 @@
 #' # show .zattrs
 #' meta(label(sd))
 #' meta(image(sd, 2))
+#' 
+#' @importFrom S4Vectors coolcat
 NULL
 
-
 #' @importFrom RBGL sp.between
-#' @importFrom S4Vectors coolcat
 #' @importFrom graph nodeData nodes
 .showSpatialData <- function(object) {
     cat("class: SpatialData\n")
@@ -46,14 +46,14 @@ NULL
     # append ellipsis when truncated
     .cat <- function(type, nms, descs) {
         total <- length(nms)
-        cat(sprintf("- %s(%d):\n", type, total))
+        cat(sprintf("%s(%d):\n", type, total))
         shown <- seq_len(min(total, n))
-        cat(sprintf("  - %s (%s)\n", nms[shown], descs[shown]), sep="")
+        cat(sprintf("- %s (%s)\n", nms[shown], descs[shown]), sep="")
         if (total > n) cat("    ...\n")
     }
     # images & labels
-    if (length(i)) coolcat("- images(%d): %s\n", i)
-    if (length(l)) coolcat("- labels(%d): %s\n", l)
+    if (length(i)) coolcat("images(%d): %s\n", i)
+    if (length(l)) coolcat("labels(%d): %s\n", l)
     # points
     if (length(p)) .cat("points", p, as.character(lengths(points(object))))
     # shapes
@@ -68,10 +68,10 @@ NULL
     if (length(t)) {
         total <- length(t)
         d <- vapply(tables(object), \(x) paste(dim(x), collapse=","), character(1))
-        cat(sprintf("- tables(%d):\n", total))
+        cat(sprintf("tables(%d):\n", total))
         for (. in seq_len(min(total, n))) {
             r <- paste(region(table(object, t[.])), collapse=",")
-            cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+            cat(sprintf("- %s (%s) [%s]\n", t[.], d[.], r))
         }
         if (total > n) cat("    ...\n")
     }
@@ -80,7 +80,7 @@ NULL
     g <- CTgraph(object)
     node_types <- nodeData(g, nodes(g), "type")
     is_space <- node_types == "space"
-    cat(sprintf("coordinate systems(%d):\n", sum(is_space)))
+    cat(sprintf("coords(%d):\n", sum(is_space)))
     for (cs in nodes(g)[is_space]) {
         pa <- suppressWarnings(sp.between(g, paste0("_", e), cs))
         ss <- strsplit(sub("^_", "", names(pa)), ":", fixed=TRUE)
@@ -94,27 +94,35 @@ NULL
 #' @rdname misc
 setMethod("show", "SpatialData", .showSpatialData)
 
-#' @importFrom S4Vectors coolcat
+.showCoordTrans <- \(.) coolcat("coords(%d): %s", CTname(object))
+
 .showArray <- function(object) {
-    n <- length(object@data)
-    cat("class:", class(object), if (n > 1) "(MultiScale)" else "", "\n")
-    scales <- vapply(object@data, \(x) paste(dim(x), collapse=","), character(1))
-    coolcat("Scales (%d): (%s)", scales)
+    nd <- length(ax <- axes(object, "name"))
+    cat("class:", class(object), sprintf("(%sd:%s)\n", nd, paste(ax, collapse="")))
+    coolcat("scales(%d): %s", vapply(object@data, \(.) sprintf("(%s)", paste(dim(.), collapse=" ")), character(1)))
+    .showCoordTrans(object)
 }
 
 #' @rdname misc
 setMethod("show", "SpatialDataArray", .showArray)
 
-#' @importFrom S4Vectors coolcat
-.showFrame <- function(object) {
-    cat("class:", class(object)[1], "\n")
-    cat("count:", length(object), "\n")
-    coolcat("data(%d): %s\n", names(object))
+.showImage <- function(object) {
+    callNextMethod()
+    coolcat("channels(%d): %s", channels(object))
 }
 
+#' @rdname misc
+setMethod("show", "SpatialDataImage", .showImage)
+
+.showFrame <- function(object) {
+    cat(sprintf("class: %s (%d)\n", class(object)[1], length(object)))
+    coolcat("names(%d): %s\n", names(object))
+    .showCoordTrans(object)
+}
+
+#' @rdname misc
 setMethod("show", "SpatialDataFrame", .showFrame)
 
-#' @importFrom S4Vectors coolcat
 .showAttrs <- function(object) {
     cat("class: SpatialDataAttrs\n")
     # axes
