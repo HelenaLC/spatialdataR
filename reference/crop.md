@@ -27,7 +27,7 @@ crop(x, y, j = 1, ...)
 crop(x, y, j = 1, ...)
 
 # S4 method for class 'SpatialData'
-crop(x, y, j = 1, ...)
+crop(x, y, j = 1, drop = TRUE, ...)
 ```
 
 ## Arguments
@@ -50,6 +50,11 @@ crop(x, y, j = 1, ...)
 - ...:
 
   optional arguments passed to and from other methods.
+
+- drop:
+
+  logical scalar; should elements without coordinate system `j` be
+  dropped from the object (TRUE) or left untouched (FALSE)?
 
 ## Value
 

@@ -89,7 +89,7 @@ reflect the new spatial extent.</p>
 <span><span class="fu">crop</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, j <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SpatialData'</span></span>
-<span><span class="fu">crop</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, j <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">crop</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, j <span class="op">=</span> <span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -102,8 +102,8 @@ reflect the new spatial extent.</p>
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>query specification;
-bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax',
-or an <code>st_bbox</code>;
+bounding box: length-4 numeric list with names
+'xmin/xmax/ymin/ymax', or an <code>st_bbox</code>;
 polygon: numeric matrix with 2 columns (= xy-coordinates),
 or an <code>st_polygon</code> (<code>sfg</code>) or <code>sfc</code>/<code>sf</code> object.</p></dd>
 
@@ -114,6 +114,11 @@ or an <code>st_polygon</code> (<code>sfg</code>) or <code>sfc</code>/<code>sf</c
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments passed to and from other methods.</p></dd>
+
+
+<dt id="arg-drop">drop<a class="anchor" aria-label="anchor" href="#arg-drop"></a></dt>
+<dd><p>logical scalar; should elements without coordinate system
+<code>j</code> be dropped from the object (TRUE) or left untouched (FALSE)?</p></dd>
 
 </dl></div>
     <div class="section level2">

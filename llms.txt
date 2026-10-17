@@ -149,8 +149,8 @@ Stadler.*
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   : The \`SpatialData\` class
 
 - [`SpatialDataImage()`](https://helenalc.github.io/spatialdataR/reference/SpatialDataArray.md)

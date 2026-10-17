@@ -84,10 +84,10 @@ shapes(x)
 # S4 method for class 'SpatialData'
 tables(x)
 
-# S4 method for class 'SpatialData,character,ANY'
+# S4 method for class 'SpatialData,character,ANY,ANY'
 x[[i]] <- value
 
-# S4 method for class 'SpatialData,ANY,ANY'
+# S4 method for class 'SpatialData,ANY,ANY,ANY'
 x[[i]] <- value
 ```
 

@@ -613,7 +613,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-10-14 r90673)
+    ## R Under development (unstable) (2026-10-16 r90685)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
@@ -669,7 +669,7 @@ sessionInfo()
     ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.3.0  
     ## [70] paws.common_0.9.0   bslib_0.12.0        class_7.3-24       
     ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.4 
-    ## [76] anndataR_1.3.2      xfun_0.61           fs_2.1.0           
+    ## [76] anndataR_1.3.2      xfun_0.62           fs_2.1.0           
     ## [79] pkgconfig_2.0.3
 
 ### References
