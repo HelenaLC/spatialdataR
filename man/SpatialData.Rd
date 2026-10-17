@@ -41,7 +41,7 @@
 \alias{shapeNames<-}
 \alias{tableNames<-}
 \alias{[[<-,SpatialData,character,ANY-method}
-\alias{[[<-,SpatialData,numeric,ANY-method}
+\alias{[[<-,SpatialData,ANY,ANY-method}
 \alias{$,SpatialData-method}
 \alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
