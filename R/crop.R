@@ -20,12 +20,14 @@
 #' reflect the new spatial extent.
 #'
 #' @param x \code{SpatialData} object or element.
-#' @param y query specification;
-#' bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax',
-#' or an \code{st_bbox};
+#' @param y query specification; 
+#' bounding box: length-4 numeric list with names 
+#' 'xmin/xmax/ymin/ymax', or an \code{st_bbox}; 
 #' polygon: numeric matrix with 2 columns (= xy-coordinates), 
 #' or an \code{st_polygon} (\code{sfg}) or \code{sfc}/\code{sf} object.
 #' @param j character string specifying a coordinate system.
+#' @param drop logical scalar; should elements without coordinate system 
+#' \code{j} be dropped from the object (TRUE) or left untouched (FALSE)?
 #' @param ... optional arguments passed to and from other methods.
 #'
 #' @return same as input
@@ -235,18 +237,21 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
-setMethod("crop", "SpatialData", \(x, y, j=1, ...) {
+setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
     if (is.numeric(j)) j <- CTname(x)[j]
-    # crop elements that share coordinate space 'j'
+    stopifnot(is.logical(drop), length(drop) == 1)
+    # crop elements that share coordinate space 'j';
+    # others are dropped/untouched according to 'drop'
+    f <- if (drop) \(.) list() else \(.) .
     z <- .lapplyLayer(x, \(.) {
         if (j %in% CTname(.)) {
             crop(., y, j=j)
-        } else list()
-    }) 
+        } else f(.)
+    })
     # drop elements without content
     z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
-    z <- do.call("SpatialData", z)
-    tables(z) <- tables(x)
+    # construct updated object, keeping original table elements
+    z <- do.call("SpatialData", c(z, list("tables"=as.list(tables(x)))))
     # filter table instances
     z <- .sync_tables_on_crop(z)
     return(z)

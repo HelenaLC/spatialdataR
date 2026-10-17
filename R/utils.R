@@ -109,7 +109,7 @@
     ts <- lapply(tables(x), \(t) {
         # filter for remaining element(s)
         t <- t[, regions(t) %in% rs]
-        region(t) <- intersect(region(t), rs)
+        region(t) <- unlist(intersect(region(t), rs))
         # table's regions-instances
         df <- data.frame(
             r=regions(t), 

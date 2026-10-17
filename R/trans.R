@@ -1,7 +1,7 @@
 #' @name trans
 #' @rdname trans
 #' @title Transformations
-#' @aliases transform scale rotate translation flip flop mirror sequence
+#' @aliases transform scale rotate translation affine flip flop mirror sequence
 #' 
 #' @param x \code{SpatialData} element.
 #' @param i scalar integer or string; target coordinate space.
@@ -54,11 +54,12 @@ NULL
 setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
     i <- .val_id(i, CTname(x))
     f <- CTtype(x)[i]
-    t <- CTdata(x, i)
-    if (f == "sequence") {
-        t <- lapply(t, unlist)
-    } else t <- unlist(t)
     if (f == "identity") return(x)
+    t <- CTdata(x, i)
+    t <- switch(f, 
+        affine=do.call(rbind, lapply(t, unlist)),
+        sequence=lapply(t, unlist),
+        unlist(t))
     do.call(f, list(x, t, ...))
 })
 
@@ -169,26 +170,29 @@ setMethod("translation",
 
 #' @importFrom dplyr mutate
 #' @importFrom rlang call2 !!
-.trans_f <- \(x, t, f=c("scale", "rotate", "translation"), rev=FALSE) {
-    ST_Scale <- ST_Rotate <- ST_Translate <- radius <- NULL # R CMD check
-    tryCatch(
-        f <- match.arg(f),
-        error=\(e) stop(
-            "Only 'scale', 'rotate' and 'translation' transformations ",
-            "are currently supported for points and shapes."))
+.trans_f <- \(x, t, f=c("scale", "rotate", "translation", "affine"), rev=FALSE) {
+    ST_Scale <- ST_Rotate <- ST_Translate <- ST_affine <- radius <- NULL # R CMD check
     
     # setup: length, identity, function
+    f <- match.arg(f)
     n <- length(axes(x))
     map <- list(
-        len=c(scale=n, rotate=1, translation=n),
-        ids=c(scale=1, rotate=0, translation=0),
-        fns=c(scale="ST_Scale", rotate="ST_Rotate", translation="ST_Translate"))
-    
+        len=c(scale=n, rotate=1, translation=n, affine=n),
+        ids=c(scale=1, rotate=0, translation=0, affine=1),
+        fns=c(scale="ST_Scale",
+            rotate="ST_Rotate", 
+            affine="ST_Affine",
+            translation="ST_Translate"))
+
     # validation
+    if (f != "affine") {
+        stopifnot(length(t) == map$len[f]) 
+    } else {
+        stopifnot(dim(t) == map$len[f]+c(0,1))
+    }
     stopifnot(
         is.numeric(t), is.finite(t), 
-        f != "scale" || all(t > 0),
-        length(t) == map$len[f]) 
+        f != "scale" || all(t > 0))
 
     # skip identity
     id <- switch(f, 
@@ -226,3 +230,9 @@ setMethod("scale", "SpatialDataFrame",
 setMethod("translation", 
     c("SpatialDataFrame", "numeric"), 
     \(x, t, ...) .trans_f(x, t, "translation", ...))
+
+#' @export
+#' @rdname trans
+setMethod("affine", 
+    c("SpatialDataFrame", "matrix"), 
+    \(x, t, ...) .trans_f(x, t, "affine", ...))
