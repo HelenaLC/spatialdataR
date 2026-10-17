@@ -247,11 +247,11 @@ setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
         if (j %in% CTname(.)) {
             crop(., y, j=j)
         } else f(.)
-    }) 
-    # construct updated object, keeping original table elements
-    z <- do.call("SpatialData", c(z, list("tables"=as.list(tables(x)))))
+    })
     # drop elements without content
     z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
+    # construct updated object, keeping original table elements
+    z <- do.call("SpatialData", c(z, list("tables"=as.list(tables(x)))))
     # filter table instances
     z <- .sync_tables_on_crop(z)
     return(z)
