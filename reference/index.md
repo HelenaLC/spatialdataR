@@ -37,7 +37,6 @@
   [`rmvCT(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/spatialdataR/reference/CTutils.md)
   [`rmvCT(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/spatialdataR/reference/CTutils.md)
   [`addCT(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/spatialdataR/reference/CTutils.md)
-  [`addCT(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/spatialdataR/reference/CTutils.md)
   : Coord. trans. utilities
 
 - [`SpatialData()`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)

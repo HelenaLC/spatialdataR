@@ -89,9 +89,6 @@
 <span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">x</span>, <span class="va">i</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SpatialDataElement'</span></span>
-<span><span class="fu">addCT</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span>, type <span class="op">=</span> <span class="st">"identity"</span>, data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'SpatialDataAttrs'</span></span>
 <span><span class="fu">addCT</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span>, type <span class="op">=</span> <span class="st">"identity"</span>, data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -159,33 +156,22 @@ element type (e.g., numeric(1) for rotation, numeric(2) for scaling in 2D)</p></
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="readSpatialData.html">readSpatialData</a></span><span class="op">(</span><span class="va">x</span>, tables<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view available target coordinate systems</span></span></span>
-<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="SpatialData.html">meta</a></span><span class="op">(</span><span class="fu"><a href="SpatialData.html">label</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="SpatialData.html">label</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "global"      "scale"       "translation" "affine"      "sequence"   </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># add</span></span></span>
-<span class="r-in"><span><span class="fu">addCT</span><span class="op">(</span><span class="va">z</span>, <span class="st">"scale"</span>, <span class="st">"scale"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">34</span><span class="op">)</span><span class="op">)</span> <span class="co"># overwrite</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> class: SpatialDataAttrs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> axes(2):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - name: y x </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - type: space space </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> coordTrans(5):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - global: (identity)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - scale: (scale:[12,34])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - translation: (translation:[-50,10])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - affine: (affine:[[20,10,30],[50,40,60]])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - sequence: (scale:[3,2]), (translation:[-50,10])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> datasets(1): 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - 0: (scale:[1,1])</span>
-<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">addCT</span><span class="op">(</span><span class="va">z</span>, <span class="st">"new"</span>, <span class="st">"translation"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">34</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">addCT</span><span class="op">(</span><span class="va">y</span>, <span class="st">"new"</span>, <span class="st">"translation"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">34</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "global"      "scale"       "translation" "affine"      "sequence"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] "new"        </span>
+<span class="r-in"><span><span class="fu">CTdata</span><span class="op">(</span><span class="fu">addCT</span><span class="op">(</span><span class="va">y</span>, <span class="st">"scale"</span>, <span class="st">"scale"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">34</span><span class="op">)</span><span class="op">)</span>, <span class="st">"scale"</span><span class="op">)</span> <span class="co"># overwrite</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12 34</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rmv</span></span></span>
-<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">z</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>        <span class="co"># by index</span></span></span>
+<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">y</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>        <span class="co"># by index</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "global"      "translation" "affine"      "sequence"   </span>
-<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">z</span>, <span class="st">"scale"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># by name</span></span></span>
+<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">y</span>, <span class="st">"scale"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># by name</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "global"      "translation" "affine"      "sequence"   </span>
-<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">z</span>, <span class="st">"global"</span><span class="op">)</span><span class="op">)</span> <span class="co"># identity is protected</span></span></span>
+<span class="r-in"><span><span class="fu">CTname</span><span class="op">(</span><span class="fu">rmvCT</span><span class="op">(</span><span class="va">y</span>, <span class="st">"global"</span><span class="op">)</span><span class="op">)</span> <span class="co"># identity is protected</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>can't drop identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "global"      "scale"       "translation" "affine"      "sequence"   </span>
 </code></pre></div>

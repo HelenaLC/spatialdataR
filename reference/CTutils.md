@@ -52,9 +52,6 @@ rmvCT(x, i)
 
 # S4 method for class 'SpatialDataElement'
 addCT(x, name, type = "identity", data = NULL)
-
-# S4 method for class 'SpatialDataAttrs'
-addCT(x, name, type = "identity", data = NULL)
 ```
 
 ## Arguments
@@ -121,33 +118,22 @@ x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x, tables=FALSE)
 
 # view available target coordinate systems
-CTname(z <- meta(label(x)))
+CTname(y <- label(x))
 #> [1] "global"      "scale"       "translation" "affine"      "sequence"   
 
 # add
-addCT(z, "scale", "scale", c(12, 34)) # overwrite
-#> class: SpatialDataAttrs
-#> axes(2):
-#> - name: y x 
-#> - type: space space 
-#> coordTrans(5):
-#> - global: (identity)
-#> - scale: (scale:[12,34])
-#> - translation: (translation:[-50,10])
-#> - affine: (affine:[[20,10,30],[50,40,60]])
-#> - sequence: (scale:[3,2]), (translation:[-50,10])
-#> datasets(1): 0
-#> - 0: (scale:[1,1])
-CTname(addCT(z, "new", "translation", c(12, 34)))
+CTname(addCT(y, "new", "translation", c(12, 34))) 
 #> [1] "global"      "scale"       "translation" "affine"      "sequence"   
 #> [6] "new"        
+CTdata(addCT(y, "scale", "scale", c(12, 34)), "scale") # overwrite
+#> [1] 12 34
 
 # rmv
-CTname(rmvCT(z, 2))        # by index
+CTname(rmvCT(y, 2))        # by index
 #> [1] "global"      "translation" "affine"      "sequence"   
-CTname(rmvCT(z, "scale"))  # by name
+CTname(rmvCT(y, "scale"))  # by name
 #> [1] "global"      "translation" "affine"      "sequence"   
-CTname(rmvCT(z, "global")) # identity is protected
+CTname(rmvCT(y, "global")) # identity is protected
 #> Warning: can't drop identity
 #> [1] "global"      "scale"       "translation" "affine"      "sequence"   
 ```
