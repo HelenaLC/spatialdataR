@@ -196,8 +196,9 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     z$xmax <- ceiling(z$xmax/tx)
     z$ymax <- ceiling(z$ymax/ty)
     # subset array
-    i <- seq(z$ymin+1, z$ymax)
-    j <- seq(z$xmin+1, z$xmax)
+    i <- seq(z$ymin, z$ymax)
+    j <- seq(z$xmin, z$xmax)
+    i <- i[i >= 0]; j <- j[j >= 0]
     ii <- is(x, "SpatialDataImage")
     if (ii) x[, i, j] else x[i, j] 
 })
@@ -237,9 +238,15 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 
 #' @export
 #' @rdname crop
+#' @importFrom stats setNames
+#' @importFrom sf st_intersects
 setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
     stopifnot(is.logical(drop), length(drop) == 1, length(j) == 1)
     if (is.numeric(j)) j <- CTname(x)[j] else j <- match.arg(j, CTname(x))
+    # halt execution when target region is out of bounds
+    z <- with(extent(x), list(xmin=x[1], xmax=x[2], ymin=y[1], ymax=y[2]))
+    ok <- st_intersects(.to_sf(y), .to_sf(z), sparse=FALSE)[[1]]
+    if (!ok) stop("crop region 'y' does not intersect object extent 'x'")
     # crop elements that share coordinate space 'j';
     # others are dropped/untouched according to 'drop'
     f <- if (drop) \(.) list() else \(.) .
@@ -249,7 +256,14 @@ setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
         } else f(.)
     })
     # drop elements without content
-    z <- .lapplyElement(z, \(.) if (length(.) > 0) .)
+    z <- .lapplyElement(z, \(.) {
+        n <- if (is(., "SpatialDataFrame")) {
+            nrow(.)
+        } else if (is(., "SpatialDataArray")) {
+            sum(dim(.)[axes(., "type") == "space"])
+        }
+        if (n > 0) .
+    })
     # construct updated object, keeping original table elements
     z <- do.call("SpatialData", c(z, list("tables"=as.list(tables(x)))))
     # filter table instances

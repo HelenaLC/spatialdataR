@@ -14,10 +14,15 @@ test_that("crop,SpatialData", {
                 dim(element(a, e)), 
                 dim(element(b, e)))
     }
+    # all-exclusive crop
+    y <- list(xmin=-100, xmax=-10, ymin=-100, ymax=-10)
+    expect_error(crop(x, y))
     # all-inclusive crop
     y <- list(xmin=-100, xmax=100, ymin=-100, ymax=100)
     z <- crop(x, y)
     f(x, z)
+    # invalid coordinate system
+    expect_error(crop(x, y, "foobar"))
     # elements without specified coordinate system 
     # are dropped/retained according to 'drop'
     y <- list(xmin=-1e3, xmax=1e3, ymin=-1e3, ymax=1e3)
