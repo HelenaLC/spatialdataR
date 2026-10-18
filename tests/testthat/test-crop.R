@@ -33,7 +33,7 @@ test_that("crop,SpatialData", {
     expect_length(points(z), 0)
     expect_length(shapes(z), 0)
     expect_equal(table(z), table(x))
-    expect_equivalent(label(z), label(x))
+    expect_identical(data(label(z)), data(label(x)))
     # crop around single point
     xy <- st_coordinates(st_as_sf(data(point(x)[1])))
     bb <- list(
