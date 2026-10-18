@@ -43,8 +43,8 @@ test_that("crop,SpatialData", {
     expect_length(point(y), 1)
     expect_length(shapes(y), 0)
     expect_length(tables(y), 1)
-    expect_all_true(c(vapply(labels(y), dim, integer(2))) == 2)
-    expect_all_true(c(vapply(images(y), \(.) dim(.)[-1], integer(2))) == 2)
+    expect_all_true(c(vapply(y$labels, dim, integer(2))) == 2)
+    expect_all_true(c(vapply(y$images, \(.) dim(.)[-1], integer(2))) == 2)
 })
 
 test_that("crop,.check_box", {

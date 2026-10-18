@@ -196,8 +196,8 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
     z$xmax <- ceiling(z$xmax/tx)
     z$ymax <- ceiling(z$ymax/ty)
     # subset array
-    i <- seq(z$ymin, z$ymax)
-    j <- seq(z$xmin, z$xmax)
+    i <- seq(z$ymin+1, z$ymax)
+    j <- seq(z$xmin+1, z$xmax)
     i <- i[i >= 0]; j <- j[j >= 0]
     ii <- is(x, "SpatialDataImage")
     if (ii) x[, i, j] else x[i, j] 
@@ -249,7 +249,7 @@ setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
     if (!ok) stop("crop region 'y' does not intersect object extent 'x'")
     # crop elements that share coordinate space 'j';
     # others are dropped/untouched according to 'drop'
-    f <- if (drop) \(.) list() else \(.) .
+    f <- if (drop) \(.) NULL else \(.) .
     z <- .lapplyLayer(x, \(.) {
         if (j %in% CTname(.)) {
             crop(., y, j=j)
@@ -257,6 +257,7 @@ setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
     })
     # drop elements without content
     z <- .lapplyElement(z, \(.) {
+        if (is.null(.)) return(NULL)
         n <- if (is(., "SpatialDataFrame")) {
             nrow(.)
         } else if (is(., "SpatialDataArray")) {
