@@ -180,7 +180,7 @@ setMethod("setTable", c("SpatialData", "character"), \(x, i, y,
     }
     . <- layer(x, i)
     if (!. %in% c("labels", "shapes"))
-        stop("can't add 'table' for", .)
+        stop("can't add 'table' for ", .)
     
     if (is.null(region_key(y))) region_key(y) <- rk
     if (is.null(instance_key(y))) instance_key(y) <- ik
