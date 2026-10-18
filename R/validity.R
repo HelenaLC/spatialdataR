@@ -47,8 +47,8 @@
     d <- length(axes(object))
     for (k in seq_along(object)) {
         x <- data(object, k)
-        if (length(dim(x)) != d) msg <- c(msg, paste(
-            "'SpatialDataImage' resolution", k, "is not ", d, "D"))
+        if (length(dim(x)) != d) msg <- c(msg, paste0(
+            "'SpatialDataImage' resolution ", k, " is not ", d, "D"))
         if (!type(x) %in% c("double", "integer")) msg <- c(msg, paste(
             "'SpatialDataImage' resolution", k, "is not of type double or integer"))
     }
@@ -63,8 +63,8 @@ setValidity2("SpatialDataImage", .validateImage)
     d <- length(axes(object))
     for (k in seq_along(object)) {
         x <- data(object, k)
-        if (length(dim(x)) != d) msg <- c(msg, paste(
-            "'SpatialDataLabel' resolution", k, "is not ", d, "D"))
+        if (length(dim(x)) != d) msg <- c(msg, paste0(
+            "'SpatialDataLabel' resolution ", k, " is not ", d, "D"))
         if (type(x) != "integer") msg <- c(msg, paste(
             "'SpatialDataLabel' resolution", k, "is not of type integer"))
     }
