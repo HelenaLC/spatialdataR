@@ -123,20 +123,29 @@ test_that("setTable(),labels", {
 })
 
 test_that("setTable(),shapes", {
-    for (. in c("shape")) {
-        nms <- paste0(., "Names")
-        i <- get(nms)(x)[1]
-        e <- element(x, i)
-        # ncol must match nrow(e)
-        sce <- SingleCellExperiment(matrix(0, 0, nrow(e)))
-        
-        # valid
-        expect_silent(y <- setTable(x, i, sce))
-        expect_length(tables(y), 2)
-        expect_true(hasTable(y, i))
-        t <- getTable(y, i)
-        expect_identical(region(t), i)
+    i <- shapeNames(x)[1]
+    e <- shape(x, i)
+    # valid
+    sce <- SingleCellExperiment(matrix(ncol=nrow(e)))
+    expect_silent(y <- setTable(x, i, sce))
+    expect_length(tables(y), 2)
+    expect_true(hasTable(y, i))
+    t <- getTable(y, i)
+    expect_identical(region(t), i)
+    # custom 'instance_key' specification
+    # (can use existing or create new)
+    sce[["foo"]] <- seq_len(ncol(sce))
+    for (ik in c("foo", "bar")) { 
+        expect_silent(y <- setTable(x, i, sce, ik=ik))
+        expect_identical(instance_key(t <- getTable(y, i)), ik)
+        expect_identical(int_colData(t)[[ik]], seq_along(element(x, i)))
     }
+})
+
+test_that("setTable(),images/points", {
+    t <- SingleCellExperiment()
+    i <- unlist(colnames(x)[c("images", "points")])
+    for (. in i) expect_error(setTable(x, ., t), "can't add")
 })
 
 test_that("setTable() correctly associates a SingleCellExperiment with an element", {
