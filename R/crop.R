@@ -238,8 +238,8 @@ setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
 #' @export
 #' @rdname crop
 setMethod("crop", "SpatialData", \(x, y, j=1, drop=TRUE, ...) {
-    if (is.numeric(j)) j <- CTname(x)[j]
-    stopifnot(is.logical(drop), length(drop) == 1)
+    stopifnot(is.logical(drop), length(drop) == 1, length(j) == 1)
+    if (is.numeric(j)) j <- CTname(x)[j] else j <- match.arg(j, CTname(x))
     # crop elements that share coordinate space 'j';
     # others are dropped/untouched according to 'drop'
     f <- if (drop) \(.) list() else \(.) .
