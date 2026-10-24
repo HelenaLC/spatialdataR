@@ -94,7 +94,7 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
                                                    \(.) list(label = .)))))
         res <- c(res,
                  list(
-                   version=.get_ome_version(ver),
+                   version=.ome_ver_from_sd(ver),
                    multiscales=
                      list(
                        list(
@@ -199,7 +199,7 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
         x$multiscales[[1]]$version %||%
         x$omero$version %||% 
         x$ome$version
-    if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
+    if (!length(v)) stop("couldn't find OME-NGFF (OME-Zarr) version")
     .val_ome_ver(v)
 }
 
@@ -215,13 +215,13 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
     x
 }
 
-.get_ome_version <- \(x) {
+.ome_ver_from_sd <- \(x) {
   switch(as.character(x), 
          "0.1" = "0.4",
          "0.2" = "0.4-dev-spatialdata",
          "0.3" = "0.5-dev-spatialdata",
-         stop("Invalid SpatialDataImage/Label format! ", 
-              "Must be 0.1, 0.2, or 0.3"))
+         stop("Invalid SpatialData Image/Label element version; ", 
+              "expected '0.x' where x is 1-3"))
 }
 
 # internal use only!
@@ -396,3 +396,49 @@ setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
     int_colData(x)[[ik]] <- value
     return(x)
 })
+
+# version ----
+
+#' @name version
+#' @title Retrieve versions of \code{SpatialData} elements
+#' 
+#' @param object \code{\link{SpatialData}} object or one of its elements.
+#' @param simplify logical scalar; whether to flatten paths into a tibble.
+#' @param ... ignored.
+#' 
+#' @returns
+#' for single elements, a character string; 
+#' for \link{SpatialData} objects, if \code{simplify=TRUE} (default), 
+#' a \code{tibble} where rows=elements and columns=layers/elements/paths. 
+#' if \code{simplify=FALSE}, a depth-3 list where levels=layers/elements/paths.
+#' 
+#' @examples
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="spatialdataR")
+#' sd <- readSpatialData(zs)
+#' 
+#' # element-wise
+#' version(shape(sd))
+#' 
+#' # object-wide
+#' version(sd)
+#' version(sd, FALSE)$labels
+#' 
+NULL
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialDataElement", \(x) version(meta(x)))
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialDataAttrs", \(x) x$spatialdata_attrs$version)
+
+#' @export
+#' @rdname version
+setMethod("version", "SingleCellExperiment", \(x) meta(x)$version)
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialData", \(x, simplify=TRUE, ...)
+          .element_apply(x, version, "version", simplify))
