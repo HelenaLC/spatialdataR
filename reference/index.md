@@ -61,8 +61,8 @@
   [`points(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   [`shapes(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   [`tables(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
-  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<character>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
+  [`` `[[<-`( ``*`<SpatialData>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   : The \`SpatialData\` class
 
 - [`SpatialDataImage()`](https://helenalc.github.io/spatialdataR/reference/SpatialDataArray.md)
@@ -187,6 +187,14 @@
   [`translation(`*`<SpatialDataFrame>`*`,`*`<numeric>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
   [`affine(`*`<SpatialDataFrame>`*`,`*`<matrix>`*`)`](https://helenalc.github.io/spatialdataR/reference/trans.md)
   : Transformations
+
+- [`version(`*`<SpatialDataElement>`*`)`](https://helenalc.github.io/spatialdataR/reference/version.md)
+  [`version(`*`<SpatialDataAttrs>`*`)`](https://helenalc.github.io/spatialdataR/reference/version.md)
+  [`version(`*`<SingleCellExperiment>`*`)`](https://helenalc.github.io/spatialdataR/reference/version.md)
+  [`version(`*`<SpatialData>`*`)`](https://helenalc.github.io/spatialdataR/reference/version.md)
+  :
+
+  Retrieve versions of `SpatialData` elements
 
 ## Example datasets
 
