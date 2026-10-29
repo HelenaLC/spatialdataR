@@ -167,18 +167,18 @@
 # validate OME version
 .val_ome_ver <- \(v) {
     ok <- length(v) == 1 && is.character(v) && (v <- gsub("-.*", "", v)) %in% sprintf("0.%d", seq_len(6))
-    if (!ok) stop("invalid OME 'version'; expected '0.x' where x is 1-6")
+    if (!ok) stop("invalid OME-NGFF (OME-Zarr) 'version'; expected '0.x' where x is 1-6")
     return(v)
 }
 
 # validate SpatialData version
 .val_sd_ver <- \(v, type) {
-  type <- match.arg(type, c("image", "label", "point", "shape"))
+  type <- match.arg(type, c("table", "image", "label", "point", "shape"))
   ok <- length(v) == 1 && 
     is.character(v) && 
-    v %in% sprintf("0.%d", seq_len(if(type == "point") 2 else 3))
-  if (!ok) stop("invalid SpatialData 'version'; expected '0.x' where x is 1-3 ", 
-                "for image/label/shape and 1-2 for point")
+    v %in% sprintf("0.%d", seq_len(if(type %in% c("point", "table")) 2 else 3))
+  if (!ok) stop("invalid SpatialData element version; expected '0.x' where ", 
+                "x is 1-3 for image/label/shape and 1-2 for point and table")
   return(v)
 }
 
@@ -219,4 +219,27 @@
         stop("couldn't find shared multiscales level; need at",
             " least one data() pair with identical dimensions")
     return(ks)
+}
+
+# path/version ----
+
+#' @importFrom dplyr tibble
+#' @noRd
+.element_apply <- function(x, FUN, col, simplify=TRUE) {
+    names(ls) <- ls <- rownames(x)
+    ps <- lapply(ls, \(l) {
+        names(es) <- es <- names(x[[l]])
+        lapply(es, \(e) FUN(x[[l]][[e]]))
+    })
+    
+    if (!simplify) return(ps)
+    
+    df <- do.call(rbind, lapply(names(ps), \(l) 
+        do.call(rbind, lapply(names(ps[[l]]), \(e)
+            tibble(layer=l, element=e, value=ps[[l]][[e]])
+        ))
+    ))
+    
+    if (!is.null(df)) names(df)[3] <- col
+    df
 }

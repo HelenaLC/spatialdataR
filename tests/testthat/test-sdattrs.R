@@ -1,4 +1,13 @@
-z <- list(v1="blobs.zarr", v3="blobs_v3.zarr")
+# testing for both SpatialData container versions 0.1 and 0.2
+z <- list(v01="blobs.zarr", v02="blobs_v3.zarr")
+zv <- list(
+    v01 = list(
+        image="0.1", label="0.1", point="0.1", shape="0.2", table="0.1"
+    ),
+    v02 = list(
+        image="0.3", label="0.3", point="0.2", shape="0.3", table="0.2"
+    )
+)
 
 for (v in names(z)) {
 
@@ -35,7 +44,7 @@ for (v in names(z)) {
         # missing
         y <- image(x)
         switch(v,
-            "v3"=y@meta$ome$multiscales[[1]]$axes <- NULL,
+            "v02"=y@meta$ome$multiscales[[1]]$axes <- NULL,
             y@meta$multiscales[[1]]$axes <- NULL)
         expect_error(axes(y))
     })
@@ -44,6 +53,20 @@ for (v in names(z)) {
         expect_error(channels(label(x)))
         expect_silent(z <- channels(y <- image(x)))
         expect_length(z, dim(y)[1])
+    })
+    
+    test_that("version()", {
+        vx <- version(x)
+        expect_s3_class(vx, c("tbl_df", "tbl", "data.frame"))
+        expect_equal(colnames(vx), 
+                     c("layer", "element", "version"))
+        expect_all_true(vx$layer %in% paste0(names(zv[[v]]), "s"))
+        for (el in names(zv[[v]])[1:4]) {
+            f <- match.fun(el)
+            expect_equal(version(f(x)), zv[[v]][[el]])
+        }
+        # match.fun matches with base::table
+        expect_equal(version(table(x)), zv[[v]][["table"]])
     })
 }
 
@@ -70,15 +93,18 @@ test_that(".val_sd_ver()", {
     expect_error(.val_sd_ver("0.30", "image"))
     expect_error(.val_sd_ver(c("0.3", "0.4"), "image"))
     expect_error(.val_sd_ver("0.3", "point"))
+    expect_error(.val_sd_ver("0.3", "table"))
     # valid
     expect_silent(x <- .val_sd_ver(v <- "0.3", "image"))
     expect_silent(x <- .val_sd_ver(v <- "0.3", "label"))
     expect_silent(x <- .val_sd_ver(v <- "0.3", "shape"))
     expect_silent(x <- .val_sd_ver(v <- "0.2", "point"))
+    expect_silent(x <- .val_sd_ver(v <- "0.2", "table"))
     expect_type(x, "character")
     expect_length(x, 1)
     expect_identical(x, v)
 })
+
 test_that("SpatialDataAttrs()", {
     # invalid
     expect_error(SpatialDataAttrs(nch=0))
