@@ -156,5 +156,19 @@ test_that("trans,sdFrame", {
         nms <- list(letters[seq_len(n)], LETTERS[seq_len(n+1)])
         y <- affine(x, `dimnames<-`(mtx, nms))
         expect_equal(.xy(y), .xy(affine(x, mtx)))
+        # reverse; should invert (not negate) the matrix
+        y <- affine(affine(x, mtx), mtx, rev=TRUE)
+        expect_equal(.xy(y), .xy(x))
+        inv <- solve(rbind(mtx, c(rep(0, n), 1)))[seq_len(n), ]
+        expect_equal(.xy(affine(x, mtx, rev=TRUE)), .xy(affine(x, inv)))
+        y <- affine(x, `dimnames<-`(mtx, nms), rev=TRUE)
+        expect_equal(.xy(y), .xy(affine(x, inv)))
+        # (also far from the origin)
+        mtx <- cbind(diag(n), 5e7)
+        y <- affine(affine(x, mtx), mtx, rev=TRUE)
+        expect_equal(.xy(y), .xy(x))
+        # singular matrices can't be reversed
+        mtx <- cbind(matrix(1, n, n), 0)
+        expect_error(affine(x, mtx, rev=TRUE), "not invertible")
     }
 })
