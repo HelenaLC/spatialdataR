@@ -110,7 +110,7 @@ readShape <- function(x, ...) {
 #' @importFrom Rarr read_zarr_attributes
 readTable <- function(x) {
     suppressWarnings({ # suppress warnings related to hidden files
-        sce <- anndataR::read_zarr(x, as="SingleCellExperiment")
+        sce <- anndataR::read_zarr(x, as="SingleCellExperiment", backed = TRUE)
     })
     # move these to 'int_metadata'
     nm <- "spatialdata_attrs"
