@@ -207,8 +207,12 @@ setMethod("translation",
     if (f == "scale" && "radius" %in% names(x))
         data(x) <- mutate(data(x), radius=!!t[1]*radius)
     
-    # dynamic injection 'ST_*(geo, v1, v2, ...)'
-    v <- switch(f, rotate=t*pi/180, t) # radians
+    # dynamic injection 'ST_*(geo, v1, v2, ...)';
+    # 'ST_Affine' expects the linear part by row, then offsets
+    v <- switch(f,
+        rotate=t*pi/180, # radians
+        affine=unname(c(base::t(t[, -ncol(t)]), t[, ncol(t)])),
+        t)
     data(x) <- mutate(data(x), geometry=!!call2(map$fns[f], quote(geometry), !!!v))
     return(x)
 }

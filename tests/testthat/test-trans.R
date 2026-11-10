@@ -144,5 +144,17 @@ test_that("trans,sdFrame", {
         expect_equal(
             lapply(extent(affine(x, mtx)), diff),
             within(lapply(old, diff), { x <- x*sx; y <- y*sy }))
+        # rotate by 30/90 degrees; should match 'rotate()'
+        if (n == 2) for (deg in c(30, 90)) {
+            rad <- deg * pi / 180
+            R <- matrix(c(cos(rad), -sin(rad), sin(rad), cos(rad)), 2, 2)
+            mtx <- cbind(t(R), 0)
+            expect_equal(.xy(affine(x, mtx)), .xy(rotate(x, deg)))
+        }
+        # dimnames should be ignored
+        mtx <- cbind(diag(n) + seq_len(n) / 10, seq_len(n))
+        nms <- list(letters[seq_len(n)], LETTERS[seq_len(n+1)])
+        y <- affine(x, `dimnames<-`(mtx, nms))
+        expect_equal(.xy(y), .xy(affine(x, mtx)))
     }
 })
