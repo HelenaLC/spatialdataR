@@ -103,6 +103,7 @@ test_that("trans,sdFrame", {
         expect_identical(rotate(x, 0), x)
         expect_identical(scale(x, rep(1, n)), x)
         expect_identical(translation(x, rep(0, n)), x)
+        expect_identical(affine(x, cbind(diag(n), 0)), x)
         
         # invalid
         expect_error(translation(x, "a"))     # non-numeric
@@ -171,6 +172,11 @@ test_that("trans,sdFrame", {
         # singular matrices can't be reversed
         mtx <- cbind(matrix(1, n, n), 0)
         expect_error(affine(x, mtx, rev=TRUE), "not invertible")
+        # matrix of ones isn't the identity (all axes become their sum+1)
+        y <- affine(x, matrix(1, n, n+1))
+        y <- sf::st_coordinates(sf::st_as_sf(data(y)))[, seq_len(n)]
+        z <- sf::st_coordinates(sf::st_as_sf(data(x)))[, seq_len(n)]
+        expect_equal(unname(y), matrix(rowSums(z)+1, nrow(z), n))
     }
 })
 

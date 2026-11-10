@@ -210,7 +210,7 @@ setMethod("translation",
     n <- length(axes(x))
     map <- list(
         len=c(scale=n, rotate=1, translation=n, affine=n),
-        ids=c(scale=1, rotate=0, translation=0, affine=1),
+        ids=c(scale=1, rotate=0, translation=0),
         fns=c(scale="ST_Scale",
             rotate="ST_Rotate", 
             affine="ST_Affine",
@@ -229,6 +229,7 @@ setMethod("translation",
     # skip identity
     id <- switch(f, 
         rotate=(t %% 360 == 0), 
+        affine=all(t == cbind(diag(n), 0)),
         all(t == map$ids[f]))
     if (id) return(x)
 
