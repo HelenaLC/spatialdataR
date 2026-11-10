@@ -3,6 +3,8 @@ changes in version 0.99.47
 - support 'affine' coordinate transformations for
   point/shape elements via 'duckspatial::ST_affine' (#276)
 - added 'version()' to retrieve format versions of SpatialData elements (#288)
+- fixed 'affine' transformations of points/shapes ('ST_Affine' argument
+  order, 'rev=TRUE', in/output axes), incl. cropping of images/labels (#289)
 
 changes in version 0.99.46
 
