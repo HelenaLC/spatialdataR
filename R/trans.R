@@ -168,6 +168,15 @@ setMethod("translation",
 
 # point/shape ----
 
+# inverse of an affine transformation given as n x (n+1) matrix
+# (linear part & translation); returned in the same layout
+.inv_affine <- \(m) {
+    n <- nrow(m)
+    a <- tryCatch(solve(m[, -(n+1), drop=FALSE]), error=\(e)
+        stop("'affine' transformation is not invertible"))
+    cbind(a, -a %*% m[, n+1])
+}
+
 #' @importFrom dplyr mutate
 #' @importFrom rlang call2 !!
 .trans_f <- \(x, t, f=c("scale", "rotate", "translation", "affine"), rev=FALSE) {
@@ -201,7 +210,7 @@ setMethod("translation",
     if (id) return(x)
 
     # (optional) reverse
-    if (rev) t <- switch(f, scale=1/t, -t)
+    if (rev) t <- switch(f, scale=1/t, affine=.inv_affine(t), -t)
     
     # edge case: rescale radii
     if (f == "scale" && "radius" %in% names(x))
