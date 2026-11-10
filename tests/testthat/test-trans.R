@@ -93,8 +93,9 @@ test_that("translation,labelArray", {
 
 # point/shape ----
 
+.xy <- \(x) unname(as.matrix(centroids(x)[unlist(axes(x))]))
+
 test_that("trans,sdFrame", {
-    .xy <- \(x) unname(as.matrix(centroids(x)[unlist(axes(x))]))
     for (x in c(as.list(points(sd)), as.list(shapes(sd)))) {
         n <- length(unlist(axes(x)))
         
@@ -171,4 +172,58 @@ test_that("trans,sdFrame", {
         mtx <- cbind(matrix(1, n, n), 0)
         expect_error(affine(x, mtx, rev=TRUE), "not invertible")
     }
+})
+
+test_that("transform,sdFrame w/ affine axes", {
+    x <- shape(sd)
+    # x' = x + 2y + 3, y' = 4x + 5y + 6
+    A <- rbind(c(1, 2, 3), c(4, 5, 6))
+    .rows <- \(m) lapply(seq_len(nrow(m)), \(.) m[., ])
+    # add affine 'm', with in/output axes modified by 'f'/'g'
+    .aff <- \(x, m, f=identity, g=f) {
+        x <- addCT(x, "aff", "affine", .rows(m))
+        md <- meta(x)
+        i <- match("aff", CTname(x))
+        ct <- md[["coordinateTransformations"]][[i]]
+        ct$input$axes <- f(ct$input$axes)
+        ct$output$axes <- g(ct$output$axes)
+        md[["coordinateTransformations"]][[i]] <- ct
+        meta(x) <- md
+        return(x)
+    }
+    .ok <- \(y) expect_equal(.xy(transform(y, "aff")), .xy(affine(x, A)))
+    # axes as for the element, or missing
+    .ok(.aff(x, A))
+    .ok(.aff(x, A, \(.) NULL))
+    # in- and/or output axes in reverse order
+    .ok(.aff(x, A[2:1, c(2, 1, 3)], rev))
+    .ok(.aff(x, A[2:1, ], identity, rev))
+    .ok(y <- .aff(x, A[, c(2, 1, 3)], rev, identity))
+    expect_equal(
+        .xy(transform(y, "aff", rev=TRUE)),
+        .xy(affine(x, A, rev=TRUE)))
+    # axes other than the element's
+    z <- \(.) `[[<-`(., 1, list(name="z", type="space"))
+    expect_error(transform(.aff(x, A, z, identity), "aff"), "don't include")
+    expect_error(transform(.aff(x, A, identity, z), "aff"), "don't include")
+    # data that don't fit the axes
+    y <- .aff(x, rbind(A, c(0, 0, 1)))
+    expect_error(transform(y, "aff"), "2x3 matrix")
+    y <- .aff(x, cbind(A, 0))
+    expect_error(transform(y, "aff"), "2x3 matrix")
+    # more output than input axes (rows follow the output axes)
+    z <- \(.) c(., list(list(name="z", type="space")))
+    .ok(.aff(x, rbind(A, c(0, 0, 1)), identity, z))
+    # 3D; 'addCT()' should use the element's (xyz) axes
+    p <- data.frame(x=c(1, 2, 3), y=c(4, 5, 6), z=c(7, 8, 9))
+    p <- SpatialDataPoint(p, meta=SpatialDataAttrs(type="point", dim=3))
+    m <- rbind(c(1, 2, 0, 3), c(4, 5, 0, 6), c(0, 0, 1, 0))
+    q <- .aff(p, m)
+    ct <- CTlist(q)[[match("aff", CTname(q))]]
+    expect_identical(.ax_names(ct$input$axes), axes(p, "name"))
+    expect_identical(.ax_names(ct$output$axes), axes(p, "name"))
+    expect_equal(extent(transform(q, "aff")), extent(affine(p, m)))
+    # (x' = x + 2y + 3 and y' = 4x + 5y + 6)
+    expect_equal(extent(affine(p, m)), list(x=c(12, 18), y=c(30, 48)))
+    expect_equal(extent(affine(affine(p, m), m, rev=TRUE)), extent(p))
 })

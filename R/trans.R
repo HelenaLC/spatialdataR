@@ -57,11 +57,34 @@ setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
     if (f == "identity") return(x)
     t <- CTdata(x, i)
     t <- switch(f, 
-        affine=do.call(rbind, lapply(t, unlist)),
+        affine=.ct_affine(CTlist(x)[[i]], axes(x, "name")),
         sequence=lapply(t, unlist),
         unlist(t))
     do.call(f, list(x, t, ...))
 })
+
+# matrix of affine transformation 'ct' for axes 'ax'; its rows follow
+# the output & its columns the input axes of 'ct' (if these aren't
+# specified, both are taken to be the element's axes 'el')
+.ct_affine <- \(ct, ax, el=ax) {
+    m <- ct$affine # matrix, or list of rows
+    if (!is.matrix(m)) m <- do.call(rbind, lapply(m, unlist))
+    i <- .ax_names(ct$input$axes %||% el)
+    o <- .ax_names(ct$output$axes %||% el)
+    if (!all(ax %in% i, ax %in% o)) stop(
+        "in/output axes of 'affine' transformation ",
+        "don't include '", paste(ax, collapse=""), "'")
+    if (!identical(dim(m), c(length(o), length(i)+1L))) stop(
+        "'affine' transformation data should be a ", length(o), "x",
+        length(i)+1, " matrix according to its in/output axes")
+    i <- match(ax, i)
+    o <- match(ax, o)
+    # other (e.g., channel) axes are dropped; these mustn't matter
+    if (any(m[o, -c(i, ncol(m))] != 0)) stop(
+        "'affine' transformation of '", paste(ax, collapse=""),
+        "' depends on other axes; this isn't supported")
+    m[o, c(i, ncol(m)), drop=FALSE]
+}
 
 #' @export
 #' @rdname trans

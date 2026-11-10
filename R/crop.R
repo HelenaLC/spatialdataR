@@ -133,7 +133,13 @@ NULL
         ct[[type]] <- .adapt(data, type)
     }
     # update input axes from 'cyx' to 'xy'
-    ct$input$axes <- .default_ax(type="shape")
+    # (for affine, also output axes & matrix)
+    xy <- .default_ax(type="shape")
+    if (ct$type == "affine") {
+        ct$affine <- .ct_affine(ct, .ax_names(xy), axes(x, "name"))
+        ct$output$axes <- xy
+    }
+    ct$input$axes <- xy
     ct$input$name <- "xy"
     # create temporary shape & transform back
     md <- SpatialDataAttrs(type="shape", trans=list(ct))
