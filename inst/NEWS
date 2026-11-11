@@ -1,5 +1,7 @@
 changes in devel
 
+- fixed shapes being dropped when adding a table: shapes without a key are
+  matched on their column named after the table's 'instance_key', if any (#252)
 - added 'version()' to retrieve format versions of SpatialData elements (#288)
 - Now using `backed=TRUE` argument internally in `anndataR::read_zarr` 
   to read `table` elements as Zarr-backed SingleCellExperiment objects (#290)
