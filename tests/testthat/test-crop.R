@@ -117,6 +117,61 @@ test_that("crop,sdLabel", {
     expect_equal(dim(m <- crop(l, y)), c(h, w))
 })
 
+test_that("crop,sdArray w/ affine", {
+    # map corners of box 'y' with affine 'm' & return their range
+    f <- \(m, y) {
+        xy <- expand.grid(x=c(y$xmin, y$xmax), y=c(y$ymin, y$ymax))
+        xy <- cbind(as.matrix(xy), 1) %*% t(m)
+        list(
+            xmin=min(xy[, 1]), xmax=max(xy[, 1]),
+            ymin=min(xy[, 2]), ymax=max(xy[, 2]))
+    }
+    # 'm' is the affine (in xy order) to coordinate space 'j' of array 'a';
+    # cropping by a pixel-space box mapped with 'm' should give the same
+    # as cropping by the box around its preimage in pixel space
+    g <- \(a, j, m) {
+        # (half-pixel bounds keep rounding off pixel edges)
+        y <- f(m, list(xmin=30.5, xmax=32.5, ymin=20.5, ymax=22.5))
+        z <- f(solve(rbind(m, c(0, 0, 1)))[1:2, ], y)
+        expect_equal(.box2rev(a, y, j), z)
+        b <- crop(a, y, j)
+        expect_identical(as.array(data(b)), as.array(data(crop(a, z))))
+        return(b)
+    }
+    # label: stored matrix maps (y, x) to (x, y), i.e.,
+    # x' = 10x + 20y + 30 and y' = 40x + 50y + 60
+    l <- label(x)
+    m <- rbind(c(10, 20, 30), c(40, 50, 60))
+    expect_identical(dim(g(l, "affine", m)), c(15L, 23L))
+    # w/o in/output axes, these are taken to be the label's
+    # (y, x), i.e., x' = 40x + 50y + 60 and y' = 10x + 20y + 30
+    md <- meta(l)
+    k <- match("affine", CTname(l))
+    md$multiscales[[1]]$coordinateTransformations[[k]]$input$axes <- NULL
+    md$multiscales[[1]]$coordinateTransformations[[k]]$output$axes <- NULL
+    meta(l) <- md
+    m <- rbind(c(40, 50, 60), c(10, 20, 30))
+    expect_identical(dim(g(l, "affine", m)), c(15L, 23L))
+    # image: matrix includes the channel axis, i.e., it's given
+    # in (c, y, x) order; here, x' = 2x + y + 7 and y' = 3x + y + 5
+    m <- list(c(1, 0, 0, 0), c(0, 1, 3, 5), c(0, 1, 2, 7))
+    i <- addCT(image(x), "affine", "affine", m)
+    m <- rbind(c(2, 1, 7), c(3, 1, 5))
+    expect_identical(dim(g(i, "affine", m)), c(3L, 35L, 15L))
+    # channels mustn't contribute to x/y
+    y <- list(xmin=0, xmax=1, ymin=0, ymax=1)
+    m <- list(c(1, 0, 0, 0), c(0, 1, 3, 5), c(1, 1, 2, 7))
+    i <- addCT(image(x), "affine", "affine", m)
+    expect_error(crop(i, y, "affine"), "other axes")
+    m <- list(c(1, 0, 0, 0), c(-1, 1, 3, 5), c(0, 1, 2, 7))
+    i <- addCT(image(x), "affine", "affine", m)
+    expect_error(crop(i, y, "affine"), "other axes")
+    # matrix should fit the image's (c, y, x) axes
+    m <- list(c(1, 3, 5), c(1, 2, 7))
+    i <- addCT(image(x), "affine", "affine", m)
+    expect_error(crop(i, y, "affine"), "3x4 matrix")
+})
+
 test_that("crop input 'y' .to_sf()", {
     ok <- \(x) {
         expect_s3_class(x, "sf")
