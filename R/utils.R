@@ -38,8 +38,17 @@
         if (layer(x, j) != "shapes") next
         # get element 'y' annotated by table 't'
         y <- element(x, j)
-        # match instances between them
-        y <- y[match(instances(t), instances(y), nomatch=0)] 
+        # nothing to drop if 't' has all instances of 'y'
+        # (e.g. if 't' is numbered by row position)
+        if (!all(instances(y) %in% instances(t))) {
+            # match instances between them; if 'y' has no instance
+            # key, use its column named after the table's, if any
+            ik <- instance_key(t)
+            ky <- tryCatch(instance_key(y), error=\(e) NULL)
+            ok <- is.null(ky) && ik %in% names(y)
+            is <- if (ok) y[[ik]] else instances(y)
+            y <- y[match(instances(t), is, nomatch=0)]
+        }
         # return matching shape instances
         shape(x, j) <- y
     }
