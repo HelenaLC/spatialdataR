@@ -1,5 +1,7 @@
 changes in version 0.99.47
 
+- fixed shapes being dropped when adding a table: shapes without a key are
+  matched on their column named after the table's 'instance_key', if any (#252)
 - support 'affine' coordinate transformations for
   point/shape elements via 'duckspatial::ST_affine' (#276)
 - added 'version()' to retrieve format versions of SpatialData elements (#288)
