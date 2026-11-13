@@ -39,7 +39,7 @@ setMethod("extent", "SpatialDataArray", \(x, i=1) {
     x <- transform(x, i)
     wh <- metadata(x)$wh %||% {
         n <- length(d <- dim(x))
-        if (n == 3) d <- d[-1]
+        d <- d[(n - 1):n]
         d <- rev(d)
         lapply(d, \(.) c(0, .))
     }
