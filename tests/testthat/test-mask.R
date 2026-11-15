@@ -42,10 +42,10 @@ test_that("mask,sdImage,sdLabel", {
     expect_silent(z <- mask(x, i, j, how="mean"))
     expect_identical(y, z)
     
-    # check against original
+    # check against original (convert to in-memory sparse matrix before)
     y <- mask(x, i, j, how="sum")
     expect_equal(
-        unname(assay(tables(x)[[1]])),
+        unname(as(assay(tables(x)[[1]]), "dgCMatrix")),
         unname(assay(tables(y)[[2]])))
     
     # no matching scale
