@@ -50,27 +50,11 @@ sd <- readSpatialData(zs)
 
 # element-wise
 version(shape(sd))
-#> [1] "0.2"
+#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialDataShape"’
 
 # object-wide
 version(sd)
-#> # A tibble: 9 × 3
-#>   layer  element                 version
-#>   <chr>  <chr>                   <chr>  
-#> 1 images blobs_image             0.1    
-#> 2 images blobs_multiscale_image  0.1    
-#> 3 labels blobs_labels            0.1    
-#> 4 labels blobs_multiscale_labels 0.1    
-#> 5 points blobs_points            0.1    
-#> 6 shapes blobs_circles           0.2    
-#> 7 shapes blobs_multipolygons     0.2    
-#> 8 shapes blobs_polygons          0.2    
-#> 9 tables table                   0.1    
+#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialData"’
 version(sd, FALSE)$labels
-#> $blobs_labels
-#> [1] "0.1"
-#> 
-#> $blobs_multiscale_labels
-#> [1] "0.1"
-#> 
+#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialData"’
 ```

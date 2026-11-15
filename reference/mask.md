@@ -91,6 +91,9 @@ library(SingleCellExperiment)
 #>     setequal, union
 #> 
 #> Attaching package: ‘BiocGenerics’
+#> The following object is masked from ‘package:spatialdataR’:
+#> 
+#>     version
 #> The following objects are masked from ‘package:stats’:
 #> 
 #>     IQR, mad, sd, var, xtabs
