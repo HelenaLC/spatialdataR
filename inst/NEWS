@@ -3,6 +3,8 @@ changes in devel
 - added 'version()' to retrieve format versions of SpatialData elements (#288)
 - Now using `backed=TRUE` argument internally in `anndataR::read_zarr` 
   to read `table` elements as Zarr-backed SingleCellExperiment objects (#290)
+- fixed 'affine' transformations of points/shapes ('ST_Affine' argument
+  order, 'rev=TRUE', in/output axes), incl. cropping of images/labels (#289)
 
 changes in version 0.99.47
 

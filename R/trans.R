@@ -57,11 +57,34 @@ setMethod("transform", "SpatialDataElement", \(x, i=1, ...) {
     if (f == "identity") return(x)
     t <- CTdata(x, i)
     t <- switch(f, 
-        affine=do.call(rbind, lapply(t, unlist)),
+        affine=.ct_affine(CTlist(x)[[i]], axes(x, "name")),
         sequence=lapply(t, unlist),
         unlist(t))
     do.call(f, list(x, t, ...))
 })
+
+# matrix of affine transformation 'ct' for axes 'ax'; its rows follow
+# the output & its columns the input axes of 'ct' (if these aren't
+# specified, both are taken to be the element's axes 'el')
+.ct_affine <- \(ct, ax, el=ax) {
+    m <- ct$affine # matrix, or list of rows
+    if (!is.matrix(m)) m <- do.call(rbind, lapply(m, unlist))
+    i <- .ax_names(ct$input$axes %||% el)
+    o <- .ax_names(ct$output$axes %||% el)
+    if (!all(ax %in% i, ax %in% o)) stop(
+        "in/output axes of 'affine' transformation ",
+        "don't include '", paste(ax, collapse=""), "'")
+    if (!identical(dim(m), c(length(o), length(i)+1L))) stop(
+        "'affine' transformation data should be a ", length(o), "x",
+        length(i)+1, " matrix according to its in/output axes")
+    i <- match(ax, i)
+    o <- match(ax, o)
+    # other (e.g., channel) axes are dropped; these mustn't matter
+    if (any(m[o, -c(i, ncol(m))] != 0)) stop(
+        "'affine' transformation of '", paste(ax, collapse=""),
+        "' depends on other axes; this isn't supported")
+    m[o, c(i, ncol(m)), drop=FALSE]
+}
 
 #' @export
 #' @rdname trans
@@ -168,6 +191,15 @@ setMethod("translation",
 
 # point/shape ----
 
+# inverse of an affine transformation given as n x (n+1) matrix
+# (linear part & translation); returned in the same layout
+.inv_affine <- \(m) {
+    n <- nrow(m)
+    a <- tryCatch(solve(m[, -(n+1), drop=FALSE]), error=\(e)
+        stop("'affine' transformation is not invertible"))
+    cbind(a, -a %*% m[, n+1])
+}
+
 #' @importFrom dplyr mutate
 #' @importFrom rlang call2 !!
 .trans_f <- \(x, t, f=c("scale", "rotate", "translation", "affine"), rev=FALSE) {
@@ -178,7 +210,7 @@ setMethod("translation",
     n <- length(axes(x))
     map <- list(
         len=c(scale=n, rotate=1, translation=n, affine=n),
-        ids=c(scale=1, rotate=0, translation=0, affine=1),
+        ids=c(scale=1, rotate=0, translation=0),
         fns=c(scale="ST_Scale",
             rotate="ST_Rotate", 
             affine="ST_Affine",
@@ -197,18 +229,23 @@ setMethod("translation",
     # skip identity
     id <- switch(f, 
         rotate=(t %% 360 == 0), 
+        affine=all(t == cbind(diag(n), 0)),
         all(t == map$ids[f]))
     if (id) return(x)
 
     # (optional) reverse
-    if (rev) t <- switch(f, scale=1/t, -t)
+    if (rev) t <- switch(f, scale=1/t, affine=.inv_affine(t), -t)
     
     # edge case: rescale radii
     if (f == "scale" && "radius" %in% names(x))
         data(x) <- mutate(data(x), radius=!!t[1]*radius)
     
-    # dynamic injection 'ST_*(geo, v1, v2, ...)'
-    v <- switch(f, rotate=t*pi/180, t) # radians
+    # dynamic injection 'ST_*(geo, v1, v2, ...)';
+    # 'ST_Affine' expects the linear part by row, then offsets
+    v <- switch(f,
+        rotate=t*pi/180, # radians
+        affine=unname(c(base::t(t[, -ncol(t)]), t[, ncol(t)])),
+        t)
     data(x) <- mutate(data(x), geometry=!!call2(map$fns[f], quote(geometry), !!!v))
     return(x)
 }
