@@ -45,3 +45,42 @@ test_that(".sync_tables_on_crop,shape", {
     expect_equal(ncol(se), 1)       # right instances
     expect_identical(region(se), i) # regions untouched
 })
+
+test_that(".sync_shapes_on_drop", {
+    i <- shapeNames(sd)[1]
+
+    # give shapes ids from 0, in a column
+    # named after the table's instance key
+    e <- mutate(element(sd, i), instance_id=row_number()-1)
+    n <- length(id <- e$instance_id)
+    shape(sd, i) <- e
+
+    # mock shape annotation; unlike 'setTable()',
+    # 'table<-' doesn't set the shapes' key
+    se <- table(sd)[, seq_len(n)]
+    regions(se) <- i
+    instances(se) <- id
+
+    # all shapes are kept
+    x <- sd; table(x, "se") <- se
+    expect_identical(element(x, i)$instance_id, id)
+
+    # dropping an observation drops its shape
+    table(x, "se") <- se[, -1]
+    expect_identical(element(x, i)$instance_id, id[-1])
+
+    # a table numbered by row position keeps
+    # all shapes, although they have an 'instance_id'
+    instances(se) <- seq_len(n)
+    x <- sd; table(x, "se") <- se
+    expect_identical(element(x, i)$instance_id, id)
+
+    # shapes with their own instance key are
+    # matched on it, not on 'instance_id'
+    e <- mutate(e, a=instance_id+100)
+    instance_key(meta(e)) <- "a"
+    shape(sd, i) <- e
+    instances(se) <- e$a
+    x <- sd; table(x, "se") <- se[, 1:2]
+    expect_identical(element(x, i)$a, e$a[1:2])
+})
