@@ -613,7 +613,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-11-14 r90890)
+    ## R Under development (unstable) (2026-11-15 r90899)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 26.04.1 LTS
     ## 
@@ -644,7 +644,7 @@ sessionInfo()
     ## [13] BiocStyle_2.41.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_1.2.1    grumpy_0.1.1        blob_1.3.0         
+    ##  [1] tidyselect_1.2.1    grumpy_0.2.0        blob_1.3.0         
     ##  [4] dplyr_1.2.1         R.utils_2.13.0      fastmap_1.2.0      
     ##  [7] duckdb_2.0.0        digest_0.6.39       lifecycle_1.0.5    
     ## [10] sf_1.1-3            paws.storage_0.11.0 magrittr_2.0.5     
@@ -660,13 +660,13 @@ sessionInfo()
     ## [40] proxy_0.4-29        BiocManager_1.30.27 XVector_0.53.0     
     ## [43] vctrs_0.7.3         Matrix_1.7-6        jsonlite_2.0.0     
     ## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   
-    ## [49] systemfonts_1.3.2   jquerylib_0.1.4     units_1.0-1        
+    ## [49] systemfonts_1.3.3   jquerylib_0.1.4     units_1.0-1        
     ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.8    
-    ## [55] Rarr_2.1.68         tibble_3.3.1        pillar_1.11.1      
+    ## [55] Rarr_2.1.69         tibble_3.3.1        pillar_1.11.1      
     ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
     ## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           
     ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     
-    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.3.0  
+    ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.4.0  
     ## [70] paws.common_0.9.0   bslib_0.12.0        class_7.3-24       
     ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.5 
     ## [76] anndataR_1.3.5      xfun_0.62           fs_2.1.0           
