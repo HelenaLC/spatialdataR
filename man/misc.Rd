@@ -4,11 +4,17 @@
 \alias{misc}
 \alias{show,SpatialData-method}
 \alias{show,SpatialDataArray-method}
+\alias{show,SpatialDataImage-method}
+\alias{show,SpatialDataFrame-method}
 \title{Miscellaneous `SpatialData` methods}
 \usage{
 \S4method{show}{SpatialData}(object)
 
 \S4method{show}{SpatialDataArray}(object)
+
+\S4method{show}{SpatialDataImage}(object)
+
+\S4method{show}{SpatialDataFrame}(object)
 }
 \arguments{
 \item{object}{\code{\link{SpatialData}} object or one of its elements,
@@ -35,4 +41,5 @@ shape(sd)
 # show .zattrs
 meta(label(sd))
 meta(image(sd, 2))
+
 }

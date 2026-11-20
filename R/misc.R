@@ -26,11 +26,11 @@
 #' # show .zattrs
 #' meta(label(sd))
 #' meta(image(sd, 2))
+#' 
+#' @importFrom S4Vectors coolcat
 NULL
 
-
 #' @importFrom RBGL sp.between
-#' @importFrom S4Vectors coolcat
 #' @importFrom graph nodeData nodes
 .showSpatialData <- function(object) {
     cat("class: SpatialData\n")
@@ -46,14 +46,14 @@ NULL
     # append ellipsis when truncated
     .cat <- function(type, nms, descs) {
         total <- length(nms)
-        cat(sprintf("- %s(%d):\n", type, total))
+        cat(sprintf("%s(%d):\n", type, total))
         shown <- seq_len(min(total, n))
-        cat(sprintf("  - %s (%s)\n", nms[shown], descs[shown]), sep="")
+        cat(sprintf("- %s (%s)\n", nms[shown], descs[shown]), sep="")
         if (total > n) cat("    ...\n")
     }
     # images & labels
-    if (length(i)) coolcat("- images(%d): %s\n", i)
-    if (length(l)) coolcat("- labels(%d): %s\n", l)
+    if (length(i)) coolcat("images(%d): %s\n", i)
+    if (length(l)) coolcat("labels(%d): %s\n", l)
     # points
     if (length(p)) .cat("points", p, as.character(lengths(points(object))))
     # shapes
@@ -68,10 +68,10 @@ NULL
     if (length(t)) {
         total <- length(t)
         d <- vapply(tables(object), \(x) paste(dim(x), collapse=","), character(1))
-        cat(sprintf("- tables(%d):\n", total))
+        cat(sprintf("tables(%d):\n", total))
         for (. in seq_len(min(total, n))) {
             r <- paste(region(table(object, t[.])), collapse=",")
-            cat(sprintf("  - %s (%s) [%s]\n", t[.], d[.], r))
+            cat(sprintf("- %s (%s) [%s]\n", t[.], d[.], r))
         }
         if (total > n) cat("    ...\n")
     }
@@ -80,7 +80,7 @@ NULL
     g <- CTgraph(object)
     node_types <- nodeData(g, nodes(g), "type")
     is_space <- node_types == "space"
-    cat(sprintf("coordinate systems(%d):\n", sum(is_space)))
+    cat(sprintf("coords(%d):\n", sum(is_space)))
     for (cs in nodes(g)[is_space]) {
         pa <- suppressWarnings(sp.between(g, paste0("_", e), cs))
         ss <- strsplit(sub("^_", "", names(pa)), ":", fixed=TRUE)
@@ -94,27 +94,82 @@ NULL
 #' @rdname misc
 setMethod("show", "SpatialData", .showSpatialData)
 
-#' @importFrom S4Vectors coolcat
+.showArrayDims <- \(.) sprintf("(%s)", paste(dim(.), collapse=" "))
+.showCoordTrans <- \(.) coolcat("coords(%d): %s", CTname(.))
+
 .showArray <- function(object) {
-    n <- length(object@data)
-    cat("class:", class(object), if (n > 1) "(MultiScale)" else "", "\n")
-    scales <- vapply(object@data, \(x) paste(dim(x), collapse=","), character(1))
-    coolcat("Scales (%d): (%s)", scales)
+    nd <- length(ax <- axes(object, "name"))
+    cat("class:", class(object), sprintf("[%sd:%s]\n", nd, paste(ax, collapse="")))
+    coolcat("scales(%d): %s", vapply(data(object, NULL), .showArrayDims, character(1)))
+    .showCoordTrans(object)
 }
 
 #' @rdname misc
 setMethod("show", "SpatialDataArray", .showArray)
 
-#' @importFrom S4Vectors coolcat
-.showFrame <- function(object) {
-    cat("class:", class(object)[1], "\n")
-    cat("count:", length(object), "\n")
-    coolcat("data(%d): %s\n", names(object))
+.showImage <- function(object) {
+    callNextMethod()
+    coolcat("channels(%d): %s", channels(object))
 }
 
-setMethod("show", "SpatialDataFrame", .showFrame)
+#' @rdname misc
+setMethod("show", "SpatialDataImage", .showImage)
 
-#' @importFrom S4Vectors coolcat
+.showPoint <- function(object) {
+    cat(sprintf("class: %s (%d) [%s]\n", class(object)[1], length(object), .axes(list(object))))
+    coolcat("names(%d): %s\n", names(object))
+    .showCoordTrans(object)
+}
+
+.showShape <- function(object) {
+    cat(sprintf("class: %s (%d, %s) [%s]\n", class(object)[1], length(object), .geom(list(object)), .axes(list(object))))
+    coolcat("names(%d): %s\n", names(object))
+    .showCoordTrans(object)
+}
+
+#' @rdname misc
+setMethod("show", "SpatialDataPoint", .showPoint)
+
+#' @rdname misc
+setMethod("show", "SpatialDataShape", .showShape)
+
+.dims <- \(.) vapply(., \(.) paste(vapply(data(., NULL), .showArrayDims, character(1)), collapse=" "), character(1))
+.geom <- \(.) vapply(., \(.) c("polygon", "circle")[1L+("radius" %in% names(.))], character(1))
+.axes <- \(.) {
+    axes <- vapply(., \(.) paste(axes(., "name"), collapse=""), character(1))
+    ndim <- vapply(axes, nchar, integer(1))
+    sprintf("%dd:%s", ndim, axes)
+}
+
+.showImages <- function(object) {
+    cat(sprintf("class: %s\n", class(object)))
+    cat(sprintf("- %s [%s]\n", names(object), .axes(object)), sep="")
+}
+.showLabels <- function(object) { .showImages(object) }
+#     cat(sprintf("class: %s\n", class(object)))
+#     cat(sprintf("- %s [dims: %s]\n", names(object), .dims(object)), sep="")
+# }
+.showPoints <- function(object) {
+    cat(sprintf("class: %s\n", class(object)))
+    n <- vapply(object, length, integer(1))
+    cat(sprintf("- %s (%d) [%s]\n", names(object), n, .axes(object)), sep="")
+    
+}
+.showShapes <- function(object) {
+    cat(sprintf("class: %s\n", class(object)))
+    n <- vapply(object, length, integer(1))
+    cat(sprintf("- %s (%d,%s) [%s]\n", names(object), n, .geom(object), .axes(object)), sep="")
+}
+
+#' @rdname misc
+setMethod("show", "sdImageList", .showImages)
+#' @rdname misc
+setMethod("show", "sdLabelList", .showLabels)
+#' @rdname misc
+setMethod("show", "sdPointList", .showPoints)
+#' @rdname misc
+setMethod("show", "sdShapeList", .showShapes)
+
 .showAttrs <- function(object) {
     cat("class: SpatialDataAttrs\n")
     # axes
