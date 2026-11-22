@@ -138,7 +138,7 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 # compares metadata dataset paths to arrays on disk
 .validate_multiscales_paths <- function(x, ds) {
-    ok <- Rarr:::.store_check_exist(
+    ok <- Rarr:::.store_check_folder_exist(
         paste0(x, "/"), ds, 
         Rarr:::.create_s3_client(x))
     if (!all(ok)) warning(
