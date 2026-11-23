@@ -231,8 +231,7 @@ setMethod("crop", "SpatialDataArray", \(x, y, j=1, ...) {
 setMethod("crop", "SpatialDataFrame", \(x, y, j=1, ...) {
     y <- .to_sf(y)
     df <- data(transform(x, j))
-    fd <- data(SpatialDataShape(y))
-    ok <- ddbs_intersects(df, fd, sparse=TRUE)
+    ok <- ddbs_intersects(df, y, sparse=TRUE)
     x[pull(ok, .data$id_x), ]
 })
 
