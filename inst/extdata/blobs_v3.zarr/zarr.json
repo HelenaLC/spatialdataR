@@ -1,71 +1,64 @@
 {
+  "zarr_format": 3,
+  "node_type": "group",
   "attributes": {
     "spatialdata_attrs": {
       "version": "0.2",
       "spatialdata_software_version": "0.7.2"
     }
   },
-  "zarr_format": 3,
   "consolidated_metadata": {
     "kind": "inline",
     "must_understand": false,
     "metadata": {
-      "images": {
-        "attributes": {},
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "labels": {
-        "attributes": {
-          "ome": {
-            "labels": [
-              "blobs_labels",
-              "blobs_multiscale_labels"
+      "images/blobs_image/0": {
+        "shape": [
+          3,
+          64,
+          64
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              3,
+              64,
+              64
             ]
           }
         },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
         },
-        "node_type": "group"
-      },
-      "points": {
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
         "attributes": {},
+        "dimension_names": [
+          "c",
+          "y",
+          "x"
+        ],
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "shapes": {
-        "attributes": {},
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables": {
-        "attributes": {},
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
+        "node_type": "array",
+        "storage_transformers": []
       },
       "images/blobs_image": {
         "attributes": {
@@ -93,9 +86,9 @@
                       {
                         "type": "scale",
                         "scale": [
-                          1.0,
-                          1.0,
-                          1.0
+                          1,
+                          1,
+                          1
                         ]
                       }
                     ]
@@ -167,12 +160,139 @@
           }
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
         "node_type": "group"
+      },
+      "images/blobs_multiscale_image/0": {
+        "shape": [
+          3,
+          64,
+          64
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              3,
+              64,
+              64
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "images/blobs_multiscale_image/1": {
+        "shape": [
+          3,
+          32,
+          32
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              3,
+              32,
+              32
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "images/blobs_multiscale_image/2": {
+        "shape": [
+          3,
+          16,
+          16
+        ],
+        "data_type": "float64",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              3,
+              16,
+              16
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
       },
       "images/blobs_multiscale_image": {
         "attributes": {
@@ -200,9 +320,9 @@
                       {
                         "type": "scale",
                         "scale": [
-                          1.0,
-                          1.0,
-                          1.0
+                          1,
+                          1,
+                          1
                         ]
                       }
                     ]
@@ -213,9 +333,9 @@
                       {
                         "type": "scale",
                         "scale": [
-                          1.0,
-                          2.0,
-                          2.0
+                          1,
+                          2,
+                          2
                         ]
                       }
                     ]
@@ -226,9 +346,9 @@
                       {
                         "type": "scale",
                         "scale": [
-                          1.0,
-                          4.0,
-                          4.0
+                          1,
+                          4,
+                          4
                         ]
                       }
                     ]
@@ -300,12 +420,58 @@
           }
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
         "node_type": "group"
+      },
+      "images": {
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "labels/blobs_labels/0": {
+        "shape": [
+          64,
+          64
+        ],
+        "data_type": "int16",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              64,
+              64
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes",
+            "configuration": {
+              "endian": "little"
+            }
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {},
+        "dimension_names": [
+          "y",
+          "x"
+        ],
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
       },
       "labels/blobs_labels": {
         "attributes": {
@@ -320,8 +486,8 @@
                       {
                         "type": "scale",
                         "scale": [
-                          1.0,
-                          1.0
+                          1,
+                          1
                         ]
                       }
                     ]
@@ -375,8 +541,8 @@
                   {
                     "type": "scale",
                     "scale": [
-                      3.0,
-                      2.0
+                      3,
+                      2
                     ],
                     "input": {
                       "name": "yx",
@@ -412,8 +578,8 @@
                   {
                     "type": "translation",
                     "translation": [
-                      -50.0,
-                      10.0
+                      -50,
+                      10
                     ],
                     "input": {
                       "name": "yx",
@@ -450,14 +616,14 @@
                     "type": "affine",
                     "affine": [
                       [
-                        20.0,
-                        10.0,
-                        30.0
+                        20,
+                        10,
+                        30
                       ],
                       [
-                        50.0,
-                        40.0,
-                        60.0
+                        50,
+                        40,
+                        60
                       ]
                     ],
                     "input": {
@@ -497,8 +663,8 @@
                       {
                         "type": "scale",
                         "scale": [
-                          3.0,
-                          2.0
+                          3,
+                          2
                         ],
                         "input": {
                           "name": "yx",
@@ -534,8 +700,8 @@
                       {
                         "type": "translation",
                         "translation": [
-                          -50.0,
-                          10.0
+                          -50,
+                          10
                         ],
                         "input": {
                           "name": "yx",
@@ -612,580 +778,7 @@
           }
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
         "node_type": "group"
-      },
-      "labels/blobs_multiscale_labels": {
-        "attributes": {
-          "ome": {
-            "version": "0.5-dev-spatialdata",
-            "multiscales": [
-              {
-                "datasets": [
-                  {
-                    "path": "0",
-                    "coordinateTransformations": [
-                      {
-                        "type": "scale",
-                        "scale": [
-                          1.0,
-                          1.0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "path": "1",
-                    "coordinateTransformations": [
-                      {
-                        "type": "scale",
-                        "scale": [
-                          2.0,
-                          2.0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "path": "2",
-                    "coordinateTransformations": [
-                      {
-                        "type": "scale",
-                        "scale": [
-                          4.0,
-                          4.0
-                        ]
-                      }
-                    ]
-                  }
-                ],
-                "name": "blobs_multiscale_labels",
-                "axes": [
-                  {
-                    "name": "y",
-                    "type": "space"
-                  },
-                  {
-                    "name": "x",
-                    "type": "space"
-                  }
-                ],
-                "coordinateTransformations": [
-                  {
-                    "type": "identity",
-                    "input": {
-                      "name": "yx",
-                      "axes": [
-                        {
-                          "name": "y",
-                          "type": "space",
-                          "unit": "unit"
-                        },
-                        {
-                          "name": "x",
-                          "type": "space",
-                          "unit": "unit"
-                        }
-                      ]
-                    },
-                    "output": {
-                      "name": "global",
-                      "axes": [
-                        {
-                          "name": "y",
-                          "type": "space",
-                          "unit": "unit"
-                        },
-                        {
-                          "name": "x",
-                          "type": "space",
-                          "unit": "unit"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "spatialdata_attrs": {
-            "version": "0.3"
-          }
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "points/blobs_points": {
-        "attributes": {
-          "encoding-type": "ngff:points",
-          "axes": [
-            "x",
-            "y"
-          ],
-          "coordinateTransformations": [
-            {
-              "type": "identity",
-              "input": {
-                "name": "xy",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              },
-              "output": {
-                "name": "global",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              }
-            }
-          ],
-          "spatialdata_attrs": {
-            "instance_key": "instance_id",
-            "feature_key": "genes",
-            "version": "0.2"
-          }
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "shapes/blobs_circles": {
-        "attributes": {
-          "encoding-type": "ngff:shapes",
-          "axes": [
-            "x",
-            "y"
-          ],
-          "coordinateTransformations": [
-            {
-              "type": "identity",
-              "input": {
-                "name": "xy",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              },
-              "output": {
-                "name": "global",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              }
-            }
-          ],
-          "spatialdata_attrs": {
-            "version": "0.3"
-          }
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "shapes/blobs_multipolygons": {
-        "attributes": {
-          "encoding-type": "ngff:shapes",
-          "axes": [
-            "x",
-            "y"
-          ],
-          "coordinateTransformations": [
-            {
-              "type": "identity",
-              "input": {
-                "name": "xy",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              },
-              "output": {
-                "name": "global",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              }
-            }
-          ],
-          "spatialdata_attrs": {
-            "version": "0.3"
-          }
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "shapes/blobs_polygons": {
-        "attributes": {
-          "encoding-type": "ngff:shapes",
-          "axes": [
-            "x",
-            "y"
-          ],
-          "coordinateTransformations": [
-            {
-              "type": "identity",
-              "input": {
-                "name": "xy",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              },
-              "output": {
-                "name": "global",
-                "axes": [
-                  {
-                    "name": "x",
-                    "type": "space",
-                    "unit": "unit"
-                  },
-                  {
-                    "name": "y",
-                    "type": "space",
-                    "unit": "unit"
-                  }
-                ]
-              }
-            }
-          ],
-          "spatialdata_attrs": {
-            "version": "0.3"
-          }
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table": {
-        "attributes": {
-          "encoding-type": "anndata",
-          "encoding-version": "0.1.0",
-          "spatialdata-encoding-type": "ngff:regions_table",
-          "region": "blobs_labels",
-          "region_key": "region",
-          "instance_key": "instance_id",
-          "version": "0.2"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "images/blobs_image/0": {
-        "shape": [
-          3,
-          64,
-          64
-        ],
-        "data_type": "float64",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              3,
-              64,
-              64
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0.0,
-        "codecs": [
-          {
-            "name": "bytes",
-            "configuration": {
-              "endian": "little"
-            }
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {},
-        "dimension_names": [
-          "c",
-          "y",
-          "x"
-        ],
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "images/blobs_multiscale_image/0": {
-        "shape": [
-          3,
-          64,
-          64
-        ],
-        "data_type": "float64",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              3,
-              64,
-              64
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0.0,
-        "codecs": [
-          {
-            "name": "bytes",
-            "configuration": {
-              "endian": "little"
-            }
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {},
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "images/blobs_multiscale_image/1": {
-        "shape": [
-          3,
-          32,
-          32
-        ],
-        "data_type": "float64",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              3,
-              32,
-              32
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0.0,
-        "codecs": [
-          {
-            "name": "bytes",
-            "configuration": {
-              "endian": "little"
-            }
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {},
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "images/blobs_multiscale_image/2": {
-        "shape": [
-          3,
-          16,
-          16
-        ],
-        "data_type": "float64",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              3,
-              16,
-              16
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0.0,
-        "codecs": [
-          {
-            "name": "bytes",
-            "configuration": {
-              "endian": "little"
-            }
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {},
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "labels/blobs_labels/0": {
-        "shape": [
-          64,
-          64
-        ],
-        "data_type": "int16",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              64,
-              64
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0,
-        "codecs": [
-          {
-            "name": "bytes",
-            "configuration": {
-              "endian": "little"
-            }
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {},
-        "dimension_names": [
-          "y",
-          "x"
-        ],
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
       },
       "labels/blobs_multiscale_labels/0": {
         "shape": [
@@ -1313,168 +906,378 @@
         "node_type": "array",
         "storage_transformers": []
       },
+      "labels/blobs_multiscale_labels": {
+        "attributes": {
+          "ome": {
+            "version": "0.5-dev-spatialdata",
+            "multiscales": [
+              {
+                "datasets": [
+                  {
+                    "path": "0",
+                    "coordinateTransformations": [
+                      {
+                        "type": "scale",
+                        "scale": [
+                          1,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "path": "1",
+                    "coordinateTransformations": [
+                      {
+                        "type": "scale",
+                        "scale": [
+                          2,
+                          2
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "path": "2",
+                    "coordinateTransformations": [
+                      {
+                        "type": "scale",
+                        "scale": [
+                          4,
+                          4
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "name": "blobs_multiscale_labels",
+                "axes": [
+                  {
+                    "name": "y",
+                    "type": "space"
+                  },
+                  {
+                    "name": "x",
+                    "type": "space"
+                  }
+                ],
+                "coordinateTransformations": [
+                  {
+                    "type": "identity",
+                    "input": {
+                      "name": "yx",
+                      "axes": [
+                        {
+                          "name": "y",
+                          "type": "space",
+                          "unit": "unit"
+                        },
+                        {
+                          "name": "x",
+                          "type": "space",
+                          "unit": "unit"
+                        }
+                      ]
+                    },
+                    "output": {
+                      "name": "global",
+                      "axes": [
+                        {
+                          "name": "y",
+                          "type": "space",
+                          "unit": "unit"
+                        },
+                        {
+                          "name": "x",
+                          "type": "space",
+                          "unit": "unit"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "spatialdata_attrs": {
+            "version": "0.3"
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "labels": {
+        "attributes": {
+          "ome": {
+            "labels": [
+              "blobs_labels",
+              "blobs_multiscale_labels"
+            ]
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "points/blobs_points": {
+        "attributes": {
+          "encoding-type": "ngff:points",
+          "axes": [
+            "x",
+            "y"
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "xy",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            }
+          ],
+          "spatialdata_attrs": {
+            "instance_key": "instance_id",
+            "feature_key": "genes",
+            "version": "0.2"
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "points/blobs_points3d": {
+        "zarr_format": 3,
+        "node_type": "group",
+        "attributes": {
+          "encoding-type": "ngff:points",
+          "axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "xyz",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "z",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": "xyz"
+              }
+            }
+          ],
+          "spatialdata_attrs": {
+            "instance_key": "instance_id",
+            "feature_key": "genes",
+            "version": "0.2"
+          }
+        }
+      },
+      "points": {
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "shapes/blobs_circles": {
+        "attributes": {
+          "encoding-type": "ngff:shapes",
+          "axes": [
+            "x",
+            "y"
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "xy",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            }
+          ],
+          "spatialdata_attrs": {
+            "version": "0.3"
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "shapes/blobs_multipolygons": {
+        "attributes": {
+          "encoding-type": "ngff:shapes",
+          "axes": [
+            "x",
+            "y"
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "xy",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            }
+          ],
+          "spatialdata_attrs": {
+            "version": "0.3"
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "shapes/blobs_polygons": {
+        "attributes": {
+          "encoding-type": "ngff:shapes",
+          "axes": [
+            "x",
+            "y"
+          ],
+          "coordinateTransformations": [
+            {
+              "type": "identity",
+              "input": {
+                "name": "xy",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              },
+              "output": {
+                "name": "global",
+                "axes": [
+                  {
+                    "name": "x",
+                    "type": "space",
+                    "unit": "unit"
+                  },
+                  {
+                    "name": "y",
+                    "type": "space",
+                    "unit": "unit"
+                  }
+                ]
+              }
+            }
+          ],
+          "spatialdata_attrs": {
+            "version": "0.3"
+          }
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "shapes": {
+        "attributes": {},
+        "zarr_format": 3,
+        "node_type": "group"
+      },
       "tables/table/layers": {
         "attributes": {
           "encoding-type": "dict",
           "encoding-version": "0.1.0"
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/obs": {
-        "attributes": {
-          "column-order": [
-            "instance_id",
-            "region"
-          ],
-          "_index": "_index",
-          "encoding-type": "dataframe",
-          "encoding-version": "0.2.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/obsm": {
-        "attributes": {
-          "encoding-type": "dict",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/obsp": {
-        "attributes": {
-          "encoding-type": "dict",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/raw": {
-        "shape": [],
-        "data_type": "bool",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": []
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": false,
-        "codecs": [
-          {
-            "name": "bytes"
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {
-          "encoding-type": "null",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "tables/table/uns": {
-        "attributes": {
-          "encoding-type": "dict",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/var": {
-        "attributes": {
-          "column-order": [],
-          "_index": "_index",
-          "encoding-type": "dataframe",
-          "encoding-version": "0.2.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/varm": {
-        "attributes": {
-          "encoding-type": "dict",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/varp": {
-        "attributes": {
-          "encoding-type": "dict",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
-        "node_type": "group"
-      },
-      "tables/table/X": {
-        "attributes": {
-          "shape": [
-            10,
-            3
-          ],
-          "encoding-type": "csr_matrix",
-          "encoding-version": "0.1.0"
-        },
-        "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
         "node_type": "group"
       },
       "tables/table/obs/_index": {
@@ -1561,6 +1364,87 @@
         "node_type": "array",
         "storage_transformers": []
       },
+      "tables/table/obs/region/categories": {
+        "shape": [
+          1
+        ],
+        "data_type": "string",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              1
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "",
+        "codecs": [
+          {
+            "name": "vlen-utf8",
+            "configuration": {}
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "string-array",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "tables/table/obs/region/codes": {
+        "shape": [
+          10
+        ],
+        "data_type": "int8",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": [
+              10
+            ]
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": 0,
+        "codecs": [
+          {
+            "name": "bytes"
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "array",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
       "tables/table/obs/region": {
         "attributes": {
           "ordered": false,
@@ -1568,12 +1452,183 @@
           "encoding-version": "0.2.0"
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
-        },
         "node_type": "group"
+      },
+      "tables/table/obs": {
+        "attributes": {
+          "column-order": [
+            "instance_id",
+            "region"
+          ],
+          "_index": "_index",
+          "encoding-type": "dataframe",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "tables/table/obsm": {
+        "attributes": {
+          "encoding-type": "dict",
+          "encoding-version": "0.1.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "tables/table/obsp": {
+        "attributes": {
+          "encoding-type": "dict",
+          "encoding-version": "0.1.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "tables/table/raw": {
+        "shape": [],
+        "data_type": "bool",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": []
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": false,
+        "codecs": [
+          {
+            "name": "bytes"
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "null",
+          "encoding-version": "0.1.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "tables/table/uns/spatialdata_attrs/instance_key": {
+        "shape": [],
+        "data_type": "string",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": []
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "",
+        "codecs": [
+          {
+            "name": "vlen-utf8",
+            "configuration": {}
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "string",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "tables/table/uns/spatialdata_attrs/region_key": {
+        "shape": [],
+        "data_type": "string",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": []
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "",
+        "codecs": [
+          {
+            "name": "vlen-utf8",
+            "configuration": {}
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "string",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
+      },
+      "tables/table/uns/spatialdata_attrs/region": {
+        "shape": [],
+        "data_type": "string",
+        "chunk_grid": {
+          "name": "regular",
+          "configuration": {
+            "chunk_shape": []
+          }
+        },
+        "chunk_key_encoding": {
+          "name": "default",
+          "configuration": {
+            "separator": "/"
+          }
+        },
+        "fill_value": "",
+        "codecs": [
+          {
+            "name": "vlen-utf8",
+            "configuration": {}
+          },
+          {
+            "name": "zstd",
+            "configuration": {
+              "level": 0,
+              "checksum": false
+            }
+          }
+        ],
+        "attributes": {
+          "encoding-type": "string",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "array",
+        "storage_transformers": []
       },
       "tables/table/uns/spatialdata_attrs": {
         "attributes": {
@@ -1581,11 +1636,14 @@
           "encoding-version": "0.1.0"
         },
         "zarr_format": 3,
-        "consolidated_metadata": {
-          "kind": "inline",
-          "must_understand": false,
-          "metadata": {}
+        "node_type": "group"
+      },
+      "tables/table/uns": {
+        "attributes": {
+          "encoding-type": "dict",
+          "encoding-version": "0.1.0"
         },
+        "zarr_format": 3,
         "node_type": "group"
       },
       "tables/table/var/_index": {
@@ -1629,6 +1687,32 @@
         "node_type": "array",
         "storage_transformers": []
       },
+      "tables/table/var": {
+        "attributes": {
+          "column-order": [],
+          "_index": "_index",
+          "encoding-type": "dataframe",
+          "encoding-version": "0.2.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "tables/table/varm": {
+        "attributes": {
+          "encoding-type": "dict",
+          "encoding-version": "0.1.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
+      "tables/table/varp": {
+        "attributes": {
+          "encoding-type": "dict",
+          "encoding-version": "0.1.0"
+        },
+        "zarr_format": 3,
+        "node_type": "group"
+      },
       "tables/table/X/data": {
         "shape": [
           30
@@ -1648,7 +1732,7 @@
             "separator": "/"
           }
         },
-        "fill_value": 0.0,
+        "fill_value": 0,
         "codecs": [
           {
             "name": "bytes",
@@ -1749,199 +1833,36 @@
         "node_type": "array",
         "storage_transformers": []
       },
-      "tables/table/obs/region/categories": {
-        "shape": [
-          1
-        ],
-        "data_type": "string",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              1
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": "",
-        "codecs": [
-          {
-            "name": "vlen-utf8",
-            "configuration": {}
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
+      "tables/table/X": {
         "attributes": {
-          "encoding-type": "string-array",
-          "encoding-version": "0.2.0"
+          "shape": [
+            10,
+            3
+          ],
+          "encoding-type": "csr_matrix",
+          "encoding-version": "0.1.0"
         },
         "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
+        "node_type": "group"
       },
-      "tables/table/obs/region/codes": {
-        "shape": [
-          10
-        ],
-        "data_type": "int8",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": [
-              10
-            ]
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": 0,
-        "codecs": [
-          {
-            "name": "bytes"
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
+      "tables/table": {
         "attributes": {
-          "encoding-type": "array",
-          "encoding-version": "0.2.0"
+          "encoding-type": "anndata",
+          "encoding-version": "0.1.0",
+          "spatialdata-encoding-type": "ngff:regions_table",
+          "region": "blobs_labels",
+          "region_key": "region",
+          "instance_key": "instance_id",
+          "version": "0.2"
         },
         "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
+        "node_type": "group"
       },
-      "tables/table/uns/spatialdata_attrs/instance_key": {
-        "shape": [],
-        "data_type": "string",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": []
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": "",
-        "codecs": [
-          {
-            "name": "vlen-utf8",
-            "configuration": {}
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {
-          "encoding-type": "string",
-          "encoding-version": "0.2.0"
-        },
+      "tables": {
+        "attributes": {},
         "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "tables/table/uns/spatialdata_attrs/region": {
-        "shape": [],
-        "data_type": "string",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": []
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": "",
-        "codecs": [
-          {
-            "name": "vlen-utf8",
-            "configuration": {}
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {
-          "encoding-type": "string",
-          "encoding-version": "0.2.0"
-        },
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
-      },
-      "tables/table/uns/spatialdata_attrs/region_key": {
-        "shape": [],
-        "data_type": "string",
-        "chunk_grid": {
-          "name": "regular",
-          "configuration": {
-            "chunk_shape": []
-          }
-        },
-        "chunk_key_encoding": {
-          "name": "default",
-          "configuration": {
-            "separator": "/"
-          }
-        },
-        "fill_value": "",
-        "codecs": [
-          {
-            "name": "vlen-utf8",
-            "configuration": {}
-          },
-          {
-            "name": "zstd",
-            "configuration": {
-              "level": 0,
-              "checksum": false
-            }
-          }
-        ],
-        "attributes": {
-          "encoding-type": "string",
-          "encoding-version": "0.2.0"
-        },
-        "zarr_format": 3,
-        "node_type": "array",
-        "storage_transformers": []
+        "node_type": "group"
       }
     }
-  },
-  "node_type": "group"
+  }
 }

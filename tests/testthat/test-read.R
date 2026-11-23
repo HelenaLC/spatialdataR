@@ -51,3 +51,15 @@ test_that("read from S3", {
     img <- readImage(pa)
     expect_identical(img, images(x)[[1]])
 })
+
+test_that("readPoint() handles 3D points", {
+    y <- system.file("extdata", "blobs_v3.zarr", package="spatialdataR")
+    p <- readPoint(file.path(y, "points", "blobs_points3d"))
+    expect_s4_class(p, "SpatialDataPoint")
+    expect_length(axes(p), 3)
+    # 'st_as_sf()' (used by 'centroids()') fails on non-GEOMETRY 'POINT_3D'
+    xy <- centroids(p)
+    expect_equal(names(xy)[1:3], c("x", "y", "z"))
+    ref <- centroids(readPoint(file.path(y, "points", "blobs_points")))
+    expect_equal(xy$z, ref$x / 2)
+})
