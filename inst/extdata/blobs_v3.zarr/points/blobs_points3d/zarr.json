@@ -1,0 +1,46 @@
+{
+  "zarr_format": 3,
+  "node_type": "group",
+  "attributes": {
+    "encoding-type": "ngff:points",
+    "axes": [
+      "x",
+      "y",
+      "z"
+    ],
+    "coordinateTransformations": [
+      {
+        "type": "identity",
+        "input": {
+          "name": "xyz",
+          "axes": [
+            {
+              "name": "x",
+              "type": "space",
+              "unit": "unit"
+            },
+            {
+              "name": "y",
+              "type": "space",
+              "unit": "unit"
+            },
+            {
+              "name": "z",
+              "type": "space",
+              "unit": "unit"
+            }
+          ]
+        },
+        "output": {
+          "name": "global",
+          "axes": "xyz"
+        }
+      }
+    ],
+    "spatialdata_attrs": {
+      "instance_key": "instance_id",
+      "feature_key": "genes",
+      "version": "0.2"
+    }
+  }
+}

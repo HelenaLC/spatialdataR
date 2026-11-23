@@ -80,8 +80,17 @@ readPoint <- function(x, ...) {
     pq <- file.path(x, "points.parquet", "part.0.parquet")
     md <- read_zarr_attributes(x)
     ax <- unlist(md$axes)
+    if (length(ax) == 2L) {
+        pt <- sprintf("ST_Point(%s, %s)", ax[1], ax[2])
+    } else if (length(ax) == 3L) {
+        # 'POINT_3D' is a native type that 'st_as_sf' can't convert
+        # and it needs to be cast to ::GEOMETRY
+        pt <- sprintf("ST_Point3D(%s, %s, %s)::GEOMETRY", ax[1], ax[2], ax[3])
+    } else {
+        stop("unsupported number of point axes: ", length(ax))
+    }
     df <- ddbs_open_dataset(pq, conn=.conn()) |>
-        mutate(geometry=sql(sprintf("ST_Point(%s, %s)", ax[1], ax[2]))) |>
+        mutate(geometry=sql(pt)) |>
         as_duckspatial_df(crs=NA_character_) |>
         select(-all_of(ax))
     attr(df, "source_path") <- pq
