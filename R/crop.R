@@ -100,7 +100,7 @@ NULL
     return(mx)
 }
 
-#' @importFrom sf st_as_sf st_coordinates
+#' @importFrom duckspatial ddbs_bbox
 .box2rev <- \(x, y, j=1) {
     # align query bounding box
     y <- y[c("xmin", "xmax", "ymin", "ymax")]
@@ -139,9 +139,9 @@ NULL
     md <- SpatialDataAttrs(type="shape", trans=list(ct))
     z <- SpatialDataShape(df, meta=md)
     z <- transform(z, 1, rev=TRUE)
-    # extract coordinates & return range
-    z <- st_coordinates(st_as_sf(data(z)))
-    z <- as.list(c(range(z[, 1]), range(z[, 2])))
+    # extract bounding box
+    bb <- ddbs_bbox(data(z))
+    z <- as.list(unname(c(bb$xmin, bb$xmax, bb$ymin, bb$ymax)))
     names(z) <- names(y)
     return(z)
 }
