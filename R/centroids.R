@@ -67,17 +67,19 @@ setMethod("centroids", "SpatialDataLabel", \(x,
 
 #' @export
 #' @rdname centroids
-#' @importFrom sf st_as_sf st_geometry_type st_centroid st_coordinates
+#' @importFrom dplyr collect
+#' @importFrom duckspatial ddbs_centroid ddbs_x ddbs_y
 setMethod("centroids", "SpatialDataShape", \(x,
     as=c("data.frame", "matrix", "list")) {
     as <- match.arg(as)
     xy <- data(x) |>
-        st_as_sf() |>
-        st_centroid() |>
-        st_coordinates()
-    colnames(xy)[c(1, 2)] <- c("x", "y")
-    if (as == "matrix") return(xy)
-    xy <- as.data.frame(xy)
+        ddbs_centroid() |>
+        ddbs_x(new_column="x") |>
+        ddbs_y(new_column="y") |>
+        select(.data$x, .data$y) |>
+        collect(as = "tibble") |>
+        as.data.frame()
+    if (as == "matrix") return(as.matrix(xy))
     rownames(xy) <- NULL
     if (ncol(xy) > 2)
         for (. in seq(3, ncol(xy)))
@@ -88,18 +90,22 @@ setMethod("centroids", "SpatialDataShape", \(x,
 
 #' @export
 #' @rdname centroids
-#' @importFrom dplyr pull
-#' @importFrom sf st_as_sf st_coordinates
+#' @importFrom dplyr collect
+#' @importFrom duckspatial ddbs_centroid ddbs_x ddbs_y ddbs_z
 setMethod("centroids", "SpatialDataPoint", \(x,
     as=c("data.frame", "list")) {
     as <- match.arg(as)
-    xy <- data(x) |>
-        st_as_sf() |> 
-        st_coordinates()
-    xy <- data.frame(xy)
-    names(xy) <- axes(x)
+    ax <- axes(x)
     fk <- feature_key(x)
-    xy[[fk]] <- pull(x, fk)
+    xy <- data(x) |>
+        ddbs_centroid() |>
+        ddbs_x(new_column=ax[[1]]) |>
+        ddbs_y(new_column=ax[[2]]) 
+    if (length(ax) > 2) xy <- ddbs_z(xy, new_column=ax[[3]])
+    xy <- xy |>
+        select(!!!ax, .data[[fk]]) |>
+        collect(as = "tibble") |>
+        as.data.frame()
     if (as == "data.frame") return(xy)
     lapply(split(xy, xy[[fk]]), `[`, -3)
 })
