@@ -68,6 +68,9 @@ setMethod("mask", c("SpatialData", "ANY", "ANY"), \(x, i, j, k,
     cd <- int_colData(se)
     cd$region <- j
     cd[[ik]] <- colnames(se)
+    # the 1st column is for what lies in no shape, so it
+    # gets no instance ("0" could be the id of a shape)
+    if (is(.j, "SpatialDataShape")) cd[[ik]][1] <- NA
     int_colData(se) <- cd
     `table<-`(x, nm, value=se)
 })

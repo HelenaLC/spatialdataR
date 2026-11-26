@@ -1,5 +1,11 @@
 changes in devel
 
+- fixed shapes being dropped when adding a table: shapes take their
+  'instance_key' from the index of their .parquet file, if stored as a
+  column; without a key, they are matched on their column named after
+  the table's 'instance_key', if any (#252)
+- the "0" column that 'mask()' adds for what lies in no shape is
+  no longer an instance, since "0" can be the id of a shape
 - added 'version()' to retrieve format versions of SpatialData elements (#288)
 - Now using `backed=TRUE` argument internally in `anndataR::read_zarr` 
   to read `table` elements as Zarr-backed SingleCellExperiment objects (#290)

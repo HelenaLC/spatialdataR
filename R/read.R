@@ -14,6 +14,12 @@
 #'   to skip a layer, or a integer vector specifying which elements to read.
 #' @param ... option arguments passed to and from other methods.
 #'
+#' @details
+#' The instances of a shape element are identified by the index of the
+#' \code{GeoDataFrame} it was written from. If the .parquet file stores
+#' that index as a column, \code{readShape} uses it as the element's
+#' \code{instance_key}, so that tables are matched by id.
+#'
 #' @return
 #' \itemize{
 #' \item{For \code{readSpatialData}, a \code{SpatialData}.},
@@ -98,7 +104,29 @@ readShape <- function(x, ...) {
     pq <- file.path(x, "shapes.parquet")
     df <- ddbs_open_dataset(pq, conn=.conn(), crs=NA_character_)
     attr(df, "source_path") <- pq
+    # instances are identified by the index of the GeoDataFrame;
+    # if stored as a column, use that as the instance key
+    if (is.null(md$spatialdata_attrs$instance_key)) {
+        ik <- .pq_index(pq)
+        if (isTRUE(ik %in% colnames(df)))
+            md$spatialdata_attrs$instance_key <- ik
+    }
     SpatialDataShape(data=df, meta=SpatialDataAttrs(md))
+}
+
+# name of the column that holds the index in a
+# .parquet file written by pandas; NULL if there is none
+#' @importFrom DBI dbGetQuery
+.pq_index <- \(pq) {
+    q <- paste(
+        "SELECT json_array_length(ix) AS n, json_type(ix->0) AS typ,",
+        "ix->>0 AS ik FROM (SELECT",
+        "TRY_CAST(decode(value) AS JSON)->'index_columns' AS ix",
+        "FROM parquet_kv_metadata(?) WHERE key = 'pandas'::BLOB)")
+    ix <- dbGetQuery(.conn(), q, params=list(pq))
+    # a range index is listed as a dictionary, not by name
+    ok <- nrow(ix) == 1 && isTRUE(ix$n == 1 && ix$typ == "VARCHAR")
+    if (ok) ix$ik
 }
 
 #' @export

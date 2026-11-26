@@ -38,8 +38,13 @@
         if (layer(x, j) != "shapes") next
         # get element 'y' annotated by table 't'
         y <- element(x, j)
-        # match instances between them
-        y <- y[match(instances(t), instances(y), nomatch=0)] 
+        # nothing to drop if 't' has all instances of 'y'
+        # (e.g. if 't' is numbered by row position)
+        if (!all(instances(y) %in% instances(t))) {
+            # match instances between them
+            is <- .shape_instances(y, instance_key(t))
+            y <- y[match(instances(t), is, nomatch=0)]
+        }
         # return matching shape instances
         shape(x, j) <- y
     }
@@ -126,7 +131,9 @@
             if (lb) return(df$keep)
             # element's regions-instances
             ik <- instance_key(t)
-            i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
+            i <- if (is(e, "SpatialDataShape")) {
+                .shape_instances(e, ik)
+            } else if (ik %in% names(e)) e[[ik]] else seq_along(e)
             fd <- data.frame(r, i)
             # return table indices in element
             right_join(df, fd, names(fd))$keep

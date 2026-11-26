@@ -127,7 +127,10 @@ importFrom(BiocGenerics,
   table,
   transform
 )
-importFrom(DBI,dbIsValid)
+importFrom(DBI,
+  dbGetQuery,
+  dbIsValid
+)
 importFrom(DelayedArray,DelayedArray)
 importFrom(Matrix,
   sparseMatrix,
