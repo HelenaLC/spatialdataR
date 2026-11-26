@@ -84,3 +84,53 @@ test_that(".sync_shapes_on_drop", {
     x <- sd; table(x, "se") <- se[, 1:2]
     expect_identical(element(x, i)$a, e$a[1:2])
 })
+
+test_that("shapes get their instance key from the index of the .parquet", {
+    i <- shapeNames(sd)[1]
+    pa <- file.path(zs, "shapes", i)
+
+    # a range index isn't stored as a column
+    expect_null(instance_key(readShape(pa)))
+
+    # mock an element written from a GeoDataFrame with
+    # index 'id', which isn't the table's instance key
+    dir.create(td <- tempfile())
+    file.copy(pa, td, recursive=TRUE)
+    pq <- file.path(c(pa, file.path(td, i)), "shapes.parquet")
+    DBI::dbExecute(.conn(), sprintf(paste(
+        "COPY (SELECT *, 10*row_number() OVER () AS id",
+        "FROM read_parquet('%s')) TO '%s' (FORMAT parquet,",
+        "KV_METADATA {pandas: '{\"index_columns\": [\"id\"]}'})"),
+        pq[1], pq[2]))
+    e <- readShape(file.path(td, i))
+    id <- 10*seq_along(e)
+    expect_identical(instance_key(e), "id")
+    expect_equal(instances(e), id)
+
+    # mock shape annotation
+    se <- table(sd)[, seq_along(id)]
+    regions(se) <- i
+    instances(se) <- id
+    x <- sd; shape(x, i) <- e
+
+    # all shapes are kept
+    table(x, "se") <- se
+    expect_equal(instances(element(x, i)), id)
+    expect_equal(instances(getTable(x, i)), id)
+
+    # dropping observations drops their shapes
+    k <- c(2, 4)
+    y <- x; table(y, "se") <- se[, k]
+    expect_equal(instances(element(y, i)), id[k])
+    y <- query(x, i="se", instance_id %in% id[k])
+    expect_equal(instances(element(y, i)), id[k])
+
+    # cropping around one shape keeps its observation
+    k <- sample(length(id), 1)
+    xy <- centroids(e)[k, ]
+    dx <- xy[[1]]+c(-(. <- 1e-3), .); dy <- xy[[2]]+c(-., .)
+    bb <- list(xmin=dx[1], xmax=dx[2], ymin=dy[1], ymax=dy[2])
+    y <- crop(x, bb)
+    expect_equal(instances(element(y, i)), id[k])
+    expect_equal(instances(getTable(y, i)), id[k])
+})

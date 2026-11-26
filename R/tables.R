@@ -77,6 +77,15 @@ setMethod("meta", c("SingleCellExperiment"),
     "invalid 'i'; should be a character ",
     "string specifying an element in 'x'")
 
+# instances of shape element 'x' as seen by a table with
+# instance key 'ik': the element's own key comes first,
+# then its column named 'ik', then row positions
+.shape_instances <- \(x, ik) {
+    k <- tryCatch(instance_key(x), error=\(e) NULL)
+    if (is.null(k) && ik %in% names(x)) k <- ik
+    if (is.null(k)) seq_along(x) else x[[k]]
+}
+
 # has ----
 
 #' @rdname table-utils
@@ -131,7 +140,7 @@ setMethod("getTable", c("SpatialData", "character"), \(x, i, j, assay=1, drop=TR
         i <- if (is(y, "SpatialDataLabel")) {
             instances(y)
         } else if (is(y, "SpatialDataShape")) {
-            if (ik %in% names(y)) pull(y, !!ik) else seq_along(y)
+            .shape_instances(y, ik)
         } else stop ("Only labels and shapes can have tables.")
         t <- t[, instances(t) %in% i]
     }

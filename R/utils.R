@@ -41,12 +41,8 @@
         # nothing to drop if 't' has all instances of 'y'
         # (e.g. if 't' is numbered by row position)
         if (!all(instances(y) %in% instances(t))) {
-            # match instances between them; if 'y' has no instance
-            # key, use its column named after the table's, if any
-            ik <- instance_key(t)
-            ky <- tryCatch(instance_key(y), error=\(e) NULL)
-            ok <- is.null(ky) && ik %in% names(y)
-            is <- if (ok) y[[ik]] else instances(y)
+            # match instances between them
+            is <- .shape_instances(y, instance_key(t))
             y <- y[match(instances(t), is, nomatch=0)]
         }
         # return matching shape instances
@@ -135,7 +131,9 @@
             if (lb) return(df$keep)
             # element's regions-instances
             ik <- instance_key(t)
-            i <- if (ik %in% names(e)) e[[ik]] else seq_along(e)
+            i <- if (is(e, "SpatialDataShape")) {
+                .shape_instances(e, ik)
+            } else if (ik %in% names(e)) e[[ik]] else seq_along(e)
             fd <- data.frame(r, i)
             # return table indices in element
             right_join(df, fd, names(fd))$keep

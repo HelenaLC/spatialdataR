@@ -50,6 +50,12 @@ or \code{SingleCellExperiment}.}}
 \description{
 Reading `SpatialData`
 }
+\details{
+The instances of a shape element are identified by the index of the
+\code{GeoDataFrame} it was written from. If the .parquet file stores
+that index as a column, \code{readShape} uses it as the element's
+\code{instance_key}, so that tables are matched by id.
+}
 \examples{
 zs <- file.path("extdata", "blobs.zarr")
 zs <- system.file(zs, package="spatialdataR")

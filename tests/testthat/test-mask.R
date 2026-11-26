@@ -156,6 +156,16 @@ test_that("mask,sdPoint,sdShape", {
     nq <- length(unique(is))
     expect_equal(as.numeric(n0), np - nq)
     
+    # that column isn't an instance,
+    # also when a shape has an id of 0
+    expect_identical(which(is.na(instances(t))), 1L)
+    s <- mutate(shape(x, j), id=row_number()-1)
+    instance_key(meta(s)) <- "id"
+    z <- x; shape(z, j) <- s
+    u <- getTable(mask(z, i, j), j)
+    expect_identical(instances(u), as.character(instances(s)))
+    expect_identical(unname(u$n_instances), unname(t$n_instances[-1]))
+
     # check that custom naming works
     y <- mask(x, i, j, name="x")
     expect_true("x" %in% tableNames(y))
