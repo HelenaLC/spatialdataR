@@ -402,7 +402,7 @@ setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
 #' @name version
 #' @title Retrieve versions of \code{SpatialData} elements
 #' 
-#' @param x \code{\link{SpatialData}} object or one of its elements.
+#' @param object \code{\link{SpatialData}} object or one of its elements.
 #' @param simplify logical scalar; whether to flatten paths into a tibble.
 #' @param ... ignored.
 #' 

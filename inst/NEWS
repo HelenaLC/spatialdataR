@@ -1,3 +1,9 @@
+changes in devel
+
+- added 'version()' to retrieve format versions of SpatialData elements (#288)
+- Now using `backed=TRUE` argument internally in `anndataR::read_zarr` 
+  to read `table` elements as Zarr-backed SingleCellExperiment objects (#290)
+
 changes in version 0.99.47
 
 - support 'affine' coordinate transformations for
