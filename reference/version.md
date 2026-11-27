@@ -6,21 +6,21 @@ Retrieve versions of `SpatialData` elements
 
 ``` r
 # S4 method for class 'SpatialDataElement'
-version(x)
+version(object)
 
 # S4 method for class 'SpatialDataAttrs'
-version(x)
+version(object)
 
 # S4 method for class 'SingleCellExperiment'
-version(x)
+version(object)
 
 # S4 method for class 'SpatialData'
-version(x, simplify = TRUE, ...)
+version(object, simplify = TRUE, ...)
 ```
 
 ## Arguments
 
-- x:
+- object:
 
   [`SpatialData`](https://helenalc.github.io/spatialdataR/reference/SpatialData.md)
   object or one of its elements.
@@ -50,11 +50,27 @@ sd <- readSpatialData(zs)
 
 # element-wise
 version(shape(sd))
-#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialDataShape"’
+#> [1] "0.2"
 
 # object-wide
 version(sd)
-#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialData"’
+#> # A tibble: 9 × 3
+#>   layer  element                 version
+#>   <chr>  <chr>                   <chr>  
+#> 1 images blobs_image             0.1    
+#> 2 images blobs_multiscale_image  0.1    
+#> 3 labels blobs_labels            0.1    
+#> 4 labels blobs_multiscale_labels 0.1    
+#> 5 points blobs_points            0.1    
+#> 6 shapes blobs_circles           0.2    
+#> 7 shapes blobs_multipolygons     0.2    
+#> 8 shapes blobs_polygons          0.2    
+#> 9 tables table                   0.1    
 version(sd, FALSE)$labels
-#> Error: unable to find an inherited method for function ‘version’ for signature ‘object = "SpatialData"’
+#> $blobs_labels
+#> [1] "0.1"
+#> 
+#> $blobs_multiscale_labels
+#> [1] "0.1"
+#> 
 ```

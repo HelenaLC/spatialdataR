@@ -613,7 +613,7 @@ rbind(native=unlist(xy), scaled=unlist(yx))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-11-15 r90899)
+    ## R Under development (unstable) (2026-11-26 r90998)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 26.04.1 LTS
     ## 
@@ -635,41 +635,41 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] SingleCellExperiment_1.35.2 SummarizedExperiment_1.43.0
-    ##  [3] Biobase_2.73.2              GenomicRanges_1.65.4       
-    ##  [5] Seqinfo_1.3.2               IRanges_2.47.5             
-    ##  [7] S4Vectors_0.51.10           BiocGenerics_0.59.13       
-    ##  [9] generics_0.1.4              MatrixGenerics_1.25.0      
+    ##  [1] SingleCellExperiment_1.36.0 SummarizedExperiment_1.45.0
+    ##  [3] Biobase_2.74.0              GenomicRanges_1.67.0       
+    ##  [5] Seqinfo_1.5.0               IRanges_2.48.0             
+    ##  [7] S4Vectors_0.53.0            BiocGenerics_0.60.0        
+    ##  [9] generics_0.1.4              MatrixGenerics_1.27.0      
     ## [11] matrixStats_1.5.0           spatialdataR_0.99.47       
-    ## [13] BiocStyle_2.41.0           
+    ## [13] BiocStyle_2.42.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1    grumpy_0.2.0        blob_1.3.0         
     ##  [4] dplyr_1.2.1         R.utils_2.13.0      fastmap_1.2.0      
-    ##  [7] duckdb_2.0.0        digest_0.6.39       lifecycle_1.0.5    
+    ##  [7] duckdb_2.0.1        digest_0.6.39       lifecycle_1.0.5    
     ## [10] sf_1.1-3            paws.storage_0.11.0 magrittr_2.0.5     
-    ## [13] compiler_4.7.0      rlang_1.3.0         sass_0.4.10        
+    ## [13] compiler_4.7.0      rlang_1.3.0         sass_0.5.0         
     ## [16] tools_4.7.0         yaml_2.3.12         knitr_1.52         
-    ## [19] S4Arrays_1.13.2     htmlwidgets_1.6.4   classInt_0.4-11    
-    ## [22] curl_8.1.0          reticulate_1.47.0   DelayedArray_0.39.8
+    ## [19] S4Arrays_1.15.0     htmlwidgets_1.6.4   classInt_0.4-11    
+    ## [22] curl_8.2.0          reticulate_1.47.0   DelayedArray_0.40.0
     ## [25] abind_1.4-8         KernSmooth_2.23-27  withr_3.0.3        
     ## [28] purrr_1.2.2         desc_1.4.3          R.oo_1.27.1        
     ## [31] grid_4.7.0          e1071_1.7-17        cli_3.6.6          
     ## [34] rmarkdown_2.32      crayon_1.5.3        ragg_1.5.2         
     ## [37] otel_0.3.0          DBI_1.3.0           cachem_1.1.0       
-    ## [40] proxy_0.4-29        BiocManager_1.30.27 XVector_0.53.0     
+    ## [40] proxy_0.4-29        BiocManager_1.30.27 XVector_0.54.0     
     ## [43] vctrs_0.7.3         Matrix_1.7-6        jsonlite_2.0.0     
-    ## [46] bookdown_0.48       RBGL_1.89.0         Rgraphviz_2.57.2   
-    ## [49] systemfonts_1.3.3   jquerylib_0.1.4     units_1.0-1        
-    ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.1.8    
-    ## [55] Rarr_2.1.69         tibble_3.3.1        pillar_1.11.1      
-    ## [58] htmltools_0.5.9     graph_1.91.0        R6_2.6.1           
+    ## [46] bookdown_0.48       RBGL_1.91.0         Rgraphviz_2.59.0   
+    ## [49] systemfonts_1.3.4   jquerylib_0.1.4     units_1.0-1        
+    ## [52] glue_1.8.1          pkgdown_2.2.1       ZarrArray_1.3.1    
+    ## [55] Rarr_2.2.0          tibble_3.3.1        pillar_1.11.1      
+    ## [58] htmltools_0.5.9     graph_1.93.0        R6_2.6.1           
     ## [61] dbplyr_2.6.0        httr2_1.3.0         wk_0.9.5           
-    ## [64] textshaping_1.0.5   evaluate_1.0.5      lattice_0.23-1     
+    ## [64] textshaping_1.1.0   evaluate_1.0.5      lattice_0.23-1     
     ## [67] R.methodsS3_1.8.2   png_0.1-9           duckspatial_1.4.0  
     ## [70] paws.common_0.9.0   bslib_0.12.0        class_7.3-24       
-    ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.13.5 
-    ## [76] anndataR_1.3.5      xfun_0.62           fs_2.1.0           
+    ## [73] Rcpp_1.1.2          uuid_1.2-2          SparseArray_1.15.0 
+    ## [76] anndataR_1.4.0      xfun_0.62           fs_2.1.0           
     ## [79] pkgconfig_2.0.3
 
 ### References
