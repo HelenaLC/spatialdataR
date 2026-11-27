@@ -402,9 +402,11 @@ setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
 #' @name version
 #' @title Retrieve versions of \code{SpatialData} elements
 #' 
-#' @param x \code{\link{SpatialData}} object or one of its elements.
+#' @param object \code{\link{SpatialData}} object or one of its elements.
 #' @param simplify logical scalar; whether to flatten paths into a tibble.
 #' @param ... ignored.
+#' 
+#' @importFrom BiocGenerics version
 #' 
 #' @returns
 #' for single elements, a character string; 
@@ -428,17 +430,17 @@ NULL
 
 #' @export
 #' @rdname version
-setMethod("version", "SpatialDataElement", \(x) version(meta(x)))
+setMethod("version", "SpatialDataElement", \(object) version(meta(object)))
 
 #' @export
 #' @rdname version
-setMethod("version", "SpatialDataAttrs", \(x) x$spatialdata_attrs$version)
+setMethod("version", "SpatialDataAttrs", \(object) object$spatialdata_attrs$version)
 
 #' @export
 #' @rdname version
-setMethod("version", "SingleCellExperiment", \(x) meta(x)$version)
+setMethod("version", "SingleCellExperiment", \(object) meta(object)$version)
 
 #' @export
 #' @rdname version
-setMethod("version", "SpatialData", \(x, simplify=TRUE, ...)
-          .element_apply(x, version, "version", simplify))
+setMethod("version", "SpatialData", \(object, simplify=TRUE, ...)
+          .element_apply(object, version, "version", simplify))

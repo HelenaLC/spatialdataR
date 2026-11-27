@@ -8,16 +8,16 @@
 \alias{version,SpatialData-method}
 \title{Retrieve versions of \code{SpatialData} elements}
 \usage{
-\S4method{version}{SpatialDataElement}(x)
+\S4method{version}{SpatialDataElement}(object)
 
-\S4method{version}{SpatialDataAttrs}(x)
+\S4method{version}{SpatialDataAttrs}(object)
 
-\S4method{version}{SingleCellExperiment}(x)
+\S4method{version}{SingleCellExperiment}(object)
 
-\S4method{version}{SpatialData}(x, simplify = TRUE, ...)
+\S4method{version}{SpatialData}(object, simplify = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{SpatialData}} object or one of its elements.}
+\item{object}{\code{\link{SpatialData}} object or one of its elements.}
 
 \item{simplify}{logical scalar; whether to flatten paths into a tibble.}
 
