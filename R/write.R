@@ -35,15 +35,42 @@ NULL
 
 #' @export
 #' @rdname write_utils
-#' @importFrom anndataR read_zarr
-#' @importFrom dplyr select
-#' @importFrom S4Vectors metadata metadata<-
-#' @importFrom SummarizedExperiment colData colData<-
-#' @importFrom SingleCellExperiment int_colData int_colData<- int_metadata int_metadata<-
+#' @importFrom methods as is
+#' @importFrom SummarizedExperiment assay assay<- assayNames colData colData<-
+#' @importFrom SingleCellExperiment int_colData int_metadata
 writeTable <- function(x, i = NULL) {
     sce <- table(x, i)
-    suppressWarnings({ # suppress warnings related to hidden files
-        anndataR::write_zarr(sce, path = path(sce), mode = "w")
-    })
+    pa <- path(sce)
+    if (is.na(pa)) stop("table has no 'source_path' to write to")
+    # move 'int_colData' columns back to 'colData' (reverse of 'readTable')
+    nm <- "spatialdata_attrs"
+    md <- int_metadata(sce)[[nm]]
+    icd <- int_colData(sce)
+    cd <- cbind(icd[names(icd) %in% unlist(md)], colData(sce))
+    rownames(cd) <- colnames(sce)
+    colData(sce) <- cd
+    # 'anndataR' can't write 'DelayedArray's, so realize (backed) assays
+    for (a in assayNames(sce)) {
+        y <- assay(sce, a)
+        if (!is(y, "DelayedArray")) next
+        sparse <- DelayedArray::is_sparse(y)
+        assay(sce, a) <- if (sparse) as(y, "dgCMatrix") else as.matrix(y)
+    }
+    # write to a sibling directory first, so that
+    # the source is left untouched if writing fails
+    tmp <- tempfile(paste0(".", basename(pa)), tmpdir=dirname(pa))
+    fmt <- if (file.exists(file.path(pa, "zarr.json"))) 3L else 2L
+    xm <- if ("X" %in% assayNames(sce)) "X"
+    tryCatch({
+        anndataR::write_zarr(sce, path=tmp, mode="w",
+            x_mapping=xm, zarr_format=fmt)
+        # write 'int_metadata' attributes back to the table's root
+        # (reverse of 'readTable'); 'overwrite=FALSE' gives precedence
+        # to encoding entries already written by 'anndataR'
+        if (length(md)) Rarr::write_zarr_attributes(tmp, md, overwrite=FALSE)
+    }, error=\(e) { unlink(tmp, recursive=TRUE); stop(e) })
+    unlink(pa, recursive=TRUE)
+    if (!file.rename(tmp, pa))
+        stop("couldn't move written table from ", tmp, " to ", pa)
     NULL
 }
