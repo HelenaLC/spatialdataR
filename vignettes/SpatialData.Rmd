@@ -412,6 +412,27 @@ yx <- extent(label(sd), "scale")
 rbind(native=unlist(xy), scaled=unlist(yx))
 ```
 
+## Writing SpatialData stores
+
+```{r}
+# make a local copy of SpatialData store
+td <- tempfile(fileext = ".zarr")
+dir.create(td)
+file.copy(list.dirs(zs, full.names = TRUE), td, recursive=TRUE)
+
+# read SpatialData
+sd <- readSpatialData(td)
+
+# update SCE
+sd_table <- table(sd)
+sd_table$annotation <- int_colData(sd_table)$region
+table(sd) <- sd_table
+writeTable(sd, i="table")
+
+# read back
+sd <- readSpatialData(td)
+```
+
 # Appendix
 
 ## Resources
