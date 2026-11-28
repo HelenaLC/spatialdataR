@@ -11,20 +11,23 @@
 
 \S4method{crop}{SpatialDataFrame}(x, y, j = 1, ...)
 
-\S4method{crop}{SpatialData}(x, y, j = 1, ...)
+\S4method{crop}{SpatialData}(x, y, j = 1, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{SpatialData} object or element.}
 
-\item{y}{query specification;
-bounding box: length-4 numeric list with names 'xmin/xmax/ymin/ymax',
-or an \code{st_bbox};
+\item{y}{query specification; 
+bounding box: length-4 numeric list with names 
+'xmin/xmax/ymin/ymax', or an \code{st_bbox}; 
 polygon: numeric matrix with 2 columns (= xy-coordinates), 
 or an \code{st_polygon} (\code{sfg}) or \code{sfc}/\code{sf} object.}
 
 \item{j}{character string specifying a coordinate system.}
 
 \item{...}{optional arguments passed to and from other methods.}
+
+\item{drop}{logical scalar; should elements without coordinate system 
+\code{j} be dropped from the object (TRUE) or left untouched (FALSE)?}
 }
 \value{
 same as input

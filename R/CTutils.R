@@ -1,6 +1,6 @@
 #' @name CTutils
 #' @title Coord. trans. utilities
-#' @aliases axes CTlist CTname CTtype CTdata addCT rmvCT
+#' @aliases axes CTlist CTname CTtype CTunit CTdata addCT rmvCT
 #' 
 #' @param x \code{SpatialData}, an element, or \code{SpatialDataAttrs}.
 #' @param y NULL (default) returns a list where each element is 
@@ -24,6 +24,8 @@
 #'   transformation data (e.g., scalar numeric for rotation)
 #' \item \code{CTlist}: list;
 #'   list of transformation specifications per OME-NGFF spec
+#' \item \code{CTunit}: list of lists;
+#'   for each transformation, the unit of each axis
 #' \item \code{add/rmvCT}: 
 #'   \code{SpatialDataElement} or \code{SpatialDataAttrs} 
 #'   with transformation(s) added/removed
@@ -38,16 +40,16 @@
 #' x <- readSpatialData(x, tables=FALSE)
 #' 
 #' # view available target coordinate systems
-#' CTname(z <- meta(label(x)))
+#' CTname(y <- label(x))
 #'
 #' # add
-#' addCT(z, "scale", "scale", c(12, 34)) # overwrite
-#' CTname(addCT(z, "new", "translation", c(12, 34)))
+#' CTname(addCT(y, "new", "translation", c(12, 34))) 
+#' CTdata(addCT(y, "scale", "scale", c(12, 34)), "scale") # overwrite
 #' 
 #' # rmv
-#' CTname(rmvCT(z, 2))        # by index
-#' CTname(rmvCT(z, "scale"))  # by name
-#' CTname(rmvCT(z, "global")) # identity is protected
+#' CTname(rmvCT(y, 2))        # by index
+#' CTname(rmvCT(y, "scale"))  # by name
+#' CTname(rmvCT(y, "global")) # identity is protected
 NULL
 
 # axes() ----
@@ -60,10 +62,10 @@ setMethod("axes", "SpatialDataAttrs", \(x, y=NULL, ...) {
     if (is.null(y)) return(x)
     y <- match.arg(y, c("name", "type", "unit"))
     # shape/point axes have no type and unit, return axes names as given
-    if(y == "name" && is.null(names(x[[1]]))){
-      unlist(x)
+    if (y == "name" && is.null(names(x[[1]]))) {
+        unlist(x)
     } else {
-      vapply(x, `[[`, character(1), y)
+        vapply(x, `[[`, character(1), y)
     }
 })
 
@@ -100,6 +102,18 @@ setMethod("CTname", "SpatialDataAttrs", \(x, ...) {
     vapply(CTlist(x), \(.) .$output$name, character(1))
 })
 
+#' @rdname CTutils
+#' @importFrom stats setNames
+#' @export
+setMethod("CTunit", "SpatialDataAttrs", \(x, ...) {
+    lapply(CTlist(x), \(.) {
+        ax <- .$output$axes
+        setNames(
+            lapply(ax, \(.) .$unit),
+            vapply(ax, \(.) .$name, character(1)))
+    }) |> setNames(CTname(x))
+})
+
 # SpatialDataElement ----
 
 #' @rdname CTutils
@@ -113,6 +127,10 @@ setMethod("CTlist", "SpatialDataElement", \(x, ...) CTlist(meta(x), ...))
 #' @rdname CTutils
 #' @export
 setMethod("CTtype", "SpatialDataElement", \(x, ...) CTtype(meta(x), ...))
+
+#' @rdname CTutils
+#' @export
+setMethod("CTunit", "SpatialDataElement", \(x, ...) CTunit(meta(x), ...))
 
 #' @rdname CTutils
 #' @export
@@ -160,11 +178,10 @@ setMethod("rmvCT", "SpatialDataAttrs", \(x, i) {
     ms <- "multiscales"
     ct <- "coordinateTransformations"
     if (length(i)) {
-        if (is.null(x[[ms]])) {
+        if (is.null(multiscales(x))) {
             x[[ct]] <- x[[ct]][-i]
         } else {
-            y <- x[[ms]][[1]][[ct]][-i]
-            x[[ms]][[1]][[ct]] <- y
+            .ome_root(x)[[ms]][[1]][[ct]] <- .ome_root(x)[[ms]][[1]][[ct]][-i]
         }
     }
     return(x)
@@ -176,7 +193,39 @@ setMethod("rmvCT", "SpatialDataAttrs", \(x, i) {
 #' @export
 setMethod("addCT", "SpatialDataElement", 
     \(x, name, type="identity", data=NULL) {
-    meta(x) <- addCT(meta(x), name, type, data); x })
+    stopifnot(
+        is.character(name), length(name) == 1,
+        is.character(type), length(type) == 1)
+    y <- meta(x)
+    .check_ct(y, type, data)
+    dim <- length(dim(x))
+    axes <- .default_ax(
+        type=. <- tolower(sub("^SpatialData", "", class(x)[1])),
+        dim=if (. == "image") dim-1 else dim) # ignore 'channel'
+    new <- .default_ct(axes)[[1]]
+    new$type <- type
+    new$output$name <- name
+    new[[new$type]] <- data
+    # append/overwrite
+    old <- CTlist(y)
+    i <- match(name, CTname(y))
+    if (is.na(i)) {
+        new <- c(old, list(new))
+    } else {
+        old[[i]] <- new
+        new <- old
+    }
+    # update .zattrs
+    ms <- "multiscales"
+    ct <- "coordinateTransformations"
+    if (is.null(multiscales(y))) {
+        y[[ct]] <- new
+    } else {
+        .ome_root(y)[[ms]][[1]][[ct]] <- new
+    }
+    meta(x) <- y
+    x
+})
 
 .check_ct <- \(x, type, data) {
     d <- length(axes(x))
@@ -190,38 +239,3 @@ setMethod("addCT", "SpatialDataElement",
         TRUE)
     if (!.) f(t)
 }
-
-#' @rdname CTutils
-#' @export
-setMethod("addCT", "SpatialDataAttrs", \(x, name, type="identity", data=NULL) {
-    stopifnot(
-        is.character(name), length(name) == 1,
-        is.character(type), length(type) == 1)
-    .check_ct(x, type, data)
-    # use existing as skeleton
-    new <- .default_ct(axes(x))[[1]]
-    new$type <- type
-    new$output$name <- name
-    new[[new$type]] <- data
-    # append/overwrite
-    old <- CTlist(x)
-    i <- match(name, CTname(x))
-    if (is.na(i)) {
-        new <- c(old, list(new))
-    } else {
-        old[[i]] <- new
-        new <- old
-    }
-    # update .zattrs
-    ms <- "multiscales"
-    ct <- "coordinateTransformations"
-    if (is.null(multiscales(x))) {
-        x[[ct]] <- new
-    } else {
-        switch( 
-            tryCatch(.ome_ver(x), error=\(e) "9.9"), 
-            "0.3"=x$ome[[ms]][[1]][[ct]] <- new,
-            x[[ms]][[1]][[ct]] <- new)
-    }
-    return(x)
-})

@@ -127,5 +127,22 @@ test_that("trans,sdFrame", {
             R <- matrix(c(cos(rad), -sin(rad), sin(rad), cos(rad)), 2, 2)
             expect_equal(.xy(y), .xy(x) %*% R)
         }
+        
+        # affine
+        old <- extent(x)
+        # shift x by +7, y by -7
+        mtx <- rbind(
+            c(1,0,dx <- -7),
+            c(0,1,dy <- +7))
+        expect_equal(
+            extent(affine(x, mtx)),
+            within(old, { x <- x+dx; y <- y+dy }))
+        # scale x by 33, y by 11
+        mtx <- rbind(
+            c(sx <- 33,0,0),
+            c(0,sy <- 11,0))
+        expect_equal(
+            lapply(extent(affine(x, mtx)), diff),
+            within(lapply(old, diff), { x <- x*sx; y <- y*sy }))
     }
 })

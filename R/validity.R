@@ -1,3 +1,54 @@
+.validateImage <- \(object) {
+    msg <- c()
+    d <- length(axes(object))
+    for (k in seq_along(object)) {
+        x <- data(object, k)
+        if (length(dim(x)) != d) msg <- c(msg, paste0(
+            "'SpatialDataImage' resolution ", k, " is not ", d, "D"))
+        if (!type(x) %in% c("double", "integer")) msg <- c(msg, paste(
+            "'SpatialDataImage' resolution", k, "is not of type double or integer"))
+    }
+    return(msg)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("SpatialDataImage", \(object) .validateImage(object))
+
+#' @importFrom ZarrArray type
+.validateLabel <- \(object) {
+    msg <- c()
+    d <- length(axes(object))
+    for (k in seq_along(object)) {
+        x <- data(object, k)
+        if (length(dim(x)) != d) msg <- c(msg, paste0(
+            "'SpatialDataLabel' resolution ", k, " is not ", d, "D"))
+        if (type(x) != "integer") msg <- c(msg, paste(
+            "'SpatialDataLabel' resolution", k, "is not of type integer"))
+    }
+    return(msg)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("SpatialDataLabel", \(object) .validateLabel(object))
+
+#' @importFrom dplyr count pull
+.validatePoint <- \(object) {
+    f <- \() pull(count(spatialdataR::data(object)), "n")
+    n <- tryCatch(error=\(.) 0, as.integer(f()))
+    if (!n) return(NULL)
+    if (!"geometry" %in% names(object)) 
+        return("'SpatialDataPoint' missing 'geometry'.")
+    return(NULL)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("SpatialDataPoint", \(object) .validatePoint(object))
+
+.validateShape <- \(object) {
+    if (!"geometry" %in% names(object)) 
+        return("'SpatialDataShape' missing 'geometry'.")
+    return(NULL)
+}
+#' @importFrom S4Vectors setValidity2
+setValidity2("SpatialDataShape", \(object) .validateShape(object))
+
 # https://spatialdata.scverse.org/en/latest/design_doc.html#table-table-of-annotations-for-regions
 #' @importFrom SingleCellExperiment int_metadata int_colData
 .validateTables <- \(object) {
@@ -42,57 +93,6 @@
     return(msg)
 }
 
-.validateImage <- \(object) {
-    msg <- c()
-    d <- length(axes(object))
-    for (k in seq_along(object)) {
-        x <- data(object, k)
-        if (length(dim(x)) != d) msg <- c(msg, paste(
-            "'SpatialDataImage' resolution", k, "is not ", d, "D"))
-        if (!type(x) %in% c("double", "integer")) msg <- c(msg, paste(
-            "'SpatialDataImage' resolution", k, "is not of type double or integer"))
-    }
-    return(msg)
-}
-#' @importFrom S4Vectors setValidity2
-setValidity2("SpatialDataImage", .validateImage)
-
-#' @importFrom ZarrArray type
-.validateLabel <- \(object) {
-    msg <- c()
-    d <- length(axes(object))
-    for (k in seq_along(object)) {
-        x <- data(object, k)
-        if (length(dim(x)) != d) msg <- c(msg, paste(
-            "'SpatialDataLabel' resolution", k, "is not ", d, "D"))
-        if (type(x) != "integer") msg <- c(msg, paste(
-            "'SpatialDataLabel' resolution", k, "is not of type integer"))
-    }
-    return(msg)
-}
-#' @importFrom S4Vectors setValidity2
-setValidity2("SpatialDataLabel", .validateLabel)
-
-#' @importFrom dplyr count pull
-.validatePoint <- \(object) {
-    f <- \() pull(count(spatialdataR::data(object)), "n")
-    n <- tryCatch(error=\(.) 0, as.integer(f()))
-    if (!n) return(NULL)
-    if (!"geometry" %in% names(object)) 
-        return("'SpatialDataPoint' missing 'geometry'.")
-    return(NULL)
-}
-#' @importFrom S4Vectors setValidity2
-setValidity2("SpatialDataPoint", .validatePoint)
-
-.validateShape <- \(object) {
-    if (!"geometry" %in% names(object)) 
-        return("'SpatialDataShape' missing 'geometry'.")
-    return(NULL)
-}
-#' @importFrom S4Vectors setValidity2
-setValidity2("SpatialDataShape", .validateShape)
-
 .nm <- \(x, l) {
     msg <- c()
     lys <- get(l)(x)
@@ -121,11 +121,11 @@ setValidity2("SpatialDataShape", .validateShape)
 }
 
 #' @importFrom S4Vectors setValidity2
-setValidity2("SpatialData", .validateSpatialData)
+setValidity2("SpatialData", \(object) .validateSpatialData(object))
 
 # TODO: version-specific .zattrs validation for all layers
 
-.ms <- \(x) x$multiscales[[1]] %||% x$ome$multiscales[[1]]
+.ms <- \(x) multiscales(x)[[1]]
 
 .validateAttrs_multiscales <- \(x, msg) {
     if (is.null(ms <- .ms(x))) {

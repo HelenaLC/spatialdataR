@@ -116,9 +116,8 @@ setMethod("data_type", "DelayedArray", \(x) {
 # internal use only!
 #' @noRd 
 .ch <- \(x) {
-    v <- tryCatch(.ome_ver(x), error=\(e) NULL)
-    if (is.null(v)) return()
-    if (v == "0.5") x <- x$ome
+    if (is.null(tryCatch(.ome_ver(x), error=\(e) NULL))) return()
+    x <- .ome_root(x)
     # NOTE: can't use 'vapply' as we 
     # have encountered integer 'label's  
     x <- x$omero$channels
@@ -139,12 +138,13 @@ setMethod("channels", "SpatialDataElement", \(x, ...) stop("only 'images' have c
 
 # compares metadata dataset paths to arrays on disk
 .validate_multiscales_paths <- function(x, ds) {
-    ps <- list.files(x)
-    ds <- ds[ds %in% ps]
-    if (!length(ds))
-        stop("Invalid 'SpatialData' image or label:",
-            " metadata does not match the names of Zarr arrays")
-    return(ds)
+    ok <- Rarr:::.store_check_exist(
+        paste0(x, "/"), ds, 
+        Rarr:::.create_s3_client(x))
+    if (!all(ok)) warning(
+        "Invalid 'SpatialData' image or label: ",
+        "metadata does not match the names of Zarr arrays")
+    return(ds[ok])
 }
 
 # sub ----

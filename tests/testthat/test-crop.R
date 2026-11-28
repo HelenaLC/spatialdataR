@@ -6,13 +6,34 @@ x <- system.file(x, package="spatialdataR")
 x <- readSpatialData(x)
 
 test_that("crop,SpatialData", {
+    # check that all elements have the same 
+    # dimensions between objects 'a' and 'b'
+    f <- \(a, b) {
+        for (e in unlist(colnames(b))) 
+            expect_identical(
+                dim(element(a, e)), 
+                dim(element(b, e)))
+    }
+    # all-exclusive crop
+    y <- list(xmin=-100, xmax=-10, ymin=-100, ymax=-10)
+    expect_error(crop(x, y))
     # all-inclusive crop
     y <- list(xmin=-100, xmax=100, ymin=-100, ymax=100)
     z <- crop(x, y)
-    for (e in unlist(colnames(z))) 
-        expect_identical(
-            dim(element(x, e)), 
-            dim(element(z, e)))
+    f(x, z)
+    # invalid coordinate system
+    expect_error(crop(x, y, "foobar"))
+    # elements without specified coordinate system 
+    # are dropped/retained according to 'drop'
+    y <- list(xmin=-1e3, xmax=1e3, ymin=-1e3, ymax=1e3)
+    z <- crop(x, y, j=2, drop=FALSE)
+    f(x, z)
+    z <- crop(x, y, j=2, drop=TRUE)
+    expect_length(images(z), 0)
+    expect_length(points(z), 0)
+    expect_length(shapes(z), 0)
+    expect_equal(table(z), table(x))
+    expect_identical(data(label(z)), data(label(x)))
     # crop around single point
     xy <- st_coordinates(st_as_sf(data(point(x)[1])))
     bb <- list(
@@ -22,8 +43,8 @@ test_that("crop,SpatialData", {
     expect_length(point(y), 1)
     expect_length(shapes(y), 0)
     expect_length(tables(y), 1)
-    expect_all_true(c(vapply(labels(y), dim, integer(2))) == 2)
-    expect_all_true(c(vapply(images(y), \(.) dim(.)[-1], integer(2))) == 2)
+    expect_all_true(c(vapply(y$labels, dim, integer(2))) == 2)
+    expect_all_true(c(vapply(y$images, \(.) dim(.)[-1], integer(2))) == 2)
 })
 
 test_that("crop,.check_box", {

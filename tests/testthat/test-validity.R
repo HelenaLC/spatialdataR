@@ -28,21 +28,29 @@ test_that("SpatialData()", {
 })
 
 test_that("validity,SpatialDataImage", {
-    expect_error(SpatialDataImage(list(v <- character(1))))
+    # non-numeric entry
+    a <- array(v <- character(1), c(1,1,1))
+    expect_error(SpatialDataImage(list(a)))
     x <- image(sd,1); x@data[[1]][1,1,1] <- v; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]][1,1,1] <- v; expect_error(validObject(x))
-    expect_error(SpatialDataImage(list(a <- array(numeric(1), c(1,1)))))
+    # non-3D array
+    a <- array(numeric(1), c(1,1))
+    expect_error(SpatialDataImage(list(a)))
     x <- image(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- image(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })
 
 test_that("validity,SpatialDataLabel", {
+    # non-integer entry
     for (v in list(logical(1), character(1), numeric(1))) {
-        expect_error(SpatialDataLabel(list(v)))
+        a <- array(v, c(1,1,1))
+        expect_error(SpatialDataLabel(list(a)))
         x <- label(sd,1); x@data[[1]][1,1] <- v; expect_error(validObject(x))
         x <- label(sd,2); x@data[[2]][1,1] <- v; expect_error(validObject(x))
     }
-    expect_error(SpatialDataLabel(list(a <- array(integer(1), rep(1,7)))))
+    # non-2D array
+    a <- array(integer(1), rep(1,7))
+    expect_error(SpatialDataLabel(list(a)))
     x <- label(sd,1); x@data[[1]] <- a; expect_error(validObject(x))
     x <- label(sd,2); x@data[[2]] <- a; expect_error(validObject(x))
 })
@@ -86,7 +94,9 @@ test_that("validity,sdTable", {
         md <- int_metadata(t)
         md$spatialdata_attrs[[i]] <- j
         int_metadata(t) <- md
-        `table<-`(x, value=t)
+        # use 'slot<-' to circumvent validity
+        slot(x, "tables") <- sdTableList(t=t) 
+        x
     }
     
     # missing/non-existent region

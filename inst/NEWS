@@ -1,3 +1,29 @@
+changes in devel
+
+- added 'version()' to retrieve format versions of SpatialData elements (#288)
+- Now using `backed=TRUE` argument internally in `anndataR::read_zarr` 
+  to read `table` elements as Zarr-backed SingleCellExperiment objects (#290)
+
+changes in version 0.99.47
+
+- support 'affine' coordinate transformations for
+  point/shape elements via 'duckspatial::ST_affine' (#276)
+
+changes in version 0.99.46
+
+- update installation instructions per Bioc acceptance
+- reduce code duplication around ome attribute nesting
+- skip non-represented layers in 'show,SpatialData'
+
+changes in version 0.99.45
+
+- setup auto-benchmarks
+- add contribution guidelines
+- code style and efficiency improvements
+- added read support from S3 object storage for
+  "images", "labels", "points", "shapes" elements
+- added new 'CTunit()' helper function
+
 changes in version 0.99.44
 
 - fixed package down URL per package name change
@@ -33,7 +59,7 @@ changes in version 0.99.39
 
 - class revision: SpatialData slots were base::list, now prototyped 
   S4Vectors::SimpleList with layer-specific properties & validation
-- added 'path()' to retrieve on-disk paths of spatial data elements
+- added 'path()' to retrieve on-disk paths of SpatialData elements
 
 changes in version 0.99.38
 

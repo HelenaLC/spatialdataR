@@ -39,8 +39,19 @@ visualization capabilities. These are still under active development, but
 can be installed from GitHub until their release through Bioconductor via:
 
 ```{r eval=FALSE}
-BiocManager::install("HelenaLC/SpatialData.data") # example datasets
+BiocManager::install("SpatialData.data") # example datasets
 BiocManager::install("HelenaLC/SpatialData.plot") # visualization
+```
+
+If working with remote datasets stored on S3 compatible storage, 
+the `duckdb` **httpfs** extension needs to be installed like so:
+
+```{r eval=FALSE}
+library(duckspatial)
+library(duckdb)
+conn <- duckdb::dbConnect(duckdb::duckdb())
+ddbs_install(conn, extension="httpfs")
+duckdb::dbDisconnect(conn)
 ```
 
 ## Introduction

@@ -41,7 +41,7 @@
 \alias{shapeNames<-}
 \alias{tableNames<-}
 \alias{[[<-,SpatialData,character,ANY-method}
-\alias{[[<-,SpatialData,numeric,ANY-method}
+\alias{[[<-,SpatialData,ANY,ANY-method}
 \alias{$,SpatialData-method}
 \alias{$<-,SpatialData-method}
 \alias{[[,SpatialData,numeric,ANY-method}
@@ -63,7 +63,6 @@
 \alias{points,SpatialData-method}
 \alias{shapes,SpatialData-method}
 \alias{tables,SpatialData-method}
-\alias{[[<-,SpatialData,ANY,ANY-method}
 \title{The `SpatialData` class}
 \usage{
 SpatialData(

@@ -54,19 +54,5 @@ setMethod("path", "SingleCellExperiment", \(object, ...) {
 
 #' @export
 #' @rdname path
-#' @importFrom dplyr tibble
-setMethod("path", "SpatialData", \(object, simplify=TRUE, ...) {
-    names(ls) <- ls <- rownames(object)
-    ps <- lapply(ls, \(l) {
-        names(es) <- es <- names(object[[l]])
-        lapply(es, \(e) path(object[[l]][[e]]))
-    })
-
-    if (!simplify) return(ps)
-    
-    do.call(rbind, lapply(names(ps), \(l) 
-        do.call(rbind, lapply(names(ps[[l]]), \(e)
-            tibble(layer = l, element = e, path = ps[[l]][[e]])
-        ))
-    ))
-})
+setMethod("path", "SpatialData", \(object, simplify=TRUE, ...)
+          .element_apply(object, path, "path", simplify))

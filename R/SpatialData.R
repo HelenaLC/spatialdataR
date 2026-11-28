@@ -10,7 +10,7 @@
 #' @aliases imageNames labelNames pointNames shapeNames tableNames
 #' @aliases imageNames<- labelNames<- pointNames<- shapeNames<- tableNames<-
 #' @aliases [[<-,SpatialData,character,ANY-method
-#' @aliases [[<-,SpatialData,numeric,ANY-method
+#' @aliases [[<-,SpatialData,ANY,ANY-method
 #' 
 #' @description 
 #' \code{SpatialData} provides an R interface to Python's \code{spatialdata},

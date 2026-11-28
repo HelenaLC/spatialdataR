@@ -94,7 +94,7 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
                                                    \(.) list(label = .)))))
         res <- c(res,
                  list(
-                   version=.get_ome_version(ver),
+                   version=.ome_ver_from_sd(ver),
                    multiscales=
                      list(
                        list(
@@ -118,6 +118,8 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
     z <- list(name="z", type="space")
     y <- list(name="y", type="space")
     x <- list(name="x", type="space")
+    # note: 'unit' field is currently not populated;
+    # Python defaults to 'unit="unit"' when missing
     switch(match.arg(type), 
         # xyz for points/shapes
         point=,
@@ -141,42 +143,45 @@ SpatialDataAttrs <- \(x, type=c("image", "label", "point", "shape"),
 }
 
 # Internal helper to get axes names
-.ax_names <- function(ax){
-  if (is.character(ax[[1]])) {
-    unlist(ax)
-  } else {
-    vapply(ax, \(.) .$name, character(1))
-  }
+.ax_names <- function(ax) {
+    if (is.character(ax[[1]])) {
+        unlist(ax)
+    } else {
+        vapply(ax, \(.) .$name, character(1))
+    }
 }
 
 # Internal helper to generate coordinate transformations
 .default_ct <- \(axes, name="global", type="identity", data=NULL) {
-    ct <- list(input=list(axes=axes, 
-                          name=paste(.ax_names(axes), collapse = "")), 
-               output=list(axes=axes, 
-                           name=name), 
-               type=type)
+    ct <- list(
+        input=list(
+            axes=axes, 
+            name=paste(.ax_names(axes), collapse="")), 
+        output=list(
+            axes=axes, 
+            name=name), 
+        type=type)
     if (!is.null(data)) ct[[type]] <- data
     list(ct)
 }
 
 # Internal helper to generate datasets
-.default_ds <- function(axes, scale_factors = NULL){
-  scale_factors <- cumprod(c(1,scale_factors))
-  paths <- paste0(seq_along(scale_factors) - 1)
-  mapply(\(p,s) {
-    list(
-      coordinateTransformations = list(
+.default_ds <- function(axes, scale_factors=NULL) {
+    scale_factors <- cumprod(c(1, scale_factors))
+    paths <- paste0(seq_along(scale_factors) - 1)
+    mapply(\(p,s) {
         list(
-          scale = lapply(
-            axes,
-            \(.) if(. == "c") 1 else s),
-          type = "scale"
+            coordinateTransformations=list(
+                list(
+                    scale=lapply(
+                        axes,
+                        \(.) if(. == "c") 1 else s),
+                    type="scale"
+                )
+            ),
+            path=p
         )
-      ),
-      path = p
-    )
-  }, paths, scale_factors, USE.NAMES = FALSE, SIMPLIFY = FALSE)
+    }, paths, scale_factors, USE.NAMES=FALSE, SIMPLIFY=FALSE)
 }
 
 #' @export
@@ -194,26 +199,36 @@ setMethod("$", "SpatialDataAttrs", \(x, name) x[[name]])
         x$multiscales[[1]]$version %||%
         x$omero$version %||% 
         x$ome$version
-    if (!length(v)) stop("couldn't find 'version' in 'spatialdata_attrs'")
-    v <- .val_ome_ver(v)
-    return(v)
+    if (!length(v)) stop("couldn't find OME-NGFF (OME-Zarr) version")
+    .val_ome_ver(v)
 }
 
-.get_ome_version <- \(x){
+# root of OME metadata
+.ome_root <- \(x) {
+    v <- tryCatch(.ome_ver(x), error=\(e) "0.99")
+    if (numeric_version(v) >= "0.5") x$ome else x
+}
+
+`.ome_root<-` <- \(x, value) {
+    v <- tryCatch(.ome_ver(x), error=\(e) "0.99")
+    if (numeric_version(v) >= "0.5") x$ome <- value else x <- value
+    x
+}
+
+.ome_ver_from_sd <- \(x) {
   switch(as.character(x), 
          "0.1" = "0.4",
          "0.2" = "0.4-dev-spatialdata",
          "0.3" = "0.5-dev-spatialdata",
-         stop("Invalid SpatialDataImage/Label format! ", 
-              "Must be 0.1, 0.2, or 0.3"))
+         stop("Invalid SpatialData Image/Label element version; ", 
+              "expected '0.x' where x is 1-3"))
 }
 
 # internal use only!
 #' @noRd 
 setMethod("multiscales", "list", \(x) {
-    v <- tryCatch(.ome_ver(x), error=\(e) NULL)
-    if (is.null(v)) return()
-    switch(v, "0.5"=x$ome$multiscales, x$multiscales)
+    if (is.null(tryCatch(.ome_ver(x), error=\(e) NULL))) return()
+    .ome_root(x)$multiscales
 })
 
 # internal use only!
@@ -381,3 +396,51 @@ setReplaceMethod("instances", c("SingleCellExperiment", "ANY"), \(x, value) {
     int_colData(x)[[ik]] <- value
     return(x)
 })
+
+# version ----
+
+#' @name version
+#' @title Retrieve versions of \code{SpatialData} elements
+#' 
+#' @param object \code{\link{SpatialData}} object or one of its elements.
+#' @param simplify logical scalar; whether to flatten paths into a tibble.
+#' @param ... ignored.
+#' 
+#' @importFrom BiocGenerics version
+#' 
+#' @returns
+#' for single elements, a character string; 
+#' for \link{SpatialData} objects, if \code{simplify=TRUE} (default), 
+#' a \code{tibble} where rows=elements and columns=layers/elements/versions. 
+#' if \code{simplify=FALSE}, a depth-3 list where levels=layers/elements/versions.
+#' 
+#' @examples
+#' zs <- file.path("extdata", "blobs.zarr")
+#' zs <- system.file(zs, package="spatialdataR")
+#' sd <- readSpatialData(zs)
+#' 
+#' # element-wise
+#' version(shape(sd))
+#' 
+#' # object-wide
+#' version(sd)
+#' version(sd, FALSE)$labels
+#' 
+NULL
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialDataElement", \(object) version(meta(object)))
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialDataAttrs", \(object) object$spatialdata_attrs$version)
+
+#' @export
+#' @rdname version
+setMethod("version", "SingleCellExperiment", \(object) meta(object)$version)
+
+#' @export
+#' @rdname version
+setMethod("version", "SpatialData", \(object, simplify=TRUE, ...)
+          .element_apply(object, version, "version", simplify))

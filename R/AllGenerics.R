@@ -50,6 +50,7 @@ setGeneric("CTlist", \(x, ...) standardGeneric("CTlist"))
 setGeneric("CTdata", \(x, ...) standardGeneric("CTdata"))
 setGeneric("CTname", \(x, ...) standardGeneric("CTname"))
 setGeneric("CTtype", \(x, ...) standardGeneric("CTtype"))
+setGeneric("CTunit", \(x, ...) standardGeneric("CTunit"))
 
 setGeneric("CTpath", \(x, ...) standardGeneric("CTpath"))
 setGeneric("CTgraph", \(x, ...) standardGeneric("CTgraph"))
@@ -60,6 +61,7 @@ setGeneric("addCT", \(x, ...) standardGeneric("addCT"))
 setGeneric("flip", \(x, ...) standardGeneric("flip"))
 setGeneric("flop", \(x, ...) standardGeneric("flop"))
 setGeneric("mirror", \(x, ...) standardGeneric("mirror"))
+setGeneric("affine", \(x, t, ...) standardGeneric("affine"))
 setGeneric("translation", \(x, t, ...) standardGeneric("translation"))
 
 # sda ----
