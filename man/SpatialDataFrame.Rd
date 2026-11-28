@@ -47,13 +47,13 @@ SpatialDataShape(
 
 \S4method{geom_type}{SpatialDataShape}(x)
 
-pull.SpatialDataFrame(.data, ...)
+\method{pull}{SpatialDataFrame}(.data, ...)
 
-select.SpatialDataFrame(.data, ...)
+\method{select}{SpatialDataFrame}(.data, ...)
 
-mutate.SpatialDataFrame(.data, ...)
+\method{mutate}{SpatialDataFrame}(.data, ...)
 
-filter.SpatialDataFrame(.data, ...)
+\method{filter}{SpatialDataFrame}(.data, ...)
 
 \S4method{[[}{SpatialDataFrame,ANY,ANY}(x, i, j, ...)
 

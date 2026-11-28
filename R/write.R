@@ -1,4 +1,4 @@
-#' @name write_utils
+#' @name writeSpatialData
 #' @title Writing `SpatialData` components
 #'
 #' @aliases writeTable
@@ -8,40 +8,44 @@
 #'   path to a \code{SpatialData} element.
 #'   For \code{readSpatialData},
 #'   path to a \code{SpatialData}-.zarr store.
+#' @param i table elements to write to  
 #' @param ... option arguments passed to and from other methods.
 #'
 #' @return NULL
 #'
 #' @examples
-#' zs <- file.path("extdata", "blobs.zarr")
+#' # Write support is only for SpatialData stores associated with Zarr v3
+#' zs <- file.path("extdata", "blobs_v3.zarr")
 #' zs <- system.file(zs, package="spatialdataR")
-#'
-#' # read complete Zarr store
+#' 
+#' # move store to temporary location
+#' td <- tempfile()
+#' dir.create(td)
+#' file.copy(zs, td, recursive=TRUE)
+#' zs <- file.path(td, basename(zs))
+#' 
+#' # read store & write (first) table back to disk
+#' sd <- readSpatialData(zs)
+#' writeTable(sd, i=1)
+#' 
+#' # re-read to check the round trip
 #' (sd <- readSpatialData(zs))
-#'
-#' # helper that gets path to last element in layer 'l'
-#' fn <- \(.) tail(list.files(file.path(zs, .), full.names=TRUE), 1)
-#'
-#' # read individual elements
-#' (i <- readImage(fn("images")))
-#' channels(i)
 #' 
-#' (p <- readPoint(fn("points")))
-#' as.data.frame(head(p))
-#' 
-#' (s <- readShape(fn("shapes")))
-#' data(s)
+#' # clean up
+#' unlink(td, recursive=TRUE)
 NULL
 
 #' @export
-#' @rdname write_utils
+#' @rdname writeSpatialData
 #' @importFrom methods as is
 #' @importFrom SummarizedExperiment assay assay<- assayNames colData colData<-
 #' @importFrom SingleCellExperiment int_colData int_metadata
 writeTable <- function(x, i = NULL) {
+    # check version
     sce <- table(x, i)
-    pa <- path(sce)
-    if (is.na(pa)) stop("table has no 'source_path' to write to")
+    if(version(sce) !="0.2") 
+        stop("Updates can only be performed tables with version 0.2!")
+    
     # move 'int_colData' columns back to 'colData' (reverse of 'readTable')
     nm <- "spatialdata_attrs"
     md <- int_metadata(sce)[[nm]]
@@ -49,28 +53,35 @@ writeTable <- function(x, i = NULL) {
     cd <- cbind(icd[names(icd) %in% unlist(md)], colData(sce))
     rownames(cd) <- colnames(sce)
     colData(sce) <- cd
-    # 'anndataR' can't write 'DelayedArray's, so realize (backed) assays
+    
+    # TODO: 'anndataR' can't write 'DelayedArray's, so realize (backed) assays
+    # until https://github.com/scverse/anndataR/pull/601 is merged.
+    sce <- .realize_assays(sce)
+    
+    # write to a temporary directory first, so that
+    # the source is left untouched if writing fails
+    pa <- path(sce)
+    tmp <- tempfile(fileext = ".zarr")
+    xm <- if ("X" %in% assayNames(sce)) "X"
+    anndataR::write_zarr(sce, path=tmp, mode="w",
+                         x_mapping=xm, zarr_format=3)
+    if (length(md)) 
+        Rarr::write_zarr_attributes(tmp, md, overwrite=FALSE)
+    
+    # write to table location
+    unlink(pa, recursive=TRUE)
+    if (!file.rename(tmp, pa))
+        stop("couldn't move written table from ", tmp, " to ", pa)
+    invisible(x)
+}
+
+#' @noRd
+.realize_assays <- function(sce){
     for (a in assayNames(sce)) {
         y <- assay(sce, a)
         if (!is(y, "DelayedArray")) next
         sparse <- DelayedArray::is_sparse(y)
         assay(sce, a) <- if (sparse) as(y, "dgCMatrix") else as.matrix(y)
     }
-    # write to a sibling directory first, so that
-    # the source is left untouched if writing fails
-    tmp <- tempfile(paste0(".", basename(pa)), tmpdir=dirname(pa))
-    fmt <- if (file.exists(file.path(pa, "zarr.json"))) 3L else 2L
-    xm <- if ("X" %in% assayNames(sce)) "X"
-    tryCatch({
-        anndataR::write_zarr(sce, path=tmp, mode="w",
-            x_mapping=xm, zarr_format=fmt)
-        # write 'int_metadata' attributes back to the table's root
-        # (reverse of 'readTable'); 'overwrite=FALSE' gives precedence
-        # to encoding entries already written by 'anndataR'
-        if (length(md)) Rarr::write_zarr_attributes(tmp, md, overwrite=FALSE)
-    }, error=\(e) { unlink(tmp, recursive=TRUE); stop(e) })
-    unlink(pa, recursive=TRUE)
-    if (!file.rename(tmp, pa))
-        stop("couldn't move written table from ", tmp, " to ", pa)
-    NULL
+    sce
 }
